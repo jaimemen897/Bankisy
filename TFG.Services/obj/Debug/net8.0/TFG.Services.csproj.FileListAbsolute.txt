@@ -15,3 +15,4 @@ C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Services\obj\Debug\net8.0\TFG.Servic
 C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Services\obj\Debug\net8.0\ref\TFG.Services.dll
 C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Services\bin\Debug\net8.0\TFG.Services.runtimeconfig.json
 C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Services\obj\Debug\net8.0\TFG.Services.genruntimeconfig.cache
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Services\obj\Debug\net8.0\TFG.Services.sourcelink.json

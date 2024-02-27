@@ -1,9 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TFG.Context.Context;
 using TFG.Context.Models;
-using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using TFG.Services;
 
 namespace TFG.Controllers.Controllers
@@ -26,67 +22,30 @@ namespace TFG.Controllers.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public ActionResult<User> GetUser(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            var user = _usersService.GetUser(id);
+            return user == null ? NotFound() : user;
         }
-
-        [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
+        
+        [HttpPost()]
+        public ActionResult<User> CreateUser(User user)
         {
-            user.Id = Guid.NewGuid();
-            user.CreatedAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            var createdUser = _usersService.CreateUser(user);
+            return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
         }
-
+        
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, User user)
+        public ActionResult<User> UpdateUser(Guid id, User user)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
-            user.UpdatedAt = DateTime.UtcNow;
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-            }
-
-            return NoContent();
+            var updatedUser = _usersService.UpdateUser(id, user);
+            return updatedUser == null ? NotFound() : updatedUser;
         }
-
+        
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
+        public ActionResult DeleteUser(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return _usersService.DeleteUser(id) ? NoContent() : NotFound();
         }
     }
 }

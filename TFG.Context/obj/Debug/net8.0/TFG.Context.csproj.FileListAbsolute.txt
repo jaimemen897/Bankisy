@@ -12,3 +12,4 @@ C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context
 C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\ref\TFG.Context.dll
 C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\bin\Debug\net8.0\TFG.Context.runtimeconfig.json
 C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.genruntimeconfig.cache
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.sourcelink.json
