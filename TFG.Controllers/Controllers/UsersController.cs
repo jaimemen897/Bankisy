@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs;
+using TFG.Context.DTOs.users;
 using TFG.Services;
 
 namespace TFG.Controllers.Controllers

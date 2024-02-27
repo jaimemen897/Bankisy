@@ -1,4 +1,4 @@
-using TFG.Context.DTOs;
+using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 
 namespace TFG.Services.mappers;
@@ -18,17 +18,14 @@ public class UsersMapper
             UpdatedAt = DateTime.Now.ToUniversalTime(),
         };
     }
-    
-    public static User MapToEntity(UserUpdateDto userDto)
+
+    public static User MapToEntity(User user, UserUpdateDto userDto)
     {
-        return new User
-        {
-            Id = userDto.Id,
-            Name = userDto.Name,
-            Email = userDto.Email,
-            Password = userDto.Password,
-            Avatar = userDto.Avatar,
-        };
+        user.Name = userDto.Name ?? user.Name;
+        user.Email = userDto.Email ?? user.Email;
+        user.Avatar = userDto.Avatar ?? user.Avatar;
+        user.UpdatedAt = DateTime.Now.ToUniversalTime();
+        return user;
     }
 
     public static UserResponseDto MapToResponseDto(User user)

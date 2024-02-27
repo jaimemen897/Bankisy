@@ -1,4 +1,4 @@
-namespace TFG.Context.DTOs;
+namespace TFG.Context.DTOs.users;
 
 public class UserResponseDto
 {

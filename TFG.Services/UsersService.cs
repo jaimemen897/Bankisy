@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
-using TFG.Context.DTOs;
+using TFG.Context.DTOs.users;
 using TFG.Services.mappers;
 
 namespace TFG.Services;
@@ -42,9 +42,7 @@ public class UsersService
             return null;
         }
         
-        userToUpdate.Name = user.Name;
-        userToUpdate.Email = user.Email;
-        userToUpdate.UpdatedAt = DateTime.Now.ToUniversalTime();
+        userToUpdate = UsersMapper.MapToEntity(userToUpdate, user);
         await _bankContext.SaveChangesAsync();
         
         return UsersMapper.MapToResponseDto(userToUpdate);
