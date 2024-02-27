@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TFG.Context.Models;
+using TFG.Context.DTOs;
 using TFG.Services;
 
 namespace TFG.Controllers.Controllers
@@ -16,36 +16,35 @@ namespace TFG.Controllers.Controllers
         }
 
         [HttpGet()]
-        public List<User> GetUsers()
+        public async Task<ActionResult<List<UserResponseDto>>> GetUsers()
         {
-            return _usersService.GetUsers();
+            return await _usersService.GetUsers();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<User> GetUser(Guid id)
+        public async Task<ActionResult<UserResponseDto>> GetUser(Guid id)
         {
-            var user = _usersService.GetUser(id);
+            var user = await _usersService.GetUserAsync(id);
             return user == null ? NotFound() : user;
         }
-        
+
         [HttpPost()]
-        public ActionResult<User> CreateUser(User user)
+        public async Task<ActionResult<UserResponseDto>> CreateUser(UserCreateDto user)
         {
-            var createdUser = _usersService.CreateUser(user);
-            return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
+            return await _usersService.CreateUser(user);
         }
-        
+
         [HttpPut("{id}")]
-        public ActionResult<User> UpdateUser(Guid id, User user)
+        public async Task<ActionResult<UserResponseDto>> UpdateUser(Guid id, UserUpdateDto user)
         {
-            var updatedUser = _usersService.UpdateUser(id, user);
-            return updatedUser == null ? NotFound() : updatedUser;
+            var userUpdated = await _usersService.UpdateUser(id, user);
+            return userUpdated == null ? NotFound() : userUpdated;
         }
-        
+
         [HttpDelete("{id}")]
-        public ActionResult DeleteUser(Guid id)
+        public async Task<ActionResult> DeleteUser(Guid id)
         {
-            return _usersService.DeleteUser(id) ? NoContent() : NotFound();
+            return await _usersService.DeleteUser(id) ? Ok() : NotFound();
         }
     }
 }

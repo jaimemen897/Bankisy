@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
-using TFG.Context.Models;
+using TFG.Context.DTOs;
+using TFG.Services.mappers;
 
 namespace TFG.Services;
 
@@ -12,31 +14,29 @@ public class UsersService
         _bankContext = bankContext;
     }
 
-    public List<User> GetUsers()
+    public async Task<List<UserResponseDto>> GetUsers()
     {
-        return _bankContext.Users.ToList();
+        var userList = await _bankContext.Users.ToListAsync();
+        return userList.Select(UsersMapper.MapToResponseDto).ToList();
+    }
+    
+    public async Task<UserResponseDto?> GetUserAsync(Guid id)
+    {
+        var user = await _bankContext.Users.FindAsync(id);
+        return user == null ? null: UsersMapper.MapToResponseDto(user);
     }
 
-    public User? GetUser(Guid id)
+    public async Task<UserResponseDto> CreateUser(UserCreateDto user)
     {
-        return _bankContext.Users.Find(id);
+        var userDto = UsersMapper.MapToEntity(user);
+        await _bankContext.Users.AddAsync(userDto);
+        await _bankContext.SaveChangesAsync();
+        return UsersMapper.MapToResponseDto(userDto);
     }
-
-    public User CreateUser(User user)
+    
+    public async Task<UserResponseDto?> UpdateUser(Guid id, UserUpdateDto user)
     {
-        user.Id = Guid.NewGuid();
-
-        user.CreatedAt = DateTime.Now.ToUniversalTime();
-        user.UpdatedAt = DateTime.Now.ToUniversalTime();
-        _bankContext.Users.Add(user);
-        _bankContext.SaveChanges();
-
-        return user;
-    }
-
-    public User? UpdateUser(Guid id, User user)
-    {
-        var userToUpdate = _bankContext.Users.Find(id);
+        var userToUpdate = await _bankContext.Users.FindAsync(id);
         if (userToUpdate == null)
         {
             return null;
@@ -45,21 +45,21 @@ public class UsersService
         userToUpdate.Name = user.Name;
         userToUpdate.Email = user.Email;
         userToUpdate.UpdatedAt = DateTime.Now.ToUniversalTime();
-        _bankContext.SaveChanges();
+        await _bankContext.SaveChangesAsync();
         
-        return userToUpdate;
+        return UsersMapper.MapToResponseDto(userToUpdate);
     }
-
-    public bool DeleteUser(Guid id)
+    
+    public async Task<bool> DeleteUser(Guid id)
     {
-        var user = _bankContext.Users.Find(id);
+        var user = await _bankContext.Users.FindAsync(id);
         if (user == null)
         {
             return false;
         }
 
         _bankContext.Users.Remove(user);
-        _bankContext.SaveChanges();
+        await _bankContext.SaveChangesAsync();
 
         return true;
     }

@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "CPPh8M8J6t28UTXnOO0xHjpPrN/prR5CyjM68g5oep27dneYmDyfVNTB9rbSP2qAqLld832oMaLXmbltCET1rQ==",
+  "dgSpecHash": "+8eiUe9Yia6THCCXnjRq7QhZT6RZlnRxvwSvXGARw1rnhQjOLf7LqtBf5Hixzi+bhrx2SH7ZRLKqcZw20/D0uw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Jaime\\Downloads\\Clase2\\TFG.Net\\TFG.Services\\TFG.Services.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Jaime\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\Jaime\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\Jaime\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\Jaime\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

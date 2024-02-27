@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TFG.Context")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d42a7e2d4729dad9d5ebc4258b67e33446046776")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f8f45df245fe2adf0f940b4e4baae5c4cd60318")]
 [assembly: System.Reflection.AssemblyProductAttribute("TFG.Context")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TFG.Context")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
