@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFG.Controllers", "TFG.Controllers\TFG.Controllers.csproj", "{BC72D19A-D910-4592-B432-02DF129082AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFG.Services", "TFG.Services\TFG.Services.csproj", "{86FA52AA-3CCE-4A7F-9844-32A4F3092082}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TFG.Context", "TFG.Context\TFG.Context.csproj", "{E999255A-C5E7-4617-8FEB-B9C1723B6D00}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC72D19A-D910-4592-B432-02DF129082AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC72D19A-D910-4592-B432-02DF129082AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC72D19A-D910-4592-B432-02DF129082AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC72D19A-D910-4592-B432-02DF129082AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86FA52AA-3CCE-4A7F-9844-32A4F3092082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86FA52AA-3CCE-4A7F-9844-32A4F3092082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86FA52AA-3CCE-4A7F-9844-32A4F3092082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86FA52AA-3CCE-4A7F-9844-32A4F3092082}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E999255A-C5E7-4617-8FEB-B9C1723B6D00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E999255A-C5E7-4617-8FEB-B9C1723B6D00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E999255A-C5E7-4617-8FEB-B9C1723B6D00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E999255A-C5E7-4617-8FEB-B9C1723B6D00}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

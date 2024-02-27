@@ -1,0 +1,14 @@
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\bin\Debug\net8.0\TFG.Context.deps.json
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\bin\Debug\net8.0\TFG.Context.dll
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\bin\Debug\net8.0\TFG.Context.pdb
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.csproj.AssemblyReference.cache
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.AssemblyInfoInputs.cache
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.AssemblyInfo.cs
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.csproj.CoreCompileInputs.cache
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.dll
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\refint\TFG.Context.dll
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.pdb
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\ref\TFG.Context.dll
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\bin\Debug\net8.0\TFG.Context.runtimeconfig.json
+C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Context\obj\Debug\net8.0\TFG.Context.genruntimeconfig.cache
