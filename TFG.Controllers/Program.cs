@@ -2,23 +2,27 @@ using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Services;
 
+DotNetEnv.Env.Load();
+var host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
+var port = Environment.GetEnvironmentVariable("POSTGRES_PORT");
+var database = Environment.GetEnvironmentVariable("DATABASE_NAME");
+var user = Environment.GetEnvironmentVariable("DATABASE_USER");
+var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
+var connectionString = $"Host={host};Port={port};Database={database};Username={user};Password={password}";
+
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddDbContext<BankContext>(options =>
 {
-    options.UseNpgsql("Host=localhost;Database=bank;Username=postgres;Password=postgres");
+    options.UseNpgsql(connectionString);
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -26,15 +30,13 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "Users",
     pattern: "users/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "BankAccounts",
+    pattern: "bankAccounts/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
-;
 
 app.Run();

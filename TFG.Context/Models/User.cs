@@ -26,4 +26,11 @@ public class User
 
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; }
+    
+    public ICollection<BankAccount> BankAccounts { get; set; }
+    
+    public User()
+    {
+        BankAccounts = new List<BankAccount>();
+    }
 }
