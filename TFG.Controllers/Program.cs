@@ -4,21 +4,18 @@ using TFG.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddDbContext<BankContext>(options =>
 {
-    options.UseNpgsql("Host=localhost;Database=bank;Username=postgres;Password=postgres");
+    options.UseNpgsql("Host=localhost;Database=bank;Username=postgres;Password=pass");
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -33,6 +30,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "Users",
     pattern: "users/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "BankAccounts",
+    pattern: "bankAccounts/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
 ;
