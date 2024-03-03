@@ -7,11 +7,13 @@ public class BankAccountMapper
 {
     public static BankAccount MapToEntity(BankAccountCreateDto bankAccountDto)
     {
+        var accountType = Enum.Parse<AccountType>(bankAccountDto.AccountType);
+        
         return new BankAccount
         {
             Id = new Guid(),
             Balance = bankAccountDto.Balance,
-            AccountType = bankAccountDto.AccountType,
+            AccountType = accountType,
             UserId = bankAccountDto.UserId,
         };
     }

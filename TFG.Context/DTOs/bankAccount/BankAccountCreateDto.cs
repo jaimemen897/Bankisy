@@ -9,8 +9,7 @@ public class BankAccountCreateDto
     [Range(0, double.MaxValue)]
     public decimal Balance { get; set; }
     [Required]
-    [EnumDataType(typeof(AccountType))]
-    public AccountType AccountType { get; set; }
+    public string AccountType { get; set; }
     [Required]
     public Guid UserId { get; set; }
 }

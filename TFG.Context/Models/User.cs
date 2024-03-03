@@ -28,4 +28,9 @@ public class User
     public DateTime UpdatedAt { get; set; }
     
     public ICollection<BankAccount> BankAccounts { get; set; }
+    
+    public User()
+    {
+        BankAccounts = new List<BankAccount>();
+    }
 }

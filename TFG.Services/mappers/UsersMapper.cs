@@ -16,6 +16,7 @@ public class UsersMapper
             Avatar = userDto.Avatar,
             CreatedAt = DateTime.Now.ToUniversalTime(),
             UpdatedAt = DateTime.Now.ToUniversalTime(),
+            BankAccounts = new List<BankAccount>()
         };
     }
 
@@ -38,6 +39,7 @@ public class UsersMapper
             Avatar = user.Avatar,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt,
+            BankAccounts = user.BankAccounts.Select(BankAccountMapper.MapToResponseDto).ToList()
         };
     }
 }
