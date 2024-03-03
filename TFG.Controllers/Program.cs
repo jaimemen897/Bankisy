@@ -9,7 +9,7 @@ builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddDbContext<BankContext>(options =>
 {
-    options.UseNpgsql("Host=localhost;Database=bank;Username=postgres;Password=pass");
+    options.UseNpgsql("Host=localhost;Database=database;Username=admin;Password=admin");
 });
 
 var app = builder.Build();
