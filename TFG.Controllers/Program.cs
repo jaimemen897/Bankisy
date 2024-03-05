@@ -14,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
+builder.Services.AddScoped<TransactionService>();
 builder.Services.AddDbContext<BankContext>(options =>
 {
     options.UseNpgsql(connectionString);
@@ -36,6 +37,9 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "BankAccounts",
     pattern: "bankAccounts/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "Transactions",
+    pattern: "transactions/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
 

@@ -24,8 +24,7 @@ namespace TFG.Controllers.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponseDto>> GetUser(Guid id)
         {
-            var user = await _usersService.GetUserAsync(id);
-            return user == null ? NotFound() : user;
+            return await _usersService.GetUserAsync(id);
         }
 
         [HttpPost()]
@@ -37,14 +36,13 @@ namespace TFG.Controllers.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<UserResponseDto>> UpdateUser(Guid id, UserUpdateDto user)
         {
-            var userUpdated = await _usersService.UpdateUser(id, user);
-            return userUpdated == null ? NotFound() : userUpdated;
+            return await _usersService.UpdateUser(id, user);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteUser(Guid id)
+        public async Task<ActionResult<bool>> DeleteUser(Guid id)
         {
-            return await _usersService.DeleteUser(id) ? Ok() : NotFound();
+            return await _usersService.DeleteUser(id);
         }
     }
 }

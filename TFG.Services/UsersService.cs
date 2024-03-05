@@ -1,56 +1,68 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.users;
+using TFG.Context.Models;
 using TFG.Services.mappers;
 
 namespace TFG.Services;
 
-public class UsersService(BankContext bankContext)
+public class UsersService
 {
+    private readonly BankContext _bankContext;
+    private readonly Mapper _mapper;
+
+    public UsersService(BankContext bankContext)
+    {
+        _bankContext = bankContext;
+        _mapper = MapperConfig.InitializeAutomapper();
+    }
+
     public async Task<List<UserResponseDto>> GetUsers()
     {
-        var userList = await bankContext.Users.Include(u => u.BankAccounts).ToListAsync();
-        return userList.Select(UsersMapper.MapToResponseDto).ToList();
+        var userList = await _bankContext.Users.Include(u => u.BankAccounts).ToListAsync();
+        return userList.Select(user => _mapper.Map<UserResponseDto>(user)).ToList();
     }
-    
-    public async Task<UserResponseDto?> GetUserAsync(Guid id)
+
+    public async Task<ActionResult<UserResponseDto>> GetUserAsync(Guid id)
     {
-        var user = await bankContext.Users.FindAsync(id);
-        return user == null ? null: UsersMapper.MapToResponseDto(user);
+        var user = await _bankContext.Users.FindAsync(id);
+        return user == null ? new NotFoundResult() : _mapper.Map<UserResponseDto>(user);
     }
 
     public async Task<UserResponseDto> CreateUser(UserCreateDto user)
     {
-        var userDto = UsersMapper.MapToEntity(user);
-        await bankContext.Users.AddAsync(userDto);
-        await bankContext.SaveChangesAsync();
-        return UsersMapper.MapToResponseDto(userDto);
+        var userDto = _mapper.Map<User>(user);
+        await _bankContext.Users.AddAsync(userDto);
+        await _bankContext.SaveChangesAsync();
+        return _mapper.Map<UserResponseDto>(userDto);
     }
-    
-    public async Task<UserResponseDto?> UpdateUser(Guid id, UserUpdateDto user)
+
+    public async Task<ActionResult<UserResponseDto>> UpdateUser(Guid id, UserUpdateDto user)
     {
-        var userToUpdate = await bankContext.Users.FindAsync(id);
+        var userToUpdate = await _bankContext.Users.FindAsync(id);
         if (userToUpdate == null)
         {
-            return null;
-        }
-        
-        userToUpdate = UsersMapper.MapToEntity(userToUpdate, user);
-        await bankContext.SaveChangesAsync();
-        
-        return UsersMapper.MapToResponseDto(userToUpdate);
-    }
-    
-    public async Task<bool> DeleteUser(Guid id)
-    {
-        var user = await bankContext.Users.FindAsync(id);
-        if (user == null)
-        {
-            return false;
+            return new NotFoundResult();
         }
 
-        bankContext.Users.Remove(user);
-        await bankContext.SaveChangesAsync();
+        userToUpdate = _mapper.Map(user, userToUpdate);
+        await _bankContext.SaveChangesAsync();
+
+        return _mapper.Map<UserResponseDto>(userToUpdate);
+    }
+
+    public async Task<ActionResult<bool>> DeleteUser(Guid id)
+    {
+        var user = await _bankContext.Users.FindAsync(id);
+        if (user == null)
+        {
+            return new NotFoundResult();
+        }
+
+        _bankContext.Users.Remove(user);
+        await _bankContext.SaveChangesAsync();
 
         return true;
     }

@@ -1,10 +1,12 @@
-using TFG.Context.DTOs.bankAccount;
-using TFG.Context.Models;
+using AutoMapper;
 
 namespace TFG.Services.mappers;
 
-public class BankAccountMapper
+public class BankAccountMapper : Profile
 {
+    
+}
+/*{
     public static BankAccount MapToEntity(BankAccountCreateDto bankAccountDto)
     {
         var accountType = Enum.Parse<AccountType>(bankAccountDto.AccountType);
@@ -14,7 +16,8 @@ public class BankAccountMapper
             Id = new Guid(),
             Balance = bankAccountDto.Balance,
             AccountType = accountType,
-            UserId = bankAccountDto.UserId,
+            Transactions = new List<Transaction>(),
+            UserId = bankAccountDto.UserId
         };
     }
     
@@ -22,6 +25,7 @@ public class BankAccountMapper
     {
         bankAccount.Balance = bankAccountDto.Balance ?? bankAccount.Balance;
         bankAccount.AccountType = bankAccountDto.AccountType ?? bankAccount.AccountType;
+        bankAccount.UserId = bankAccountDto.UserId ?? bankAccount.UserId;
         return bankAccount;
     }
     
@@ -33,6 +37,7 @@ public class BankAccountMapper
             UserId = bankAccount.UserId,
             Balance = bankAccount.Balance,
             AccountType = bankAccount.AccountType,
+            Transactions = bankAccount.Transactions.Select(t => TransactionMapper.MapToResponseDto(t)).ToList()
         };
     }
-}
+}*/

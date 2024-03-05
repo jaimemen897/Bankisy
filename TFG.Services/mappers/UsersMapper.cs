@@ -1,3 +1,4 @@
+using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 
@@ -5,6 +6,7 @@ namespace TFG.Services.mappers;
 
 public class UsersMapper
 {
+
     public static User MapToEntity(UserCreateDto userDto)
     {
         return new User
@@ -39,7 +41,6 @@ public class UsersMapper
             Avatar = user.Avatar,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt,
-            BankAccounts = user.BankAccounts.Select(BankAccountMapper.MapToResponseDto).ToList()
         };
     }
 }

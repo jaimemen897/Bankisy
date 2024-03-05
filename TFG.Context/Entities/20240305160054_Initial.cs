@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace TFG.Context.Entities
 {
     /// <inheritdoc />
-    public partial class UsersMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,15 +49,57 @@ namespace TFG.Context.Entities
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "transactions",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    concept = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    id_account_origin = table.Column<Guid>(type: "uuid", nullable: false),
+                    id_account_destination = table.Column<Guid>(type: "uuid", nullable: false),
+                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_transactions", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_transactions_bank_accounts_id_account_destination",
+                        column: x => x.id_account_destination,
+                        principalTable: "bank_accounts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_transactions_bank_accounts_id_account_origin",
+                        column: x => x.id_account_origin,
+                        principalTable: "bank_accounts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_bank_accounts_user_id",
                 table: "bank_accounts",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_transactions_id_account_destination",
+                table: "transactions",
+                column: "id_account_destination");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_transactions_id_account_origin",
+                table: "transactions",
+                column: "id_account_origin");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "transactions");
+
             migrationBuilder.DropTable(
                 name: "bank_accounts");
 

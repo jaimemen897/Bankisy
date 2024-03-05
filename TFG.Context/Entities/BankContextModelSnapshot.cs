@@ -48,6 +48,46 @@ namespace TFG.Context.Entities
                     b.ToTable("bank_accounts");
                 });
 
+            modelBuilder.Entity("TFG.Context.Models.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("Concept")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("concept");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date");
+
+                    b.Property<Guid>("IdAccountDestination")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_account_destination");
+
+                    b.Property<Guid>("IdAccountOrigin")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id_account_origin");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdAccountDestination");
+
+                    b.HasIndex("IdAccountOrigin");
+
+                    b.ToTable("transactions");
+                });
+
             modelBuilder.Entity("TFG.Context.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -97,6 +137,30 @@ namespace TFG.Context.Entities
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TFG.Context.Models.Transaction", b =>
+                {
+                    b.HasOne("TFG.Context.Models.BankAccount", "BankAccountDestination")
+                        .WithMany()
+                        .HasForeignKey("IdAccountDestination")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TFG.Context.Models.BankAccount", "BankAccountOrigin")
+                        .WithMany("Transactions")
+                        .HasForeignKey("IdAccountOrigin")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BankAccountDestination");
+
+                    b.Navigation("BankAccountOrigin");
+                });
+
+            modelBuilder.Entity("TFG.Context.Models.BankAccount", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("TFG.Context.Models.User", b =>

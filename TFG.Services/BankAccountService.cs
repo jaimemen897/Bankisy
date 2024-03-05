@@ -1,7 +1,5 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http.HttpResults;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
@@ -13,22 +11,25 @@ namespace TFG.Services;
 public class BankAccountService
 {
     private readonly BankContext _bankContext;
+    private readonly Mapper _mapper;
 
     public BankAccountService(BankContext bankContext)
     {
         _bankContext = bankContext;
+        _mapper = MapperConfig.InitializeAutomapper();
     }
+    
 
     public async Task<List<BankAccountResponseDto>> GetBankAccounts()
     {
         var bankAccountList = await _bankContext.BankAccounts.ToListAsync();
-        return bankAccountList.Select(BankAccountMapper.MapToResponseDto).ToList();
+        return bankAccountList.Select(bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount)).ToList();
     }
 
     public async Task<BankAccountResponseDto?> GetBankAccountAsync(Guid id)
     {
         var bankAccount = await _bankContext.BankAccounts.FindAsync(id);
-        return bankAccount == null ? null : BankAccountMapper.MapToResponseDto(bankAccount);
+        return bankAccount == null ? null : _mapper.Map<BankAccountResponseDto>(bankAccount);
     }
 
     private static ActionResult IsValid(BankAccountCreateDto bankAccountCreateDto)
@@ -53,7 +54,7 @@ public class BankAccountService
 
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto)
     {
-        var validationResult = IsValid(bankAccountCreateDto);
+        IsValid(bankAccountCreateDto);
 
         var user = await _bankContext.Users.FindAsync(bankAccountCreateDto.UserId);
 
@@ -62,13 +63,13 @@ public class BankAccountService
             return new NotFoundResult();
         }
 
-        var bankAccount = BankAccountMapper.MapToEntity(bankAccountCreateDto);
+        var bankAccount = _mapper.Map<BankAccount>(bankAccountCreateDto);
         user.BankAccounts.Add(bankAccount);
 
         _bankContext.BankAccounts.Add(bankAccount);
         await _bankContext.SaveChangesAsync();
 
-        var bankAccountResponseDto = BankAccountMapper.MapToResponseDto(bankAccount);
+        var bankAccountResponseDto = _mapper.Map<BankAccountResponseDto>(bankAccount);
         return bankAccountResponseDto;
     }
 
@@ -79,11 +80,11 @@ public class BankAccountService
         {
             return null;
         }
-
-        bankAccountToUpdate = BankAccountMapper.MapToEntity(bankAccountToUpdate, bankAccount);
+        
+        bankAccountToUpdate = _mapper.Map(bankAccount, bankAccountToUpdate);
         await _bankContext.SaveChangesAsync();
 
-        return BankAccountMapper.MapToResponseDto(bankAccountToUpdate);
+        return _mapper.Map<BankAccountResponseDto>(bankAccountToUpdate);
     }
 
     public async Task<bool> DeleteBankAccount(Guid id)

@@ -10,5 +10,4 @@ public class UserResponseDto
     public string Avatar { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public ICollection<BankAccountResponseDto> BankAccounts { get; set; }
 }
