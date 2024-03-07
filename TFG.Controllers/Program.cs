@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Services;
 
+var  MyAllowSpecificOrigins = "AllowAngularApp";
 DotNetEnv.Env.Load();
 var host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
 var port = Environment.GetEnvironmentVariable("POSTGRES_PORT");
@@ -15,9 +16,18 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
-builder.Services.AddDbContext<BankContext>(options =>
+builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
+/*builder.Services.AddCors(options =>
 {
-    options.UseNpgsql(connectionString);
+    options.AddPolicy("AllowAngularApp",
+        builder => builder.WithOrigins("https://localhost:44464") // Replace with your Angular app's URL
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});*/
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy => { policy.WithOrigins("https://localhost:44464").AllowAnyHeader().AllowAnyMethod(); });
 });
 
 var app = builder.Build();
@@ -25,11 +35,16 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 }
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
 /*app.UseHttpsRedirection();*/
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins);
 
 app.MapControllerRoute(
     name: "Users",

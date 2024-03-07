@@ -1,1 +1,7 @@
-<p>users works!</p>
+<div>
+  @for (user of users; track user.id) {
+    <div>
+      <p>{{ user.name}} - {{ user.email }}
+    </div>
+  }
+</div>
