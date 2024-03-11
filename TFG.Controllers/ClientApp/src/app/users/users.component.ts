@@ -1,10 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from "./users.service";
+import {CardModule} from "primeng/card";
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [],
+  imports: [
+    CardModule
+  ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })

@@ -27,7 +27,7 @@ public class Transaction
     public Guid IdAccountDestination { get; set; }
     
     [Column("date")]
-    public DateTime Date { get; set; }
+    public DateTime Date { get; set; } = DateTime.Now.ToUniversalTime();
     
     public BankAccount BankAccountOrigin { get; set; }
     

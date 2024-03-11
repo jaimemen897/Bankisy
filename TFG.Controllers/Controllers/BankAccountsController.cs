@@ -6,44 +6,35 @@ namespace TFG.Controllers.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BankAccountsController : ControllerBase
+public class BankAccountsController(BankAccountService bankAccountService) : ControllerBase
 {
-    private readonly BankAccountService _bankAccountService;
-
-    public BankAccountsController(BankAccountService bankAccountService)
-    {
-        _bankAccountService = bankAccountService;
-    }
-
     [HttpGet()]
-    public async Task<ActionResult<List<BankAccountResponseDto>>> GetBankAccounts()
+    public async Task<List<BankAccountResponseDto>> GetBankAccounts()
     {
-        return await _bankAccountService.GetBankAccounts();
+        return await bankAccountService.GetBankAccounts();
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<BankAccountResponseDto>> GetBankAccount(Guid id)
     {
-        var bankAccount = await _bankAccountService.GetBankAccountAsync(id);
-        return bankAccount == null ? NotFound() : bankAccount;
+        return await bankAccountService.GetBankAccountAsync(id);
     }
 
     [HttpPost()]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {
-        return await _bankAccountService.CreateBankAccount(bankAccount);
+        return await bankAccountService.CreateBankAccount(bankAccount);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult<BankAccountResponseDto>> UpdateBankAccount(Guid id, BankAccountUpdateDto bankAccount)
     {
-        var bankAccountUpdated = await _bankAccountService.UpdateBankAccount(id, bankAccount);
-        return bankAccountUpdated == null ? NotFound() : bankAccountUpdated;
+       return await bankAccountService.UpdateBankAccount(id, bankAccount);
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteBankAccount(Guid id)
+    public async Task DeleteBankAccount(Guid id)
     {
-        return await _bankAccountService.DeleteBankAccount(id) ? Ok() : NotFound();
+        await bankAccountService.DeleteBankAccount(id);
     }
 }

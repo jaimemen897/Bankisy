@@ -6,7 +6,7 @@ namespace TFG.Context.Models;
 [Table("bank_accounts")]
 public class BankAccount
 {
-    [Column("id"), Key] public Guid Id { get; set; }
+    [Column("id"), Key] public Guid Id { get; set; } = new Guid();
 
     [Column("balance")] public decimal Balance { get; set; }
 

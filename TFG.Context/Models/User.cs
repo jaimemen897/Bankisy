@@ -7,7 +7,7 @@ namespace TFG.Context.Models;
 public class User
 {
     [Column("id"), Key]
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = new Guid();
 
     [Column("name")]
     public string Name { get; set; }
@@ -22,10 +22,10 @@ public class User
     public string Avatar { get; set; }
 
     [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
 
     [Column("updated_at")]
-    public DateTime UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
     
     public ICollection<BankAccount> BankAccounts { get; set; }
  

@@ -1,7 +1,5 @@
-<div>
-  @for (user of users; track user.id) {
-    <div>
-      <p>{{ user.name}} - {{ user.email }}
-    </div>
-  }
-</div>
+@for (user of users; track users.id) {
+  <p-card [header]="user.name">
+    <p>{{ user.name }} - {{ user.email }}</p>
+  </p-card>
+}
