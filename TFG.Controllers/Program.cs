@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
+using TFG.Controllers.ExceptionsHandler;
 using TFG.Services;
 
+var myAllowSpecificOrigins = "AllowAngularApp";
 DotNetEnv.Env.Load();
 var host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
 var port = Environment.GetEnvironmentVariable("POSTGRES_PORT");
@@ -15,9 +17,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
-builder.Services.AddDbContext<BankContext>(options =>
+builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
+builder.Services.AddExceptionHandler<ExceptionHandler>();
+builder.Services.AddProblemDetails();
+builder.Services.AddCors(options =>
 {
-    options.UseNpgsql(connectionString);
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        policy => { policy.WithOrigins("https://localhost:44464").AllowAnyHeader().AllowAnyMethod(); });
 });
 
 var app = builder.Build();
@@ -25,12 +31,17 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 }
 
 /*app.UseHttpsRedirection();*/
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseCors(myAllowSpecificOrigins);
+app.UseExceptionHandler();
 app.MapControllerRoute(
     name: "Users",
     pattern: "users/{action=Index}/{id?}");
@@ -40,7 +51,5 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "Transactions",
     pattern: "transactions/{action=Index}/{id?}");
-
 app.MapFallbackToFile("index.html");
-
 app.Run();

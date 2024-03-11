@@ -7,6 +7,7 @@ import {RouterModule} from '@angular/router';
 import {AppComponent} from './app.component';
 import {ButtonModule} from "primeng/button";
 import {FilterMatchMode, PrimeNGConfig} from 'primeng/api';
+import {UsersComponent} from "./users/users.component";
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {FilterMatchMode, PrimeNGConfig} from 'primeng/api';
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([]),
-    ButtonModule
+    ButtonModule,
+    UsersComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

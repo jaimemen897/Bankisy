@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace TFG.Context.Entities
+namespace TFG.Context.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -21,6 +21,7 @@ namespace TFG.Context.Entities
                     email = table.Column<string>(type: "text", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
                     avatar = table.Column<string>(type: "text", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -36,6 +37,7 @@ namespace TFG.Context.Entities
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     balance = table.Column<decimal>(type: "numeric", nullable: false),
                     account_type = table.Column<int>(type: "integer", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>

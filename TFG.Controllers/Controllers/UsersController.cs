@@ -2,47 +2,39 @@ using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.users;
 using TFG.Services;
 
-namespace TFG.Controllers.Controllers
+namespace TFG.Controllers.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class UsersController(UsersService usersService) : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class UsersController : ControllerBase
+    [HttpGet()]
+    public async Task<ActionResult<List<UserResponseDto>>> GetUsers()
     {
-        private readonly UsersService _usersService;
+        return await usersService.GetUsers();
+    }
 
-        public UsersController(UsersService usersService)
-        {
-            _usersService = usersService;
-        }
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserResponseDto>> GetUser(Guid id)
+    {
+        return await usersService.GetUserAsync(id);
+    }
 
-        [HttpGet()]
-        public async Task<ActionResult<List<UserResponseDto>>> GetUsers()
-        {
-            return await _usersService.GetUsers();
-        }
+    [HttpPost()]
+    public async Task<ActionResult<UserResponseDto>> CreateUser(UserCreateDto user)
+    {
+        return await usersService.CreateUser(user);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserResponseDto>> GetUser(Guid id)
-        {
-            return await _usersService.GetUserAsync(id);
-        }
+    [HttpPut("{id}")]
+    public async Task<ActionResult<UserResponseDto>> UpdateUser(Guid id, UserUpdateDto user)
+    {
+        return await usersService.UpdateUser(id, user);
+    }
 
-        [HttpPost()]
-        public async Task<ActionResult<UserResponseDto>> CreateUser(UserCreateDto user)
-        {
-            return await _usersService.CreateUser(user);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult<UserResponseDto>> UpdateUser(Guid id, UserUpdateDto user)
-        {
-            return await _usersService.UpdateUser(id, user);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteUser(Guid id)
-        {
-            return await _usersService.DeleteUser(id);
-        }
+    [HttpDelete("{id}")]
+    public async Task DeleteUser(Guid id)
+    {
+        await usersService.DeleteUser(id);
     }
 }

@@ -11,6 +11,8 @@ public class BankAccount
     [Column("balance")] public decimal Balance { get; set; }
 
     [Column("account_type")] public AccountType AccountType { get; set; }
+    
+    [Column("is_deleted")] public bool IsDeleted { get; set; }
 
     [Column("user_id")]
     [ForeignKey("User")]

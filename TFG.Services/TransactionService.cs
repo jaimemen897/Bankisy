@@ -4,81 +4,61 @@ using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
+using TFG.Services.Exceptions;
 using TFG.Services.mappers;
 
 namespace TFG.Services;
 
-public class TransactionService
+public class TransactionService(BankContext bankContext)
 {
-    private readonly BankContext _bankContext;
-    private readonly Mapper _mapper;
-
-    public TransactionService(BankContext bankContext)
-    {
-        _bankContext = bankContext;
-        _mapper = MapperConfig.InitializeAutomapper();
-    }
+    private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
     public async Task<List<TransactionResponseDto>> GetTransactions()
     {
-        var transactionList = await _bankContext.Transactions.ToListAsync();
+        var transactionList = await bankContext.Transactions.ToListAsync();
         return transactionList.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
 
-    public async Task<ActionResult<TransactionResponseDto>> GetTransaction(int id)
+    public async Task<TransactionResponseDto> GetTransaction(int id)
     {
-        var transaction = await _bankContext.Transactions.FindAsync(id);
-        return transaction == null ? new NotFoundResult() : _mapper.Map<TransactionResponseDto>(transaction);
+        var transaction = await bankContext.Transactions.FindAsync(id);
+        return transaction == null ? throw new HttpException(404, "Transaction not found"): _mapper.Map<TransactionResponseDto>(transaction);
     }
 
-    public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transactionCreateDto)
+    public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto)
     {
-        var account = await _bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountOrigin);
-        var accountDestination = await _bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountDestination);
+        var account = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountOrigin);
+        var accountDestination = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountDestination);
+        
         if (account == null || accountDestination == null)
         {
-            return new NotFoundResult();
+            throw new HttpException(404, "Account not found");
         }
         
         var transaction = _mapper.Map<Transaction>(transactionCreateDto);
         
         account.Transactions.Add(transaction);
         
-        _bankContext.Transactions.Add(transaction);
+        bankContext.Transactions.Add(transaction);
         
         account.Balance -= transaction.Amount;
         accountDestination.Balance += transaction.Amount;
         
-        await _bankContext.SaveChangesAsync();
+        await bankContext.SaveChangesAsync();
 
         var transactionResponseDto = _mapper.Map<TransactionResponseDto>(transaction);
         return transactionResponseDto;
     }
 
-    public async Task<ActionResult<TransactionResponseDto>> UpdateTransaction(int id, TransactionUpdateDto transactionDto)
+    public async Task DeleteTransaction(int id)
     {
-        var transactionToUpdate = await _bankContext.Transactions.FindAsync(id);
-        if (transactionToUpdate == null)
-        {
-            return new NotFoundResult();
-        }
-
-        transactionToUpdate = _mapper.Map(transactionDto, transactionToUpdate);
-        await _bankContext.SaveChangesAsync();
-
-        return _mapper.Map<TransactionResponseDto>(transactionToUpdate);
-    }
-
-    public async Task<ActionResult<bool>> DeleteTransaction(int id)
-    {
-        var transaction = await _bankContext.Transactions.FindAsync(id);
+        var transaction = await bankContext.Transactions.FindAsync(id);
         if (transaction == null)
         {
-            return new NotFoundResult();
+            throw new HttpException(404, "Transaction not found");
         }
 
-        _bankContext.Transactions.Remove(transaction);
-        await _bankContext.SaveChangesAsync();
-        return true;
+        bankContext.Transactions.Remove(transaction);
+        await bankContext.SaveChangesAsync();
     }
 }

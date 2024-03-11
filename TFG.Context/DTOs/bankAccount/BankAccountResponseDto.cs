@@ -1,4 +1,3 @@
-using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 
 namespace TFG.Context.DTOs.bankAccount;
@@ -9,4 +8,5 @@ public class BankAccountResponseDto
     public decimal Balance { get; set; }
     public AccountType AccountType { get; set; }
     public Guid UserId { get; set; }
+    public bool IsDeleted { get; set; }
 }
