@@ -22,6 +22,7 @@ public abstract class MapperConfig
             cfg.CreateMap<BankAccountUpdateDto, BankAccount>()
                 .ForMember(dest => dest.Balance, opt => opt.Ignore())
                 .ForMember(dest => dest.AccountType, opt => opt.Ignore())
+                .ForMember(dest => dest.UsersId, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.Balance = src.Balance ?? dest.Balance;
