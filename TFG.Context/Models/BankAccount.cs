@@ -14,11 +14,7 @@ public class BankAccount
     
     [Column("is_deleted")] public bool IsDeleted { get; set; }
 
-    [Column("user_id")]
-    [ForeignKey("User")]
-    public Guid UserId { get; set; }
-
-    public User User { get; set; }
+    public List<User> UsersId { get; set; } = [];
     
     public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

@@ -6,37 +6,23 @@ namespace TFG.Context.Models;
 [Table("users")]
 public class User
 {
-    public const string ImageDefault = "https://icon-library.com/images/anonymous-icon/anonymous-icon-0.jpg";
-    
-    [Column("id"), Key]
-    public Guid Id { get; set; }
+    public const string ImageDefault = "https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg";
 
-    [Column("name")]
-    public string Name { get; set; }
+    [Column("id"), Key] public Guid Id { get; set; }
 
-    [Column("email")]
-    public string Email { get; set; }
+    [Column("name")] public string Name { get; set; }
 
-    [Column("password")]
-    public string Password { get; set; }
+    [Column("email")] public string Email { get; set; }
 
-    [Column("avatar")]
-    public string Avatar { get; set; } = ImageDefault;
-    
-    [Column("is_deleted")]
-    public bool IsDeleted { get; set; }
+    [Column("password")] public string Password { get; set; }
 
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
+    [Column("avatar")] public string Avatar { get; set; } = ImageDefault;
 
-    [Column("updated_at")]
-    public DateTime UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
-    
-    public ICollection<BankAccount> BankAccounts { get; set; }
- 
-    
-    public User()
-    {
-        BankAccounts = new List<BankAccount>();
-    }
+    [Column("is_deleted")] public bool IsDeleted { get; set; }
+
+    [Column("created_at")] public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
+
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
+
+    public List<BankAccount> BankAccounts { get; set; } = [];
 }

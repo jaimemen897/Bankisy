@@ -6,5 +6,5 @@ public class BankAccountUpdateDto
 {
     public decimal? Balance { get; set; }
     public AccountType? AccountType { get; set; }
-    public Guid? UserId { get; set; }
+    public Guid? UsersId { get; set; }
 }

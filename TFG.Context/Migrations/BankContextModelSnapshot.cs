@@ -41,13 +41,7 @@ namespace TFG.Context.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("bank_accounts");
                 });
@@ -136,15 +130,19 @@ namespace TFG.Context.Migrations
                     b.ToTable("users");
                 });
 
-            modelBuilder.Entity("TFG.Context.Models.BankAccount", b =>
+            modelBuilder.Entity("UserBankAccount", b =>
                 {
-                    b.HasOne("TFG.Context.Models.User", "User")
-                        .WithMany("BankAccounts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uuid");
 
-                    b.Navigation("User");
+                    b.Property<Guid>("BankAccountsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UsersId", "BankAccountsId");
+
+                    b.HasIndex("BankAccountsId");
+
+                    b.ToTable("UserBankAccount");
                 });
 
             modelBuilder.Entity("TFG.Context.Models.Transaction", b =>
@@ -166,14 +164,24 @@ namespace TFG.Context.Migrations
                     b.Navigation("BankAccountOrigin");
                 });
 
+            modelBuilder.Entity("UserBankAccount", b =>
+                {
+                    b.HasOne("TFG.Context.Models.BankAccount", null)
+                        .WithMany()
+                        .HasForeignKey("BankAccountsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TFG.Context.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TFG.Context.Models.BankAccount", b =>
                 {
                     b.Navigation("Transactions");
-                });
-
-            modelBuilder.Entity("TFG.Context.Models.User", b =>
-                {
-                    b.Navigation("BankAccounts");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,5 +10,5 @@ public class BankAccountCreateDto
     [Required]
     public string AccountType { get; set; }
     [Required]
-    public Guid UserId { get; set; }
+    public List<Guid> UsersId { get; set; }
 }

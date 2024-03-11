@@ -14,8 +14,8 @@ public class UsersService(BankContext bankContext)
 
     public async Task<List<UserResponseDto>> GetUsers()
     {
-        var userList = await bankContext.Users.Include(u => u.BankAccounts).ToListAsync();
-        return userList.Where(user => !user.IsDeleted).Select(user => _mapper.Map<UserResponseDto>(user)).ToList();
+        var users = await bankContext.Users.Where(user => !user.IsDeleted).ToListAsync();
+        return _mapper.Map<List<UserResponseDto>>(users);
     }
 
     public async Task<UserResponseDto> GetUserAsync(Guid id)
@@ -45,7 +45,7 @@ public class UsersService(BankContext bankContext)
     public async Task DeleteUser(Guid id)
     {
         var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
-        var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.UserId == id).ToListAsync();
+        var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.UsersId.Contains(user)).ToListAsync();
         bankAccounts.ForEach(ba => ba.IsDeleted = true);
         user.IsDeleted = true;
         await bankContext.SaveChangesAsync();
