@@ -6,11 +6,13 @@ namespace TFG.Context.Models;
 [Table("bank_accounts")]
 public class BankAccount
 {
-    [Column("id"), Key] public Guid Id { get; set; } = new Guid();
+    [Column("id"), Key] public Guid Id { get; set; }
 
     [Column("balance")] public decimal Balance { get; set; }
 
     [Column("account_type")] public AccountType AccountType { get; set; }
+    
+    [Column("is_deleted")] public bool IsDeleted { get; set; }
 
     [Column("user_id")]
     [ForeignKey("User")]

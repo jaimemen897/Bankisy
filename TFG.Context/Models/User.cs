@@ -6,8 +6,10 @@ namespace TFG.Context.Models;
 [Table("users")]
 public class User
 {
+    public const string ImageDefault = "https://icon-library.com/images/anonymous-icon/anonymous-icon-0.jpg";
+    
     [Column("id"), Key]
-    public Guid Id { get; set; } = new Guid();
+    public Guid Id { get; set; }
 
     [Column("name")]
     public string Name { get; set; }
@@ -19,7 +21,10 @@ public class User
     public string Password { get; set; }
 
     [Column("avatar")]
-    public string Avatar { get; set; }
+    public string Avatar { get; set; } = ImageDefault;
+    
+    [Column("is_deleted")]
+    public bool IsDeleted { get; set; }
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();

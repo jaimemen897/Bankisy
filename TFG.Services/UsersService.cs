@@ -15,18 +15,12 @@ public class UsersService(BankContext bankContext)
     public async Task<List<UserResponseDto>> GetUsers()
     {
         var userList = await bankContext.Users.Include(u => u.BankAccounts).ToListAsync();
-        return userList.Select(user => _mapper.Map<UserResponseDto>(user)).ToList();
+        return userList.Where(user => !user.IsDeleted).Select(user => _mapper.Map<UserResponseDto>(user)).ToList();
     }
 
     public async Task<UserResponseDto> GetUserAsync(Guid id)
     {
-        var user = await bankContext.Users.FindAsync(id);
-
-        if (user == null)
-        {
-            throw new HttpException(404, "User not found");
-        }
-
+        var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
         return _mapper.Map<UserResponseDto>(user);
     }
 
@@ -40,11 +34,7 @@ public class UsersService(BankContext bankContext)
 
     public async Task<UserResponseDto> UpdateUser(Guid id, UserUpdateDto user)
     {
-        var userToUpdate = await bankContext.Users.FindAsync(id);
-        if (userToUpdate == null)
-        {
-            throw new HttpException(404, "User not found");
-        }
+        var userToUpdate = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
 
         userToUpdate = _mapper.Map(user, userToUpdate);
         await bankContext.SaveChangesAsync();
@@ -54,13 +44,10 @@ public class UsersService(BankContext bankContext)
 
     public async Task DeleteUser(Guid id)
     {
-        var user = await bankContext.Users.FindAsync(id);
-        if (user == null)
-        {
-            throw new HttpException(404, "User not found");
-        }
-
-        bankContext.Users.Remove(user);
+        var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.UserId == id).ToListAsync();
+        bankAccounts.ForEach(ba => ba.IsDeleted = true);
+        user.IsDeleted = true;
         await bankContext.SaveChangesAsync();
     }
 }

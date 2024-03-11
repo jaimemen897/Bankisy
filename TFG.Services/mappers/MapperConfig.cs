@@ -15,13 +15,14 @@ public abstract class MapperConfig
             /*BANK ACOUNTS*/
             cfg.CreateMap<BankAccountCreateDto, BankAccount>()
                 .ForMember(dest => dest.AccountType,
-                    act => act.MapFrom(src => Enum.Parse<AccountType>(src.AccountType)));
-
+                    act => act.MapFrom(src => Enum.Parse<AccountType>(src.AccountType)))
+                .ForMember(dest => dest.IsDeleted, act => act.MapFrom(src => false));
+            
             cfg.CreateMap<BankAccountUpdateDto, BankAccount>()
                 .ForMember(dest => dest.Balance, opt => opt.Ignore())
                 .ForMember(dest => dest.AccountType, opt => opt.Ignore())
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
-                .AfterMap((src, dest) => 
+                .AfterMap((src, dest) =>
                 {
                     dest.Balance = src.Balance ?? dest.Balance;
                     dest.AccountType = src.AccountType ?? dest.AccountType;
@@ -31,7 +32,9 @@ public abstract class MapperConfig
             cfg.CreateMap<BankAccount, BankAccountResponseDto>();
 
             /*USERS*/
-            cfg.CreateMap<UserCreateDto, User>();
+            cfg.CreateMap<UserCreateDto, User>()
+                .ForMember(dest => dest.IsDeleted, act => act.MapFrom(src => false))
+                .ForMember(dest => dest.Avatar, act => act.MapFrom(src => src.Avatar ?? User.ImageDefault));
 
             cfg.CreateMap<UserUpdateDto, User>()
                 .ForMember(dest => dest.Name, opt => opt.Ignore())

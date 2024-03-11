@@ -16,7 +16,7 @@ public class BankAccountService(BankContext bankContext)
     public async Task<List<BankAccountResponseDto>> GetBankAccounts()
     {
         var bankAccountList = await bankContext.BankAccounts.ToListAsync();
-        return bankAccountList.Select(bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount)).ToList();
+        return bankAccountList.Where(account => !account.IsDeleted).Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
     }
 
     public async Task<BankAccountResponseDto> GetBankAccountAsync(Guid id)
@@ -78,7 +78,7 @@ public class BankAccountService(BankContext bankContext)
             throw new HttpException(404, "Bank account not found");
         }
 
-        bankContext.BankAccounts.Remove(bankAccount);
+        bankAccount.IsDeleted = true;
         await bankContext.SaveChangesAsync();
     }
 
