@@ -35,12 +35,14 @@ public abstract class MapperConfig
             /*USERS*/
             cfg.CreateMap<UserCreateDto, User>()
                 .ForMember(dest => dest.IsDeleted, act => act.MapFrom(src => false))
-                .ForMember(dest => dest.Avatar, act => act.MapFrom(src => src.Avatar ?? User.ImageDefault));
+                .ForMember(dest => dest.Avatar, act => act.MapFrom(src => src.Avatar ?? User.ImageDefault))
+                .ForMember(dest => dest.Role, act => act.MapFrom(src => Roles.User));
 
             cfg.CreateMap<UserUpdateDto, User>()
                 .ForMember(dest => dest.Name, opt => opt.Ignore())
                 .ForMember(dest => dest.Email, opt => opt.Ignore())
                 .ForMember(dest => dest.Avatar, opt => opt.Ignore())
+                .ForMember(dest => dest.Role, opt => opt.Ignore())
                 .ForMember(dest => dest.Password, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
                 .AfterMap((src, dest) =>

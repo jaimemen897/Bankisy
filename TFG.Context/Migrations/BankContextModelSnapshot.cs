@@ -121,6 +121,10 @@ namespace TFG.Context.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("integer")
+                        .HasColumnName("role");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");

@@ -17,6 +17,8 @@ public class User
     [Column("password")] public string Password { get; set; }
 
     [Column("avatar")] public string Avatar { get; set; } = ImageDefault;
+    
+    [Column("role")] public Roles Role { get; set; }
 
     [Column("is_deleted")] public bool IsDeleted { get; set; }
 
@@ -25,4 +27,10 @@ public class User
     [Column("updated_at")] public DateTime UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
 
     public List<BankAccount> BankAccounts { get; set; } = [];
+}
+
+public enum Roles
+{
+    Admin,
+    User
 }
