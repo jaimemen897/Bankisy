@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.users;
 using TFG.Services;
+using TFG.Services.Pagination;
 
 namespace TFG.Controllers.Controllers;
 
@@ -9,9 +10,10 @@ namespace TFG.Controllers.Controllers;
 public class UsersController(UsersService usersService) : ControllerBase
 {
     [HttpGet()]
-    public async Task<ActionResult<List<UserResponseDto>>> GetUsers()
+    public async Task<ActionResult<Pagination<UserResponseDto>>> GetUsers([FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        return await usersService.GetUsers();
+        return await usersService.GetUsers(pageNumber, pageSize);
     }
 
     [HttpGet("{id}")]
