@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
@@ -7,6 +6,7 @@ using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.mappers;
+using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
@@ -14,12 +14,28 @@ public class BankAccountService(BankContext bankContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
-    public async Task<List<BankAccountResponseDto>> GetBankAccounts()
+    public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy, bool descending)
     {
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
-        return bankAccountList.Where(account => !account.IsDeleted)
-            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
+        pageNumber = pageNumber > 0 ? pageNumber : 1;
+        pageSize = pageSize > 0 ? pageSize : 10;
+
+        if (!typeof(BankAccountResponseDto).GetProperties()
+                .Any(p => string.Equals(p.Name, orderBy, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            throw new HttpException(400, "Invalid orderBy parameter");
+        }
+
+        var bankAccounts = bankContext.BankAccounts.Include(ba => ba.UsersId).Where(ba => !ba.IsDeleted);
+
+        var paginatedBankAccounts =
+            await Pagination<BankAccount>.CreateAsync(bankAccounts, pageNumber, pageSize, orderBy, descending);
+
+        var bankAccountsMapped = _mapper.Map<List<BankAccountResponseDto>>(paginatedBankAccounts);
+
+        return new Pagination<BankAccountResponseDto>(bankAccountsMapped, paginatedBankAccounts.TotalCount, pageNumber,
+            pageSize);
     }
+
 
     public async Task<BankAccountResponseDto> GetBankAccountAsync(Guid id)
     {
@@ -106,14 +122,14 @@ public class BankAccountService(BankContext bankContext)
                 "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
         }
     }
-    
+
     public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
     {
         var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
         return bankAccountList.Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
             .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
     }
-    
+
     public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(Guid bankAccountId)
     {
         var transactions = await bankContext.Transactions
@@ -123,9 +139,10 @@ public class BankAccountService(BankContext bankContext)
         {
             throw new HttpException(404, "Transactions not found");
         }
+
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
-    
+
     public async Task<List<TransactionResponseDto>> GetExpensesForAccount(Guid bankAccountId)
     {
         var transactions = await bankContext.Transactions
@@ -135,6 +152,7 @@ public class BankAccountService(BankContext bankContext)
         {
             throw new HttpException(404, "Transactions not found");
         }
+
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
 }

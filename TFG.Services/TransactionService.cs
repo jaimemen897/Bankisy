@@ -1,11 +1,10 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.mappers;
+using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
@@ -13,10 +12,26 @@ public class TransactionService(BankContext bankContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
-    public async Task<List<TransactionResponseDto>> GetTransactions()
+    public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy, bool descending)
     {
-        var transactionList = await bankContext.Transactions.ToListAsync();
-        return transactionList.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+        pageNumber = pageNumber > 0 ? pageNumber : 1;
+        pageSize = pageSize > 0 ? pageSize : 10;
+
+        if (!typeof(TransactionResponseDto).GetProperties()
+                .Any(p => string.Equals(p.Name, orderBy, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            throw new HttpException(400, "Invalid orderBy parameter");
+        }
+
+        var transactions = bankContext.Transactions;
+
+        var paginatedTransactions =
+            await Pagination<Transaction>.CreateAsync(transactions, pageNumber, pageSize, orderBy, descending);
+        
+        var transactionsMapped = _mapper.Map<List<TransactionResponseDto>>(paginatedTransactions);
+        
+        return new Pagination<TransactionResponseDto>(transactionsMapped, paginatedTransactions.TotalCount, pageNumber,
+            pageSize);
     }
 
     public async Task<TransactionResponseDto> GetTransaction(int id)
@@ -59,7 +74,6 @@ public class TransactionService(BankContext bankContext)
         return transactionResponseDto;
     }
     
-
     public async Task DeleteTransaction(int id)
     {
         var transaction = await bankContext.Transactions.FindAsync(id);

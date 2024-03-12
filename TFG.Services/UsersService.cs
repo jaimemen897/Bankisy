@@ -1,5 +1,4 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.users;
@@ -14,14 +13,20 @@ public class UsersService(BankContext bankContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
-    public async Task<Pagination<UserResponseDto>> GetUsers(int pageNumber, int pageSize)
+    public async Task<Pagination<UserResponseDto>> GetUsers(int pageNumber, int pageSize, string orderBy, bool descending)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
-        
+
+        if (!typeof(UserResponseDto).GetProperties()
+                .Any(p => string.Equals(p.Name, orderBy, StringComparison.CurrentCultureIgnoreCase)))
+        {
+            throw new HttpException(400, "Invalid orderBy parameter");
+        }
+
         var users = bankContext.Users.Where(user => !user.IsDeleted);
 
-        var paginatedUsers = await Pagination<User>.CreateAsync(users, pageNumber, pageSize);
+        var paginatedUsers = await Pagination<User>.CreateAsync(users, pageNumber, pageSize, orderBy, descending);
 
         var usersMapped = _mapper.Map<List<UserResponseDto>>(paginatedUsers);
 

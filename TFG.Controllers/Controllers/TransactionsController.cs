@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.transactions;
 using TFG.Services;
+using TFG.Services.Pagination;
 
 namespace TFG.Controllers.Controllers;
 
@@ -9,9 +10,10 @@ namespace TFG.Controllers.Controllers;
 public class TransactionsController(TransactionService transactionService) : ControllerBase
 {
     [HttpGet()]
-    public async Task<ActionResult<List<TransactionResponseDto>>> GetTransactions()
+    public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactions([FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
     {
-        return await transactionService.GetTransactions();
+        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending);
     }
 
     [HttpGet("{id}")]

@@ -11,9 +11,9 @@ public class UsersController(UsersService usersService) : ControllerBase
 {
     [HttpGet()]
     public async Task<ActionResult<Pagination<UserResponseDto>>> GetUsers([FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
     {
-        return await usersService.GetUsers(pageNumber, pageSize);
+        return await usersService.GetUsers(pageNumber, pageSize, orderBy, descending);
     }
 
     [HttpGet("{id}")]

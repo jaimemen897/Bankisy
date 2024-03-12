@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.transactions;
 using TFG.Services;
+using TFG.Services.Pagination;
 
 namespace TFG.Controllers.Controllers;
 
@@ -10,9 +11,10 @@ namespace TFG.Controllers.Controllers;
 public class BankAccountsController(BankAccountService bankAccountService) : ControllerBase
 {
     [HttpGet()]
-    public async Task<List<BankAccountResponseDto>> GetBankAccounts()
+    public async Task<ActionResult<Pagination<BankAccountResponseDto>>> GetBankAccounts([FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
     {
-        return await bankAccountService.GetBankAccounts();
+        return await bankAccountService.GetBankAccounts(pageNumber, pageSize, orderBy, descending);
     }
 
     [HttpGet("{id}")]
