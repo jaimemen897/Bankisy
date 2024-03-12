@@ -13,6 +13,15 @@ public class BankContext(DbContextOptions<BankContext> options) : DbContext(opti
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.BankAccounts)
+            .WithMany(u => u.UsersId)
+            .UsingEntity("UserBankAccount",
+                l => l.HasOne(typeof(BankAccount)).WithMany().HasForeignKey("BankAccountsId").HasPrincipalKey(nameof(BankAccount.Id)),
+                r => r.HasOne(typeof(User)).WithMany().HasForeignKey("UsersId").HasPrincipalKey(nameof(User.Id)),
+                j => j.HasKey("UsersId", "BankAccountsId"));
+
+
         modelBuilder.Entity<Transaction>()
             .HasOne(t => t.BankAccountOrigin)
             .WithMany(b => b.Transactions)
@@ -25,5 +34,4 @@ public class BankContext(DbContextOptions<BankContext> options) : DbContext(opti
             .HasForeignKey(t => t.IdAccountDestination)
             .OnDelete(DeleteBehavior.Restrict);
     }
-
 }

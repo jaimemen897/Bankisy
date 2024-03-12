@@ -13,6 +13,20 @@ namespace TFG.Context.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "bank_accounts",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    balance = table.Column<decimal>(type: "numeric", nullable: false),
+                    account_type = table.Column<int>(type: "integer", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_bank_accounts", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
@@ -28,27 +42,6 @@ namespace TFG.Context.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_users", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "bank_accounts",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    balance = table.Column<decimal>(type: "numeric", nullable: false),
-                    account_type = table.Column<int>(type: "integer", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
-                    user_id = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_bank_accounts", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_bank_accounts_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -80,10 +73,29 @@ namespace TFG.Context.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_bank_accounts_user_id",
-                table: "bank_accounts",
-                column: "user_id");
+            migrationBuilder.CreateTable(
+                name: "UserBankAccount",
+                columns: table => new
+                {
+                    UsersId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BankAccountsId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserBankAccount", x => new { x.UsersId, x.BankAccountsId });
+                    table.ForeignKey(
+                        name: "FK_UserBankAccount_bank_accounts_BankAccountsId",
+                        column: x => x.BankAccountsId,
+                        principalTable: "bank_accounts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserBankAccount_users_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_transactions_id_account_destination",
@@ -94,6 +106,11 @@ namespace TFG.Context.Migrations
                 name: "IX_transactions_id_account_origin",
                 table: "transactions",
                 column: "id_account_origin");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserBankAccount_BankAccountsId",
+                table: "UserBankAccount",
+                column: "BankAccountsId");
         }
 
         /// <inheritdoc />
@@ -101,6 +118,9 @@ namespace TFG.Context.Migrations
         {
             migrationBuilder.DropTable(
                 name: "transactions");
+
+            migrationBuilder.DropTable(
+                name: "UserBankAccount");
 
             migrationBuilder.DropTable(
                 name: "bank_accounts");

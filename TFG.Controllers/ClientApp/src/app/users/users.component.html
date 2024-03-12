@@ -1,5 +1,19 @@
-@for (user of users; track users.id) {
-  <p-card [header]="user.name">
-    <p>{{ user.name }} - {{ user.email }}</p>
+@for (user of users; track users){
+  <p-card [style]="{ width: '300px' }">
+    <ng-template pTemplate="content">
+      <div class="p-grid">
+        <div class="p-col-12">
+          <img src="{{user.avatar}}" alt="{{user.name}}" style="width: 100%" />
+        </div>
+        <div class="p-col-12">
+          <h4>{{user.name}}</h4>
+          <p>{{user.email}}</p>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <button pButton type="button" label="Edit" icon="pi pi-pencil" class="p-button-warning"></button>
+      <button pButton type="button" label="Delete" icon="pi pi-trash" class="p-button-danger"></button>
+    </ng-template>
   </p-card>
 }

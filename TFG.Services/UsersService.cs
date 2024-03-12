@@ -1,10 +1,12 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.mappers;
+using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
@@ -12,10 +14,18 @@ public class UsersService(BankContext bankContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
-    public async Task<List<UserResponseDto>> GetUsers()
+    public async Task<Pagination<UserResponseDto>> GetUsers(int pageNumber, int pageSize)
     {
-        var userList = await bankContext.Users.Include(u => u.BankAccounts).ToListAsync();
-        return userList.Where(user => !user.IsDeleted).Select(user => _mapper.Map<UserResponseDto>(user)).ToList();
+        pageNumber = pageNumber > 0 ? pageNumber : 1;
+        pageSize = pageSize > 0 ? pageSize : 10;
+        
+        var users = bankContext.Users.Where(user => !user.IsDeleted);
+
+        var paginatedUsers = await Pagination<User>.CreateAsync(users, pageNumber, pageSize);
+
+        var usersMapped = _mapper.Map<List<UserResponseDto>>(paginatedUsers);
+
+        return new Pagination<UserResponseDto>(usersMapped, paginatedUsers.TotalCount, pageNumber, pageSize);
     }
 
     public async Task<UserResponseDto> GetUserAsync(Guid id)
@@ -45,7 +55,7 @@ public class UsersService(BankContext bankContext)
     public async Task DeleteUser(Guid id)
     {
         var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
-        var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.UserId == id).ToListAsync();
+        var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.UsersId.Contains(user)).ToListAsync();
         bankAccounts.ForEach(ba => ba.IsDeleted = true);
         user.IsDeleted = true;
         await bankContext.SaveChangesAsync();

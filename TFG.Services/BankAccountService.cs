@@ -15,29 +15,36 @@ public class BankAccountService(BankContext bankContext)
 
     public async Task<List<BankAccountResponseDto>> GetBankAccounts()
     {
-        var bankAccountList = await bankContext.BankAccounts.ToListAsync();
-        return bankAccountList.Where(account => !account.IsDeleted).Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
+        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
+        return bankAccountList.Where(account => !account.IsDeleted)
+            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
     }
 
     public async Task<BankAccountResponseDto> GetBankAccountAsync(Guid id)
     {
-        var bankAccount = await bankContext.BankAccounts.FindAsync(id);
-        return bankAccount == null ? throw new HttpException(404, "BankAccount not found"): _mapper.Map<BankAccountResponseDto>(bankAccount);
+        var bankAccount =
+            await bankContext.BankAccounts.Include(ba => ba.UsersId).FirstOrDefaultAsync(ba => ba.Id == id);
+        return bankAccount == null
+            ? throw new HttpException(404, "BankAccount not found")
+            : _mapper.Map<BankAccountResponseDto>(bankAccount);
     }
 
     public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto)
     {
         IsValid(bankAccountCreateDto);
+        var users = await bankContext.Users.Where(u => bankAccountCreateDto.UsersId.Contains(u.Id)).ToListAsync();
 
-        var user = await bankContext.Users.FindAsync(bankAccountCreateDto.UserId);
-
-        if (user == null)
+        if (users.Count != bankAccountCreateDto.UsersId.Count)
         {
-            throw new HttpException(404, "User not found");
+            throw new HttpException(404, "Users not found");
         }
 
         var bankAccount = _mapper.Map<BankAccount>(bankAccountCreateDto);
-        user.BankAccounts.Add(bankAccount);
+        bankAccount.UsersId = users;
+        foreach (var user in users)
+        {
+            user.BankAccounts.Add(bankAccount);
+        }
 
         bankContext.BankAccounts.Add(bankAccount);
         await bankContext.SaveChangesAsync();
@@ -48,23 +55,31 @@ public class BankAccountService(BankContext bankContext)
 
     public async Task<BankAccountResponseDto> UpdateBankAccount(Guid id, BankAccountUpdateDto bankAccount)
     {
-        var bankAccountToUpdate = await bankContext.BankAccounts.FindAsync(id);
-        if (bankAccountToUpdate == null)
-        {
+        var bankAccountToUpdate =
+            await bankContext.BankAccounts.Include(ba => ba.UsersId).FirstOrDefaultAsync(ba => ba.Id == id) ??
             throw new HttpException(404, "Bank account not found");
-        }
 
-        if (bankAccount.UserId != null)
+        if (bankAccount.UsersId != null)
         {
-            var user = await bankContext.Users.FindAsync(bankAccount.UserId);
-            if (user == null)
+            var users = await bankContext.Users.Where(u => bankAccount.UsersId.Contains(u.Id)).ToListAsync();
+            if (users.Count != bankAccount.UsersId.Count)
             {
-                throw new HttpException(404, "User not found");
+                throw new HttpException(404, "Users not found");
             }
-            bankAccountToUpdate.UserId = bankAccount.UserId.Value;
+
+            foreach (var user in users)
+            {
+                bankAccountToUpdate.UsersId.Add(user);
+                user.BankAccounts.Add(bankAccountToUpdate);
+            }
+
+            await bankContext.SaveChangesAsync();
+
+            return _mapper.Map<BankAccountResponseDto>(bankAccountToUpdate);
         }
 
-        bankAccountToUpdate = _mapper.Map(bankAccount, bankAccountToUpdate);
+        _mapper.Map(bankAccount, bankAccountToUpdate);
+
         await bankContext.SaveChangesAsync();
 
         return _mapper.Map<BankAccountResponseDto>(bankAccountToUpdate);
