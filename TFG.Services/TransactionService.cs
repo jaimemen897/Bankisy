@@ -21,34 +21,44 @@ public class TransactionService(BankContext bankContext)
 
     public async Task<TransactionResponseDto> GetTransaction(int id)
     {
-        var transaction = await bankContext.Transactions.FindAsync(id);
-        return transaction == null ? throw new HttpException(404, "Transaction not found"): _mapper.Map<TransactionResponseDto>(transaction);
+        var transaction = await bankContext.Transactions.FindAsync(id) ?? throw new HttpException(404, "Transaction not found");
+        return _mapper.Map<TransactionResponseDto>(transaction);
     }
 
     public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto)
     {
-        var account = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountOrigin);
-        var accountDestination = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountDestination);
-        
-        if (account == null || accountDestination == null)
+        var account = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountOrigin) ?? throw new HttpException(404, "Account not found");
+        var accountDestination = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountDestination) ?? throw new HttpException(404, "Account not found");
+
+        if (account.Id == accountDestination.Id)
         {
-            throw new HttpException(404, "Account not found");
+            throw new HttpException(400, "Origin and destination accounts cannot be the same");
         }
-        
+
+        if (account.Balance < transactionCreateDto.Amount)
+        {
+            throw new HttpException(400, "Insufficient funds in the origin account");
+        }
+
+        if (transactionCreateDto.Amount <= 0)
+        {
+            throw new HttpException(400, "Transaction amount must be greater than zero");
+        }
+
         var transaction = _mapper.Map<Transaction>(transactionCreateDto);
-        
+
         account.Transactions.Add(transaction);
-        
         bankContext.Transactions.Add(transaction);
-        
+
         account.Balance -= transaction.Amount;
         accountDestination.Balance += transaction.Amount;
-        
+
         await bankContext.SaveChangesAsync();
 
         var transactionResponseDto = _mapper.Map<TransactionResponseDto>(transaction);
         return transactionResponseDto;
     }
+    
 
     public async Task DeleteTransaction(int id)
     {

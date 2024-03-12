@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
+using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.mappers;
@@ -104,5 +105,36 @@ public class BankAccountService(BankContext bankContext)
             throw new HttpException(400,
                 "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
         }
+    }
+    
+    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
+    {
+        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
+        return bankAccountList.Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
+            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
+    }
+    
+    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(Guid bankAccountId)
+    {
+        var transactions = await bankContext.Transactions
+            .Where(t => t.IdAccountOrigin == bankAccountId || t.IdAccountDestination == bankAccountId)
+            .ToListAsync() ?? throw new HttpException(404, "Transactions not found");
+        if (transactions.Count == 0)
+        {
+            throw new HttpException(404, "Transactions not found");
+        }
+        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+    }
+    
+    public async Task<List<TransactionResponseDto>> GetExpensesForAccount(Guid bankAccountId)
+    {
+        var transactions = await bankContext.Transactions
+            .Where(t => t.IdAccountOrigin == bankAccountId)
+            .ToListAsync();
+        if (transactions.Count == 0)
+        {
+            throw new HttpException(404, "Transactions not found");
+        }
+        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
 }
