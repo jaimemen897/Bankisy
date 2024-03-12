@@ -24,6 +24,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<SessionService>();
 builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
@@ -48,13 +49,15 @@ builder.Services.AddAuthentication(options =>
             ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
             ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
             IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException()))
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
+                                                                throw new InvalidOperationException()))
         };
     });
 
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("User", policy => policy.RequireRole("User"))
+    .AddPolicy("User", policy => policy.RequireAssertion(context => context.User.IsInRole("User") || context.User.IsInRole("Admin")))
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+
 
 var app = builder.Build();
 

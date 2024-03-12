@@ -8,10 +8,10 @@ namespace TFG.Controllers.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = "Admin")]
 public class UsersController(UsersService usersService) : ControllerBase
 {
     [HttpGet()]
-    [Authorize(Roles = "User")]
     public async Task<ActionResult<Pagination<UserResponseDto>>> GetUsers([FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
     {
