@@ -13,7 +13,8 @@ public class UsersService(BankContext bankContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
-    public async Task<Pagination<UserResponseDto>> GetUsers(int pageNumber, int pageSize, string orderBy, bool descending)
+    public async Task<Pagination<UserResponseDto>> GetUsers(int pageNumber, int pageSize, string orderBy,
+        bool descending)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -64,5 +65,10 @@ public class UsersService(BankContext bankContext)
         bankAccounts.ForEach(ba => ba.IsDeleted = true);
         user.IsDeleted = true;
         await bankContext.SaveChangesAsync();
+    }
+
+    public async Task<User> ValidateUserCredentials(string email, string password)
+    {
+        return await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ?? throw new HttpException(401, "Invalid credentials");
     }
 }

@@ -1,5 +1,9 @@
+using System.Text;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
 using TFG.Services;
@@ -28,6 +32,30 @@ builder.Services.AddCors(options =>
         policy => { policy.WithOrigins("https://localhost:44464").AllowAnyHeader().AllowAnyMethod(); });
 });
 
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+            ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+            IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new InvalidOperationException()))
+        };
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("User", policy => policy.RequireRole("User"))
+    .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -41,9 +69,10 @@ if (!app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 app.UseDefaultFiles();
 app.UseStaticFiles();
-app.UseStaticFiles();
 app.UseRouting();
 app.UseCors(myAllowSpecificOrigins);
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllerRoute(
     name: "Users",
     pattern: "users/{action=Index}/{id?}");
@@ -53,5 +82,8 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "Transactions",
     pattern: "transactions/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "Session",
+    pattern: "session/{action=Index}/{id?}");
 app.MapFallbackToFile("index.html");
 app.Run();

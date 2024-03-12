@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.users;
 using TFG.Services;
@@ -10,6 +11,7 @@ namespace TFG.Controllers.Controllers;
 public class UsersController(UsersService usersService) : ControllerBase
 {
     [HttpGet()]
+    [Authorize(Roles = "User")]
     public async Task<ActionResult<Pagination<UserResponseDto>>> GetUsers([FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
     {
