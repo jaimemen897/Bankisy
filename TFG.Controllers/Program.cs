@@ -1,13 +1,11 @@
-using System.Net;
 using DotNetEnv;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
 using TFG.Services;
 
 var myAllowSpecificOrigins = "AllowAngularApp";
-DotNetEnv.Env.Load();
+Env.Load();
 var host = Environment.GetEnvironmentVariable("POSTGRES_HOST");
 var port = Environment.GetEnvironmentVariable("POSTGRES_PORT");
 var database = Environment.GetEnvironmentVariable("DATABASE_NAME");

@@ -18,8 +18,7 @@ internal sealed class ExceptionHandler(ILogger<ExceptionHandler> logger) : IExce
         var problemDetails = new ProblemDetails
         {
             Status = httpException.Code,
-            Title = httpException.Message,
-            Detail = httpException.Message
+            Title = httpException.Message
         };
 
         httpContext.Response.StatusCode = problemDetails.Status.Value;
