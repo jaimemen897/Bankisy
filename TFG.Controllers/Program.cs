@@ -1,3 +1,6 @@
+using System.Net;
+using DotNetEnv;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
@@ -13,12 +16,13 @@ var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
 var connectionString = $"Host={host};Port={port};Database={database};Username={user};Password={password}";
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddExceptionHandler<ExceptionHandler>();
+builder.Services.AddProblemDetails();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
-builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
 {
@@ -36,12 +40,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 /*app.UseHttpsRedirection();*/
+app.UseExceptionHandler();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseCors(myAllowSpecificOrigins);
-app.UseExceptionHandler();
 app.MapControllerRoute(
     name: "Users",
     pattern: "users/{action=Index}/{id?}");

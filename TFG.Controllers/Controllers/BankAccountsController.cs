@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.bankAccount;
+using TFG.Context.DTOs.transactions;
 using TFG.Services;
 
 namespace TFG.Controllers.Controllers;
@@ -19,7 +20,25 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     {
         return await bankAccountService.GetBankAccountAsync(id);
     }
-
+    
+    [HttpGet("user/{userId}")]
+    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUser(Guid userId)
+    {
+        return await bankAccountService.GetBankAccountsByUserId(userId);
+    }
+    
+    [HttpGet("{bankAccountId}/transactions")]
+    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(Guid bankAccountId)
+    {
+        return await bankAccountService.GetTransactionsForAccount(bankAccountId);
+    }
+    
+    [HttpGet("{bankAccountId}/expenses")]
+    public async Task<List<TransactionResponseDto>> GetExpensesForAccount(Guid bankAccountId)
+    {
+        return await bankAccountService.GetExpensesForAccount(bankAccountId);
+    }
+    
     [HttpPost()]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {
@@ -37,4 +56,6 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     {
         await bankAccountService.DeleteBankAccount(id);
     }
+    
+    
 }

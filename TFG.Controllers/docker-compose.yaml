@@ -1,7 +1,7 @@
 services:
   postgres-db:
     container_name: db-postgree
-    image: postgres:12-alpine
+    image: postgres:16.2-alpine
     restart: always
     env_file: .env
     environment:
