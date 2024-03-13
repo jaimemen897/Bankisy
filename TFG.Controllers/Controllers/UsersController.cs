@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.users;
 using TFG.Services;
@@ -7,6 +8,7 @@ namespace TFG.Controllers.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = "Admin")]
 public class UsersController(UsersService usersService) : ControllerBase
 {
     [HttpGet()]

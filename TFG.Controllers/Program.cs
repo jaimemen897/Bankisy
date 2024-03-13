@@ -1,5 +1,9 @@
+using System.Text;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
 using TFG.Services;
@@ -17,9 +21,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllersWithViews();
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<SessionService>();
 builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
@@ -27,6 +33,29 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: myAllowSpecificOrigins,
         policy => { policy.WithOrigins("https://localhost:44464").AllowAnyHeader().AllowAnyMethod(); });
 });
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+        ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+        IssuerSigningKey =
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
+                                                            throw new InvalidOperationException()))
+    };
+});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("User",
+        policy => policy.RequireAssertion(context => context.User.IsInRole("User") || context.User.IsInRole("Admin")))
+    .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
 
 var app = builder.Build();
 
@@ -41,17 +70,10 @@ if (!app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 app.UseDefaultFiles();
 app.UseStaticFiles();
-app.UseStaticFiles();
 app.UseRouting();
 app.UseCors(myAllowSpecificOrigins);
-app.MapControllerRoute(
-    name: "Users",
-    pattern: "users/{action=Index}/{id?}");
-app.MapControllerRoute(
-    name: "BankAccounts",
-    pattern: "bankAccounts/{action=Index}/{id?}");
-app.MapControllerRoute(
-    name: "Transactions",
-    pattern: "transactions/{action=Index}/{id?}");
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 app.MapFallbackToFile("index.html");
 app.Run();

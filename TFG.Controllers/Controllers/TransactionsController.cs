@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.transactions;
 using TFG.Services;
@@ -6,6 +7,7 @@ using TFG.Services.Pagination;
 namespace TFG.Controllers.Controllers;
 
 [ApiController]
+[Authorize(Policy = "Admin")]
 [Route("[controller]")]
 public class TransactionsController(TransactionService transactionService) : ControllerBase
 {

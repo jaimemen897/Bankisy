@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.transactions;
@@ -7,6 +8,7 @@ using TFG.Services.Pagination;
 namespace TFG.Controllers.Controllers;
 
 [ApiController]
+[Authorize(Policy = "Admin")]
 [Route("[controller]")]
 public class BankAccountsController(BankAccountService bankAccountService) : ControllerBase
 {
