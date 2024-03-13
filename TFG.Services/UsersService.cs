@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using TFG.Context.Context;
 using TFG.Context.DTOs.users;
 using TFG.Context.Models;
@@ -9,7 +10,7 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class UsersService(BankContext bankContext)
+public class UsersService(BankContext bankContext, IMemoryCache cache)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
@@ -25,19 +26,37 @@ public class UsersService(BankContext bankContext)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        var users = bankContext.Users.Where(user => !user.IsDeleted);
+        var cacheKey = $"GetUsers-{pageNumber}-{pageSize}-{orderBy}-{descending}";
+        if (cache.TryGetValue(cacheKey, out Pagination<UserResponseDto>? users))
+        {
+            return users ?? throw new HttpException(404, "Users not found");
+        }
 
-        var paginatedUsers = await Pagination<User>.CreateAsync(users, pageNumber, pageSize, orderBy, descending);
+        var usersQuery = bankContext.Users.Where(user => !user.IsDeleted);
+        var paginatedUsers = await Pagination<User>.CreateAsync(usersQuery, pageNumber, pageSize, orderBy, descending);
+        users = new Pagination<UserResponseDto>(_mapper.Map<List<UserResponseDto>>(paginatedUsers),
+            paginatedUsers.TotalCount, pageNumber, pageSize);
 
-        var usersMapped = _mapper.Map<List<UserResponseDto>>(paginatedUsers);
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, users, cacheEntryOptions);
 
-        return new Pagination<UserResponseDto>(usersMapped, paginatedUsers.TotalCount, pageNumber, pageSize);
+        return users ?? throw new HttpException(404, "Users not found");
     }
 
     public async Task<UserResponseDto> GetUserAsync(Guid id)
     {
-        var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
-        return _mapper.Map<UserResponseDto>(user);
+        var cacheKey = $"GetUser-{id}";
+        if (cache.TryGetValue(cacheKey, out UserResponseDto? user))
+        {
+            return user ?? throw new HttpException(404, "User not found");
+        }
+
+        var userEntity = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        user = _mapper.Map<UserResponseDto>(userEntity);
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, user, cacheEntryOptions);
+
+        return user ?? throw new HttpException(404, "User not found");
     }
 
     public async Task<UserResponseDto> CreateUser(UserCreateDto user)
@@ -45,6 +64,10 @@ public class UsersService(BankContext bankContext)
         var userDto = _mapper.Map<User>(user);
         await bankContext.Users.AddAsync(userDto);
         await bankContext.SaveChangesAsync();
+        
+        cache.Remove("GetUsers-1-10-Id-False");
+        cache.Remove("GetUser-" + userDto.Id);
+        
         return _mapper.Map<UserResponseDto>(userDto);
     }
 
@@ -54,6 +77,9 @@ public class UsersService(BankContext bankContext)
 
         userToUpdate = _mapper.Map(user, userToUpdate);
         await bankContext.SaveChangesAsync();
+        
+        cache.Remove("GetUsers-1-10-Id-False");
+        cache.Remove("GetUser-" + userToUpdate.Id);
 
         return _mapper.Map<UserResponseDto>(userToUpdate);
     }
@@ -65,10 +91,14 @@ public class UsersService(BankContext bankContext)
         bankAccounts.ForEach(ba => ba.IsDeleted = true);
         user.IsDeleted = true;
         await bankContext.SaveChangesAsync();
+        
+        cache.Remove("GetUsers-1-10-Id-False");
+        cache.Remove("GetUser-" + user.Id);
     }
 
     public async Task<User> ValidateUserCredentials(string email, string password)
     {
-        return await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ?? throw new HttpException(401, "Invalid credentials");
+        return await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ??
+               throw new HttpException(401, "Invalid credentials");
     }
 }

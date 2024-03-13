@@ -21,6 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddControllersWithViews();
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
@@ -32,32 +33,29 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: myAllowSpecificOrigins,
         policy => { policy.WithOrigins("https://localhost:44464").AllowAnyHeader().AllowAnyMethod(); });
 });
-
 builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
-            ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-            IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
-                                                                throw new InvalidOperationException()))
-        };
-    });
-
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+        ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+        IssuerSigningKey =
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
+                                                            throw new InvalidOperationException()))
+    };
+});
 builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("User", policy => policy.RequireAssertion(context => context.User.IsInRole("User") || context.User.IsInRole("Admin")))
+    .AddPolicy("User",
+        policy => policy.RequireAssertion(context => context.User.IsInRole("User") || context.User.IsInRole("Admin")))
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-
 
 var app = builder.Build();
 
@@ -76,17 +74,6 @@ app.UseRouting();
 app.UseCors(myAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllerRoute(
-    name: "Users",
-    pattern: "users/{action=Index}/{id?}");
-app.MapControllerRoute(
-    name: "BankAccounts",
-    pattern: "bankAccounts/{action=Index}/{id?}");
-app.MapControllerRoute(
-    name: "Transactions",
-    pattern: "transactions/{action=Index}/{id?}");
-app.MapControllerRoute(
-    name: "Session",
-    pattern: "session/{action=Index}/{id?}");
+app.MapControllers();
 app.MapFallbackToFile("index.html");
 app.Run();
