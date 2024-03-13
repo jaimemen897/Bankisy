@@ -3,6 +3,7 @@ import {UserService} from "./users.service";
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
 import {NgOptimizedImage} from "@angular/common";
+import {RouterOutlet} from "@angular/router";
 
 export class User {
   id: string;
@@ -20,7 +21,8 @@ export class User {
   imports: [
     CardModule,
     ButtonModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    RouterOutlet
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'

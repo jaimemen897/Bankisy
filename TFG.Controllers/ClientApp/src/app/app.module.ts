@@ -1,33 +1,41 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
-import {RouterModule} from '@angular/router';
-
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {provideRouter, RouterModule, withComponentInputBinding} from '@angular/router';
 import {AppComponent} from './app.component';
 import {ButtonModule} from "primeng/button";
 import {FilterMatchMode, PrimeNGConfig} from 'primeng/api';
 import {UsersComponent} from "./users/users.component";
 import {LoginComponent} from "./login/login.component";
+import {MessageService} from 'primeng/api';
+import {AuthInterceptor} from "./login/AuthInterceptor";
+import {ErrorHttpInterceptor} from "./Redirections/error-http.interceptor";
+import {routes} from "./Redirections/app.routing";
 
 @NgModule({
   declarations: [
     AppComponent,
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        FormsModule,
-        RouterModule.forRoot([]),
-        ButtonModule,
-        UsersComponent,
-        LoginComponent
-    ],
-  providers: [],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    RouterModule.forRoot([]),
+    ButtonModule,
+    UsersComponent,
+    LoginComponent
+  ],
+  providers: [MessageService,
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorHttpInterceptor, multi: true},
+    provideRouter(routes, withComponentInputBinding())
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule implements OnInit {
-  constructor(private primengConfig: PrimeNGConfig) {}
+  constructor(private primengConfig: PrimeNGConfig) {
+  }
 
   ngOnInit() {
     this.primengConfig.ripple = true;
