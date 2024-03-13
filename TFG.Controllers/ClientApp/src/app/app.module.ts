@@ -8,19 +8,21 @@ import {AppComponent} from './app.component';
 import {ButtonModule} from "primeng/button";
 import {FilterMatchMode, PrimeNGConfig} from 'primeng/api';
 import {UsersComponent} from "./users/users.component";
+import {LoginComponent} from "./login/login.component";
 
 @NgModule({
   declarations: [
     AppComponent,
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    RouterModule.forRoot([]),
-    ButtonModule,
-    UsersComponent
-  ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        FormsModule,
+        RouterModule.forRoot([]),
+        ButtonModule,
+        UsersComponent,
+        LoginComponent
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

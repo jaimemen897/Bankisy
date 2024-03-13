@@ -1,0 +1,10 @@
+<div class="p-d-flex p-jc-center p-ai-center" style="height: 100vh;">
+  <p-card header="Login">
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <input type="text" pInputText formControlName="text"/>
+      <input [(ngModel)]="email" name="username" placeholder="Username" required>
+      <input [(ngModel)]="password" name="password" placeholder="Password" type="password" required>
+      <p-button type="submit" [disabled]="!loginForm.valid" label="Login"></p-button>
+    </form>
+  </p-card>
+</div>

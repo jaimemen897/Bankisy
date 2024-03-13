@@ -11,9 +11,9 @@ internal sealed class ExceptionHandler(ILogger<ExceptionHandler> logger) : IExce
     {
         if (exception is not HttpException httpException)
         {
+            logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
             return false;
         }
-        logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
         var problemDetails = new ProblemDetails
         {
