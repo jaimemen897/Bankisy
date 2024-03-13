@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.transactions;
@@ -10,11 +11,12 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class BankAccountService(BankContext bankContext)
+public class BankAccountService(BankContext bankContext, IMemoryCache cache)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
-    public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy, bool descending)
+    public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy,
+        bool descending)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -25,27 +27,104 @@ public class BankAccountService(BankContext bankContext)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        var bankAccounts = bankContext.BankAccounts.Include(ba => ba.UsersId).Where(ba => !ba.IsDeleted);
+        var cacheKey = $"GetBankAccounts-{pageNumber}-{pageSize}-{orderBy}-{descending}";
+        if (cache.TryGetValue(cacheKey, out Pagination<BankAccountResponseDto>? bankAccounts))
+        {
+            if (bankAccounts != null) return bankAccounts;
+        }
 
+        var bankAccountsQuery = bankContext.BankAccounts.Include(ba => ba.UsersId).Where(ba => !ba.IsDeleted);
         var paginatedBankAccounts =
-            await Pagination<BankAccount>.CreateAsync(bankAccounts, pageNumber, pageSize, orderBy, descending);
+            await Pagination<BankAccount>.CreateAsync(bankAccountsQuery, pageNumber, pageSize, orderBy, descending);
+        bankAccounts = new Pagination<BankAccountResponseDto>(
+            _mapper.Map<List<BankAccountResponseDto>>(paginatedBankAccounts), paginatedBankAccounts.TotalCount,
+            pageNumber, pageSize);
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, bankAccounts, cacheEntryOptions);
 
-        var bankAccountsMapped = _mapper.Map<List<BankAccountResponseDto>>(paginatedBankAccounts);
-
-        return new Pagination<BankAccountResponseDto>(bankAccountsMapped, paginatedBankAccounts.TotalCount, pageNumber,
-            pageSize);
+        return bankAccounts;
     }
 
-
-    public async Task<BankAccountResponseDto> GetBankAccountAsync(Guid id)
+    public async Task<BankAccountResponseDto> GetBankAccount(Guid id)
     {
-        var bankAccount =
-            await bankContext.BankAccounts.Include(ba => ba.UsersId).FirstOrDefaultAsync(ba => ba.Id == id);
-        return bankAccount == null
-            ? throw new HttpException(404, "BankAccount not found")
-            : _mapper.Map<BankAccountResponseDto>(bankAccount);
+        var cacheKey = $"GetBankAccount-{id}";
+        if (cache.TryGetValue(cacheKey, out BankAccountResponseDto? bankAccount))
+        {
+            if (bankAccount != null) return bankAccount;
+        }
+
+        var bankAccountEntity =
+            await bankContext.BankAccounts.Include(ba => ba.UsersId).FirstOrDefaultAsync(ba => ba.Id == id) ??
+            throw new HttpException(404, "BankAccount not found");
+        bankAccount = _mapper.Map<BankAccountResponseDto>(bankAccountEntity);
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, bankAccount, cacheEntryOptions);
+
+        return bankAccount ?? throw new HttpException(404, "BankAccount not found");
     }
 
+    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
+    {
+        var cacheKey = $"GetBankAccountsByUserId-{userId}";
+        if (cache.TryGetValue(cacheKey, out List<BankAccountResponseDto>? bankAccounts))
+        {
+            return bankAccounts ?? throw new HttpException(404, "BankAccounts not found");
+        }
+
+        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
+        bankAccounts = bankAccountList.Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
+            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, bankAccounts, cacheEntryOptions);
+
+        return bankAccounts ?? throw new HttpException(404, "BankAccounts not found");
+    }
+
+    private static void IsValid(BankAccountCreateDto bankAccountCreateDto)
+    {
+        if (!Enum.TryParse(typeof(AccountType), bankAccountCreateDto.AccountType, out _))
+        {
+            throw new HttpException(400,
+                "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
+        }
+    }
+
+    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(Guid bankAccountId)
+    {
+        var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountId) ??
+            throw new HttpException(404, "Bank account not found");
+        
+        var transactions = await bankContext.Transactions
+            .Where(t => t.IdAccountOrigin == bankAccount.Id || t.IdAccountDestination == bankAccount.Id)
+            .ToListAsync();
+
+        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+    }
+
+    public async Task<List<TransactionResponseDto>> GetExpensesForAccount(Guid bankAccountId)
+    {
+        var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountId) ??
+                          throw new HttpException(404, "Bank account not found");
+        
+        var transactions = await bankContext.Transactions
+            .Where(t => t.IdAccountOrigin == bankAccount.Id)
+            .ToListAsync();
+
+        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+    }
+    
+    public async Task<List<TransactionResponseDto>> GetIncomesForAccount(Guid bankAccountId)
+    {
+        var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountId) ??
+                          throw new HttpException(404, "Bank account not found");
+        
+        var transactions = await bankContext.Transactions
+            .Where(t => t.IdAccountDestination == bankAccount.Id)
+            .ToListAsync();
+
+        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+    }
+    
     public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto)
     {
         IsValid(bankAccountCreateDto);
@@ -67,6 +146,9 @@ public class BankAccountService(BankContext bankContext)
         await bankContext.SaveChangesAsync();
 
         var bankAccountResponseDto = _mapper.Map<BankAccountResponseDto>(bankAccount);
+
+        await ClearCache();
+        
         return bankAccountResponseDto;
     }
 
@@ -99,6 +181,8 @@ public class BankAccountService(BankContext bankContext)
 
         await bankContext.SaveChangesAsync();
 
+        await ClearCache();
+
         return _mapper.Map<BankAccountResponseDto>(bankAccountToUpdate);
     }
 
@@ -112,47 +196,17 @@ public class BankAccountService(BankContext bankContext)
 
         bankAccount.IsDeleted = true;
         await bankContext.SaveChangesAsync();
-    }
 
-    private static void IsValid(BankAccountCreateDto bankAccountCreateDto)
+        await ClearCache();
+    }
+    
+    private async Task ClearCache()
     {
-        if (!Enum.TryParse(typeof(AccountType), bankAccountCreateDto.AccountType, out _))
+        var ids = await bankContext.BankAccounts.Select(ba => ba.Id).ToListAsync();
+        cache.Remove("GetBankAccounts-1-10-Id-false");
+        foreach (var id in ids)
         {
-            throw new HttpException(400,
-                "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
+            cache.Remove("GetBankAccount-" + id);
         }
-    }
-
-    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
-    {
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
-        return bankAccountList.Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
-            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
-    }
-
-    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(Guid bankAccountId)
-    {
-        var transactions = await bankContext.Transactions
-            .Where(t => t.IdAccountOrigin == bankAccountId || t.IdAccountDestination == bankAccountId)
-            .ToListAsync() ?? throw new HttpException(404, "Transactions not found");
-        if (transactions.Count == 0)
-        {
-            throw new HttpException(404, "Transactions not found");
-        }
-
-        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
-    }
-
-    public async Task<List<TransactionResponseDto>> GetExpensesForAccount(Guid bankAccountId)
-    {
-        var transactions = await bankContext.Transactions
-            .Where(t => t.IdAccountOrigin == bankAccountId)
-            .ToListAsync();
-        if (transactions.Count == 0)
-        {
-            throw new HttpException(404, "Transactions not found");
-        }
-
-        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
 }

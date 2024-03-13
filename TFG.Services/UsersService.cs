@@ -29,7 +29,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         var cacheKey = $"GetUsers-{pageNumber}-{pageSize}-{orderBy}-{descending}";
         if (cache.TryGetValue(cacheKey, out Pagination<UserResponseDto>? users))
         {
-            return users ?? throw new HttpException(404, "Users not found");
+            if (users != null) return users;
         }
 
         var usersQuery = bankContext.Users.Where(user => !user.IsDeleted);
@@ -40,7 +40,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
         cache.Set(cacheKey, users, cacheEntryOptions);
 
-        return users ?? throw new HttpException(404, "Users not found");
+        return users;
     }
 
     public async Task<UserResponseDto> GetUserAsync(Guid id)
@@ -48,7 +48,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         var cacheKey = $"GetUser-{id}";
         if (cache.TryGetValue(cacheKey, out UserResponseDto? user))
         {
-            return user ?? throw new HttpException(404, "User not found");
+            if (user != null) return user;
         }
 
         var userEntity = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
@@ -64,9 +64,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         var userDto = _mapper.Map<User>(user);
         await bankContext.Users.AddAsync(userDto);
         await bankContext.SaveChangesAsync();
-        
-        cache.Remove("GetUsers-1-10-Id-False");
-        cache.Remove("GetUser-" + userDto.Id);
+
+        await ClearCache();
         
         return _mapper.Map<UserResponseDto>(userDto);
     }
@@ -77,9 +76,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
         userToUpdate = _mapper.Map(user, userToUpdate);
         await bankContext.SaveChangesAsync();
-        
-        cache.Remove("GetUsers-1-10-Id-False");
-        cache.Remove("GetUser-" + userToUpdate.Id);
+
+        await ClearCache();
 
         return _mapper.Map<UserResponseDto>(userToUpdate);
     }
@@ -91,14 +89,23 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         bankAccounts.ForEach(ba => ba.IsDeleted = true);
         user.IsDeleted = true;
         await bankContext.SaveChangesAsync();
-        
-        cache.Remove("GetUsers-1-10-Id-False");
-        cache.Remove("GetUser-" + user.Id);
+
+        await ClearCache();
     }
 
     public async Task<User> ValidateUserCredentials(string email, string password)
     {
         return await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ??
                throw new HttpException(401, "Invalid credentials");
+    }
+    
+    private async Task ClearCache()
+    {
+        var ids = await bankContext.Users.Select(u => u.Id).ToListAsync();
+        cache.Remove("GetUsers-1-10-Id-False");
+        foreach (var id in ids)
+        {
+            cache.Remove("GetUser-" + id);
+        }
     }
 }

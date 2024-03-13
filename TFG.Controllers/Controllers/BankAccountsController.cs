@@ -22,7 +22,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     [HttpGet("{id}")]
     public async Task<ActionResult<BankAccountResponseDto>> GetBankAccount(Guid id)
     {
-        return await bankAccountService.GetBankAccountAsync(id);
+        return await bankAccountService.GetBankAccount(id);
     }
     
     [HttpGet("user/{userId}")]
@@ -41,6 +41,12 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     public async Task<List<TransactionResponseDto>> GetExpensesForAccount(Guid bankAccountId)
     {
         return await bankAccountService.GetExpensesForAccount(bankAccountId);
+    }
+    
+    [HttpGet("{bankAccountId}/incomes")]
+    public async Task<List<TransactionResponseDto>> GetIncomesForAccount(Guid bankAccountId)
+    {
+        return await bankAccountService.GetIncomesForAccount(bankAccountId);
     }
     
     [HttpPost()]
