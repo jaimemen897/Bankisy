@@ -17,12 +17,6 @@ public class UsersController(UsersService usersService) : ControllerBase
     {
         return await usersService.GetUsers(pageNumber, pageSize, orderBy, descending);
     }
-    
-    [HttpGet("all")]
-    public async Task<ActionResult<List<UserResponseDto>>> GetUsersWithoutPagination()
-    {
-        return await usersService.GetUsersWithoutPagination();
-    }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<UserResponseDto>> GetUser(Guid id)

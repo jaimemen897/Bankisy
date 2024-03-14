@@ -5,6 +5,7 @@ using TFG.Context.Context;
 using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
+using TFG.Services.Extensions;
 using TFG.Services.mappers;
 using TFG.Services.Pagination;
 
@@ -33,20 +34,13 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         }
 
         var usersQuery = bankContext.Users.Where(user => !user.IsDeleted);
-        var paginatedUsers = await Pagination<User>.CreateAsync(usersQuery, pageNumber, pageSize, orderBy, descending);
-        users = new Pagination<UserResponseDto>(_mapper.Map<List<UserResponseDto>>(paginatedUsers.Items),
-            paginatedUsers.TotalCount, pageNumber, pageSize);
+        var paginatedUsers = await usersQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
+            user => _mapper.Map<UserResponseDto>(user));
 
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, users, cacheEntryOptions);
+        cache.Set(cacheKey, paginatedUsers, cacheEntryOptions);
 
-        return users;
-    }
-    
-    public async Task<List<UserResponseDto>> GetUsersWithoutPagination()
-    {
-        var users = await bankContext.Users.Where(user => !user.IsDeleted).ToListAsync();
-        return _mapper.Map<List<UserResponseDto>>(users);
+        return paginatedUsers;
     }
 
     public async Task<UserResponseDto> GetUserAsync(Guid id)
@@ -102,7 +96,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
     public async Task<User> ValidateUserCredentials(string email, string password)
     {
         return await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ??
-               throw new HttpException(401, "Invalid credentials");
+               throw new HttpException(400, "Invalid credentials");
     }
     
     private async Task ClearCache()

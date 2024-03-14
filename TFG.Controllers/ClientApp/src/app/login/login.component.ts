@@ -61,5 +61,9 @@ export class LoginComponent {
       console.log(this.formGroup.controls.email.value, this.formGroup.controls.password.value);
     }
   }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
 }
 

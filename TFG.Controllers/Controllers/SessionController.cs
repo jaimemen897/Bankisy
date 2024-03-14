@@ -13,4 +13,10 @@ public class SessionController(SessionService sessionService) : ControllerBase
     {
         return await sessionService.Login(userLogin);
     }
+    
+    [HttpPost("signup")]
+    public async Task<ActionResult<string>> Register(UserCreateDto userRegister)
+    {
+        return await sessionService.Register(userRegister);
+    }
 }

@@ -5,6 +5,7 @@ using TFG.Context.Context;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
+using TFG.Services.Extensions;
 using TFG.Services.mappers;
 using TFG.Services.Pagination;
 
@@ -33,15 +34,13 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         }
 
         var transactionsQuery = bankContext.Transactions;
-        var paginatedTransactions = await Pagination<Transaction>.CreateAsync(transactionsQuery, pageNumber, pageSize, orderBy, descending);
-        transactions = new Pagination<TransactionResponseDto>(
-            _mapper.Map<List<TransactionResponseDto>>(paginatedTransactions.Items), paginatedTransactions.TotalCount,
-            pageNumber, pageSize);
+        var paginatedTransactions = await transactionsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
+            transaction => _mapper.Map<TransactionResponseDto>(transaction));
         
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, transactions, cacheEntryOptions);
+        cache.Set(cacheKey, paginatedTransactions, cacheEntryOptions);
 
-        return transactions;
+        return paginatedTransactions;
     }
 
     public async Task<TransactionResponseDto> GetTransaction(int id)

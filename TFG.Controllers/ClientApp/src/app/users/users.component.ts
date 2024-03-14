@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {UserService} from "./users.service";
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
@@ -6,7 +6,7 @@ import {NgClass, NgForOf, NgOptimizedImage} from "@angular/common";
 import {RouterOutlet} from "@angular/router";
 import {TagModule} from "primeng/tag";
 import {RatingModule} from "primeng/rating";
-import {DataViewModule} from "primeng/dataview";
+import {DataViewLazyLoadEvent, DataViewModule} from "primeng/dataview";
 import {FormsModule} from "@angular/forms";
 import {SpeedDialModule} from "primeng/speeddial";
 import {ToastModule} from "primeng/toast";
@@ -22,6 +22,12 @@ export class User {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export class UserCreate {
+  name: string;
+  email: string;
+  password: string;
 }
 
 @Component({
@@ -45,63 +51,46 @@ export class User {
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
-export class UsersComponent implements OnInit {
-  constructor(private userService: UserService, private messageService: MessageService) {
+export class UsersComponent implements OnInit{
+  constructor(private userService: UserService) {
   }
 
   users!: User[];
   layout: 'list' | 'grid' = 'list';
   actions: MenuItem[] = [];
 
-  /*pagination*/
-  first: number = 1;
   rows: number = 5;
   totalRecords: number = 0;
 
   ngOnInit() {
-    this.userService.getUsers(this.first, this.rows).subscribe((data) => {
-      this.users = data.items;
-      this.totalRecords = data.totalCount;
-    });
-
     this.actions = [
       {
-        icon: 'pi pi-pencil',
-        command: () => {
-          this.messageService.add({severity: 'info', summary: 'Add', detail: 'Data Added'});
-        }
+        icon: 'pi pi-eye',
+        routerLink: ['/edit']
       },
       {
-        icon: 'pi pi-refresh',
-        command: () => {
-          this.messageService.add({severity: 'success', summary: 'Update', detail: 'Data Updated'});
-        }
+        icon: 'pi pi-user-edit',
+        routerLink: ['/edit']
       },
       {
         icon: 'pi pi-trash',
-        command: () => {
-          this.messageService.add({severity: 'error', summary: 'Delete', detail: 'Data Deleted'});
-        }
+        routerLink: ['/delete']
       },
       {
-        icon: 'pi pi-upload',
+        icon: 'pi pi-image',
         routerLink: ['/fileupload']
       },
       {
         icon: 'pi pi-external-link',
         target: '_blank',
-        url: 'http://angular.io'
       }
     ];
   }
 
-  onPageChange(event: PaginatorState) {
-    const page = event.page || 0;
-    const pageSize = event.rows || 10;
-
-    this.first = event.first || 0;
-
-    this.userService.getUsers(page, pageSize).subscribe((data) => {
+  lazyLoad(event: DataViewLazyLoadEvent) {
+    let pageNumber = event.first/event.rows;
+    if (pageNumber < 1) pageNumber = 1; else pageNumber++;
+    this.userService.getUsers(pageNumber, event.rows).subscribe((data) => {
       this.users = data.items;
       this.totalRecords = data.totalCount;
     });
@@ -112,7 +101,7 @@ export class UsersComponent implements OnInit {
       case 'Admin':
         return 'success';
       case 'User':
-        return 'info';
+        return 'primary';
       default:
         return 'warning';
     }

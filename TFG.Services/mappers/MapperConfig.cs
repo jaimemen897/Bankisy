@@ -56,6 +56,9 @@ public abstract class MapperConfig
 
             cfg.CreateMap<User, UserResponseDto>()
                 .ForMember(dest => dest.Role, act => act.MapFrom(src => src.Role.ToString()));
+            
+            cfg.CreateMap<UserResponseDto, User>()
+                .ForMember(dest => dest.Role, act => act.MapFrom(src => Enum.Parse<Roles>(src.Role)));
 
             /*TRANSACTIONS*/
             cfg.CreateMap<TransactionCreateDto, Transaction>();

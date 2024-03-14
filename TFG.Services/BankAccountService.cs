@@ -6,6 +6,7 @@ using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
+using TFG.Services.Extensions;
 using TFG.Services.mappers;
 using TFG.Services.Pagination;
 
@@ -34,14 +35,13 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         }
 
         var bankAccountsQuery = bankContext.BankAccounts.Include(ba => ba.UsersId).Where(ba => !ba.IsDeleted);
-        var paginatedBankAccounts = await Pagination<BankAccount>.CreateAsync(bankAccountsQuery, pageNumber, pageSize, orderBy, descending);
-        bankAccounts = new Pagination<BankAccountResponseDto>(_mapper.Map<List<BankAccountResponseDto>>(paginatedBankAccounts.Items),
-            paginatedBankAccounts.TotalCount, pageNumber, pageSize);
+        var paginatedBankAccounts = await bankAccountsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
+            bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount));
         
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, bankAccounts, cacheEntryOptions);
+        cache.Set(cacheKey, paginatedBankAccounts, cacheEntryOptions);
 
-        return bankAccounts;
+        return paginatedBankAccounts;
     }
 
     public async Task<BankAccountResponseDto> GetBankAccount(Guid id)

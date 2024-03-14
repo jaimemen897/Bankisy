@@ -1,23 +1,38 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TFG.Context.DTOs.users;
+using TFG.Context.Models;
 using TFG.Services.Exceptions;
+using TFG.Services.mappers;
 
 namespace TFG.Services;
 
 public class SessionService(UsersService usersService)
 {
+    
+    private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+    
     public async Task<string> Login(UserLoginDto userLogin)
     {
-        var user = await usersService.ValidateUserCredentials(userLogin.Email, userLogin.Password);
-        if (user is null)
-        {
-            throw new HttpException(401, "Invalid credentials");
-        }
+        var user = await usersService.ValidateUserCredentials(userLogin.Email, userLogin.Password) ??
+                   throw new HttpException(401, "Invalid credentials");
 
+        return GetToken(user);
+    }
+
+    public async Task<string> Register(UserCreateDto userRegister)
+    {
+        var user = await usersService.CreateUser(userRegister) ?? throw new HttpException(400, "Error creating user");
+        var userMapped = _mapper.Map<User>(user);
+        return GetToken(userMapped);
+    }
+    
+    private static string GetToken(User user)
+    {
         var claims = new List<Claim>
         {
             new(ClaimTypes.Email, user.Email),
@@ -46,7 +61,7 @@ public class SessionService(UsersService usersService)
                 user.Role
             }
         };
-        
+
         return JsonConvert.SerializeObject(response);
     }
 }

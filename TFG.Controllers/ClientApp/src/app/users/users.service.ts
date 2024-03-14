@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
-import {User} from "./users.component";
+import {User, UserCreate} from "./users.component";
 
 export interface Pagination<T> {
   currentPage: number;
@@ -21,7 +21,6 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  /*users paginated*/
   getUsers(pageNumber: number, pageSize: number): Observable<Pagination<User>> {
     const url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
     return this.http.get<Pagination<User>>(url).pipe(
@@ -36,5 +35,20 @@ export class UserService {
     );
   }
 
+  getUserById(id: number): Observable<User> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<User>(url);
+  }
 
+  addUser(user: UserCreate): Observable<User> {
+    return this.http.post<User>(this.apiUrl, user);
+  }
+
+  updateUser(user: UserCreate, id: string): Observable<User> {
+    return this.http.put<User>(this.apiUrl + '/' + id, user);
+  }
+
+  deleteUser(id: string): Observable<User> {
+    return this.http.delete<User>(this.apiUrl + '/' + id);
+  }
 }
