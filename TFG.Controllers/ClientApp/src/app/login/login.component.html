@@ -1,0 +1,25 @@
+
+<div class="flex align-items-center justify-content-center h-screen">
+  <p-card header="Login" subheader="">
+    <form [formGroup]="formGroup" id="loginForm">
+      <div class="flex flex-column ">
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-user"></i>
+          <input id="email" formControlName="email" type="text" pInputText placeholder="Email">
+        </span>
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-key"></i>
+          <input id="password" formControlName="password" type="password" pInputText placeholder="Password">
+        </span>
+      </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+      <div class="flex align-items-center justify-content-center">
+        <p-button label="Iniciar sesión" (click)="sendLogin()" class="mx-2" [rounded]="true"></p-button>
+      </div>
+    </ng-template>
+  </p-card>
+</div>
+<p-toast></p-toast>
+<router-outlet></router-outlet>

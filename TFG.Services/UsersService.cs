@@ -34,13 +34,19 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
         var usersQuery = bankContext.Users.Where(user => !user.IsDeleted);
         var paginatedUsers = await Pagination<User>.CreateAsync(usersQuery, pageNumber, pageSize, orderBy, descending);
-        users = new Pagination<UserResponseDto>(_mapper.Map<List<UserResponseDto>>(paginatedUsers),
+        users = new Pagination<UserResponseDto>(_mapper.Map<List<UserResponseDto>>(paginatedUsers.Items),
             paginatedUsers.TotalCount, pageNumber, pageSize);
 
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
         cache.Set(cacheKey, users, cacheEntryOptions);
 
         return users;
+    }
+    
+    public async Task<List<UserResponseDto>> GetUsersWithoutPagination()
+    {
+        var users = await bankContext.Users.Where(user => !user.IsDeleted).ToListAsync();
+        return _mapper.Map<List<UserResponseDto>>(users);
     }
 
     public async Task<UserResponseDto> GetUserAsync(Guid id)
