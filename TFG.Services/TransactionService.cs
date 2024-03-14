@@ -33,11 +33,11 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         }
 
         var transactionsQuery = bankContext.Transactions;
-        var paginatedTransactions =
-            await Pagination<Transaction>.CreateAsync(transactionsQuery, pageNumber, pageSize, orderBy, descending);
+        var paginatedTransactions = await Pagination<Transaction>.CreateAsync(transactionsQuery, pageNumber, pageSize, orderBy, descending);
         transactions = new Pagination<TransactionResponseDto>(
-            _mapper.Map<List<TransactionResponseDto>>(paginatedTransactions), paginatedTransactions.TotalCount,
+            _mapper.Map<List<TransactionResponseDto>>(paginatedTransactions.Items), paginatedTransactions.TotalCount,
             pageNumber, pageSize);
+        
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
         cache.Set(cacheKey, transactions, cacheEntryOptions);
 

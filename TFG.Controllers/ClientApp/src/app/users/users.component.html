@@ -1,20 +1,57 @@
 <router-outlet></router-outlet>
-@for (user of users; track users){
-  <p-card [style]="{ width: '300px' }">
-    <ng-template pTemplate="content">
-      <div class="p-grid">
-        <div class="p-col-12">
-          <img src="{{user.avatar}}" alt="{{user.name}}" style="width: 100%" />
-        </div>
-        <div class="p-col-12">
-          <h4>{{user.name}}</h4>
-          <p>{{user.email}}</p>
-        </div>
+<div class="card">
+
+  <p-dataView [value]="users" [layout]="layout" [emptyMessage]="'No se han encontrado usuarios'" [paginator]="true"
+              [rows]="rows" [first]="first" [totalRecords]="totalRecords" [rowsPerPageOptions]="[2, 10, 20]" (onPage)="onPageChange($event)">
+    <ng-template pTemplate="list">
+      <div class="grid grid-nogutter">
+        @for (user of users; track users) {
+          <div class="col-12 p-2">
+            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
+                 [ngClass]="{ 'border-top-1 surface-border': users.indexOf(user) !== 0 }">
+
+              <img class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" [src]="user.avatar"
+                   [alt]="user.name"/>
+
+              <div class="flex flex-column sm:flex-row align-items-center xl:align-items-start flex-1 gap-8">
+                <div class="flex flex-column align-items-center sm:align-items-start gap-3 w-4">
+                  <div class="text-2xl font-bold text-900">{{ user.name }}</div>
+                  <p>{{ user.email }}</p>
+                  <p>{{ user.role }}</p>
+                </div>
+
+                <div class="flex flex-column align-items-center gap-3">
+                  <p-speedDial [model]="actions" [radius]="80" type="linear" direction="right"></p-speedDial>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        }
       </div>
     </ng-template>
-    <ng-template pTemplate="footer">
-      <button pButton type="button" label="Edit" icon="pi pi-pencil" class="p-button-warning"></button>
-      <button pButton type="button" label="Delete" icon="pi pi-trash" class="p-button-danger"></button>
+
+    <ng-template pTemplate="grid">
+      <div class="grid grid-nogutter">
+        @for (user of users; track users) {
+          <div class="col-12 sm:col-6 lg:col-12 xl:col-4 p-2">
+            <div class="p-2 border-1 surface-border surface-card border-round">
+              <div class="flex flex-wrap align-items-center justify-content-between gap-1">
+              <span class="flex align-items-center gap-2">
+                <i class="pi pi-tag"></i>
+                <span class="font-semibold">{{ user.role }}</span>
+              </span>
+              </div>
+              <div class="flex flex-column align-items-center gap-3 py-5">
+                <img class="w-9 shadow-2 border-round" [src]="user.avatar" [alt]="user.name"/>
+                <div class="text-2xl font-bold">{{ user.name }}</div>
+                <p>{{ user.email }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
     </ng-template>
-  </p-card>
-}
+  </p-dataView>
+
+</div>
