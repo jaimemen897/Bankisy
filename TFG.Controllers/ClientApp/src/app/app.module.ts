@@ -12,8 +12,8 @@ import {MessageService} from 'primeng/api';
 import {AuthInterceptor} from "./login/AuthInterceptor";
 import {ErrorHttpInterceptor} from "./Redirections/error-http.interceptor";
 import {routes} from "./Redirections/app.routing";
-import { PaginatorModule } from 'primeng/paginator';
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {UserService} from "./users/users.service";
 
 @NgModule({
   declarations: [
@@ -27,13 +27,13 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
     ButtonModule,
     UsersComponent,
     LoginComponent,
-    PaginatorModule,
     BrowserAnimationsModule
   ],
   providers: [MessageService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorHttpInterceptor, multi: true},
-    provideRouter(routes, withComponentInputBinding())
+    provideRouter(routes, withComponentInputBinding()),
+    UserService
   ],
   bootstrap: [AppComponent]
 })

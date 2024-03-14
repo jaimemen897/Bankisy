@@ -1,57 +1,69 @@
 <router-outlet></router-outlet>
 <div class="card">
 
-  <p-dataView [value]="users" [layout]="layout" [emptyMessage]="'No se han encontrado usuarios'" [paginator]="true"
-              [rows]="rows" [first]="first" [totalRecords]="totalRecords" [rowsPerPageOptions]="[2, 10, 20]" (onPage)="onPageChange($event)">
+  <p-dataView [value]="users" [layout]="layout" [emptyMessage]="'No se han encontrado usuarios'">
+    <ng-template pTemplate="header">
+      <div class="flex justify-content-end">
+        <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
+      </div>
+    </ng-template>
     <ng-template pTemplate="list">
       <div class="grid grid-nogutter">
         @for (user of users; track users) {
-          <div class="col-12 p-2">
-            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
-                 [ngClass]="{ 'border-top-1 surface-border': users.indexOf(user) !== 0 }">
+        <div class="col-12 p-2">
+          <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
+               [ngClass]="{ 'border-top-1 surface-border': users.indexOf(user) !== 0 }">
 
-              <img class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" [src]="user.avatar"
-                   [alt]="user.name"/>
+            <img class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" [src]="user.avatar"
+                 [alt]="user.name"/>
 
-              <div class="flex flex-column sm:flex-row align-items-center xl:align-items-start flex-1 gap-8">
-                <div class="flex flex-column align-items-center sm:align-items-start gap-3 w-4">
-                  <div class="text-2xl font-bold text-900">{{ user.name }}</div>
-                  <p>{{ user.email }}</p>
-                  <p>{{ user.role }}</p>
-                </div>
-
-                <div class="flex flex-column align-items-center gap-3">
-                  <p-speedDial [model]="actions" [radius]="80" type="linear" direction="right"></p-speedDial>
-                </div>
+            <div class="flex flex-column sm:flex-row align-items-center xl:align-items-start flex-1 gap-8">
+              <div class="flex flex-column align-items-center sm:align-items-start gap-3 w-4">
+                <div class="text-2xl font-bold text-900">{{ user.name }}</div>
+                <p>{{ user.email }}</p>
+                <p-tag [value]="user.role" [severity]="getRole(user)"></p-tag>
               </div>
 
+              <div class="flex flex-column align-items-center gap-3">
+                <p-speedDial [model]="actions" [radius]="80" type="linear" direction="right"></p-speedDial>
+              </div>
             </div>
+
           </div>
+        </div>
         }
+      </div>
+      <div class="card flex justify-content-center">
+        <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalRecords" [rowsPerPageOptions]="[5, 10, 20]"  [showFirstLastIcon]="false" [alwaysShow]="false"></p-paginator>
       </div>
     </ng-template>
 
     <ng-template pTemplate="grid">
       <div class="grid grid-nogutter">
         @for (user of users; track users) {
-          <div class="col-12 sm:col-6 lg:col-12 xl:col-4 p-2">
-            <div class="p-2 border-1 surface-border surface-card border-round">
-              <div class="flex flex-wrap align-items-center justify-content-between gap-1">
+        <div class="col-12 sm:col-6 lg:col-12 xl:col-3 p-2">
+          <div class="p-2 border-1 surface-border surface-card border-round">
+            <div class="flex flex-wrap align-items-center justify-content-between gap-1">
               <span class="flex align-items-center gap-2">
                 <i class="pi pi-tag"></i>
                 <span class="font-semibold">{{ user.role }}</span>
               </span>
-              </div>
-              <div class="flex flex-column align-items-center gap-3 py-5">
-                <img class="w-9 shadow-2 border-round" [src]="user.avatar" [alt]="user.name"/>
-                <div class="text-2xl font-bold">{{ user.name }}</div>
-                <p>{{ user.email }}</p>
-              </div>
+            </div>
+            <div class="flex flex-column align-items-center gap-3 py-5">
+              <img class="w-9 shadow-2 border-round" [src]="user.avatar" [alt]="user.name"/>
+              <div class="text-2xl font-bold">{{ user.name }}</div>
+              <p>{{ user.email }}</p>
             </div>
           </div>
+        </div>
         }
       </div>
+      <div class="card flex justify-content-center">
+        <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalRecords" [rowsPerPageOptions]="[5, 10, 20]" [showFirstLastIcon]="false" [alwaysShow]="false"></p-paginator>
+      </div>
     </ng-template>
+
+
   </p-dataView>
 
 </div>

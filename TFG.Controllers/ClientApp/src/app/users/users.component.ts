@@ -10,7 +10,7 @@ import {DataViewModule} from "primeng/dataview";
 import {FormsModule} from "@angular/forms";
 import {SpeedDialModule} from "primeng/speeddial";
 import {ToastModule} from "primeng/toast";
-import {MenuItem, MessageService, PrimeNGConfig} from "primeng/api";
+import {MenuItem, MessageService} from "primeng/api";
 import {PaginatorModule, PaginatorState} from "primeng/paginator";
 
 export class User {
@@ -45,8 +45,8 @@ export class User {
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
-export class UsersComponent implements OnInit{
-  constructor(private userService: UserService, private messageService: MessageService, private primengConfig: PrimeNGConfig) {
+export class UsersComponent implements OnInit {
+  constructor(private userService: UserService, private messageService: MessageService) {
   }
 
   users!: User[];
@@ -54,36 +54,33 @@ export class UsersComponent implements OnInit{
   actions: MenuItem[] = [];
 
   /*pagination*/
-  first: number = 0;
-  rows: number = 2;
+  first: number = 1;
+  rows: number = 5;
   totalRecords: number = 0;
 
   ngOnInit() {
-    this.users = [];
     this.userService.getUsers(this.first, this.rows).subscribe((data) => {
-      this.users = data;
-      this.totalRecords = data.totalRecords;
-      console.log(this.users);
-      console.log(this.totalRecords);
+      this.users = data.items;
+      this.totalRecords = data.totalCount;
     });
 
     this.actions = [
       {
         icon: 'pi pi-pencil',
         command: () => {
-          this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
+          this.messageService.add({severity: 'info', summary: 'Add', detail: 'Data Added'});
         }
       },
       {
         icon: 'pi pi-refresh',
         command: () => {
-          this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+          this.messageService.add({severity: 'success', summary: 'Update', detail: 'Data Updated'});
         }
       },
       {
         icon: 'pi pi-trash',
         command: () => {
-          this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+          this.messageService.add({severity: 'error', summary: 'Delete', detail: 'Data Deleted'});
         }
       },
       {
@@ -96,15 +93,28 @@ export class UsersComponent implements OnInit{
         url: 'http://angular.io'
       }
     ];
-    this.primengConfig.ripple = true;
   }
 
   onPageChange(event: PaginatorState) {
-    const page = (event.page  || 0) + 1;
+    const page = event.page || 0;
     const pageSize = event.rows || 10;
-    this.userService.getUsers(page, pageSize).subscribe((response) => {
-      this.users = response.data;
-      this.totalRecords = response.totalRecords;
+
+    this.first = event.first || 0;
+
+    this.userService.getUsers(page, pageSize).subscribe((data) => {
+      this.users = data.items;
+      this.totalRecords = data.totalCount;
     });
+  }
+
+  getRole(user: User) {
+    switch (user.role) {
+      case 'Admin':
+        return 'success';
+      case 'User':
+        return 'info';
+      default:
+        return 'warning';
+    }
   }
 }
