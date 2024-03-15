@@ -5,14 +5,14 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {provideRouter, RouterModule, withComponentInputBinding} from '@angular/router';
 import {AppComponent} from './app.component';
 import {ButtonModule} from "primeng/button";
-import {FilterMatchMode, PrimeNGConfig} from 'primeng/api';
+import {ConfirmationService, FilterMatchMode, PrimeNGConfig} from 'primeng/api';
 import {UsersComponent} from "./users/users.component";
 import {LoginComponent} from "./login/login.component";
 import {MessageService} from 'primeng/api';
 import {AuthInterceptor} from "./login/AuthInterceptor";
 import {ErrorHttpInterceptor} from "./Redirections/error-http.interceptor";
 import {routes} from "./Redirections/app.routing";
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {UserService} from "./users/users.service";
 
 @NgModule({
@@ -33,7 +33,7 @@ import {UserService} from "./users/users.service";
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorHttpInterceptor, multi: true},
     provideRouter(routes, withComponentInputBinding()),
-    UserService
+    UserService, ConfirmationService, MessageService
   ],
   bootstrap: [AppComponent]
 })

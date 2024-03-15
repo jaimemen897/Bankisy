@@ -1,0 +1,44 @@
+<router-outlet></router-outlet>
+<div class="flex align-items-center justify-content-center h-screen">
+  <p-card header="Crear un usuario" subheader="">
+    <form [formGroup]="formGroup" id="registerForm">
+      <div class="flex flex-column ">
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-user"></i>
+          <input id="name" formControlName="name" type="text" pInputText placeholder="Nombre">
+        </span>
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-envelope"></i>
+          <input id="email" formControlName="email" type="text" pInputText placeholder="Email">
+        </span>
+        <!--username, dni, gender-->
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-user"></i>
+          <input id="username" formControlName="username" type="text" pInputText placeholder="Username">
+        </span>
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-id-card"></i>
+          <input id="dni" formControlName="dni" type="text" pInputText placeholder="DNI">
+        </span>
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-user"></i>
+          <input id="gender" formControlName="gender" type="text" pInputText placeholder="Género">
+        </span>
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-lock"></i>
+          <p-password formControlName="password" [toggleMask]="true" placeholder="Password" [feedback]="true"
+                      class="ng-invalid ng-dirty"/>
+        </span>
+      </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+      <div class="flex align-items-center justify-content-center">
+        <p-button label="Crear usuario" (click)="sendForm()" class="mx-2" [rounded]="true"></p-button>
+      </div>
+    </ng-template>
+  </p-card>
+</div>
+<p-toast></p-toast>
+
+

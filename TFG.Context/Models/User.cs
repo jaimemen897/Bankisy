@@ -13,6 +13,12 @@ public class User
     [Column("name")] public string Name { get; set; }
 
     [Column("email")] public string Email { get; set; }
+    
+    [Column("username")] public string Username { get; set; }
+    
+    [Column("dni")] public string Dni { get; set; }
+    
+    [Column("gender")] public Gender Gender { get; set; }
 
     [Column("password")] public string Password { get; set; }
 
@@ -33,4 +39,12 @@ public enum Roles
 {
     Admin,
     User
+}
+
+public enum Gender
+{
+    Male,
+    Female,
+    Other,
+    PreferNotToSay
 }

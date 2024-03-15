@@ -1,6 +1,10 @@
 <router-outlet></router-outlet>
 <div class="card">
 
+  <div class="flex justify-content-end gap-4 p-4">
+    <p-button label="Crear usuario" icon="pi pi-plus" (onClick)="goToAddUser()" class="p-button-success"></p-button>
+  </div>
+
   <p-dataView [value]="users" [layout]="layout" [emptyMessage]="'No se han encontrado usuarios'" [lazy]="true"
               (onLazyLoad)="lazyLoad($event)" [paginator]="true" [rows]="rows" [totalRecords]="totalRecords"
               [rowsPerPageOptions]="[5, 10, 20]"
@@ -10,6 +14,7 @@
         <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
       </div>
     </ng-template>
+
     <ng-template pTemplate="list">
       <div class="grid grid-nogutter">
         @for (user of users; track users) {
@@ -27,14 +32,45 @@
                   <p-tag [value]="user.role" [severity]="getRole(user)"></p-tag>
                 </div>
 
-                <div class="flex flex-column align-items-center gap-3">
-                  <p-speedDial [model]="actions" [radius]="80" type="linear" direction="right"></p-speedDial>
+                <div class="flex align-items-center gap-3">
+                  <p-overlayPanel #op>
+                    <ng-template pTemplate="content">
+                      <h4>Nombre: {{ user.name }}</h4>
+                      <p>Id: {{ user.id }}</p>
+                      <p>Email: {{ user.email }}</p>
+                      <p>Username: {{ user.username }}</p>
+                      <p>DNI: {{ user.dni }}</p>
+                      <p>Género: {{ user.gender }}</p>
+                      <p>Rol: {{ user.role }}</p>
+                    </ng-template>
+                  </p-overlayPanel>
+                  <p-button (click)="op.toggle($event)" icon="pi pi-user"></p-button>
+                  <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning"/>
+                  <p-button icon="pi pi-upload" (click)="goToFileUpload(user.id)" severity="help"/>
+                  <div class="card flex justify-content-center">
+                    <p-toast></p-toast>
+                    <p-button (click)="confirm(user.id)" icon="pi pi-trash" severity="danger"></p-button>
+                  </div>
                 </div>
               </div>
-
             </div>
           </div>
         }
+        <p-confirmDialog #cd>
+          <ng-template pTemplate="headless" let-message>
+            <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+              <div class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
+                <i class="pi pi-trash text-5xl"></i>
+              </div>
+              <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
+              <p class="mb-0">{{ message.message }}</p>
+              <div class="flex align-items-center gap-2 mt-4">
+                <button pButton label="Eliminar" (click)="cd.accept()" class="w-8rem p-button-danger"></button>
+                <button pButton label="Cancelar" (click)="cd.reject()" class="p-button-danger p-button-outlined"></button>
+              </div>
+            </div>
+          </ng-template>
+        </p-confirmDialog>
       </div>
     </ng-template>
 

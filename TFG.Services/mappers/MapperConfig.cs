@@ -36,11 +36,15 @@ public abstract class MapperConfig
             cfg.CreateMap<UserCreateDto, User>()
                 .ForMember(dest => dest.IsDeleted, act => act.MapFrom(src => false))
                 .ForMember(dest => dest.Avatar, act => act.MapFrom(src => src.Avatar ?? User.ImageDefault))
-                .ForMember(dest => dest.Role, act => act.MapFrom(src => Roles.User));
+                .ForMember(dest => dest.Role, act => act.MapFrom(src => Roles.User))
+                .ForMember(dest => dest.Gender, act => act.MapFrom(src => src.Gender));
 
             cfg.CreateMap<UserUpdateDto, User>()
                 .ForMember(dest => dest.Name, opt => opt.Ignore())
                 .ForMember(dest => dest.Email, opt => opt.Ignore())
+                .ForMember(dest => dest.Username, opt => opt.Ignore())
+                .ForMember(dest => dest.Dni, opt => opt.Ignore())
+                .ForMember(dest => dest.Gender, opt => opt.Ignore())
                 .ForMember(dest => dest.Avatar, opt => opt.Ignore())
                 .ForMember(dest => dest.Role, opt => opt.Ignore())
                 .ForMember(dest => dest.Password, opt => opt.Ignore())
@@ -49,13 +53,17 @@ public abstract class MapperConfig
                 {
                     dest.Name = src.Name ?? dest.Name;
                     dest.Email = src.Email ?? dest.Email;
+                    dest.Username = src.Username ?? dest.Username;
+                    dest.Dni = src.Dni ?? dest.Dni;
+                    dest.Gender = src.Gender != null ? (Gender)Enum.Parse(typeof(Gender), src.Gender) : dest.Gender;
                     dest.Avatar = src.Avatar ?? dest.Avatar;
                     dest.Password = src.Password ?? dest.Password;
                     dest.UpdatedAt = DateTime.Now.ToUniversalTime();
                 });
 
             cfg.CreateMap<User, UserResponseDto>()
-                .ForMember(dest => dest.Role, act => act.MapFrom(src => src.Role.ToString()));
+                .ForMember(dest => dest.Role, act => act.MapFrom(src => src.Role.ToString()))
+                .ForMember(dest => dest.Gender, act => act.MapFrom(src => src.Gender.ToString()));
             
             cfg.CreateMap<UserResponseDto, User>()
                 .ForMember(dest => dest.Role, act => act.MapFrom(src => Enum.Parse<Roles>(src.Role)));

@@ -102,10 +102,19 @@ namespace TFG.Context.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("Dni")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("dni");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("email");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("integer")
+                        .HasColumnName("gender");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -128,6 +137,11 @@ namespace TFG.Context.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("username");
 
                     b.HasKey("Id");
 

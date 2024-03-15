@@ -12,7 +12,7 @@ using TFG.Context.Context;
 namespace TFG.Context.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20240312141054_Initial")]
+    [Migration("20240315145014_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -105,10 +105,19 @@ namespace TFG.Context.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("Dni")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("dni");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("email");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("integer")
+                        .HasColumnName("gender");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -131,6 +140,11 @@ namespace TFG.Context.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("username");
 
                     b.HasKey("Id");
 

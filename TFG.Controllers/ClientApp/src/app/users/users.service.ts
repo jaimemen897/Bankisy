@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {map, Observable} from 'rxjs';
+import {map, Observable, tap} from 'rxjs';
 import {User, UserCreate} from "./users.component";
 
 export interface Pagination<T> {
@@ -35,7 +35,7 @@ export class UserService {
     );
   }
 
-  getUserById(id: number): Observable<User> {
+  getUserById(id: string): Observable<User> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<User>(url);
   }

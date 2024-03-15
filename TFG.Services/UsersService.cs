@@ -59,8 +59,18 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         return user ?? throw new HttpException(404, "User not found");
     }
 
+    private static void IsValid(UserCreateDto userCreateDto)
+    {
+        if (!Enum.TryParse(typeof(Gender), userCreateDto.Gender, true, out _))
+        {
+            throw new HttpException(400,
+                "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
+        }
+    }
+
     public async Task<UserResponseDto> CreateUser(UserCreateDto user)
     {
+        IsValid(user);
         var userDto = _mapper.Map<User>(user);
         await bankContext.Users.AddAsync(userDto);
         await bankContext.SaveChangesAsync();
