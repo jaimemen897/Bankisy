@@ -14,21 +14,23 @@ import {ErrorHttpInterceptor} from "./Redirections/error-http.interceptor";
 import {routes} from "./Redirections/app.routing";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {UserService} from "./users/users.service";
+import {MessagesModule} from "primeng/messages";
 
 @NgModule({
   declarations: [
     AppComponent,
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    RouterModule.forRoot([]),
-    ButtonModule,
-    UsersComponent,
-    LoginComponent,
-    BrowserAnimationsModule
-  ],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        FormsModule,
+        RouterModule.forRoot([]),
+        ButtonModule,
+        UsersComponent,
+        LoginComponent,
+        BrowserAnimationsModule,
+        MessagesModule
+    ],
   providers: [MessageService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorHttpInterceptor, multi: true},

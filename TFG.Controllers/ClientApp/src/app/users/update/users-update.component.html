@@ -19,10 +19,32 @@
           <i class="pi pi-id-card"></i>
           <input id="dni" formControlName="dni" type="text" pInputText placeholder="user.dni">
         </span>
-        <span class="p-input-icon-left my-2">
-          <i class="pi pi-users"></i>
-          <input id="gender" formControlName="gender" type="text" pInputText placeholder="user.gender">
-        </span>
+        <p>Género:</p>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex flex-column gap-3">
+            <div class="flex align-items-center">
+              <p-radioButton name="gender" value="male" formControlName="gender" id="male"></p-radioButton>
+              <label for="male" class="ml-2">Hombre</label>
+            </div>
+
+            <div class="flex align-items-center">
+              <p-radioButton name="gender" value="female" formControlName="gender" id="female"></p-radioButton>
+              <label for="female" class="ml-2">Mujer</label>
+            </div>
+          </div>
+
+          <div class="flex flex-column gap-3">
+            <div class="flex align-items-center">
+              <p-radioButton name="gender" value="other" formControlName="gender" id="other"></p-radioButton>
+              <label for="other" class="ml-2">Otro</label>
+            </div>
+
+            <div class="flex align-items-center">
+              <p-radioButton name="gender" value="nottosay" formControlName="gender" id="nottosay"></p-radioButton>
+              <label for="nottosay" class="ml-2">Prefiero no decirlo</label>
+            </div>
+          </div>
+        </div>
         <span class="p-input-icon-left my-2">
           <i class="pi pi-lock"></i>
           <input id="password" formControlName="password" type="password" pInputText placeholder="Password">

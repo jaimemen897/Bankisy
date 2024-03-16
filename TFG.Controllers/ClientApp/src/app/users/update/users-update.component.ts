@@ -8,19 +8,21 @@ import {CardModule} from "primeng/card";
 import {InputTextModule} from "primeng/inputtext";
 import {SharedModule} from "primeng/api";
 import {ToastModule} from "primeng/toast";
+import {RadioButtonModule} from "primeng/radiobutton";
 
 @Component({
   selector: 'app-update',
   standalone: true,
-  imports: [
-    ButtonModule,
-    CardModule,
-    InputTextModule,
-    ReactiveFormsModule,
-    RouterOutlet,
-    SharedModule,
-    ToastModule
-  ],
+    imports: [
+        ButtonModule,
+        CardModule,
+        InputTextModule,
+        ReactiveFormsModule,
+        RouterOutlet,
+        SharedModule,
+        ToastModule,
+        RadioButtonModule
+    ],
   templateUrl: './users-update.component.html',
   styleUrl: './users-update.component.css'
 })

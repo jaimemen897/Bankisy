@@ -1,102 +1,111 @@
 <router-outlet></router-outlet>
 <div class="card">
 
-  <div class="flex justify-content-end gap-4 p-4">
-    <p-button label="Crear usuario" icon="pi pi-plus" (onClick)="goToAddUser()" class="p-button-success"></p-button>
-  </div>
 
-  <p-dataView [value]="users" [layout]="layout" [emptyMessage]="'No se han encontrado usuarios'" [lazy]="true"
-              (onLazyLoad)="lazyLoad($event)" [paginator]="true" [rows]="rows" [totalRecords]="totalRecords"
-              [rowsPerPageOptions]="[5, 10, 20]"
-              [showFirstLastIcon]="false" [alwaysShowPaginator]="false">
-    <ng-template pTemplate="header">
-      <div class="flex justify-content-end">
-        <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
-      </div>
-    </ng-template>
 
-    <ng-template pTemplate="list">
-      <div class="grid grid-nogutter">
-        @for (user of users; track users) {
-          <div class="col-12 p-2">
-            <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
-                 [ngClass]="{ 'border-top-1 surface-border': users.indexOf(user) !== 0 }">
+  <div
+    class="dataView-container w-10 sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 mx-auto border-1 surface-border border-round">
+    <p-dataView [value]="users" [layout]="layout" [emptyMessage]="'No se han encontrado usuarios'" [lazy]="true"
+                (onLazyLoad)="lazyLoad($event)" [paginator]="true" [rows]="rows" [totalRecords]="totalRecords"
+                [rowsPerPageOptions]="[5, 10, 20]"
+                [showFirstLastIcon]="false" [alwaysShowPaginator]="false">
+      <ng-template pTemplate="header">
+        <div class="flex justify-content-between align-items-center gap-4">
+          <div class="flex align-items-center gap-4">
+            <h2 class="text-3xl font-bold flex-grow-0">Gestión de usuarios</h2>
+            <p-button label="Crear usuario" icon="pi pi-plus" (onClick)="goToAddUser()" class="p-button-success"></p-button>
+          </div>
+          <div class="flex justify-content-end align-items-center gap-4">
+            <p-dataViewLayoutOptions class="flex-grow-0"></p-dataViewLayoutOptions>
+          </div>
+        </div>
+      </ng-template>
 
-              <img class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" [src]="user.avatar"
-                   [alt]="user.name"/>
+      <ng-template pTemplate="list">
+        <div class="grid grid-nogutter justify-content-center align-items-center">
+          @for (user of users; track users) {
+            <div class="col-12 p-2">
+              <div class="flex flex-column xl:flex-row xl:align-items-center justify-content-center gap-4"
+                   [ngClass]="{ 'border-top-1 surface-border': users.indexOf(user) !== 0 }">
 
-              <div class="flex flex-column sm:flex-row align-items-center xl:align-items-start flex-1 gap-8">
-                <div class="flex flex-column align-items-center sm:align-items-start gap-3 w-4">
-                  <div class="text-2xl font-bold text-900">{{ user.name }}</div>
-                  <p>{{ user.email }}</p>
-                  <p-tag [value]="user.role" [severity]="getRole(user)"></p-tag>
-                </div>
+                <img class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" [src]="user.avatar"
+                     [alt]="user.name"/>
 
-                <div class="flex align-items-center gap-3">
-                  <p-overlayPanel #op>
-                    <ng-template pTemplate="content">
-                      <h4>Nombre: {{ user.name }}</h4>
-                      <p>Id: {{ user.id }}</p>
-                      <p>Email: {{ user.email }}</p>
-                      <p>Username: {{ user.username }}</p>
-                      <p>DNI: {{ user.dni }}</p>
-                      <p>Género: {{ user.gender }}</p>
-                      <p>Rol: {{ user.role }}</p>
-                    </ng-template>
-                  </p-overlayPanel>
-                  <p-button (click)="op.toggle($event)" icon="pi pi-user"></p-button>
-                  <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning"/>
-                  <p-button icon="pi pi-upload" (click)="goToFileUpload(user.id)" severity="help"/>
-                  <div class="card flex justify-content-center">
-                    <p-toast></p-toast>
-                    <p-button (click)="confirm(user.id)" icon="pi pi-trash" severity="danger"></p-button>
+                <div
+                  class="flex flex-column sm:flex-row align-items-center xl:align-items-center justify-content-center flex-1 gap-8">
+                  <div class="flex flex-column align-items-center sm:align-items-start gap-3 w-4 text-left">
+                    <div class="text-2xl font-bold text-900">{{ user.name }}</div>
+                    <p>{{ user.email }}</p>
+                    <p-tag [value]="user.role" [severity]="getRole(user)"></p-tag>
+                  </div>
+
+                  <div class="flex align-items-center justify-content-center gap-3">
+                    <p-overlayPanel #op>
+                      <ng-template pTemplate="content">
+                        <h4 class="text-left">Nombre: {{ user.name }}</h4>
+                        <p class="text-left">Id: {{ user.id }}</p>
+                        <p class="text-left">Email: {{ user.email }}</p>
+                        <p class="text-left">Username: {{ user.username }}</p>
+                        <p class="text-left">DNI: {{ user.dni }}</p>
+                        <p class="text-left">Género: {{ user.gender }}</p>
+                        <p class="text-left">Rol: {{ user.role }}</p>
+                      </ng-template>
+                    </p-overlayPanel>
+                    <p-button (click)="op.toggle($event)" icon="pi pi-user"></p-button>
+                    <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning"/>
+                    <p-button icon="pi pi-upload" (click)="goToFileUpload(user.id)" severity="help"/>
+                    <div class="card flex justify-content-center">
+                      <p-toast></p-toast>
+                      <p-button (click)="confirm(user.id)" icon="pi pi-trash" severity="danger"></p-button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        }
-        <p-confirmDialog #cd>
-          <ng-template pTemplate="headless" let-message>
-            <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
-              <div class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
-                <i class="pi pi-trash text-5xl"></i>
+          }
+          <p-confirmDialog #cd>
+            <ng-template pTemplate="headless" let-message>
+              <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+                <div
+                  class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
+                  <i class="pi pi-trash text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
+                <p class="mb-0 text-left">{{ message.message }}</p>
+                <div class="flex align-items-center justify-content-center gap-2 mt-4">
+                  <button pButton label="Eliminar" (click)="cd.accept()" class="w-8rem p-button-danger"></button>
+                  <button pButton label="Cancelar" (click)="cd.reject()"
+                          class="p-button-danger p-button-outlined"></button>
+                </div>
               </div>
-              <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
-              <p class="mb-0">{{ message.message }}</p>
-              <div class="flex align-items-center gap-2 mt-4">
-                <button pButton label="Eliminar" (click)="cd.accept()" class="w-8rem p-button-danger"></button>
-                <button pButton label="Cancelar" (click)="cd.reject()" class="p-button-danger p-button-outlined"></button>
-              </div>
-            </div>
-          </ng-template>
-        </p-confirmDialog>
-      </div>
-    </ng-template>
+            </ng-template>
+          </p-confirmDialog>
+        </div>
+      </ng-template>
 
-    <ng-template pTemplate="grid">
-      <div class="grid grid-nogutter">
-        @for (user of users; track users) {
-          <div class="col-12 sm:col-6 lg:col-12 xl:col-3 p-2">
-            <div class="p-2 border-1 surface-border surface-card border-round">
-              <div class="flex flex-wrap align-items-center justify-content-between gap-1">
+      <ng-template pTemplate="grid">
+        <div class="grid grid-nogutter">
+          @for (user of users; track users) {
+            <div class="col-12 sm:col-6 lg:col-12 xl:col-3 p-2">
+              <div class="p-2 border-1 surface-border surface-card border-round">
+                <div class="flex flex-wrap align-items-center justify-content-between gap-1">
               <span class="flex align-items-center gap-2">
                 <i class="pi pi-tag"></i>
                 <span class="font-semibold">{{ user.role }}</span>
               </span>
-              </div>
-              <div class="flex flex-column align-items-center gap-3 py-5">
-                <img class="w-9 shadow-2 border-round" [src]="user.avatar" [alt]="user.name"/>
-                <div class="text-2xl font-bold">{{ user.name }}</div>
-                <p>{{ user.email }}</p>
+                </div>
+                <div class="flex flex-column align-items-center gap-3 py-5">
+                  <img class="w-9 shadow-2 border-round" [src]="user.avatar" [alt]="user.name"/>
+                  <div class="text-2xl font-bold">{{ user.name }}</div>
+                  <p>{{ user.email }}</p>
+                </div>
               </div>
             </div>
-          </div>
-        }
-      </div>
-    </ng-template>
+          }
+        </div>
+      </ng-template>
 
 
-  </p-dataView>
-
+    </p-dataView>
+  </div>
 </div>

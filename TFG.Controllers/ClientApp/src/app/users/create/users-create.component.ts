@@ -10,6 +10,7 @@ import {SharedModule} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {PasswordModule} from "primeng/password";
 import {DividerModule} from "primeng/divider";
+import {RadioButtonModule} from "primeng/radiobutton";
 
 @Component({
   selector: 'app-create',
@@ -24,6 +25,7 @@ import {DividerModule} from "primeng/divider";
     ToastModule,
     PasswordModule,
     DividerModule,
+    RadioButtonModule,
   ],
   templateUrl: './users-create.component.html',
   styleUrl: './users-create.component.css'
