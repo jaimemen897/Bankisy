@@ -1,24 +1,63 @@
 <router-outlet></router-outlet>
-<div class="flex align-items-center justify-content-center h-screen">
-  <p-card header="Registro" subheader="">
+<p-toast></p-toast>
+<div class="flex align-items-center justify-content-center h-screen"
+     style="background: linear-gradient(180deg, rgba(228,42,240,1) 0%, rgba(0,104,255,1) 100%)">
+  <p-card header="Registro" subheader="" class="flex justify-content-center align-items-center align-content-center">
     <form [formGroup]="formGroup" id="registerForm">
       <div class="flex flex-column">
+        <!--name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
+    dni: new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]),
+    gender: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),-->
         <span class="p-input-icon-left my-2">
           <i class="pi pi-user"></i>
           <input id="name" formControlName="name" type="text" pInputText placeholder="Nombre">
         </span>
+        @if (formGroup.controls['name'].invalid && formGroup.controls['name'].touched) {
+          <p *ngIf="formGroup.controls['name'].errors?.required" class="text-red-500 text-xs m-0">El nombre es
+            requerido</p>
+          <p *ngIf="formGroup.controls['name'].errors?.minlength" class="text-red-500 text-xs m-0">El nombre debe tener
+            al menos 3 caracteres</p>
+          <p *ngIf="formGroup.controls['name'].errors?.maxlength" class="text-red-500 text-xs m-0">El nombre debe tener
+            como máximo 50 caracteres</p>
+        }
         <span class="p-input-icon-left my-2">
           <i class="pi pi-envelope"></i>
           <input id="email" formControlName="email" type="text" pInputText placeholder="Email">
         </span>
+        @if (formGroup.controls['email'].invalid && formGroup.controls['email'].touched) {
+          <p *ngIf="formGroup.controls['email'].errors?.required" class="text-red-500 text-xs m-0">El email es
+            requerido</p>
+          <p *ngIf="formGroup.controls['email'].errors?.email" class="text-red-500 text-xs m-0">El email no es
+            válido</p>
+        }
         <span class="p-input-icon-left my-2">
           <i class="pi pi-user"></i>
           <input id="username" formControlName="username" type="text" pInputText placeholder="Username">
         </span>
+        @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
+          <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0">El username es
+            requerido</p>
+          <p *ngIf="formGroup.controls['username'].errors?.minlength" class="text-red-500 text-xs m-0">El username debe
+            tener al menos 3 caracteres</p>
+          <p *ngIf="formGroup.controls['username'].errors?.maxlength" class="text-red-500 text-xs m-0">El username debe
+            tener como máximo 50 caracteres</p>
+        }
         <span class="p-input-icon-left my-2">
           <i class="pi pi-id-card"></i>
-          <input id="dni" formControlName="dni" type="text" pInputText placeholder="DNI">
+          <input id="dni" formControlName="dni" type="text" pInputText placeholder="DNI" (input)="validateDNI($event)"/>
         </span>
+        @if (formGroup.controls['dni'].invalid && formGroup.controls['dni'].touched) {
+          <p *ngIf="formGroup.controls['dni'].errors?.required" class="text-red-500 text-xs m-0">El DNI es requerido</p>
+          <p *ngIf="formGroup.controls['dni'].errors?.minlength" class="text-red-500 text-xs m-0">El DNI debe tener 9
+            caracteres</p>
+          <p *ngIf="formGroup.controls['dni'].errors?.maxlength" class="text-red-500 text-xs m-0">El DNI debe tener 9
+            caracteres</p>
+          <p *ngIf="formGroup.controls['dni'].errors?.incorrect" class="text-red-500 text-xs m-0">El DNI no es
+            correcto</p>
+        }
         <p>Género:</p>
         <div class="flex flex-wrap gap-3">
           <div class="flex flex-column gap-3">
@@ -47,19 +86,17 @@
         </div>
         <span class="p-input-icon-left my-2">
           <i class="pi pi-lock"></i>
-          <p-password formControlName="password" [toggleMask]="true" placeholder="Password" [feedback]="true"
-                      class="ng-invalid ng-dirty"/>
+          <p-password formControlName="password" [toggleMask]="true" placeholder="Password" [feedback]="true"/>
         </span>
       </div>
     </form>
 
-    <ng-template pTemplate="footer">
-      <div class="flex align-items-center justify-content-center">
-        <p-button label="Crear cuenta" (click)="sendForm()" class="mx-2" [rounded]="true"></p-button>
+    <div class="mt-4">
+      <div class="">
+        <p-button label="Crear cuenta" (click)="sendForm()" [disabled]="!isValid()"/>
+        <p-button label="Volver" (click)="goBack()" icon="pi pi-arrow-left" [style]="{ 'margin-left': '.5em' }"
+                  severity="secondary"/>
       </div>
-    </ng-template>
+    </div>
   </p-card>
 </div>
-<p-toast></p-toast>
-
-

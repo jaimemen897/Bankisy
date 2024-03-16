@@ -14,6 +14,7 @@ import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {PaginatorModule} from "primeng/paginator";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {OverlayPanelModule} from "primeng/overlaypanel";
+import {InputTextModule} from "primeng/inputtext";
 
 export class User {
   id: string;
@@ -56,7 +57,8 @@ export class UserCreate {
     ToastModule,
     PaginatorModule,
     ConfirmDialogModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    InputTextModule
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
@@ -74,26 +76,28 @@ export class UsersComponent {
   sortOptions!: SelectItem[];
   sortField!: string;
   sortOrder!: number;
+  search!: string;
 
   lazyLoad(event: DataViewLazyLoadEvent) {
     let pageNumber = event.first / event.rows;
     if (pageNumber < 1) pageNumber = 1; else pageNumber++;
 
-    if (this.sortField) {
-      this.userService.getUsers(pageNumber, event.rows, this.sortField, this.sortOrder === -1).subscribe((data) => {
-        this.users = data.items;
-        this.totalRecords = data.totalCount;
-      });
-    } else {
-      this.userService.getUsers(pageNumber, event.rows).subscribe((data) => {
-        this.users = data.items;
-        this.totalRecords = data.totalCount;
-      });
-    }
+
+    this.userService.getUsers(pageNumber, event.rows, this.sortField, this.sortOrder === -1, this.search).subscribe((data) => {
+      this.users = data.items;
+      this.totalRecords = data.totalCount;
+    });
     this.sortOptions = [
-      {label: 'Nombre ascendiente', value: 'name'},
-      {label: 'Nombre descendiente', value: '!name'},
+      {label: 'Nombre ascendiente', value: 'name', icon: 'pi pi-sort-alpha-down'},
+      {label: 'Nombre descendiente', value: '!name', icon: 'pi pi-sort-alpha-up'},
     ];
+  }
+
+  onSearch(event: any) {
+    this.userService.getUsers(1, this.rows, this.sortField, this.sortOrder === -1, event.target.value).subscribe((data) => {
+      this.users = data.items;
+      this.totalRecords = data.totalCount;
+    });
   }
 
   onSortChange(event: any) {
@@ -141,12 +145,18 @@ export class UsersComponent {
     this.router.navigate(['/users/upload/' + id]).then(() => console.log('Navigate to file upload'));
   }
 
-  confirm(id:string) {
+  confirm(id: string) {
     this.confirmationService.confirm({
       header: '¿Desea eliminar el usuario?',
       message: 'Confirme para continuar',
       accept: () => {
-        this.messageService.add({severity: 'info', summary: 'Eliminado', detail: 'Usuario eliminado', life: 3000});
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Eliminado',
+          detail: 'Usuario eliminado',
+          life: 3000,
+          closable: false
+        });
         this.userService.deleteUser(id).subscribe(() => {
           this.userService.getUsers(1, this.rows).subscribe((data) => {
             this.users = data.items;
@@ -155,15 +165,14 @@ export class UsersComponent {
         });
       },
       reject: () => {
-        this.messageService.add({severity: 'error', summary: 'Cancelar', detail: 'No se ha eliminado', life: 3000});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Cancelar',
+          detail: 'No se ha eliminado',
+          life: 3000,
+          closable: false
+        });
       }
-    });
-  }
-
-  onSearch(event: any) {
-    this.userService.searchUsers(event.target.value).subscribe(users => {
-      this.users = users.items;
-      this.totalRecords = users.totalCount;
     });
   }
 }

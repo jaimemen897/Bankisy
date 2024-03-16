@@ -16,7 +16,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
     public async Task<Pagination<UserResponseDto>> GetUsers(int pageNumber, int pageSize, string orderBy,
-        bool descending)
+        bool descending, string? search = null)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -34,6 +34,13 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         }*/
 
         var usersQuery = bankContext.Users.Where(user => !user.IsDeleted);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            usersQuery = usersQuery.Where(user =>
+                user.Name.ToLower().Contains(search.ToLower()) || user.Email.ToLower().Contains(search.ToLower()));
+        }
+
         var paginatedUsers = await usersQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
             user => _mapper.Map<UserResponseDto>(user));
 
@@ -76,7 +83,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         await bankContext.SaveChangesAsync();
 
         await ClearCache();
-        
+
         return _mapper.Map<UserResponseDto>(userDto);
     }
 
@@ -108,7 +115,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         return await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ??
                throw new HttpException(400, "Invalid credentials");
     }
-    
+
     private async Task ClearCache()
     {
         var ids = await bankContext.Users.Select(u => u.Id).ToListAsync();

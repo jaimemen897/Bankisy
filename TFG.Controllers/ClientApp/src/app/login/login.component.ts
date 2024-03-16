@@ -7,6 +7,8 @@ import {InputTextModule} from "primeng/inputtext";
 import {DividerModule} from "primeng/divider";
 import {ToastModule} from "primeng/toast";
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
+import {Location} from "@angular/common";
+import {MessageService} from "primeng/api";
 
 export class Token {
   token: string;
@@ -39,7 +41,7 @@ export class User {
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private location: Location, private messageService: MessageService) {
   }
 
   formGroup = new FormGroup({

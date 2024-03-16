@@ -36,6 +36,7 @@ export class UsersUpdateComponent {
         this.formGroup.controls.username.setValue(user.username);
         this.formGroup.controls.dni.setValue(user.dni);
         this.formGroup.controls.gender.setValue(user.gender);
+        console.log(user.gender + 'gender');
       }
     );
   }
