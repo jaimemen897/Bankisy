@@ -65,7 +65,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
         return user ?? throw new HttpException(404, "User not found");
     }
-
+    
     private static void IsValid(UserCreateDto userCreateDto)
     {
         if (!Enum.TryParse(typeof(Gender), userCreateDto.Gender, true, out _))
@@ -74,7 +74,15 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
         }
     }
-
+    private static void IsValid(UserUpdateDto userUpdateDto)
+    {
+        if (!Enum.TryParse(typeof(Gender), userUpdateDto.Gender, true, out _))
+        {
+            throw new HttpException(400,
+                "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
+        }
+    }
+    
     public async Task<UserResponseDto> CreateUser(UserCreateDto user)
     {
         IsValid(user);
@@ -89,6 +97,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
     public async Task<UserResponseDto> UpdateUser(Guid id, UserUpdateDto user)
     {
+        IsValid(user);
         var userToUpdate = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
 
         userToUpdate = _mapper.Map(user, userToUpdate);
@@ -110,9 +119,9 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         await ClearCache();
     }
 
-    public async Task<User> ValidateUserCredentials(string email, string password)
+    public async Task<User> ValidateUserCredentials(string username, string password)
     {
-        return await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ??
+        return await bankContext.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == password) ??
                throw new HttpException(400, "Invalid credentials");
     }
 

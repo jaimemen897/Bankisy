@@ -1,4 +1,11 @@
 <router-outlet></router-outlet>
+<p-toast></p-toast>
+<div class="flex justify-content-center align-items-center gap-4 m-5">
+  <p-button label="Iniciar sesión" icon="pi pi-sign-in" (onClick)="goToLogin()"
+            class="p-button-primary"></p-button>
+    <p-button label="Registrarse" icon="pi pi-user-plus" (onClick)="goToRegister()"
+              class="p-button-success"></p-button>
+</div>
 <div class="card">
   <div
     class="dataView-container w-10 sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 mx-auto border-1 surface-border border-round">

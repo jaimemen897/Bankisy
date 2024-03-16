@@ -18,7 +18,7 @@ public class SessionService(UsersService usersService)
     
     public async Task<string> Login(UserLoginDto userLogin)
     {
-        var user = await usersService.ValidateUserCredentials(userLogin.Email, userLogin.Password) ??
+        var user = await usersService.ValidateUserCredentials(userLogin.Username, userLogin.Password) ??
                    throw new HttpException(401, "Invalid credentials");
 
         return GetToken(user);

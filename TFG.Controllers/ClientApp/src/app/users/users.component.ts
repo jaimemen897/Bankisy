@@ -124,12 +124,23 @@ export class UsersComponent {
   }
 
   goToAddUser() {
-    this.router.navigate(['/users/create']).then(() => console.log('Navigate to add users'));
+    this.router.navigate(['/register', 'create']);
   }
 
   goToEditUser(id: string) {
-    this.router.navigate(['/users/edit/' + id]).then(() => {
-    });
+    this.router.navigate(['/register', id, 'update']);
+  }
+
+  goToFileUpload(id: string) {
+    this.router.navigate(['/users/upload/' + id]).then(() => console.log('Navigate to file upload'));
+  }
+
+  goToLogin(){
+    this.router.navigate(['/login']);
+  }
+
+  goToRegister(){
+    this.router.navigate(['/register', 'register']);
   }
 
   deleteUser(id: string) {
@@ -139,10 +150,6 @@ export class UsersComponent {
         this.totalRecords = data.totalCount;
       });
     });
-  }
-
-  goToFileUpload(id: string) {
-    this.router.navigate(['/users/upload/' + id]).then(() => console.log('Navigate to file upload'));
   }
 
   confirm(id: string) {
