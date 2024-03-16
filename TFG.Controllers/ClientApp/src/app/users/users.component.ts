@@ -10,7 +10,7 @@ import {DataViewLazyLoadEvent, DataViewModule} from "primeng/dataview";
 import {FormsModule} from "@angular/forms";
 import {SpeedDialModule} from "primeng/speeddial";
 import {ToastModule} from "primeng/toast";
-import {ConfirmationService, MessageService} from "primeng/api";
+import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {PaginatorModule} from "primeng/paginator";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {OverlayPanelModule} from "primeng/overlaypanel";
@@ -71,13 +71,41 @@ export class UsersComponent {
   rows: number = 5;
   totalRecords: number = 0;
 
+  sortOptions!: SelectItem[];
+  sortField!: string;
+  sortOrder!: number;
+
   lazyLoad(event: DataViewLazyLoadEvent) {
     let pageNumber = event.first / event.rows;
     if (pageNumber < 1) pageNumber = 1; else pageNumber++;
-    this.userService.getUsers(pageNumber, event.rows).subscribe((data) => {
-      this.users = data.items;
-      this.totalRecords = data.totalCount;
-    });
+
+    if (this.sortField) {
+      this.userService.getUsers(pageNumber, event.rows, this.sortField, this.sortOrder === -1).subscribe((data) => {
+        this.users = data.items;
+        this.totalRecords = data.totalCount;
+      });
+    } else {
+      this.userService.getUsers(pageNumber, event.rows).subscribe((data) => {
+        this.users = data.items;
+        this.totalRecords = data.totalCount;
+      });
+    }
+    this.sortOptions = [
+      {label: 'Nombre ascendiente', value: 'name'},
+      {label: 'Nombre descendiente', value: '!name'},
+    ];
+  }
+
+  onSortChange(event: any) {
+    let value = event.value;
+
+    if (value.indexOf('!') === 0) {
+      this.sortOrder = -1;
+      this.sortField = value.substring(1, value.length);
+    } else {
+      this.sortOrder = 1;
+      this.sortField = value;
+    }
   }
 
   getRole(user: User) {
@@ -129,6 +157,13 @@ export class UsersComponent {
       reject: () => {
         this.messageService.add({severity: 'error', summary: 'Cancelar', detail: 'No se ha eliminado', life: 3000});
       }
+    });
+  }
+
+  onSearch(event: any) {
+    this.userService.searchUsers(event.target.value).subscribe(users => {
+      this.users = users.items;
+      this.totalRecords = users.totalCount;
     });
   }
 }

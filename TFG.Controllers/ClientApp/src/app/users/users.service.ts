@@ -21,8 +21,28 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  getUsers(pageNumber: number, pageSize: number): Observable<Pagination<User>> {
-    const url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+  getUsers(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean): Observable<Pagination<User>> {
+    let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+    if (orderBy) {
+      url += `&orderBy=${orderBy}`;
+    }
+    if (descending) {
+      url += `&descending=${descending}`;
+    }
+    return this.http.get<Pagination<User>>(url).pipe(
+      map(response => ({
+        currentPage: response.currentPage,
+        totalPages: response.totalPages,
+        pageSize: response.pageSize,
+        totalCount: response.totalCount,
+        totalRecords: response.totalRecords,
+        items: response.items
+      }))
+    );
+  }
+
+  searchUsers(search: string){
+    const url = `${this.apiUrl}/search?search=${search}`;
     return this.http.get<Pagination<User>>(url).pipe(
       map(response => ({
         currentPage: response.currentPage,

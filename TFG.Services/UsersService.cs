@@ -27,18 +27,18 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        var cacheKey = $"GetUsers-{pageNumber}-{pageSize}-{orderBy}-{descending}";
+        /*var cacheKey = $"GetUsers-{pageNumber}-{pageSize}-{orderBy}-{descending}";
         if (cache.TryGetValue(cacheKey, out Pagination<UserResponseDto>? users))
         {
             if (users != null) return users;
-        }
+        }*/
 
         var usersQuery = bankContext.Users.Where(user => !user.IsDeleted);
         var paginatedUsers = await usersQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
             user => _mapper.Map<UserResponseDto>(user));
 
-        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, paginatedUsers, cacheEntryOptions);
+        /*var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, paginatedUsers, cacheEntryOptions);*/
 
         return paginatedUsers;
     }
@@ -112,7 +112,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
     private async Task ClearCache()
     {
         var ids = await bankContext.Users.Select(u => u.Id).ToListAsync();
-        cache.Remove("GetUsers-1-10-Id-False");
+        /*cache.Remove("GetUsers-1-10-Id-False");*/
         foreach (var id in ids)
         {
             cache.Remove("GetUser-" + id);
