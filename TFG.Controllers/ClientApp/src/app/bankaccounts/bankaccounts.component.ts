@@ -12,6 +12,8 @@ import {InputTextModule} from "primeng/inputtext";
 import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
 import {FormsModule} from "@angular/forms";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 export class BankAccount {
   id: string;
@@ -43,7 +45,9 @@ export class BankAccountCreate {
     InputTextModule,
     TooltipModule,
     ButtonModule,
-    FormsModule
+    FormsModule,
+    OverlayPanelModule,
+    ConfirmDialogModule
   ],
   templateUrl: './bankaccounts.component.html',
   styleUrl: './bankaccounts.component.css'
@@ -127,7 +131,12 @@ export class BankaccountsComponent {
     this.router.navigate(['/bankaccounts/edit', id]);
   }
 
+  goToTransactions(id: string) {
+    this.router.navigate(['/transactions', id]);
+  }
+
   deleteBankAccount(id: string) {
+    console.log(id);
     this.confirmationService.confirm({
       header: '¿Desea eliminar la cuenta de banco?',
       message: 'Confirme para continuar',
@@ -190,5 +199,15 @@ export class BankaccountsComponent {
     } else {
       return 'info';
     }
+  }
+
+  clearFilters() {
+    this.search = '';
+    this.filter = '';
+
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
   }
 }

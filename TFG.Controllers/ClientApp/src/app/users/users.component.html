@@ -75,7 +75,7 @@
                     <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning"/>
                     <p-button icon="pi pi-upload" (click)="goToFileUpload(user.id)" severity="help"/>
                     <div class="card flex justify-content-center">
-                      <p-toast></p-toast>
+
                       <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger"></p-button>
                     </div>
                   </div>
@@ -83,6 +83,7 @@
               </div>
             </div>
           }
+          <p-toast></p-toast>
           <p-confirmDialog #cd>
             <ng-template pTemplate="headless" let-message>
               <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
