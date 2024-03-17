@@ -17,6 +17,7 @@ namespace TFG.Context.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    iban = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
                     balance = table.Column<decimal>(type: "numeric", nullable: false),
                     account_type = table.Column<int>(type: "integer", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false)

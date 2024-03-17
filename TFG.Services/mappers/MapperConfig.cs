@@ -19,18 +19,21 @@ public abstract class MapperConfig
                 .ForMember(dest => dest.UsersId, act => act.Ignore());
 
             cfg.CreateMap<BankAccountUpdateDto, BankAccount>()
+                .ForMember(dest => dest.Iban, opt => opt.Ignore())
                 .ForMember(dest => dest.Balance, opt => opt.Ignore())
                 .ForMember(dest => dest.AccountType, opt => opt.Ignore())
                 .ForMember(dest => dest.UsersId, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
+                    dest.Iban = src.Iban ?? dest.Iban;
                     dest.Balance = src.Balance ?? dest.Balance;
                     dest.AccountType = src.AccountType ?? dest.AccountType;
                 });
 
             cfg.CreateMap<BankAccount, BankAccountResponseDto>()
                 .ForMember(dest => dest.AccountType, act => act.MapFrom(src => src.AccountType.ToString()))
-                .ForMember(dest => dest.UsersId, act => act.MapFrom(src => src.UsersId.Select(u => u.Id).ToList()));
+                .ForMember(dest => dest.UsersId, act => act.MapFrom(src => src.UsersId.Select(u => u.Id).ToList()))
+                .ForMember(dest => dest.UsersName, act => act.MapFrom(src => src.UsersId.Select(u => u.Name).ToList()));
 
             /*USERS*/
             cfg.CreateMap<UserCreateDto, User>()

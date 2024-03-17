@@ -74,6 +74,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
         }
     }
+    
     private static void IsValid(UserUpdateDto userUpdateDto)
     {
         if (!Enum.TryParse(typeof(Gender), userUpdateDto.Gender, true, out _))

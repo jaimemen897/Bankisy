@@ -7,6 +7,8 @@ namespace TFG.Context.Models;
 public class BankAccount
 {
     [Column("id"), Key] public Guid Id { get; set; }
+    
+    [Column("iban"), Required, StringLength(34)] public string Iban { get; set; }
 
     [Column("balance")] public decimal Balance { get; set; }
 

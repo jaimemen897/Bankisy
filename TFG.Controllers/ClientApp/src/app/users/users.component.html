@@ -3,7 +3,9 @@
 <div class="flex justify-content-center align-items-center gap-4 m-5">
   <p-button label="Iniciar sesión" icon="pi pi-sign-in" (onClick)="goToLogin()"
             class="p-button-primary"></p-button>
-    <p-button label="Registrarse" icon="pi pi-user-plus" (onClick)="goToRegister()"
+  <p-button label="Registrarse" icon="pi pi-user-plus" (onClick)="goToRegister()"
+              class="p-button-success"></p-button>
+  <p-button label="Cuentas de banco" icon="pi pi-money-bill" (onClick)="goToBankAccounts()"
               class="p-button-success"></p-button>
 </div>
 <div class="card">
@@ -12,7 +14,7 @@
     <p-dataView [value]="users" [layout]="layout" [emptyMessage]="'No se han encontrado usuarios'" [lazy]="true"
                 (onLazyLoad)="lazyLoad($event)" [paginator]="true" [rows]="rows" [totalRecords]="totalRecords"
                 [rowsPerPageOptions]="[5, 10, 20]"
-                [showFirstLastIcon]="false" [alwaysShowPaginator]="false" [sortField]="sortField"
+                [showFirstLastIcon]="false" [sortField]="sortField"
                 [sortOrder]="sortOrder">
 
       <ng-template pTemplate="header">
@@ -24,7 +26,7 @@
             <div class="p-toolbar-group-center">
               <span class="p-input-icon-left">
                 <i class="pi pi-search"></i>
-                <input pInputText placeholder="Buscar" pTooltip="Nombre, email y DNI" [autoHide]="true"
+                <input pInputText placeholder="Buscar" pTooltip="Nombre, email o DNI" [autoHide]="true"
                        (input)="onSearch($event)">
               </span>
             </div>
@@ -74,7 +76,7 @@
                     <p-button icon="pi pi-upload" (click)="goToFileUpload(user.id)" severity="help"/>
                     <div class="card flex justify-content-center">
                       <p-toast></p-toast>
-                      <p-button (click)="confirm(user.id)" icon="pi pi-trash" severity="danger"></p-button>
+                      <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger"></p-button>
                     </div>
                   </div>
                 </div>

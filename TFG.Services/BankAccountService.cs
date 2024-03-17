@@ -1,4 +1,6 @@
 using AutoMapper;
+using IbanNet;
+using IbanNet.Registry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using TFG.Context.Context;
@@ -17,7 +19,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
     public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy,
-        bool descending)
+        bool descending, string? search = null, string? filter = null)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -28,18 +30,36 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        var cacheKey = $"GetBankAccounts-{pageNumber}-{pageSize}-{orderBy}-{descending}";
+        /*var cacheKey = $"GetBankAccounts-{pageNumber}-{pageSize}-{orderBy}-{descending}";
         if (cache.TryGetValue(cacheKey, out Pagination<BankAccountResponseDto>? bankAccounts))
         {
             if (bankAccounts != null) return bankAccounts;
-        }
+        }*/
 
         var bankAccountsQuery = bankContext.BankAccounts.Include(ba => ba.UsersId).Where(ba => !ba.IsDeleted);
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var userNames = search.Split(',');
+
+            bankAccountsQuery = bankAccountsQuery.Where(ba => ba.Balance.ToString().Contains(search) ||
+                                                              ba.Iban.Contains(search) || 
+                                                              ba.UsersId.Any(u => userNames.Contains(u.Name)));
+        }
+        
+        if (!string.IsNullOrWhiteSpace(filter))
+        {
+            if (Enum.TryParse<AccountType>(filter, out var accountTypeFilter))
+            {
+                bankAccountsQuery = bankAccountsQuery.Where(ba => ba.AccountType == accountTypeFilter);
+            }
+
+        }
+
         var paginatedBankAccounts = await bankAccountsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
             bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount));
-        
-        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, paginatedBankAccounts, cacheEntryOptions);
+
+        /*var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, paginatedBankAccounts, cacheEntryOptions);*/
 
         return paginatedBankAccounts;
     }
@@ -91,8 +111,8 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
     public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(Guid bankAccountId)
     {
         var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountId) ??
-            throw new HttpException(404, "Bank account not found");
-        
+                          throw new HttpException(404, "Bank account not found");
+
         var transactions = await bankContext.Transactions
             .Where(t => t.IdAccountOrigin == bankAccount.Id || t.IdAccountDestination == bankAccount.Id)
             .ToListAsync();
@@ -104,37 +124,40 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
     {
         var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountId) ??
                           throw new HttpException(404, "Bank account not found");
-        
+
         var transactions = await bankContext.Transactions
             .Where(t => t.IdAccountOrigin == bankAccount.Id)
             .ToListAsync();
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
-    
+
     public async Task<List<TransactionResponseDto>> GetIncomesForAccount(Guid bankAccountId)
     {
         var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountId) ??
                           throw new HttpException(404, "Bank account not found");
-        
+
         var transactions = await bankContext.Transactions
             .Where(t => t.IdAccountDestination == bankAccount.Id)
             .ToListAsync();
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
-    
+
     public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto)
     {
         IsValid(bankAccountCreateDto);
         var users = await bankContext.Users.Where(u => bankAccountCreateDto.UsersId.Contains(u.Id)).ToListAsync();
-
         if (users.Count != bankAccountCreateDto.UsersId.Count)
         {
             throw new HttpException(404, "Users not found");
         }
 
+        var ibanGenerator = new IbanGenerator();
+        var iban = ibanGenerator.Generate("ES");
+
         var bankAccount = _mapper.Map<BankAccount>(bankAccountCreateDto);
+        bankAccount.Iban = iban.ToString();
         bankAccount.UsersId = users;
         foreach (var user in users)
         {
@@ -147,7 +170,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         var bankAccountResponseDto = _mapper.Map<BankAccountResponseDto>(bankAccount);
 
         await ClearCache();
-        
+
         return bankAccountResponseDto;
     }
 
@@ -156,6 +179,17 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         var bankAccountToUpdate =
             await bankContext.BankAccounts.Include(ba => ba.UsersId).FirstOrDefaultAsync(ba => ba.Id == id) ??
             throw new HttpException(404, "Bank account not found");
+
+        if (bankAccount.Iban != null)
+        {
+            var ibanValidator = new IbanValidator();
+            var validationResult = ibanValidator.Validate(bankAccount.Iban);
+            if (validationResult.IsValid == false)
+            {
+                throw new HttpException(400, "Invalid Iban");
+            }
+            bankAccountToUpdate.Iban = bankAccount.Iban;
+        }
 
         if (bankAccount.UsersId != null)
         {
@@ -198,11 +232,11 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
 
         await ClearCache();
     }
-    
+
     private async Task ClearCache()
     {
         var ids = await bankContext.BankAccounts.Select(ba => ba.Id).ToListAsync();
-        cache.Remove("GetBankAccounts-1-10-Id-false");
+        /*cache.Remove("GetBankAccounts-1-10-Id-false");*/
         foreach (var id in ids)
         {
             cache.Remove("GetBankAccount-" + id);

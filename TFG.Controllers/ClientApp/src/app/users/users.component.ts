@@ -82,7 +82,6 @@ export class UsersComponent {
     let pageNumber = event.first / event.rows;
     if (pageNumber < 1) pageNumber = 1; else pageNumber++;
 
-
     this.userService.getUsers(pageNumber, event.rows, this.sortField, this.sortOrder === -1, this.search).subscribe((data) => {
       this.users = data.items;
       this.totalRecords = data.totalCount;
@@ -135,24 +134,7 @@ export class UsersComponent {
     this.router.navigate(['/users/upload/' + id]).then(() => console.log('Navigate to file upload'));
   }
 
-  goToLogin(){
-    this.router.navigate(['/login']);
-  }
-
-  goToRegister(){
-    this.router.navigate(['/register', 'register']);
-  }
-
-  deleteUser(id: string) {
-    this.userService.deleteUser(id).subscribe(() => {
-      this.userService.getUsers(1, this.rows).subscribe((data) => {
-        this.users = data.items;
-        this.totalRecords = data.totalCount;
-      });
-    });
-  }
-
-  confirm(id: string) {
+  delete(id: string) {
     this.confirmationService.confirm({
       header: '¿Desea eliminar el usuario?',
       message: 'Confirme para continuar',
@@ -181,5 +163,17 @@ export class UsersComponent {
         });
       }
     });
+  }
+
+  goToBankAccounts(){
+    this.router.navigate(['/bankaccounts']);
+  }
+
+  goToLogin(){
+    this.router.navigate(['/login']);
+  }
+
+  goToRegister(){
+    this.router.navigate(['/register', 'register']);
   }
 }

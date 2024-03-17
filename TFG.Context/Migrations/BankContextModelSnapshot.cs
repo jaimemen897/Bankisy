@@ -37,6 +37,12 @@ namespace TFG.Context.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("balance");
 
+                    b.Property<string>("Iban")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("character varying(34)")
+                        .HasColumnName("iban");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");

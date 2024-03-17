@@ -12,7 +12,7 @@ using TFG.Context.Context;
 namespace TFG.Context.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20240315145014_Initial")]
+    [Migration("20240317082249_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -39,6 +39,12 @@ namespace TFG.Context.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("numeric")
                         .HasColumnName("balance");
+
+                    b.Property<string>("Iban")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("character varying(34)")
+                        .HasColumnName("iban");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")

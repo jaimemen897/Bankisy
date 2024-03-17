@@ -14,9 +14,9 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
 {
     [HttpGet()]
     public async Task<ActionResult<Pagination<BankAccountResponseDto>>> GetBankAccounts([FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false, [FromQuery] string? search = null, [FromQuery] string? filter = null)
     {
-        return await bankAccountService.GetBankAccounts(pageNumber, pageSize, orderBy, descending);
+        return await bankAccountService.GetBankAccounts(pageNumber, pageSize, orderBy, descending, search, filter);
     }
 
     [HttpGet("{id}")]
