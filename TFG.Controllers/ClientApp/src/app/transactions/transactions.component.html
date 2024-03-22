@@ -1,1 +1,127 @@
-<p>transactions works!</p>
+<router-outlet></router-outlet>
+<p-toast></p-toast>
+<div class="card">
+  <p-table [value]="transactions" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" (onLazyLoad)="lazyLoad($event)"
+           [totalRecords]="totalRecords" [rows]="rows" [tableStyle]="{ 'min-width': '75rem' }"
+           [globalFilterFields]="['concept', 'amount', 'idAccountOrigin', 'idAccountDestination']">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="concept" style="width:22%">Concepto
+          <p-sortIcon field="concept"/>
+        </th>
+        <th pSortableColumn="amount" style="width:22%">Cantidad
+          <p-sortIcon field="amount"/>
+        </th>
+        <th pSortableColumn="idAccountOrigin" style="width:22%">Cuenta origen
+          <p-sortIcon field="idAccountOrigin"/>
+        </th>
+        <th pSortableColumn="idAccountDestination" style="width:22%">Cuenta destino
+          <p-sortIcon field="idAccountDestination"/>
+        </th>
+        <th pSortableColumn="date" style="width:22%">Fecha
+          <p-sortIcon field="date"/>
+        </th>
+        <th style="width:22%">
+          <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
+        </th>
+      </tr>
+      <tr>
+        <!--BUSCAR POR CONCEPTO-->
+        <th>
+          <p-columnFilter type="text" field="concept" (input)="onSearch($event)" placeholder="Buscar por concepto"
+                          [showMenu]="false"/>
+        </th>
+        <!--BUSCAR POR CANTIDAD-->
+        <th>
+          <p-columnFilter type="text" field="amount" (input)="onSearch($event)" placeholder="Buscar por cantidad"
+                          [showMenu]="false"/>
+        </th>
+        <!--BUSCAR POR CUENTA ORIGEN-->
+        <th>
+          <p-columnFilter type="text" field="idAccountOrigin" (input)="onSearch($event)"
+                          placeholder="Buscar por cuenta origen" [showMenu]="false"/>
+        </th>
+        <!--BUSCAR POR CUENTA DESTINO-->
+        <th>
+          <p-columnFilter type="text" field="idAccountDestination" (input)="onSearch($event)"
+                          placeholder="Buscar por cuenta destino" [showMenu]="false"/>
+        </th>
+        <!--BUSCAR POR FECHA-->
+        <th>
+          <p-columnFilter type="date" field="date" (input)="onSearch($event)" placeholder="Buscar por fecha"
+                          [showMenu]="false"/>
+        </th>
+        <!--CLEAR-->
+        <th>
+          <p-button label="Limpiar filtros" (onClick)="clearFilters()" [text]="true" class="w-12"/>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-transaction>
+      <tr>
+        <td>
+          {{ transaction.concept }}
+        </td>
+        <td>
+          <p-tag [value]="transaction.amount.toString() + '€'" [severity]="getAmountColor(transaction.amount)"></p-tag>
+        </td>
+        <td>
+          {{ transaction.idAccountOrigin }}
+        </td>
+        <td>
+          {{ transaction.idAccountDestination }}
+        </td>
+        <td>
+          {{ transaction.date | date: 'dd/MM/yyyy' }}
+        </td>
+        <td>
+          <div class="flex gap-2">
+            <p-overlayPanel #op>
+              <ng-template pTemplate="content">
+                <h4 class="text-left">Información de la transacción</h4>
+                <p>Concepto: '{{ transaction.concept }}'</p>
+                <p>Cantidad: {{ transaction.amount }}€</p>
+                <p>Cuenta origen: {{ transaction.idAccountOrigin }}</p>
+                <p>Cuenta destino: {{ transaction.idAccountDestination }}</p>
+                <p>Fecha: {{ transaction.date | date: 'dd/MM/yyyy' }}</p>
+              </ng-template>
+            </p-overlayPanel>
+            <p-button (click)="op.toggle($event)" icon="pi pi-info-circle" severity="info"/>
+            <p-button icon="pi pi-pencil" (click)="goToEditTransaction(transaction.id)" severity="warning"/>
+            <p-button icon="pi pi-money-bill" (click)="goToTransactions(transaction.id)" severity="success"/>
+            <div class="card flex justify-content-center">
+              <p-button (click)="deleteTransaction(transaction.id)" icon="pi pi-trash" severity="danger"></p-button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">No se han encontrado transacciones</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-toast></p-toast>
+  <p-confirmDialog #cd>
+    <ng-template pTemplate="headless" let-message>
+      <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+        <div
+          class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
+          <i class="pi pi-trash text-5xl"></i>
+        </div>
+        <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
+        <p class="mb-0 text-left">{{ message.message }}</p>
+        <div class="flex align-items-center justify-content-center gap-2 mt-4">
+          <button pButton label="Eliminar" (click)="cd.accept()" class="w-8rem p-button-danger"></button>
+          <button pButton label="Cancelar" (click)="cd.reject()"
+                  class="p-button-danger p-button-outlined"></button>
+        </div>
+      </div>
+    </ng-template>
+  </p-confirmDialog>
+
+</div>

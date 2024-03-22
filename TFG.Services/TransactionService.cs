@@ -37,7 +37,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         if (!string.IsNullOrWhiteSpace(search))
         {
             transactionsQuery = transactionsQuery.Where(t => t.IdAccountOrigin.ToString().Contains(search) ||
-                                                             t.IdAccountDestination.ToString().Contains(search));
+                                                             t.IdAccountDestination.ToString().Contains(search) ||
+                                                             t.Concept.Contains(search) || t.Date.ToString().Contains(search) || t.Amount.ToString().Contains(search));
         }
         
         var paginatedTransactions = await transactionsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
