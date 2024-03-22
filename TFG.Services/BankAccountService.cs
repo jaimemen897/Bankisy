@@ -25,7 +25,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         pageSize = pageSize > 0 ? pageSize : 10;
 
         if (!typeof(BankAccountResponseDto).GetProperties()
-                .Any(p => string.Equals(p.Name, orderBy, StringComparison.CurrentCultureIgnoreCase)))
+                .Any(p => string.Equals(p.Name, orderBy, StringComparison.CurrentCultureIgnoreCase) && orderBy.ToLower() != "usersname"))
         {
             throw new HttpException(400, "Invalid orderBy parameter");
         }

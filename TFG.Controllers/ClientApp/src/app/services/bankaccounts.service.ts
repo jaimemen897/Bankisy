@@ -16,11 +16,11 @@ export class BankAccountService {
 
   getBankAccounts(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string): Observable<Pagination<BankAccount>> {
     let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-    if (orderBy) {
-      url += `&orderBy=${orderBy}`;
-    }
     if (descending) {
       url += `&descending=${descending}`;
+    }
+    if (orderBy) {
+      url += `&orderBy=${orderBy}`;
     }
     if (search) {
       url += `&search=${search}`;

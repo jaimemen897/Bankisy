@@ -16,7 +16,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
-        bool descending)
+        bool descending, string? search = null)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -27,18 +27,24 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        var cacheKey = $"GetTransactions-{pageNumber}-{pageSize}-{orderBy}-{descending}";
+        /*var cacheKey = $"GetTransactions-{pageNumber}-{pageSize}-{orderBy}-{descending}";
         if (cache.TryGetValue(cacheKey, out Pagination<TransactionResponseDto>? transactions))
         {
             if (transactions != null) return transactions;
-        }
+        }*/
 
-        var transactionsQuery = bankContext.Transactions;
+        var transactionsQuery = bankContext.Transactions.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            transactionsQuery = transactionsQuery.Where(t => t.IdAccountOrigin.ToString().Contains(search) ||
+                                                             t.IdAccountDestination.ToString().Contains(search));
+        }
+        
         var paginatedTransactions = await transactionsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
             transaction => _mapper.Map<TransactionResponseDto>(transaction));
         
-        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, paginatedTransactions, cacheEntryOptions);
+        /*var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, paginatedTransactions, cacheEntryOptions);*/
 
         return paginatedTransactions;
     }
@@ -124,7 +130,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
     private async Task ClearCache()
     {
         var ids = await bankContext.Transactions.Select(t => t.Id).ToListAsync();
-        cache.Remove("GetTransactions-1-10-Id-False");
+        /*cache.Remove("GetTransactions-1-10-Id-False");*/
         foreach (var id in ids)
         {
             cache.Remove("GetTransaction-" + id);

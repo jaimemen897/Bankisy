@@ -57,7 +57,11 @@ export class BankaccountsComponent {
 
   lazyLoad(event: any) {
     let pageNumber = Math.floor(event.first / event.rows) + 1;
-    this.bankAccountService.getBankAccounts(pageNumber, event.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+    let sortField = event.sortField;
+    let sortOrder = event.sortOrder;
+
+
+    this.bankAccountService.getBankAccounts(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalRecords;
       for (let bankAccount of this.bankAccounts) {
@@ -184,6 +188,13 @@ export class BankaccountsComponent {
     } else {
       return 'info';
     }
+  }
+
+  clearOrders() {
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
   }
 
   clearFilters() {

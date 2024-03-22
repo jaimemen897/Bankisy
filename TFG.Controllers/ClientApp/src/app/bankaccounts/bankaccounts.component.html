@@ -1,11 +1,5 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
-<div class="flex justify-content-center align-items-center gap-4 m-5">
-  <p-button label="Iniciar sesión" icon="pi pi-sign-in" (onClick)="goToLogin()"
-            class="p-button-primary"></p-button>
-  <p-button label="Usuarios" icon="pi pi-user-plus" (onClick)="goToUsers()"
-            class="p-button-success"></p-button>
-</div>
 <div class="card">
   <p-table [value]="bankAccounts" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
            [rowsPerPageOptions]="[10, 25, 50]" (onLazyLoad)="lazyLoad($event)"
@@ -13,12 +7,13 @@
            [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']">
     <ng-template pTemplate="header">
       <tr>
-        <th style="width:22%">IBAN</th>
-        <th style="width:12%">Tipo de cuenta</th>
-        <th style="width:20%">Usuario</th>
-        <th style="width:12%">Saldo</th>
-        <th style="width:12%">Estado</th>
-        <th style="width:22%">Acciones</th>
+        <th pSortableColumn="IBAN" style="width:22%">IBAN <p-sortIcon field="IBAN"/></th>
+        <th pSortableColumn="accountType" style="width:22%">Tipo de cuenta <p-sortIcon field="accountType"/></th>
+        <th style="width:22%">Usuario </th>
+        <th pSortableColumn="balance" style="width:22%">Saldo <p-sortIcon field="balance"/></th>
+        <th pSortableColumn="isDeleted" style="width:22%">Estado <p-sortIcon field="isDeleted"/></th>
+        <th style="width:22%"><p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
+
       </tr>
       <tr>
         <!--BUSCAR POR IBAN-->
@@ -68,7 +63,7 @@
         </th>
         <!--CLEAR-->
         <th>
-          <p-button label="Limpiar filtros" (onClick)="clearFilters()" class="w-12"/>
+          <p-button label="Limpiar filtros" (onClick)="clearFilters()" [text]="true" class="w-12"/>
         </th>
       </tr>
     </ng-template>
@@ -83,9 +78,12 @@
         </td>
         <td>
           <div class="inline-block vertical-align-middle">
-            <img [alt]="account.usersName" src="https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg"
-                 width="24" class="vertical-align-middle"/>
-            <span class="ml-1 mt-1">{{ account.usersName }}</span>
+            <!--border radius-->
+            <div class="bg-blue-50 border-50 border-round inline-block">
+              <img [alt]="account.usersName"
+                   src="https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg"
+                   width="24" class="vertical-align-middle"/>
+              <span class="ml-1 mt-1">{{ account.usersName }}</span></div>
           </div>
         </td>
         <td>
