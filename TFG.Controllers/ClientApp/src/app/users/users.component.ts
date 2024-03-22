@@ -1,5 +1,4 @@
 import {Component} from '@angular/core';
-import {UserService} from "./users.service";
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
 import {NgClass, NgForOf, NgOptimizedImage} from "@angular/common";
@@ -15,29 +14,8 @@ import {PaginatorModule} from "primeng/paginator";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {InputTextModule} from "primeng/inputtext";
-
-export class User {
-  id: string;
-  name: string;
-  email: string;
-  username: string;
-  dni: string;
-  gender: string;
-  avatar: string;
-  role: string;
-  isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export class UserCreate {
-  name: string;
-  email: string;
-  username: string;
-  dni: string
-  gender: string;
-  password: string;
-}
+import {User} from "../models/User";
+import {UserService} from "../services/users.service";
 
 @Component({
   selector: 'app-users',
@@ -165,15 +143,15 @@ export class UsersComponent {
     });
   }
 
-  goToBankAccounts(){
+  goToBankAccounts() {
     this.router.navigate(['/bankaccounts']);
   }
 
-  goToLogin(){
+  goToLogin() {
     this.router.navigate(['/login']);
   }
 
-  goToRegister(){
+  goToRegister() {
     this.router.navigate(['/register', 'register']);
   }
 }

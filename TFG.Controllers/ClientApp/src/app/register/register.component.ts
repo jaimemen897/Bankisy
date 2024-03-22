@@ -9,10 +9,10 @@ import {ToastModule} from "primeng/toast";
 import {PasswordModule} from "primeng/password";
 import {RadioButtonModule} from "primeng/radiobutton";
 import {Location, NgIf} from '@angular/common';
-import {AuthService} from "../auth/auth.service";
-import {UserCreate} from "../users/users.component";
-import {UserService} from "../users/users.service";
 import {Token} from "../login/login.component";
+import {AuthService} from "../services/auth.service";
+import {UserService} from "../services/users.service";
+import {UserCreate} from "../models/UserCreate";
 
 @Component({
   selector: 'app-register',

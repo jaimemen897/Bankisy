@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {Router, RouterOutlet} from "@angular/router";
-import {BankAccountService} from "./bankaccounts.service";
 import {ToastModule} from "primeng/toast";
 import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
@@ -14,22 +13,8 @@ import {ButtonModule} from "primeng/button";
 import {FormsModule} from "@angular/forms";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-
-export class BankAccount {
-  id: string;
-  iban: string;
-  balance: number;
-  accountType: string;
-  usersId: string[];
-  usersName: string[];
-  isDeleted: boolean;
-}
-
-export class BankAccountCreate {
-  balance: number;
-  accountType: string;
-  usersId: string[];
-}
+import {BankAccount} from "../models/BankAccount";
+import {BankAccountService} from "../services/bankaccounts.service";
 
 @Component({
   selector: 'app-bankaccounts',

@@ -1,7 +1,8 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {map, Observable, tap} from 'rxjs';
-import {User, UserCreate} from "./users.component";
+import {map, Observable} from 'rxjs';
+import {User} from '../models/User';
+import {UserCreate} from "../models/UserCreate";
 
 export interface Pagination<T> {
   currentPage: number;

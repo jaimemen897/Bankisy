@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
-import {BankAccount, BankAccountCreate} from "./bankaccounts.component";
-import {Pagination} from "../users/users.service";
+import {Pagination} from "./users.service";
+import {BankAccount} from "../models/BankAccount";
+import {BankAccountCreate} from "../models/BankAccountCreate";
 
 @Injectable({
   providedIn: 'root'

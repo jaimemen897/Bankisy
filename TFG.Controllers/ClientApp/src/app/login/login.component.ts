@@ -9,19 +9,14 @@ import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/route
 import {NgIf} from "@angular/common";
 import {MessageService} from "primeng/api";
 import {MessageModule} from "primeng/message";
-import {AuthService} from "../auth/auth.service";
+import {UserLogin} from "../models/UserLogin";
+import {AuthService} from "../services/auth.service";
 
 export class Token {
   token: string;
-  user: User;
+  user: UserLogin;
 }
 
-export class User {
-  Id: string;
-  Name: string;
-  Email: string;
-  Role: number;
-}
 
 @Component({
   selector: 'app-login',

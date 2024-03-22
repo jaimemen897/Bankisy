@@ -106,7 +106,7 @@
                 <p class="text-left">Estado: {{ account.isDeleted ? 'Inactiva' : 'Activa' }}</p>
               </ng-template>
             </p-overlayPanel>
-            <p-button (click)="op.toggle($event)" icon="pi pi-search" severity="info"/>
+            <p-button (click)="op.toggle($event)" icon="pi pi-info-circle" severity="info"/>
             <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.id)" severity="warning"/>
             <p-button icon="pi pi-money-bill" (click)="goToTransactions(account.id)" severity="success"/>
             <div class="card flex justify-content-center">

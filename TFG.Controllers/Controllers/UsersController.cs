@@ -35,6 +35,13 @@ public class UsersController(UsersService usersService) : ControllerBase
     {
         return await usersService.UpdateUser(id, user);
     }
+    
+    [HttpPatch("{id}/avatar")]
+    public async Task<ActionResult<UserResponseDto>> UpdateUserAvatar(Guid id, [FromForm] IFormFile avatar)
+    {
+        var host = $"{Request.Scheme}://{Request.Host}";
+        return await usersService.UploadAvatar(id, avatar, host);
+    }
 
     [HttpDelete("{id}")]
     public async Task DeleteUser(Guid id)

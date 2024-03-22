@@ -8,13 +8,13 @@ import {ButtonModule} from "primeng/button";
 import {ConfirmationService, FilterMatchMode, PrimeNGConfig} from 'primeng/api';
 import {UsersComponent} from "./users/users.component";
 import {MessageService} from 'primeng/api';
-import {ErrorHttpInterceptor} from "./Redirections/error-http.interceptor";
 import {routes} from "./Redirections/app.routing";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {UserService} from "./users/users.service";
 import {MessagesModule} from "primeng/messages";
-import {AuthInterceptor} from "./auth/AuthInterceptor";
 import {LoginComponent} from "./login/login.component";
+import {AuthInterceptor} from "./interceptors/auth.interceptor";
+import {UserService} from "./services/users.service";
+import {ErrorHttpInterceptor} from "./interceptors/error-http.interceptor";
 
 @NgModule({
   declarations: [
