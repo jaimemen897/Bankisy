@@ -15,22 +15,24 @@ import {LoginComponent} from "./login/login.component";
 import {AuthInterceptor} from "./interceptors/auth.interceptor";
 import {UserService} from "./services/users.service";
 import {ErrorHttpInterceptor} from "./interceptors/error-http.interceptor";
+import {NavbarComponent} from "./navbar/navbar.component";
 
 @NgModule({
   declarations: [
     AppComponent,
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        FormsModule,
-        RouterModule.forRoot([]),
-        ButtonModule,
-        UsersComponent,
-        LoginComponent,
-        BrowserAnimationsModule,
-        MessagesModule
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    RouterModule.forRoot([]),
+    ButtonModule,
+    UsersComponent,
+    LoginComponent,
+    BrowserAnimationsModule,
+    MessagesModule,
+    NavbarComponent
+  ],
   providers: [MessageService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorHttpInterceptor, multi: true},
