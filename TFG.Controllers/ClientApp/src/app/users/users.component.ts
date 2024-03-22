@@ -16,6 +16,7 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {InputTextModule} from "primeng/inputtext";
 import {User} from "../models/User";
 import {UserService} from "../services/users.service";
+import {FileUploadModule} from "primeng/fileupload";
 
 @Component({
   selector: 'app-users',
@@ -36,7 +37,8 @@ import {UserService} from "../services/users.service";
     PaginatorModule,
     ConfirmDialogModule,
     OverlayPanelModule,
-    InputTextModule
+    InputTextModule,
+    FileUploadModule
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
@@ -153,5 +155,20 @@ export class UsersComponent {
 
   goToRegister() {
     this.router.navigate(['/register', 'register']);
+  }
+
+  onUpload() {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Subido',
+      detail: 'Avatar subido',
+      life: 3000,
+      closable: false
+    });
+
+    this.userService.getUsers(1, this.rows).subscribe((data) => {
+      this.users = data.items;
+      this.totalRecords = data.totalCount;
+    });
   }
 }

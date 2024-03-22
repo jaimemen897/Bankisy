@@ -58,6 +58,10 @@ export class UserService {
     return this.http.put<User>(this.apiUrl + '/' + id, user);
   }
 
+  uploadAvatar(avatar: FormData, id: string): Observable<any> {
+    return this.http.put(this.apiUrl + '/' + id + '/avatar', avatar);
+  }
+
   deleteUser(id: string): Observable<User> {
     return this.http.delete<User>(this.apiUrl + '/' + id);
   }

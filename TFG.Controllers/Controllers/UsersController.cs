@@ -36,7 +36,7 @@ public class UsersController(UsersService usersService) : ControllerBase
         return await usersService.UpdateUser(id, user);
     }
     
-    [HttpPatch("{id}/avatar")]
+    [HttpPut("{id}/avatar")]
     public async Task<ActionResult<UserResponseDto>> UpdateUserAvatar(Guid id, [FromForm] IFormFile avatar)
     {
         var host = $"{Request.Scheme}://{Request.Host}";
