@@ -56,7 +56,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     }
 
     [HttpPut("{iban}")]
-    public async Task<ActionResult<BankAccountResponseDto>> UpdateBankAccount(string iban, BankAccountUpdateDto bankAccount)
+    public async Task<ActionResult<BankAccountResponseDto>> UpdateBankAccount(string iban, [FromBody]BankAccountUpdateDto bankAccount)
     {
        return await bankAccountService.UpdateBankAccount(iban, bankAccount);
     }

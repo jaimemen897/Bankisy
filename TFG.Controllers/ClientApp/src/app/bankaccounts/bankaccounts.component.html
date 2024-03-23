@@ -7,12 +7,21 @@
            [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']">
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="IBAN" style="width:22%">IBAN <p-sortIcon field="IBAN"/></th>
-        <th pSortableColumn="accountType" style="width:22%">Tipo de cuenta <p-sortIcon field="accountType"/></th>
-        <th style="width:22%">Usuario </th>
-        <th pSortableColumn="balance" style="width:22%">Saldo <p-sortIcon field="balance"/></th>
-        <th pSortableColumn="isDeleted" style="width:22%">Estado <p-sortIcon field="isDeleted"/></th>
-        <th style="width:22%"><p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
+        <th pSortableColumn="IBAN" style="width:22%">IBAN
+          <p-sortIcon field="IBAN"/>
+        </th>
+        <th pSortableColumn="accountType" style="width:22%">Tipo de cuenta
+          <p-sortIcon field="accountType"/>
+        </th>
+        <th style="width:22%">Usuario</th>
+        <th pSortableColumn="balance" style="width:22%">Saldo
+          <p-sortIcon field="balance"/>
+        </th>
+        <th pSortableColumn="isDeleted" style="width:22%">Estado
+          <p-sortIcon field="isDeleted"/>
+        </th>
+        <th style="width:22%">
+          <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
 
       </tr>
       <tr>
@@ -108,7 +117,6 @@
             <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning"/>
             <p-button icon="pi pi-money-bill" (click)="goToTransactions(account.iban)" severity="success"/>
             <div class="card flex justify-content-center">
-
               <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger"></p-button>
             </div>
           </div>
@@ -122,6 +130,13 @@
       </tr>
     </ng-template>
   </p-table>
+  <p-button label="Crear cuenta bancaria" (click)="displayDialog = true"></p-button>
+
+  <p-dialog header="Crear cuenta bancaria" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
+            [contentStyle]="{height: '21rem'}" [closable]="false">
+    <app-bankaccount-create (onSave)="saveBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
+  </p-dialog>
+
   <p-toast></p-toast>
   <p-confirmDialog #cd>
     <ng-template pTemplate="headless" let-message>

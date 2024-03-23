@@ -23,6 +23,12 @@ public class UsersController(UsersService usersService) : ControllerBase
     {
         return await usersService.GetUserAsync(id);
     }
+    
+    [HttpGet("all")]
+    public async Task<ActionResult<UserResponseDto[]>> GetAllUsers()
+    {
+        return await usersService.GetAllUsers();
+    }
 
     [HttpPost()]
     public async Task<ActionResult<UserResponseDto>> CreateUser(UserCreateDto user)

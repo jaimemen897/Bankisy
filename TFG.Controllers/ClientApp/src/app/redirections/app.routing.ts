@@ -5,6 +5,7 @@ import {LoginComponent} from "../login/login.component";
 import {RegisterComponent} from "../register/register.component";
 import {BankaccountsComponent} from "../bankaccounts/bankaccounts.component";
 import {TransactionsComponent} from "../transactions/transactions.component";
+import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/bankaccount-create.component";
 
 export const routes: Routes = [
   {path: '', redirectTo: '/users', pathMatch: 'full'},
@@ -13,6 +14,7 @@ export const routes: Routes = [
   {path: 'register/:mode', component: RegisterComponent},
   {path: 'register/:id/:mode', component: RegisterComponent},
   {path: 'bankaccounts', component: BankaccountsComponent},
+  {path: 'bankaccounts/:mode/:id', component: BankaccountCreateComponent},
   {path: 'transactions', component: TransactionsComponent},
 ];
 

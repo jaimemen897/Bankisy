@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {Router, RouterOutlet} from "@angular/router";
 import {ToastModule} from "primeng/toast";
@@ -6,7 +6,7 @@ import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
 import {DropdownModule} from "primeng/dropdown";
 import {TagModule} from "primeng/tag";
-import {NgClass} from "@angular/common";
+import {DatePipe, NgClass} from "@angular/common";
 import {InputTextModule} from "primeng/inputtext";
 import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
@@ -15,6 +15,8 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {BankAccount} from "../models/BankAccount";
 import {BankAccountService} from "../services/bankaccounts.service";
+import {DialogModule} from "primeng/dialog";
+import {BankaccountCreateComponent} from "./bankaccount-create/bankaccount-create.component";
 
 @Component({
   selector: 'app-bankaccounts',
@@ -32,7 +34,10 @@ import {BankAccountService} from "../services/bankaccounts.service";
     ButtonModule,
     FormsModule,
     OverlayPanelModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    DialogModule,
+    BankaccountCreateComponent,
+    DatePipe
   ],
   templateUrl: './bankaccounts.component.html',
   styleUrl: './bankaccounts.component.css'
@@ -41,9 +46,11 @@ export class BankaccountsComponent {
   constructor(private bankAccountService: BankAccountService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService) {
   }
 
+  @ViewChild(BankaccountCreateComponent) bankAccountCreateComponent!: BankaccountCreateComponent;
   bankAccounts: BankAccount[] = [];
   rows: number = 10;
   totalRecords: number = 0;
+  displayDialog: boolean = false;
 
   sortOptions!: SelectItem[];
   sortField!: string;
@@ -112,12 +119,13 @@ export class BankaccountsComponent {
     }
   }
 
-  goToAddBankAccount() {
-    this.router.navigate(['/bankaccounts/add']);
+  goToCreateBankAccount() {
+    this.router.navigate(['/bankaccounts/update']);
   }
 
   goToEditBankAccount(iban: string) {
-    this.router.navigate(['/bankaccounts/edit', iban]);
+    this.displayDialog = true;
+    this.bankAccountCreateComponent.loadBankAccount(iban);
   }
 
   goToTransactions(iban: string) {
@@ -205,5 +213,17 @@ export class BankaccountsComponent {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
     });
+  }
+
+  saveBankAccount() {
+    this.displayDialog = false;
+    this.bankAccountService.getBankAccounts(1, this.rows).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
+  }
+
+  closeDialog() {
+    this.displayDialog = false;
   }
 }

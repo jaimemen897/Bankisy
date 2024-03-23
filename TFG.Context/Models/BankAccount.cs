@@ -8,7 +8,7 @@ public class BankAccount
 {
     [Column("iban"), Required, StringLength(34), Key] public string Iban { get; set; }
 
-    [Column("balance")] public decimal Balance { get; set; }
+    [Column("balance")] public decimal Balance { get; set; } = 0;
 
     [Column("account_type")] public AccountType AccountType { get; set; }
     

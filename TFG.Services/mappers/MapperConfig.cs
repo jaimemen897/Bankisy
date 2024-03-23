@@ -19,15 +19,12 @@ public abstract class MapperConfig
                 .ForMember(dest => dest.UsersId, act => act.Ignore());
 
             cfg.CreateMap<BankAccountUpdateDto, BankAccount>()
-                .ForMember(dest => dest.Iban, opt => opt.Ignore())
-                .ForMember(dest => dest.Balance, opt => opt.Ignore())
                 .ForMember(dest => dest.AccountType, opt => opt.Ignore())
                 .ForMember(dest => dest.UsersId, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    dest.Iban = src.Iban ?? dest.Iban;
-                    dest.Balance = src.Balance ?? dest.Balance;
-                    dest.AccountType = src.AccountType ?? dest.AccountType;
+                    dest.AccountType = src.AccountType != null ? (AccountType)Enum.Parse(typeof(AccountType), src.AccountType) : dest.AccountType;
+                    dest.UsersId = src.UsersId != null ? src.UsersId.Select(id => new User { Id = id }).ToList() : dest.UsersId;
                 });
 
             cfg.CreateMap<BankAccount, BankAccountResponseDto>()

@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,12 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         return user ?? throw new HttpException(404, "User not found");
     }
 
+    public async Task<UserResponseDto[]> GetAllUsers()
+    {
+        var users = await bankContext.Users.Where(u => !u.IsDeleted).ToListAsync();
+        return _mapper.Map<UserResponseDto[]>(users);
+    }
+
     private async Task IsValid(UserCreateDto userCreateDto)
     {
         if (!Enum.TryParse(typeof(Gender), userCreateDto.Gender, true, out _))
@@ -74,19 +81,19 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
             throw new HttpException(400,
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
         }
-        
+
         var userExists = await bankContext.Users.AnyAsync(u => u.Username == userCreateDto.Username);
         if (userExists)
         {
             throw new HttpException(400, "Username already exists");
         }
-        
+
         userExists = await bankContext.Users.AnyAsync(u => u.Email == userCreateDto.Email);
         if (userExists)
         {
             throw new HttpException(400, "Email already exists");
         }
-        
+
         userExists = await bankContext.Users.AnyAsync(u => u.Dni == userCreateDto.Dni);
         if (userExists)
         {
@@ -96,24 +103,24 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
     private async Task IsValid(UserUpdateDto userUpdateDto)
     {
-        if (!Enum.TryParse(typeof(Gender), userUpdateDto.Gender, true, out _))
+        if (userUpdateDto.Gender != null && !Enum.TryParse(typeof(Gender), userUpdateDto.Gender, true, out _))
         {
             throw new HttpException(400,
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
         }
-        
+
         var userExists = await bankContext.Users.AnyAsync(u => u.Username == userUpdateDto.Username);
         if (userExists)
         {
             throw new HttpException(400, "Username already exists");
         }
-        
+
         userExists = await bankContext.Users.AnyAsync(u => u.Dni == userUpdateDto.Dni);
         if (userExists)
         {
             throw new HttpException(400, "DNI already exists");
         }
-        
+
         userExists = await bankContext.Users.AnyAsync(u => u.Email == userUpdateDto.Email);
         if (userExists)
         {
@@ -184,7 +191,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
             {
                 throw new HttpException(400, "Invalid file type. Only images are allowed");
             }
-            
+
             if (user.Avatar != User.ImageDefault)
             {
                 var avatar = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads",
@@ -194,9 +201,9 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
                     File.Delete(avatar);
                 }
             }
-            
+
             var filePath = Path.Combine(uploads, user.Id + "-" + file.FileName);
-            
+
             await using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
@@ -220,7 +227,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
             throw new HttpException(400, "User not found");
         }
 
-        if (!user.Password.StartsWith("$2a$") && !user.Password.StartsWith("$2b$") && !user.Password.StartsWith("$2x$") && !user.Password.StartsWith("$2y$"))
+        if (!user.Password.StartsWith("$2a$") && !user.Password.StartsWith("$2b$") &&
+            !user.Password.StartsWith("$2x$") && !user.Password.StartsWith("$2y$"))
         {
             throw new HttpException(400, "Invalid password hash");
         }

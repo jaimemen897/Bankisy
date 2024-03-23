@@ -50,6 +50,7 @@ export class BankAccountService {
   }
 
   updateBankAccount(BankAccount: BankAccountCreate, iban: string): Observable<BankAccount> {
+    console.log(BankAccount);
     return this.http.put<BankAccount>(this.apiUrl + '/' + iban, BankAccount);
   }
 
