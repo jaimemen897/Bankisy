@@ -36,8 +36,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         var transactionsQuery = bankContext.Transactions.AsQueryable();
         if (!string.IsNullOrWhiteSpace(search))
         {
-            transactionsQuery = transactionsQuery.Where(t => t.IdAccountOrigin.ToString().Contains(search) ||
-                                                             t.IdAccountDestination.ToString().Contains(search) ||
+            transactionsQuery = transactionsQuery.Where(t => t.IbanAccountOrigin.Contains(search) ||
+                                                             t.IbanAccountDestination.Contains(search) ||
                                                              t.Concept.Contains(search) || t.Date.ToString().Contains(search) || t.Amount.ToString().Contains(search));
         }
         
@@ -69,9 +69,9 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
 
     public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto)
     {
-        var account = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountOrigin) ??
+        var account = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IbanAccountOrigin) ??
                       throw new HttpException(404, "Account origin not found");
-        var accountDestination = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IdAccountDestination) ??
+        var accountDestination = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IbanAccountDestination) ??
                                  throw new HttpException(404, "Account destination not found");
         
         ValidateTransaction(account, accountDestination, transactionCreateDto);
@@ -85,7 +85,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
 
     private static void ValidateTransaction(BankAccount accountOrigin, BankAccount accountDestination, TransactionCreateDto transactionCreateDto) 
     {
-        if (accountOrigin.Id == accountDestination.Id)
+        if (accountOrigin.Iban == accountDestination.Iban)
         {
             throw new HttpException(400, "Origin and destination accounts cannot be the same");
         }
@@ -104,7 +104,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
     private async Task<TransactionResponseDto> CreateTransactionPay(BankAccount accountOrigin, BankAccount accountDestination, TransactionCreateDto transactionCreateDto)
     {
         var transaction = _mapper.Map<Transaction>(transactionCreateDto);
-        accountOrigin.Transactions.Add(transaction);
+        accountOrigin.TransactionsOrigin.Add(transaction);
+        accountDestination.TransactionsDestination.Add(transaction);
         bankContext.Transactions.Add(transaction);
 
         accountOrigin.Balance -= transaction.Amount;

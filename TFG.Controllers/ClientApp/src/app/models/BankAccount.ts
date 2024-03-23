@@ -1,5 +1,4 @@
 export class BankAccount {
-  id: string;
   iban: string;
   balance: number;
   accountType: string;

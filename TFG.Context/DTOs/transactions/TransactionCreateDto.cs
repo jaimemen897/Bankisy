@@ -13,8 +13,8 @@ public class TransactionCreateDto
     public decimal Amount { get; set; }
 
     [Required]
-    public Guid IdAccountOrigin { get; set; }
+    public string IbanAccountOrigin { get; set; }
 
     [Required]
-    public Guid IdAccountDestination { get; set; }
+    public string IbanAccountDestination { get; set; }
 }

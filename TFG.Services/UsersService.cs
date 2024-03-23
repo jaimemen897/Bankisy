@@ -67,27 +67,63 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         return user ?? throw new HttpException(404, "User not found");
     }
 
-    private static void IsValid(UserCreateDto userCreateDto)
+    private async Task IsValid(UserCreateDto userCreateDto)
     {
         if (!Enum.TryParse(typeof(Gender), userCreateDto.Gender, true, out _))
         {
             throw new HttpException(400,
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
         }
+        
+        var userExists = await bankContext.Users.AnyAsync(u => u.Username == userCreateDto.Username);
+        if (userExists)
+        {
+            throw new HttpException(400, "Username already exists");
+        }
+        
+        userExists = await bankContext.Users.AnyAsync(u => u.Email == userCreateDto.Email);
+        if (userExists)
+        {
+            throw new HttpException(400, "Email already exists");
+        }
+        
+        userExists = await bankContext.Users.AnyAsync(u => u.Dni == userCreateDto.Dni);
+        if (userExists)
+        {
+            throw new HttpException(400, "DNI already exists");
+        }
     }
 
-    private static void IsValid(UserUpdateDto userUpdateDto)
+    private async Task IsValid(UserUpdateDto userUpdateDto)
     {
         if (!Enum.TryParse(typeof(Gender), userUpdateDto.Gender, true, out _))
         {
             throw new HttpException(400,
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
         }
+        
+        var userExists = await bankContext.Users.AnyAsync(u => u.Username == userUpdateDto.Username);
+        if (userExists)
+        {
+            throw new HttpException(400, "Username already exists");
+        }
+        
+        userExists = await bankContext.Users.AnyAsync(u => u.Dni == userUpdateDto.Dni);
+        if (userExists)
+        {
+            throw new HttpException(400, "DNI already exists");
+        }
+        
+        userExists = await bankContext.Users.AnyAsync(u => u.Email == userUpdateDto.Email);
+        if (userExists)
+        {
+            throw new HttpException(400, "Email already exists");
+        }
     }
 
     public async Task<UserResponseDto> CreateUser(UserCreateDto user)
     {
-        IsValid(user);
+        await IsValid(user);
         var userDto = _mapper.Map<User>(user);
         await bankContext.Users.AddAsync(userDto);
         await bankContext.SaveChangesAsync();
@@ -99,7 +135,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
     public async Task<UserResponseDto> UpdateUser(Guid id, UserUpdateDto user)
     {
-        IsValid(user);
+        await IsValid(user);
         var userToUpdate = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
 
         userToUpdate = _mapper.Map(user, userToUpdate);
@@ -178,8 +214,23 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
     public async Task<User> ValidateUserCredentials(string username, string password)
     {
-        return await bankContext.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == password) ??
-               throw new HttpException(400, "Invalid credentials");
+        var user = await bankContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user == null)
+        {
+            throw new HttpException(400, "User not found");
+        }
+
+        if (!user.Password.StartsWith("$2a$") && !user.Password.StartsWith("$2b$") && !user.Password.StartsWith("$2x$") && !user.Password.StartsWith("$2y$"))
+        {
+            throw new HttpException(400, "Invalid password hash");
+        }
+
+        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+        {
+            throw new HttpException(400, "Invalid credentials");
+        }
+
+        return user;
     }
 
     private async Task ClearCache()

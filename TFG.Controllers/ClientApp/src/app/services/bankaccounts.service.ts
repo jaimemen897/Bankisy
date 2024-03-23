@@ -40,8 +40,8 @@ export class BankAccountService {
     );
   }
 
-  getBankAccountById(id: string): Observable<BankAccount> {
-    const url = `${this.apiUrl}/${id}`;
+  getBankAccountById(iban: string): Observable<BankAccount> {
+    const url = `${this.apiUrl}/${iban}`;
     return this.http.get<BankAccount>(url);
   }
 
@@ -49,11 +49,11 @@ export class BankAccountService {
     return this.http.post<BankAccount>(this.apiUrl, BankAccount);
   }
 
-  updateBankAccount(BankAccount: BankAccountCreate, id: string): Observable<BankAccount> {
-    return this.http.put<BankAccount>(this.apiUrl + '/' + id, BankAccount);
+  updateBankAccount(BankAccount: BankAccountCreate, iban: string): Observable<BankAccount> {
+    return this.http.put<BankAccount>(this.apiUrl + '/' + iban, BankAccount);
   }
 
-  deleteBankAccount(id: string): Observable<BankAccount> {
-    return this.http.delete<BankAccount>(this.apiUrl + '/' + id);
+  deleteBankAccount(iban: string): Observable<BankAccount> {
+    return this.http.delete<BankAccount>(this.apiUrl + '/' + iban);
   }
 }

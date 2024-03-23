@@ -2,7 +2,7 @@ export class Transaction{
   id: string
   concept: string
   amount: number
-  idAccountOrigin: string
-  idAccountDestination: string
+  ibanAccountOrigin: string
+  ibanAccountDestination: string
   date: string
 }

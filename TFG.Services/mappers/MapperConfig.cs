@@ -37,6 +37,7 @@ public abstract class MapperConfig
 
             /*USERS*/
             cfg.CreateMap<UserCreateDto, User>()
+                .ForMember(dest => dest.Password, act => act.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)))
                 .ForMember(dest => dest.IsDeleted, act => act.MapFrom(src => false))
                 .ForMember(dest => dest.Avatar, act => act.MapFrom(src => src.Avatar ?? User.ImageDefault))
                 .ForMember(dest => dest.Role, act => act.MapFrom(src => Roles.User))

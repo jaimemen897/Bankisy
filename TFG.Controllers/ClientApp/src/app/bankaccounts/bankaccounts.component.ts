@@ -116,16 +116,16 @@ export class BankaccountsComponent {
     this.router.navigate(['/bankaccounts/add']);
   }
 
-  goToEditBankAccount(id: string) {
-    this.router.navigate(['/bankaccounts/edit', id]);
+  goToEditBankAccount(iban: string) {
+    this.router.navigate(['/bankaccounts/edit', iban]);
   }
 
-  goToTransactions(id: string) {
-    this.router.navigate(['/transactions', id]);
+  goToTransactions(iban: string) {
+    this.router.navigate(['/transactions', iban]);
   }
 
-  deleteBankAccount(id: string) {
-    console.log(id);
+  deleteBankAccount(iban: string) {
+    console.log(iban);
     this.confirmationService.confirm({
       header: '¿Desea eliminar la cuenta de banco?',
       message: 'Confirme para continuar',
@@ -137,7 +137,7 @@ export class BankaccountsComponent {
           life: 3000,
           closable: false
         });
-        this.bankAccountService.deleteBankAccount(id).subscribe(() => {
+        this.bankAccountService.deleteBankAccount(iban).subscribe(() => {
           this.bankAccountService.getBankAccounts(1, this.rows).subscribe((data) => {
             this.bankAccounts = data.items;
             this.totalRecords = data.totalCount;

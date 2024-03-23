@@ -12,7 +12,7 @@ using TFG.Context.Context;
 namespace TFG.Context.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20240317082249_Initial")]
+    [Migration("20240323083243_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,10 +27,10 @@ namespace TFG.Context.Migrations
 
             modelBuilder.Entity("TFG.Context.Models.BankAccount", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                    b.Property<string>("Iban")
+                        .HasMaxLength(34)
+                        .HasColumnType("character varying(34)")
+                        .HasColumnName("iban");
 
                     b.Property<int>("AccountType")
                         .HasColumnType("integer")
@@ -40,17 +40,11 @@ namespace TFG.Context.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("balance");
 
-                    b.Property<string>("Iban")
-                        .IsRequired()
-                        .HasMaxLength(34)
-                        .HasColumnType("character varying(34)")
-                        .HasColumnName("iban");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.HasKey("Id");
+                    b.HasKey("Iban");
 
                     b.ToTable("bank_accounts");
                 });
@@ -78,19 +72,21 @@ namespace TFG.Context.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date");
 
-                    b.Property<Guid>("IdAccountDestination")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id_account_destination");
+                    b.Property<string>("IbanAccountDestination")
+                        .IsRequired()
+                        .HasColumnType("character varying(34)")
+                        .HasColumnName("iban_account_destination");
 
-                    b.Property<Guid>("IdAccountOrigin")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id_account_origin");
+                    b.Property<string>("IbanAccountOrigin")
+                        .IsRequired()
+                        .HasColumnType("character varying(34)")
+                        .HasColumnName("iban_account_origin");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdAccountDestination");
+                    b.HasIndex("IbanAccountDestination");
 
-                    b.HasIndex("IdAccountOrigin");
+                    b.HasIndex("IbanAccountOrigin");
 
                     b.ToTable("transactions");
                 });
@@ -162,8 +158,8 @@ namespace TFG.Context.Migrations
                     b.Property<Guid>("UsersId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BankAccountsId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("BankAccountsId")
+                        .HasColumnType("character varying(34)");
 
                     b.HasKey("UsersId", "BankAccountsId");
 
@@ -174,21 +170,21 @@ namespace TFG.Context.Migrations
 
             modelBuilder.Entity("TFG.Context.Models.Transaction", b =>
                 {
-                    b.HasOne("TFG.Context.Models.BankAccount", "BankAccountDestination")
-                        .WithMany()
-                        .HasForeignKey("IdAccountDestination")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("TFG.Context.Models.BankAccount", "BankAccountDestinationIban")
+                        .WithMany("TransactionsDestination")
+                        .HasForeignKey("IbanAccountDestination")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TFG.Context.Models.BankAccount", "BankAccountOrigin")
-                        .WithMany("Transactions")
-                        .HasForeignKey("IdAccountOrigin")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("TFG.Context.Models.BankAccount", "BankAccountOriginIban")
+                        .WithMany("TransactionsOrigin")
+                        .HasForeignKey("IbanAccountOrigin")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BankAccountDestination");
+                    b.Navigation("BankAccountDestinationIban");
 
-                    b.Navigation("BankAccountOrigin");
+                    b.Navigation("BankAccountOriginIban");
                 });
 
             modelBuilder.Entity("UserBankAccount", b =>
@@ -208,7 +204,9 @@ namespace TFG.Context.Migrations
 
             modelBuilder.Entity("TFG.Context.Models.BankAccount", b =>
                 {
-                    b.Navigation("Transactions");
+                    b.Navigation("TransactionsDestination");
+
+                    b.Navigation("TransactionsOrigin");
                 });
 #pragma warning restore 612, 618
         }

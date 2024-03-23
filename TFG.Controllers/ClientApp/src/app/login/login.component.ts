@@ -17,7 +17,6 @@ export class Token {
   user: UserLogin;
 }
 
-
 @Component({
   selector: 'app-login',
   standalone: true,

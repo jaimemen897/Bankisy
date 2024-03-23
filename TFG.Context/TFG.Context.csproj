@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
       <PackageReference Include="DotNetEnv" Version="3.0.0" />
       <PackageReference Include="EntityFramework" Version="6.4.4" />
       <PackageReference Include="IbanNet" Version="5.14.0" />

@@ -17,21 +17,19 @@ public class BankContext(DbContextOptions<BankContext> options) : DbContext(opti
             .HasMany(u => u.BankAccounts)
             .WithMany(u => u.UsersId)
             .UsingEntity("UserBankAccount",
-                l => l.HasOne(typeof(BankAccount)).WithMany().HasForeignKey("BankAccountsId").HasPrincipalKey(nameof(BankAccount.Id)),
+                l => l.HasOne(typeof(BankAccount)).WithMany().HasForeignKey("BankAccountsId").HasPrincipalKey(nameof(BankAccount.Iban)),
                 r => r.HasOne(typeof(User)).WithMany().HasForeignKey("UsersId").HasPrincipalKey(nameof(User.Id)),
                 j => j.HasKey("UsersId", "BankAccountsId"));
 
 
         modelBuilder.Entity<Transaction>()
-            .HasOne(t => t.BankAccountOrigin)
-            .WithMany(b => b.Transactions)
-            .HasForeignKey(t => t.IdAccountOrigin)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(t => t.BankAccountOriginIban)
+            .WithMany(b => b.TransactionsOrigin)
+            .HasForeignKey(t => t.IbanAccountOrigin);
 
         modelBuilder.Entity<Transaction>()
-            .HasOne(t => t.BankAccountDestination)
-            .WithMany()
-            .HasForeignKey(t => t.IdAccountDestination)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(t => t.BankAccountDestinationIban)
+            .WithMany(b => b.TransactionsDestination)
+            .HasForeignKey(t => t.IbanAccountDestination);
     }
 }
