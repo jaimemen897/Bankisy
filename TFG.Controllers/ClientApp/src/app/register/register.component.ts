@@ -15,6 +15,11 @@ import {UserService} from "../services/users.service";
 import {UserCreate} from "../models/UserCreate";
 import {DropdownModule} from "primeng/dropdown";
 
+interface Gender {
+  name: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -41,7 +46,7 @@ export class RegisterComponent implements OnInit {
 
   mode: 'create' | 'update' | 'register';
   id: string;
-  genders = ['Hombre', 'Mujer', 'Otro', 'Prefiero no decirlo'];
+  genders: Gender[];
 
   formGroup = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
@@ -55,11 +60,18 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as string;
     this.mode = this.route.snapshot.paramMap.get('mode') as 'create' | 'update' | 'register';
+    this.genders = [
+      {name: 'Hombre', value: 'Male'},
+      {name: 'Mujer', value: 'Female'},
+      {name: 'Otro', value: 'Other'},
+      {name: 'Prefiero no decirlo', value: 'Prefer not to say'}
+    ];
 
     if (this.mode === 'update') {
       this.formGroup.controls.password.clearValidators();
       this.formGroup.controls.password.setValidators([Validators.minLength(3), Validators.maxLength(50)]);
       this.usersService.getUserById(this.route.snapshot.paramMap.get('id') ?? '').subscribe(user => {
+          console.log(this.formGroup.controls.gender.value);
           this.formGroup.controls.name.setValue(user.name);
           this.formGroup.controls.email.setValue(user.email);
           this.formGroup.controls.username.setValue(user.username);
