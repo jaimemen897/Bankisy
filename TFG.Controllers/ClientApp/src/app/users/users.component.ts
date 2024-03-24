@@ -110,10 +110,6 @@ export class UsersComponent {
     this.router.navigate(['/register', id, 'update']);
   }
 
-  goToFileUpload(id: string) {
-    this.router.navigate(['/users/upload/' + id]).then(() => console.log('Navigate to file upload'));
-  }
-
   delete(id: string) {
     this.confirmationService.confirm({
       header: '¿Desea eliminar el usuario?',

@@ -91,7 +91,6 @@ export class BankaccountsComponent {
   }
 
   onSearchUser(event: any) {
-    console.log(event);
     this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, event.value).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
@@ -119,10 +118,6 @@ export class BankaccountsComponent {
     }
   }
 
-  goToCreateBankAccount() {
-    this.router.navigate(['/bankaccounts/update']);
-  }
-
   goToEditBankAccount(iban: string) {
     this.displayDialog = true;
     this.bankAccountCreateComponent.loadBankAccount(iban);
@@ -133,7 +128,6 @@ export class BankaccountsComponent {
   }
 
   deleteBankAccount(iban: string) {
-    console.log(iban);
     this.confirmationService.confirm({
       header: '¿Desea eliminar la cuenta de banco?',
       message: 'Confirme para continuar',
@@ -203,6 +197,9 @@ export class BankaccountsComponent {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
     });
+
+    this.sortField = '';
+    this.sortOrder = 1;
   }
 
   clearFilters() {
