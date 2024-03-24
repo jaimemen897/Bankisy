@@ -81,15 +81,15 @@
             <p-overlayPanel #op>
               <ng-template pTemplate="content">
                 <h4 class="text-left">Información de la transacción</h4>
+                <p>Id: {{ transaction.id }}</p>
                 <p>Concepto: '{{ transaction.concept }}'</p>
                 <p>Cantidad: {{ transaction.amount }}€</p>
                 <p>Cuenta origen: {{ transaction.ibanAccountOrigin }}</p>
                 <p>Cuenta destino: {{ transaction.ibanAccountDestination }}</p>
-                <p>Fecha: {{ transaction.date | date: 'dd/MM/yyyy' }}</p>
+                <p>Fecha: {{ transaction.date | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
               </ng-template>
             </p-overlayPanel>
             <p-button (click)="op.toggle($event)" icon="pi pi-info-circle" severity="info"/>
-            <p-button icon="pi pi-pencil" (click)="goToEditTransaction(transaction.id)" severity="warning"/>
             <p-button icon="pi pi-money-bill" (click)="goToTransactions(transaction.id)" severity="success"/>
             <div class="card flex justify-content-center">
               <p-button (click)="deleteTransaction(transaction.id)" icon="pi pi-trash" severity="danger"></p-button>

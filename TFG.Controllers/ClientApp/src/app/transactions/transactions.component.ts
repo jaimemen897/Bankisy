@@ -102,10 +102,6 @@ export class TransactionsComponent {
     this.router.navigate(['/transactions/create']);
   }
 
-  goToEditTransaction(id: string) {
-    this.router.navigate(['/transactions/update', id]);
-  }
-
   goToTransactions(id: string) {
     this.router.navigate(['/transactions', id]);
   }
