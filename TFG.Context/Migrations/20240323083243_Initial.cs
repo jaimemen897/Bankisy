@@ -16,14 +16,14 @@ namespace TFG.Context.Migrations
                 name: "bank_accounts",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    iban = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
                     balance = table.Column<decimal>(type: "numeric", nullable: false),
                     account_type = table.Column<int>(type: "integer", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_bank_accounts", x => x.id);
+                    table.PrimaryKey("PK_bank_accounts", x => x.iban);
                 });
 
             migrationBuilder.CreateTable(
@@ -33,6 +33,9 @@ namespace TFG.Context.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     email = table.Column<string>(type: "text", nullable: false),
+                    username = table.Column<string>(type: "text", nullable: false),
+                    dni = table.Column<string>(type: "text", nullable: false),
+                    gender = table.Column<int>(type: "integer", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
                     avatar = table.Column<string>(type: "text", nullable: false),
                     role = table.Column<int>(type: "integer", nullable: false),
@@ -53,25 +56,25 @@ namespace TFG.Context.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     concept = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    id_account_origin = table.Column<Guid>(type: "uuid", nullable: false),
-                    id_account_destination = table.Column<Guid>(type: "uuid", nullable: false),
+                    iban_account_origin = table.Column<string>(type: "character varying(34)", nullable: false),
+                    iban_account_destination = table.Column<string>(type: "character varying(34)", nullable: false),
                     date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_transactions", x => x.id);
                     table.ForeignKey(
-                        name: "FK_transactions_bank_accounts_id_account_destination",
-                        column: x => x.id_account_destination,
+                        name: "FK_transactions_bank_accounts_iban_account_destination",
+                        column: x => x.iban_account_destination,
                         principalTable: "bank_accounts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "iban",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_transactions_bank_accounts_id_account_origin",
-                        column: x => x.id_account_origin,
+                        name: "FK_transactions_bank_accounts_iban_account_origin",
+                        column: x => x.iban_account_origin,
                         principalTable: "bank_accounts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "iban",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -79,7 +82,7 @@ namespace TFG.Context.Migrations
                 columns: table => new
                 {
                     UsersId = table.Column<Guid>(type: "uuid", nullable: false),
-                    BankAccountsId = table.Column<Guid>(type: "uuid", nullable: false)
+                    BankAccountsId = table.Column<string>(type: "character varying(34)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,7 +91,7 @@ namespace TFG.Context.Migrations
                         name: "FK_UserBankAccount_bank_accounts_BankAccountsId",
                         column: x => x.BankAccountsId,
                         principalTable: "bank_accounts",
-                        principalColumn: "id",
+                        principalColumn: "iban",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserBankAccount_users_UsersId",
@@ -99,14 +102,14 @@ namespace TFG.Context.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_transactions_id_account_destination",
+                name: "IX_transactions_iban_account_destination",
                 table: "transactions",
-                column: "id_account_destination");
+                column: "iban_account_destination");
 
             migrationBuilder.CreateIndex(
-                name: "IX_transactions_id_account_origin",
+                name: "IX_transactions_iban_account_origin",
                 table: "transactions",
-                column: "id_account_origin");
+                column: "iban_account_origin");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserBankAccount_BankAccountsId",

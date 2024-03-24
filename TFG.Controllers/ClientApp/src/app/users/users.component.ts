@@ -1,28 +1,22 @@
-import {Component, OnInit} from '@angular/core';
-import {UserService} from "./users.service";
+import {Component} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
 import {NgClass, NgForOf, NgOptimizedImage} from "@angular/common";
-import {RouterOutlet} from "@angular/router";
+import {Router, RouterOutlet} from "@angular/router";
 import {TagModule} from "primeng/tag";
 import {RatingModule} from "primeng/rating";
-import {DataViewModule} from "primeng/dataview";
+import {DataViewLazyLoadEvent, DataViewModule} from "primeng/dataview";
 import {FormsModule} from "@angular/forms";
 import {SpeedDialModule} from "primeng/speeddial";
 import {ToastModule} from "primeng/toast";
-import {MenuItem, MessageService} from "primeng/api";
-import {PaginatorModule, PaginatorState} from "primeng/paginator";
-
-export class User {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: string;
-  isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
+import {PaginatorModule} from "primeng/paginator";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {InputTextModule} from "primeng/inputtext";
+import {User} from "../models/User";
+import {UserService} from "../services/users.service";
+import {FileUploadModule} from "primeng/fileupload";
 
 @Component({
   selector: 'app-users',
@@ -40,71 +34,61 @@ export class User {
     NgForOf,
     SpeedDialModule,
     ToastModule,
-    PaginatorModule
+    PaginatorModule,
+    ConfirmDialogModule,
+    OverlayPanelModule,
+    InputTextModule,
+    FileUploadModule
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
-export class UsersComponent implements OnInit {
-  constructor(private userService: UserService, private messageService: MessageService) {
+export class UsersComponent {
+  constructor(private userService: UserService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService) {
   }
 
   users!: User[];
-  layout: 'list' | 'grid' = 'list';
-  actions: MenuItem[] = [];
 
-  /*pagination*/
-  first: number = 1;
+  layout: 'list' | 'grid' = 'list';
   rows: number = 5;
   totalRecords: number = 0;
 
-  ngOnInit() {
-    this.userService.getUsers(this.first, this.rows).subscribe((data) => {
+  sortOptions!: SelectItem[];
+  sortField!: string;
+  sortOrder!: number;
+  search!: string;
+
+  lazyLoad(event: DataViewLazyLoadEvent) {
+    let pageNumber = event.first / event.rows;
+    if (pageNumber < 1) pageNumber = 1; else pageNumber++;
+
+    this.userService.getUsers(pageNumber, event.rows, this.sortField, this.sortOrder === -1, this.search).subscribe((data) => {
       this.users = data.items;
       this.totalRecords = data.totalCount;
     });
-
-    this.actions = [
-      {
-        icon: 'pi pi-pencil',
-        command: () => {
-          this.messageService.add({severity: 'info', summary: 'Add', detail: 'Data Added'});
-        }
-      },
-      {
-        icon: 'pi pi-refresh',
-        command: () => {
-          this.messageService.add({severity: 'success', summary: 'Update', detail: 'Data Updated'});
-        }
-      },
-      {
-        icon: 'pi pi-trash',
-        command: () => {
-          this.messageService.add({severity: 'error', summary: 'Delete', detail: 'Data Deleted'});
-        }
-      },
-      {
-        icon: 'pi pi-upload',
-        routerLink: ['/fileupload']
-      },
-      {
-        icon: 'pi pi-external-link',
-        target: '_blank',
-        url: 'http://angular.io'
-      }
+    this.sortOptions = [
+      {label: 'Nombre ascendiente', value: 'name', icon: 'pi pi-sort-alpha-down'},
+      {label: 'Nombre descendiente', value: '!name', icon: 'pi pi-sort-alpha-up'},
     ];
   }
 
-  onPageChange(event: PaginatorState) {
-    const page = event.page || 0;
-    const pageSize = event.rows || 10;
-
-    this.first = event.first || 0;
-
-    this.userService.getUsers(page, pageSize).subscribe((data) => {
+  onSearch(event: any) {
+    this.userService.getUsers(1, this.rows, this.sortField, this.sortOrder === -1, event.target.value).subscribe((data) => {
       this.users = data.items;
       this.totalRecords = data.totalCount;
     });
+  }
+
+  onSortChange(event: any) {
+    let value = event.value;
+
+    if (value.indexOf('!') === 0) {
+      this.sortOrder = -1;
+      this.sortField = value.substring(1, value.length);
+    } else {
+      this.sortOrder = 1;
+      this.sortField = value;
+    }
   }
 
   getRole(user: User) {
@@ -112,9 +96,75 @@ export class UsersComponent implements OnInit {
       case 'Admin':
         return 'success';
       case 'User':
-        return 'info';
+        return 'primary';
       default:
         return 'warning';
     }
+  }
+
+  goToAddUser() {
+    this.router.navigate(['/register', 'create']);
+  }
+
+  goToEditUser(id: string) {
+    this.router.navigate(['/register', id, 'update']);
+  }
+
+  delete(id: string) {
+    this.confirmationService.confirm({
+      header: '¿Desea eliminar el usuario?',
+      message: 'Confirme para continuar',
+      accept: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Eliminado',
+          detail: 'Usuario eliminado',
+          life: 3000,
+          closable: false
+        });
+        this.userService.deleteUser(id).subscribe(() => {
+          this.userService.getUsers(1, this.rows).subscribe((data) => {
+            this.users = data.items;
+            this.totalRecords = data.totalCount;
+          });
+        });
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Cancelar',
+          detail: 'No se ha eliminado',
+          life: 3000,
+          closable: false
+        });
+      }
+    });
+  }
+
+  goToBankAccounts() {
+    this.router.navigate(['/bankaccounts']);
+  }
+
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register', 'register']);
+  }
+
+  onUpload() {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Subido',
+      detail: 'Avatar subido',
+      life: 3000,
+      closable: false
+    });
+
+    this.userService.getUsers(1, this.rows).subscribe((data) => {
+      this.users = data.items;
+      this.totalRecords = data.totalCount;
+    });
   }
 }

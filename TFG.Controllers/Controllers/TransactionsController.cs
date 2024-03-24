@@ -13,9 +13,9 @@ public class TransactionsController(TransactionService transactionService) : Con
 {
     [HttpGet()]
     public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactions([FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false, [FromQuery] string? search = null)
     {
-        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending);
+        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, search);
     }
 
     [HttpGet("{id}")]

@@ -1,12 +1,226 @@
-import { Component } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
+import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
+import {Router, RouterOutlet} from "@angular/router";
+import {ToastModule} from "primeng/toast";
+import {TableModule} from "primeng/table";
+import {MultiSelectModule} from "primeng/multiselect";
+import {DropdownModule} from "primeng/dropdown";
+import {TagModule} from "primeng/tag";
+import {DatePipe, NgClass} from "@angular/common";
+import {InputTextModule} from "primeng/inputtext";
+import {TooltipModule} from "primeng/tooltip";
+import {ButtonModule} from "primeng/button";
+import {FormsModule} from "@angular/forms";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {BankAccount} from "../models/BankAccount";
+import {BankAccountService} from "../services/bankaccounts.service";
+import {DialogModule} from "primeng/dialog";
+import {BankaccountCreateComponent} from "./bankaccount-create/bankaccount-create.component";
 
 @Component({
   selector: 'app-bankaccounts',
   standalone: true,
-  imports: [],
+  imports: [
+    RouterOutlet,
+    ToastModule,
+    TableModule,
+    MultiSelectModule,
+    DropdownModule,
+    TagModule,
+    NgClass,
+    InputTextModule,
+    TooltipModule,
+    ButtonModule,
+    FormsModule,
+    OverlayPanelModule,
+    ConfirmDialogModule,
+    DialogModule,
+    BankaccountCreateComponent,
+    DatePipe
+  ],
   templateUrl: './bankaccounts.component.html',
   styleUrl: './bankaccounts.component.css'
 })
 export class BankaccountsComponent {
+  constructor(private bankAccountService: BankAccountService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService) {
+  }
 
+  @ViewChild(BankaccountCreateComponent) bankAccountCreateComponent!: BankaccountCreateComponent;
+  bankAccounts: BankAccount[] = [];
+  rows: number = 10;
+  totalRecords: number = 0;
+  displayDialog: boolean = false;
+
+  sortOptions!: SelectItem[];
+  sortField!: string;
+  sortOrder!: number;
+  search: string;
+  filter!: string;
+
+  accountsTypes: String[] = ['Saving', 'Current', 'FixedTerm', 'Payroll', 'Student'];
+  users: String[] = [];
+  status: String[] = ['Active', 'Inactive'];
+
+  lazyLoad(event: any) {
+    let pageNumber = Math.floor(event.first / event.rows) + 1;
+    let sortField = event.sortField;
+    let sortOrder = event.sortOrder;
+
+
+    this.bankAccountService.getBankAccounts(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalRecords;
+      for (let bankAccount of this.bankAccounts) {
+        this.users.push(bankAccount.usersName.join(', '))
+      }
+    });
+
+    this.sortOptions = [
+      {label: 'Mayor saldo', value: '!balance'},
+      {label: 'Menor saldo', value: 'balance'}
+    ];
+  }
+
+  onSearch(event: any) {
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, event.target.value, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+      this.search = event.target.value;
+    });
+  }
+
+  onSearchUser(event: any) {
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, event.value).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+      this.filter = event.value;
+    });
+  }
+
+  onSearchFilter(event: any) {
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, event.value).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+      this.filter = event.value;
+    });
+  }
+
+  onSortChange(event: any) {
+    let value = event.value;
+
+    if (value.indexOf('!') === 0) {
+      this.sortOrder = -1;
+      this.sortField = value.substring(1, value.length);
+    } else {
+      this.sortOrder = 1;
+      this.sortField = value;
+    }
+  }
+
+  goToEditBankAccount(iban: string) {
+    this.displayDialog = true;
+    this.bankAccountCreateComponent.loadBankAccount(iban);
+  }
+
+  goToTransactions(iban: string) {
+    this.router.navigate(['/transactions', iban]);
+  }
+
+  deleteBankAccount(iban: string) {
+    this.confirmationService.confirm({
+      header: '¿Desea eliminar la cuenta de banco?',
+      message: 'Confirme para continuar',
+      accept: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Eliminada',
+          detail: 'Cuenta eliminada',
+          life: 3000,
+          closable: false
+        });
+        this.bankAccountService.deleteBankAccount(iban).subscribe(() => {
+          this.bankAccountService.getBankAccounts(1, this.rows).subscribe((data) => {
+            this.bankAccounts = data.items;
+            this.totalRecords = data.totalCount;
+          });
+        });
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Cancelar',
+          detail: 'No se ha eliminado',
+          life: 3000,
+          closable: false
+        });
+      }
+    });
+  }
+
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToUsers() {
+    this.router.navigate(['/users']);
+  }
+
+  getSeverity(accountType: string) {
+    if (accountType === 'Saving') {
+      return 'success';
+    } else if (accountType === 'Current') {
+      return 'info';
+    } else if (accountType === 'FixedTerm') {
+      return 'warning';
+    } else if (accountType === 'Payroll') {
+      return 'danger';
+    } else if (accountType === 'Student') {
+      return 'primary';
+    } else {
+      return 'secondary';
+    }
+  }
+
+  getBalanceColor(balance: number) {
+    if (balance > 0) {
+      return 'success';
+    } else if (balance < 0) {
+      return 'danger';
+    } else {
+      return 'info';
+    }
+  }
+
+  clearOrders() {
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
+
+    this.sortField = '';
+    this.sortOrder = 1;
+  }
+
+  clearFilters() {
+    this.search = '';
+    this.filter = '';
+
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
+  }
+
+  saveBankAccount() {
+    this.displayDialog = false;
+    this.bankAccountService.getBankAccounts(1, this.rows).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
+  }
+
+  closeDialog() {
+    this.displayDialog = false;
+  }
 }

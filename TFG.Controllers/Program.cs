@@ -1,12 +1,12 @@
 using System.Text;
 using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
 using TFG.Services;
+using TFG.Services.Seeders;
 
 var myAllowSpecificOrigins = "AllowAngularApp";
 Env.Load();

@@ -1,1 +1,159 @@
-<p>bankaccounts works!</p>
+<router-outlet></router-outlet>
+<p-toast></p-toast>
+<div class="card">
+  <p-table [value]="bankAccounts" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" (onLazyLoad)="lazyLoad($event)"
+           [totalRecords]="totalRecords" [rows]="rows" [tableStyle]="{ 'min-width': '75rem' }"
+           [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="IBAN" style="width:22%">IBAN
+          <p-sortIcon field="IBAN"/>
+        </th>
+        <th pSortableColumn="accountType" style="width:22%">Tipo de cuenta
+          <p-sortIcon field="accountType"/>
+        </th>
+        <th style="width:22%">Usuario</th>
+        <th pSortableColumn="balance" style="width:22%">Saldo
+          <p-sortIcon field="balance"/>
+        </th>
+        <th pSortableColumn="isDeleted" style="width:22%">Estado
+          <p-sortIcon field="isDeleted"/>
+        </th>
+        <th style="width:22%">
+          <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
+
+      </tr>
+      <tr>
+        <!--BUSCAR POR IBAN-->
+        <th>
+          <p-columnFilter type="text" field="iban" (input)="onSearch($event)" placeholder="Buscar por IBAN"
+                          [showMenu]="false"/>
+        </th>
+        <!--BUSCAR POR ACCOUNT TYPE-->
+        <th>
+          <p-columnFilter field="accountType" matchMode="in" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value>
+              <p-dropdown [ngModel]="value" [options]="accountsTypes" (onChange)="onSearchFilter($event)"
+                          placeholder="Tipo de cuenta"
+                          [showClear]="true" class="text-color-secondary">
+                <ng-template let-option pTemplate="item">
+                  <p-tag [value]="option" [severity]="getSeverity(option)"></p-tag>
+                </ng-template>
+              </p-dropdown>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <!--BUSCAR POR USUARIO-->
+        <th>
+          <p-columnFilter field="users" matchMode="in" [showMenu]="false">
+            <ng-template pTemplate="filter" let-value>
+              <p-multiSelect [ngModel]="value" [options]="users" placeholder="Buscar por usuario"
+                             (onChange)="onSearchUser($event)">
+                <ng-template let-option pTemplate="item">
+                  <div class="inline-block vertical-align-middle">
+                    <img [alt]="option" src="https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg"
+                         width="24" class="vertical-align-middle"/>
+                    <span class="ml-1 mt-1">{{ option }}</span>
+                  </div>
+                </ng-template>
+              </p-multiSelect>
+            </ng-template>
+          </p-columnFilter>
+        </th>
+        <!--BUSCAR POR SALDO-->
+        <th>
+          <p-columnFilter type="text" field="balance" (input)="onSearch($event)" placeholder="Saldo"
+                          [showMenu]="false"/>
+        </th>
+        <!--BUSCAR POR ESTADO-->
+        <th>
+          <p-columnFilter type="boolean" field="isDeleted" (input)="onSearch($event)" [showMenu]="false"/>
+        </th>
+        <!--CLEAR-->
+        <th>
+          <p-button label="Limpiar filtros" (onClick)="clearFilters()" [text]="true" class="w-12"/>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-account>
+      <tr>
+        <td>
+          {{ account.iban }}
+        </td>
+        <td>
+          <p-tag [value]="account.accountType" [severity]="getSeverity(account.accountType)"></p-tag>
+        </td>
+        <td>
+          <div class="inline-block vertical-align-middle">
+            <!--border radius-->
+            <div class="bg-blue-50 border-50 border-round inline-block">
+              <img [alt]="account.usersName"
+                   src="https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg"
+                   width="24" class="vertical-align-middle"/>
+              <span class="ml-1 mt-1">{{ account.usersName }}</span></div>
+          </div>
+        </td>
+        <td>
+          <p-tag [value]="account.balance.toString() + '€'" [severity]="getBalanceColor(account.balance)"></p-tag>
+        </td>
+        <td>
+          <i class="pi"
+             [ngClass]="{ 'text-green-500 pi-check-circle': !account.isDeleted, 'text-red-500 pi-times-circle': account.isDeleted }"></i>
+        </td>
+        <td>
+          <div class="flex gap-2">
+            <p-overlayPanel #op>
+              <ng-template pTemplate="content">
+                <h4 class="text-left">IBAN: {{ account.iban }}</h4>
+                <p class="text-left">Tipo de cuenta: {{ account.accountType }}</p>
+                <p class="text-left">Usuario: {{ account.usersName }}</p>
+                <p class="text-left">Saldo: {{ account.balance }}</p>
+                <p class="text-left">Estado: {{ account.isDeleted ? 'Inactiva' : 'Activa' }}</p>
+              </ng-template>
+            </p-overlayPanel>
+            <p-button (click)="op.toggle($event)" icon="pi pi-info-circle" severity="info"/>
+            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning"/>
+            <p-button icon="pi pi-money-bill" (click)="goToTransactions(account.iban)" severity="success"/>
+            <div class="card flex justify-content-center">
+              <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger"></p-button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">No se han encontrado cuentas bancarias</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-button label="Crear cuenta bancaria" (click)="displayDialog = true"></p-button>
+
+  <p-dialog header="Crear cuenta bancaria" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
+            [contentStyle]="{height: '21rem'}" [closable]="false">
+    <app-bankaccount-create (onSave)="saveBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
+  </p-dialog>
+
+  <p-toast></p-toast>
+  <p-confirmDialog #cd>
+    <ng-template pTemplate="headless" let-message>
+      <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+        <div
+          class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
+          <i class="pi pi-trash text-5xl"></i>
+        </div>
+        <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
+        <p class="mb-0 text-left">{{ message.message }}</p>
+        <div class="flex align-items-center justify-content-center gap-2 mt-4">
+          <button pButton label="Eliminar" (click)="cd.accept()" class="w-8rem p-button-danger"></button>
+          <button pButton label="Cancelar" (click)="cd.reject()"
+                  class="p-button-danger p-button-outlined"></button>
+        </div>
+      </div>
+    </ng-template>
+  </p-confirmDialog>
+
+</div>

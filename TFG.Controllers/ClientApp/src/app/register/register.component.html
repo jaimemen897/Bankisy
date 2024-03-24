@@ -1,0 +1,110 @@
+<router-outlet></router-outlet>
+<p-toast></p-toast>
+<div class="flex align-items-center justify-content-center h-screen"
+     style="background: linear-gradient(180deg, rgba(228,42,240,1) 0%, rgba(0,104,255,1) 100%)">
+  <p-card [header]="getTittle()" subheader="" class="flex justify-content-center align-items-center align-content-center">
+    <form [formGroup]="formGroup" id="registerForm">
+      <div class="flex flex-column">
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-user"></i>
+          <input id="name" formControlName="name" type="text" pInputText placeholder="Nombre">
+        </span>
+        @if (formGroup.controls['name'].invalid && formGroup.controls['name'].touched) {
+          <p *ngIf="formGroup.controls['name'].errors?.required" class="text-red-500 text-xs m-0">El nombre es
+            obligatorio</p>
+          <p *ngIf="formGroup.controls['name'].errors?.minlength" class="text-red-500 text-xs m-0">El nombre debe tener
+            al menos 3 caracteres</p>
+          <p *ngIf="formGroup.controls['name'].errors?.maxlength" class="text-red-500 text-xs m-0">El nombre debe tener
+            como máximo 50 caracteres</p>
+        }
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-envelope"></i>
+          <input id="email" formControlName="email" type="text" pInputText placeholder="Email">
+        </span>
+        @if (formGroup.controls['email'].invalid && formGroup.controls['email'].touched) {
+          <p *ngIf="formGroup.controls['email'].errors?.required" class="text-red-500 text-xs m-0">El email es
+            obligatorio</p>
+          <p *ngIf="formGroup.controls['email'].errors?.email" class="text-red-500 text-xs m-0">El email no es
+            válido</p>
+        }
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-user"></i>
+          <input id="username" formControlName="username" type="text" pInputText placeholder="Username">
+        </span>
+        @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
+          <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0">El username es
+            obligatorio</p>
+          <p *ngIf="formGroup.controls['username'].errors?.minlength" class="text-red-500 text-xs m-0">El username debe
+            tener al menos 3 caracteres</p>
+          <p *ngIf="formGroup.controls['username'].errors?.maxlength" class="text-red-500 text-xs m-0">El username debe
+            tener como máximo 50 caracteres</p>
+        }
+        <span class="p-input-icon-left my-2">
+          <i class="pi pi-id-card"></i>
+          <input id="dni" formControlName="dni" type="text" pInputText placeholder="DNI" (input)="validateDNI($event)"/>
+        </span>
+        @if (formGroup.controls['dni'].invalid && formGroup.controls['dni'].touched) {
+          <p *ngIf="formGroup.controls['dni'].errors?.required" class="text-red-500 text-xs m-0">El DNI es
+            obligatorio</p>
+          <p *ngIf="formGroup.controls['dni'].errors?.minlength" class="text-red-500 text-xs m-0">El DNI debe tener 9
+            caracteres</p>
+          <p *ngIf="formGroup.controls['dni'].errors?.maxlength" class="text-red-500 text-xs m-0">El DNI debe tener 9
+            caracteres</p>
+          <p *ngIf="formGroup.controls['dni'].errors?.incorrect" class="text-red-500 text-xs m-0">El DNI no es
+            correcto</p>
+        }
+        <p>Género:</p>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex flex-column gap-3">
+            <div class="flex align-items-center">
+              <p-radioButton name="gender" value="Male" formControlName="gender" id="male"></p-radioButton>
+              <label for="male" class="ml-2">Hombre</label>
+            </div>
+
+            <div class="flex align-items-center">
+              <p-radioButton name="gender" value="Female" formControlName="gender" id="female"></p-radioButton>
+              <label for="female" class="ml-2">Mujer</label>
+            </div>
+          </div>
+
+          <div class="flex flex-column gap-3">
+            <div class="flex align-items-center">
+              <p-radioButton name="gender" value="Other" formControlName="gender" id="other"></p-radioButton>
+              <label for="other" class="ml-2">Otro</label>
+            </div>
+
+            <div class="flex align-items-center">
+              <p-radioButton name="gender" value="PreferNotToSay" formControlName="gender" id="PreferNotToSay"></p-radioButton>
+              <label for="PreferNotToSay" class="ml-2">Prefiero no decirlo</label>
+            </div>
+          </div>
+        </div>
+        @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
+          <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0">El género es
+            obligatorio</p>
+        }
+        <span class="p-input-icon-left my-3">
+          <i class="pi pi-lock"></i>
+          <p-password formControlName="password" [toggleMask]="true" placeholder="Password" [feedback]="true"
+                      (keyup.enter)="sendForm()"></p-password>
+        </span>
+        @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
+          <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0">La contraseña es
+            obligatoria</p>
+          <p *ngIf="formGroup.controls['password'].errors?.minlength" class="text-red-500 text-xs m-0">La contraseña
+            debe
+            tener al menos 3 caracteres</p>
+          <p *ngIf="formGroup.controls['password'].errors?.maxlength" class="text-red-500 text-xs m-0">La contraseña
+            debe
+            tener como máximo 50 caracteres</p>
+        }
+      </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+      <p-button [label]="getButtonLabel()" (click)="sendForm()" [disabled]="!isValid()"/>
+      <p-button label="Volver" (click)="goBack()" icon="pi pi-arrow-left" [style]="{ 'margin-left': '.5em' }"
+                severity="secondary"/>
+    </ng-template>
+  </p-card>
+</div>

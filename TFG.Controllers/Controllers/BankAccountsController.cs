@@ -14,15 +14,15 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
 {
     [HttpGet()]
     public async Task<ActionResult<Pagination<BankAccountResponseDto>>> GetBankAccounts([FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Iban", [FromQuery] bool descending = false, [FromQuery] string? search = null, [FromQuery] string? filter = null)
     {
-        return await bankAccountService.GetBankAccounts(pageNumber, pageSize, orderBy, descending);
+        return await bankAccountService.GetBankAccounts(pageNumber, pageSize, orderBy, descending, search, filter);
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<BankAccountResponseDto>> GetBankAccount(Guid id)
+    [HttpGet("{iban}")]
+    public async Task<ActionResult<BankAccountResponseDto>> GetBankAccount(string iban)
     {
-        return await bankAccountService.GetBankAccount(id);
+        return await bankAccountService.GetBankAccount(iban);
     }
     
     [HttpGet("user/{userId}")]
@@ -31,22 +31,22 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetBankAccountsByUserId(userId);
     }
     
-    [HttpGet("{bankAccountId}/transactions")]
-    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(Guid bankAccountId)
+    [HttpGet("{bankAccountIban}/transactions")]
+    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
     {
-        return await bankAccountService.GetTransactionsForAccount(bankAccountId);
+        return await bankAccountService.GetTransactionsForAccount(bankAccountIban);
     }
     
-    [HttpGet("{bankAccountId}/expenses")]
-    public async Task<List<TransactionResponseDto>> GetExpensesForAccount(Guid bankAccountId)
+    [HttpGet("{bankAccountIban}/expenses")]
+    public async Task<List<TransactionResponseDto>> GetExpensesForAccount(string bankAccountIban)
     {
-        return await bankAccountService.GetExpensesForAccount(bankAccountId);
+        return await bankAccountService.GetExpensesForAccount(bankAccountIban);
     }
     
-    [HttpGet("{bankAccountId}/incomes")]
-    public async Task<List<TransactionResponseDto>> GetIncomesForAccount(Guid bankAccountId)
+    [HttpGet("{bankAccountIban}/incomes")]
+    public async Task<List<TransactionResponseDto>> GetIncomesForAccount(string bankAccountIban)
     {
-        return await bankAccountService.GetIncomesForAccount(bankAccountId);
+        return await bankAccountService.GetIncomesForAccount(bankAccountIban);
     }
     
     [HttpPost()]
@@ -55,16 +55,16 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.CreateBankAccount(bankAccount);
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<BankAccountResponseDto>> UpdateBankAccount(Guid id, BankAccountUpdateDto bankAccount)
+    [HttpPut("{iban}")]
+    public async Task<ActionResult<BankAccountResponseDto>> UpdateBankAccount(string iban, [FromBody]BankAccountUpdateDto bankAccount)
     {
-       return await bankAccountService.UpdateBankAccount(id, bankAccount);
+       return await bankAccountService.UpdateBankAccount(iban, bankAccount);
     }
 
-    [HttpDelete("{id}")]
-    public async Task DeleteBankAccount(Guid id)
+    [HttpDelete("{iban}")]
+    public async Task DeleteBankAccount(string iban)
     {
-        await bankAccountService.DeleteBankAccount(id);
+        await bankAccountService.DeleteBankAccount(iban);
     }
     
     

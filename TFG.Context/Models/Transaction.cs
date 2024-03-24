@@ -18,18 +18,16 @@ public class Transaction
     [Column("amount")]
     public decimal Amount { get; set; }
     
-    [Column("id_account_origin")]
-    [ForeignKey(nameof(BankAccountOrigin))]
-    public Guid IdAccountOrigin { get; set; }
-    
-    [Column("id_account_destination")]
-    [ForeignKey(nameof(BankAccountDestination))]
-    public Guid IdAccountDestination { get; set; }
+    [Column("iban_account_origin"), ForeignKey("BankAccountOriginIban")]
+    public string IbanAccountOrigin { get; set; }
+
+    [Column("iban_account_destination"), ForeignKey("BankAccountDestinationIban")]
+    public string IbanAccountDestination { get; set; }
     
     [Column("date")]
     public DateTime Date { get; set; } = DateTime.Now.ToUniversalTime();
     
-    public BankAccount BankAccountOrigin { get; set; }
-    
-    public BankAccount BankAccountDestination { get; set; }
+    public BankAccount BankAccountOriginIban { get; set; }
+
+    public BankAccount BankAccountDestinationIban { get; set; }
 }

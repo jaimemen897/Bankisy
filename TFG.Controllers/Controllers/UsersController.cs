@@ -13,21 +13,21 @@ public class UsersController(UsersService usersService) : ControllerBase
 {
     [HttpGet()]
     public async Task<ActionResult<Pagination<UserResponseDto>>> GetUsers([FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false)
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Name", [FromQuery] bool descending = false, [FromQuery] string? search = null)
     {
-        return await usersService.GetUsers(pageNumber, pageSize, orderBy, descending);
-    }
-    
-    [HttpGet("all")]
-    public async Task<ActionResult<List<UserResponseDto>>> GetUsersWithoutPagination()
-    {
-        return await usersService.GetUsersWithoutPagination();
+        return await usersService.GetUsers(pageNumber, pageSize, orderBy, descending, search);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<UserResponseDto>> GetUser(Guid id)
     {
         return await usersService.GetUserAsync(id);
+    }
+    
+    [HttpGet("all")]
+    public async Task<ActionResult<UserResponseDto[]>> GetAllUsers()
+    {
+        return await usersService.GetAllUsers();
     }
 
     [HttpPost()]
@@ -40,6 +40,13 @@ public class UsersController(UsersService usersService) : ControllerBase
     public async Task<ActionResult<UserResponseDto>> UpdateUser(Guid id, UserUpdateDto user)
     {
         return await usersService.UpdateUser(id, user);
+    }
+    
+    [HttpPut("{id}/avatar")]
+    public async Task<ActionResult<UserResponseDto>> UpdateUserAvatar(Guid id, [FromForm] IFormFile avatar)
+    {
+        var host = $"{Request.Scheme}://{Request.Host}";
+        return await usersService.UploadAvatar(id, avatar, host);
     }
 
     [HttpDelete("{id}")]

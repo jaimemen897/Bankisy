@@ -1,10 +1,13 @@
+using System.Linq.Dynamic.Core;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using TFG.Context.Context;
 using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
+using TFG.Services.Extensions;
 using TFG.Services.mappers;
 using TFG.Services.Pagination;
 
@@ -15,7 +18,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
     public async Task<Pagination<UserResponseDto>> GetUsers(int pageNumber, int pageSize, string orderBy,
-        bool descending)
+        bool descending, string? search = null)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -26,27 +29,27 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        var cacheKey = $"GetUsers-{pageNumber}-{pageSize}-{orderBy}-{descending}";
+        /*var cacheKey = $"GetUsers-{pageNumber}-{pageSize}-{orderBy}-{descending}";
         if (cache.TryGetValue(cacheKey, out Pagination<UserResponseDto>? users))
         {
             if (users != null) return users;
-        }
+        }*/
 
         var usersQuery = bankContext.Users.Where(user => !user.IsDeleted);
-        var paginatedUsers = await Pagination<User>.CreateAsync(usersQuery, pageNumber, pageSize, orderBy, descending);
-        users = new Pagination<UserResponseDto>(_mapper.Map<List<UserResponseDto>>(paginatedUsers.Items),
-            paginatedUsers.TotalCount, pageNumber, pageSize);
 
-        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, users, cacheEntryOptions);
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            usersQuery = usersQuery.Where(user =>
+                user.Name.ToLower().Contains(search.ToLower()) || user.Email.ToLower().Contains(search.ToLower()));
+        }
 
-        return users;
-    }
-    
-    public async Task<List<UserResponseDto>> GetUsersWithoutPagination()
-    {
-        var users = await bankContext.Users.Where(user => !user.IsDeleted).ToListAsync();
-        return _mapper.Map<List<UserResponseDto>>(users);
+        var paginatedUsers = await usersQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
+            user => _mapper.Map<UserResponseDto>(user));
+
+        /*var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        cache.Set(cacheKey, paginatedUsers, cacheEntryOptions);*/
+
+        return paginatedUsers;
     }
 
     public async Task<UserResponseDto> GetUserAsync(Guid id)
@@ -65,19 +68,81 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         return user ?? throw new HttpException(404, "User not found");
     }
 
+    public async Task<UserResponseDto[]> GetAllUsers()
+    {
+        var users = await bankContext.Users.Where(u => !u.IsDeleted).ToListAsync();
+        return _mapper.Map<UserResponseDto[]>(users);
+    }
+
+    private async Task IsValid(UserCreateDto userCreateDto)
+    {
+        if (!Enum.TryParse(typeof(Gender), userCreateDto.Gender, true, out _))
+        {
+            throw new HttpException(400,
+                "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
+        }
+
+        var userExists = await bankContext.Users.AnyAsync(u => u.Username == userCreateDto.Username);
+        if (userExists)
+        {
+            throw new HttpException(400, "Username already exists");
+        }
+
+        userExists = await bankContext.Users.AnyAsync(u => u.Email == userCreateDto.Email);
+        if (userExists)
+        {
+            throw new HttpException(400, "Email already exists");
+        }
+
+        userExists = await bankContext.Users.AnyAsync(u => u.Dni == userCreateDto.Dni);
+        if (userExists)
+        {
+            throw new HttpException(400, "DNI already exists");
+        }
+    }
+
+    private async Task IsValid(UserUpdateDto userUpdateDto)
+    {
+        if (userUpdateDto.Gender != null && !Enum.TryParse(typeof(Gender), userUpdateDto.Gender, true, out _))
+        {
+            throw new HttpException(400,
+                "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
+        }
+
+        var userExists = await bankContext.Users.AnyAsync(u => u.Username == userUpdateDto.Username);
+        if (userExists)
+        {
+            throw new HttpException(400, "Username already exists");
+        }
+
+        userExists = await bankContext.Users.AnyAsync(u => u.Dni == userUpdateDto.Dni);
+        if (userExists)
+        {
+            throw new HttpException(400, "DNI already exists");
+        }
+
+        userExists = await bankContext.Users.AnyAsync(u => u.Email == userUpdateDto.Email);
+        if (userExists)
+        {
+            throw new HttpException(400, "Email already exists");
+        }
+    }
+
     public async Task<UserResponseDto> CreateUser(UserCreateDto user)
     {
+        await IsValid(user);
         var userDto = _mapper.Map<User>(user);
         await bankContext.Users.AddAsync(userDto);
         await bankContext.SaveChangesAsync();
 
         await ClearCache();
-        
+
         return _mapper.Map<UserResponseDto>(userDto);
     }
 
     public async Task<UserResponseDto> UpdateUser(Guid id, UserUpdateDto user)
     {
+        await IsValid(user);
         var userToUpdate = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
 
         userToUpdate = _mapper.Map(user, userToUpdate);
@@ -91,6 +156,17 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
     public async Task DeleteUser(Guid id)
     {
         var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        if (user.Avatar != User.ImageDefault)
+        {
+            var avatar = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads",
+                user.Avatar.Split("/").Last());
+            if (File.Exists(avatar))
+            {
+                File.Delete(avatar);
+            }
+        }
+
+
         var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.UsersId.Contains(user)).ToListAsync();
         bankAccounts.ForEach(ba => ba.IsDeleted = true);
         user.IsDeleted = true;
@@ -99,16 +175,75 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         await ClearCache();
     }
 
-    public async Task<User> ValidateUserCredentials(string email, string password)
+    public async Task<UserResponseDto> UploadAvatar(Guid id, IFormFile file, string host)
     {
-        return await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password) ??
-               throw new HttpException(401, "Invalid credentials");
+        var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+        if (!Directory.Exists(uploads))
+        {
+            Directory.CreateDirectory(uploads);
+        }
+
+        if (file.Length > 0)
+        {
+            /*check if file is an image*/
+            if (!file.ContentType.Contains("image"))
+            {
+                throw new HttpException(400, "Invalid file type. Only images are allowed");
+            }
+
+            if (user.Avatar != User.ImageDefault)
+            {
+                var avatar = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads",
+                    user.Avatar.Split("/").Last());
+                if (File.Exists(avatar))
+                {
+                    File.Delete(avatar);
+                }
+            }
+
+            var filePath = Path.Combine(uploads, user.Id + "-" + file.FileName);
+
+            await using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            user.Avatar = $"{host}/uploads/{user.Id}-{file.FileName}";
+            bankContext.Entry(user).State = EntityState.Modified;
+            await bankContext.SaveChangesAsync();
+        }
+
+        await ClearCache();
+
+        return _mapper.Map<UserResponseDto>(user);
     }
-    
+
+    public async Task<User> ValidateUserCredentials(string username, string password)
+    {
+        var user = await bankContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user == null)
+        {
+            throw new HttpException(400, "User not found");
+        }
+
+        if (!user.Password.StartsWith("$2a$") && !user.Password.StartsWith("$2b$") &&
+            !user.Password.StartsWith("$2x$") && !user.Password.StartsWith("$2y$"))
+        {
+            throw new HttpException(400, "Invalid password hash");
+        }
+
+        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+        {
+            throw new HttpException(400, "Invalid credentials");
+        }
+
+        return user;
+    }
+
     private async Task ClearCache()
     {
         var ids = await bankContext.Users.Select(u => u.Id).ToListAsync();
-        cache.Remove("GetUsers-1-10-Id-False");
         foreach (var id in ids)
         {
             cache.Remove("GetUser-" + id);
