@@ -1,35 +1,57 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
-<div class="flex align-items-center justify-content-center h-screen" style="background: linear-gradient(180deg, rgba(228,42,240,1) 0%, rgba(0,104,255,1) 100%)">
-  <p-card header="Iniciar sesión" subheader="" class="flex justify-content-center align-items-center align-content-center">
-    <form [formGroup]="formGroup" id="loginForm">
-      <div class="flex flex-column ">
-        <span class="p-input-icon-left my-2">
-          <i class="pi pi-user"></i>
-          <input id="username" formControlName="username" type="text" pInputText placeholder="Username">
-        </span>
-        @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
-          <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0">El username es obligatorio</p>
-          <p *ngIf="formGroup.controls['username'].errors?.minlength" class="text-red-500 text-xs m-0">El username debe tener como mínimo 3 caracteres</p>
-          <p *ngIf="formGroup.controls['username'].errors?.maxlength" class="text-red-500 text-xs m-0">El username debe tener como máximo 50 caracteres</p>
-        }
-        <span class="p-input-icon-left my-2">
-          <i class="pi pi-lock"></i>
-          <input id="password" formControlName="password" type="password" pInputText placeholder="Password" (keyup.enter)="sendLogin()">
-        </span>
-        @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
-          <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0">La contraseña es obligatoria</p>
-          <p *ngIf="formGroup.controls['password'].errors?.minlength" class="text-red-500 text-xs m-0">La contraseña debe tener como mínimo 3 caracteres</p>
-          <p *ngIf="formGroup.controls['password'].errors?.maxlength" class="text-red-500 text-xs m-0">La contraseña debe tener como máximo 50 caracteres</p>
-        }
-      </div>
-    </form>
+<div class="flex align-items-center justify-content-center h-screen"
+     style="background: linear-gradient(237deg, rgba(194,42,240,1) 0%, rgba(38,0,255,1) 100%)">
 
-    <ng-template pTemplate="footer">
-      <div class="flex align-items-center justify-content-center">
-        <p-button label="Iniciar sesión" (click)="sendLogin()" [disabled]="!isValid()"/>
-        <p-button label="Registrarse" (click)="goToRegister()" styleClass="p-button-secondary" [style]="{ 'margin-left': '.5em' }"/>
+  <p-card>
+    <div class="inline-flex p-6">
+      <div class="col flex align-items-center justify-content-center">
+        <img src="assets/login-img.png" alt="login" class="w-5">
       </div>
-    </ng-template>
+
+      <div class="col flex align-items-center justify-content-center flex-column">
+        <h1 class="text-2xl font-bold text-center">Iniciar sesión</h1>
+        <form [formGroup]="formGroup" id="loginForm" class="mt-4">
+          <div class="flex flex-column">
+            <span class="p-input-filled my-2">
+              <input id="username" formControlName="username" type="text" pInputText placeholder="Username"
+                     class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendLogin()">
+            </span>
+            @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
+              <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0">
+                El usuario es obligatorio</p>
+              <p *ngIf="formGroup.controls['username'].errors?.minlength" class="text-red-500 text-xs m-0">
+                El usuario debe tener como mínimo 3 caracteres</p>
+              <p *ngIf="formGroup.controls['username'].errors?.maxlength" class="text-red-500 text-xs m-0">
+                El usuario debe tener como máximo 50 caracteres</p>
+            }
+            <span class="p-input-filled my-2">
+          <input id="password" formControlName="password" type="password" pInputText placeholder="Password"
+                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendLogin()">
+        </span>
+            @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
+              <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0">
+                La contraseña es obligatoria</p>
+              <p *ngIf="formGroup.controls['password'].errors?.minlength" class="text-red-500 text-xs m-0">
+                La contraseña debe tener como mínimo 3 caracteres</p>
+              <p *ngIf="formGroup.controls['password'].errors?.maxlength" class="text-red-500 text-xs m-0">
+                La contraseña debe tener como máximo 50 caracteres</p>
+            }
+          </div>
+        </form>
+
+        <div class="mt-4 w-full">
+          <div class="flex align-items-center justify-content-center w-full">
+            <p-button label="Iniciar sesión" (click)="sendLogin()" [rounded]="true"/>
+          </div>
+          <div class="flex align-items-center justify-content-center">
+            <p-button label="Registrarse" [text]="true" (click)="goToRegister()" severity="secondary" [rounded]="true"/>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
   </p-card>
 </div>

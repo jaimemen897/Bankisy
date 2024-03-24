@@ -64,9 +64,5 @@ export class LoginComponent {
   goToRegister() {
     this.router.navigate(['/register', 'register']);
   }
-
-  isValid() {
-    return this.formGroup.valid;
-  }
 }
 

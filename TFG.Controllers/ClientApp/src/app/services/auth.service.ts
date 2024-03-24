@@ -16,11 +16,12 @@ export class AuthService {
   login(username: string, password: string): Observable<any> {
     return this.http.post(this.loginUrl, {username, password}).pipe(
       catchError(error => {
-        if (error.status === 401) {
+        if (error.status === 400) {
           if (error.error.title === 'User not found') {
             this.messageService.add({severity: 'error', summary: 'Error', detail: 'Usuario no encontrado'});
+          } else {
+            this.messageService.add({severity: 'error', summary: 'Error', detail: 'Usuario o contraseña incorrectos'});
           }
-          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Usuario o contraseña incorrectos'});
         }
         return throwError(() => error);
       })

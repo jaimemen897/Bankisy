@@ -13,6 +13,7 @@ import {Token} from "../login/login.component";
 import {AuthService} from "../services/auth.service";
 import {UserService} from "../services/users.service";
 import {UserCreate} from "../models/UserCreate";
+import {DropdownModule} from "primeng/dropdown";
 
 @Component({
   selector: 'app-register',
@@ -28,7 +29,8 @@ import {UserCreate} from "../models/UserCreate";
     ToastModule,
     PasswordModule,
     RadioButtonModule,
-    NgIf
+    NgIf,
+    DropdownModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
@@ -39,6 +41,7 @@ export class RegisterComponent implements OnInit {
 
   mode: 'create' | 'update' | 'register';
   id: string;
+  genders = ['Hombre', 'Mujer', 'Otro', 'Prefiero no decirlo'];
 
   formGroup = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
@@ -129,10 +132,6 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  isValid() {
-    return this.formGroup.valid;
-  }
-
   goBack() {
     this.location.back();
   }
@@ -144,7 +143,7 @@ export class RegisterComponent implements OnInit {
       case 'update':
         return 'Actualizar usuario';
       case 'register':
-        return 'Crear usuario';
+        return 'Crear cuenta';
       default:
         return 'Siguiente';
     }
