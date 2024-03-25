@@ -1,52 +1,49 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
 import {Pagination} from "./users.service";
 import {BankAccount} from "../models/BankAccount";
 import {BankAccountCreate} from "../models/BankAccountCreate";
 import {Transaction} from "../models/Transaction";
+import {User} from "../models/User";
 
 @Injectable({
   providedIn: 'root'
 })
 export class IndexService {
-  private apiUrl = 'http://localhost:5196';
+  private apiUrl = 'http://localhost:5196/index';
 
   constructor(private http: HttpClient) {
   }
 
-  getBalanceByIban(iban: string): Observable<number> {
-    const url = `${this.apiUrl}/me/bankaccounts/${iban}/balance`;
+  getUserByToken(): Observable<User> {
+    const headers = new HttpHeaders().set('token', localStorage.getItem('token') || '');
+    return this.http.get<User>('http://localhost:5196/session/me', {headers});
+  }
+
+  getTotalBalanceByUserId(id: string): Observable<number> {
+    const url = `${this.apiUrl}/user/${id}/totalbalance`;
     return this.http.get<number>(url);
   }
 
-  //TRANSACTIONS, EXPENSES, INCOMES FOR ALL ACCOUNTS OF ONE USER
   getTransactionsByUserId(id: string): Observable<Transaction[]> {
-    const url = `${this.apiUrl}/me/bankaccounts/${id}/transactions`;
+    const url = `${this.apiUrl}/user/${id}/transactions`;
     return this.http.get<Transaction[]>(url);
   }
 
   getExpensesByUserId(id: string): Observable<Transaction[]> {
-    const url = `${this.apiUrl}/me/bankaccounts/${id}/expenses`;
+    const url = `${this.apiUrl}/user/${id}/expenses`;
     return this.http.get<Transaction[]>(url);
   }
 
   getIncomesByUserId(id: string): Observable<Transaction[]> {
-    const url = `${this.apiUrl}/me/bankaccounts/${id}/incomes`;
+    const url = `${this.apiUrl}/user/${id}/incomes`;
     return this.http.get<Transaction[]>(url);
   }
 
-  //TRANSACTIONS, EXPENSES, INCOMES FOR ONE ACCOUNT
-  getBankAccountTransactions(iban: string): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(`${this.apiUrl}/me/bankaccounts/${iban}/transactions`);
-  }
-
-  getBankAccountExpenses(iban: string): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(`${this.apiUrl}/me/bankaccounts/${iban}/expenses`);
-  }
-
-  getBankAccountIncomes(iban: string): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(`${this.apiUrl}/me/bankaccounts/${iban}/incomes`);
+  /*getBalanceByIban(iban: string): Observable<number> {
+    const url = `${this.apiUrl}/me/bankaccounts/${iban}/balance`;
+    return this.http.get<number>(url);
   }
 
   //BANK ACCOUNTS
@@ -85,5 +82,5 @@ export class IndexService {
 
   addTransaction(Transaction: Transaction): Observable<Transaction> {
     return this.http.post<Transaction>(`${this.apiUrl}/me/transactions`, Transaction);
-  }
+  }*/
 }

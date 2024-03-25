@@ -4,6 +4,7 @@ import {map, Observable} from 'rxjs';
 import {Pagination} from "./users.service";
 import {BankAccount} from "../models/BankAccount";
 import {BankAccountCreate} from "../models/BankAccountCreate";
+import {Transaction} from "../models/Transaction";
 
 @Injectable({
   providedIn: 'root'

@@ -83,13 +83,13 @@ export class RegisterComponent implements OnInit {
   }
 
   sendForm() {
-    const id = this.route.snapshot.paramMap.get('id') ?? '';
-    let name = this.formGroup.controls.name.value ?? '';
-    let email = this.formGroup.controls.email.value ?? '';
-    let username = this.formGroup.controls.username.value ?? '';
-    let dni = this.formGroup.controls.dni.value ?? '';
-    let gender = this.formGroup.controls.gender.value ?? '';
-    let password = this.formGroup.controls.password.value ?? '';
+    const id = this.route.snapshot.paramMap.get('id') as string;
+    let name = this.formGroup.controls.name.value as string;
+    let email = this.formGroup.controls.email.value as string;
+    let username = this.formGroup.controls.username.value as string;
+    let dni = this.formGroup.controls.dni.value as string;
+    let gender = this.formGroup.controls.gender.value as string;
+    let password = this.formGroup.controls.password.value as string;
     if (this.formGroup.valid) {
       let user: UserCreate = {
         name: name,
@@ -116,13 +116,13 @@ export class RegisterComponent implements OnInit {
         case 'register': {
           this.authService.register(name, email, username, dni, gender, password).subscribe((data: Token) => {
               localStorage.setItem('token', data.token);
-              this.router.navigate(['/users']);
+              this.router.navigate(['/index']);
             }
           );
           break;
         }
         default: {
-          this.router.navigate(['/users']);
+          this.router.navigate(['/index']);
         }
       }
     } else {

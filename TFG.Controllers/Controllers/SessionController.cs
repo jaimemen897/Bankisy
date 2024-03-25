@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.users;
 using TFG.Services;
@@ -11,6 +12,7 @@ public class SessionController(SessionService sessionService) : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login(UserLoginDto userLogin)
     {
+        
         return await sessionService.Login(userLogin);
     }
     
@@ -18,5 +20,12 @@ public class SessionController(SessionService sessionService) : ControllerBase
     public async Task<ActionResult<string>> Register(UserCreateDto userRegister)
     {
         return await sessionService.Register(userRegister);
+    }
+    
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<UserResponseDto>> GetUserByToken([FromHeader] string token)
+    {
+        return await sessionService.GetUserByToken(token);
     }
 }

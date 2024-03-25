@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.DTOs.users;
@@ -58,7 +59,7 @@ public abstract class MapperConfig
                     dest.Dni = src.Dni ?? dest.Dni;
                     dest.Gender = src.Gender != null ? (Gender)Enum.Parse(typeof(Gender), src.Gender) : dest.Gender;
                     dest.Avatar = src.Avatar ?? dest.Avatar;
-                    dest.Password = src.Password ?? dest.Password;
+                    dest.Password = src.Password .IsNullOrEmpty() ? dest.Password : BCrypt.Net.BCrypt.HashPassword(src.Password);
                     dest.UpdatedAt = DateTime.Now.ToUniversalTime();
                 });
 

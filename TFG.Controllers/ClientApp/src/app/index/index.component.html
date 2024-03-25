@@ -1,1 +1,67 @@
-<p>index works!</p>
+<p-card>
+  <div class="grid">
+    @if (user) {
+
+      <div class="col-12">
+        <div class="flex flex-column sm:flex-row align-items-center gap-4">
+          <div class="flex flex-column sm:flex-row align-items-center gap-3">
+            <img [src]="user.avatar" class="w-3rem h-3rem flex-shrink-0" alt="User Image">
+            <div class="flex flex-column align-items-center sm:align-items-start">
+          <span class="text-900 font-bold text-4xl">
+            @if (user.gender == 'Male') {
+              Bienvenido
+            } @else if (user.gender == 'Female') {
+              Bienvenida
+            } @else {
+              Bienvenide
+            }
+            {{ user.name }}
+          </span>
+            </div>
+          </div>
+          <div class="flex gap-2 sm:ml-auto">
+            <button type="button" pButton pTooltip="Exchange" tooltipPosition="bottom" icon="pi pi-arrows-h"
+                    class="p-element p-button-rounded p-button-outlined p-button p-component p-button-icon-only">
+              <span class="p-button-icon pi pi-arrows-h" aria-hidden="true"></span></button>
+            <button type="button" pButton pTooltip="Withdraw" tooltipPosition="bottom" icon="pi pi-download"
+                    class="p-element p-button-rounded p-button-outlined p-button p-component p-button-icon-only">
+              <span class="p-button-icon pi pi-download" aria-hidden="true"></span></button>
+            <button type="button" pButton pTooltip="Send" tooltipPosition="bottom" icon="pi pi-send"
+                    class="p-element p-button-rounded p-button p-component p-button-icon-only">
+              <span class="p-button-icon pi pi-send" aria-hidden="true"></span></button>
+          </div>
+        </div>
+      </div>
+      <!--SALDO-->
+      <div class="col-12 md:col-6 xl:col-4">
+        <div class="card h-full flex flex-column align-items-center justify-content-center bg-gray-200 border-round-3xl p-3">
+          <i class="pi pi-euro text-blue-400 text-4xl mb-4"></i>
+          <span class="text-900 text-lg mb-4 font-medium">Saldo</span>
+          <span class="text-900 text-2xl font-bold">{{ totalBalance }}€</span>
+        </div>
+      </div>
+
+      <!--INGRESOS-->
+      <div class="col-12 md:col-6 xl:col-4">
+        <div class="card h-full flex flex-column align-items-center justify-content-center bg-gray-200 border-round-3xl p-3">
+          <i class="pi pi-arrow-up text-green-400 text-4xl mb-4"></i>
+          <span class="text-900 text-lg mb-4 font-medium">Ingresos</span>
+          <span class="text-900 text-2xl text-success font-bold">{{ totalIncomes }}€</span>
+        </div>
+      </div>
+
+      <!--GASTOS-->
+      <div class="col-12 md:col-6 xl:col-4">
+        <div class="card h-full flex flex-column align-items-center justify-content-center bg-gray-200 border-round-3xl p-3">
+          <i class="pi pi-arrow-down text-red-400 text-4xl mb-4"></i>
+          <span class="text-900 text-lg mb-4 font-medium">Gastos</span>
+          <span class="text-900 text-2xl text-danger font-bold">{{ totalExpenses }}€</span>
+        </div>
+      </div>
+    }
+
+  </div>
+</p-card>
+
+
+

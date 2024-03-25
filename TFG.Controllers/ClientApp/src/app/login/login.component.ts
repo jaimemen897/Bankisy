@@ -52,7 +52,7 @@ export class LoginComponent {
     if (this.formGroup.valid) {
       this.authService.login(username, password).subscribe((data: Token) => {
           localStorage.setItem('token', data.token);
-          this.router.navigate(['/users']);
+          this.router.navigate(['/']);
         }
       );
 

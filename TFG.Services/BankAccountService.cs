@@ -1,9 +1,7 @@
 using AutoMapper;
-using IbanNet;
 using IbanNet.Registry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.IdentityModel.Tokens;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.transactions;
@@ -82,23 +80,6 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         cache.Set(cacheKey, bankAccount, cacheEntryOptions);*/
 
         return bankAccount ?? throw new HttpException(404, "BankAccount not found");
-    }
-
-    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
-    {
-        var cacheKey = $"GetBankAccountsByUserId-{userId}";
-        if (cache.TryGetValue(cacheKey, out List<BankAccountResponseDto>? bankAccounts))
-        {
-            return bankAccounts ?? throw new HttpException(404, "BankAccounts not found");
-        }
-
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
-        bankAccounts = bankAccountList.Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
-            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
-        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, bankAccounts, cacheEntryOptions);
-
-        return bankAccounts ?? throw new HttpException(404, "BankAccounts not found");
     }
 
     private static void IsValid(BankAccountCreateDto bankAccountCreateDto)
@@ -211,12 +192,12 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
                 bankAccountToUpdate.UsersId.Add(user);
                 user.BankAccounts.Add(bankAccountToUpdate);
             }
-            
+
             if (bankAccount.AccountType != null)
             {
                 bankAccountToUpdate.AccountType = Enum.Parse<AccountType>(bankAccount.AccountType);
             }
-            
+
 
             await bankContext.SaveChangesAsync();
 
@@ -255,4 +236,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
             cache.Remove("GetBankAccount-" + iban);
         }
     }
+
+    /*BY USER*/
+    
 }

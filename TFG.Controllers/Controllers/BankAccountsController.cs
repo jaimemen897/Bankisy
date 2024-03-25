@@ -25,12 +25,6 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetBankAccount(iban);
     }
     
-    [HttpGet("user/{userId}")]
-    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUser(Guid userId)
-    {
-        return await bankAccountService.GetBankAccountsByUserId(userId);
-    }
-    
     [HttpGet("{bankAccountIban}/transactions")]
     public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
     {
@@ -66,6 +60,4 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     {
         await bankAccountService.DeleteBankAccount(iban);
     }
-    
-    
 }

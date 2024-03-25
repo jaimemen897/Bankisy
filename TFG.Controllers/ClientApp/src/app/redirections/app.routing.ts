@@ -6,9 +6,11 @@ import {RegisterComponent} from "../register/register.component";
 import {BankaccountsComponent} from "../bankaccounts/bankaccounts.component";
 import {TransactionsComponent} from "../transactions/transactions.component";
 import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/bankaccount-create.component";
+import {IndexComponent} from "../index/index.component";
 
 export const routes: Routes = [
-  {path: '', redirectTo: '/users', pathMatch: 'full'},
+  {path: '', redirectTo: '/index', pathMatch: 'full'},
+  {path: 'index', component: IndexComponent},
   {path: 'users', component: UsersComponent},
   {path: 'login', component: LoginComponent},
   {path: 'register/:mode', component: RegisterComponent},

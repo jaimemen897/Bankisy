@@ -18,10 +18,10 @@ export class ErrorHttpInterceptor implements HttpInterceptor {
         this.messageService.add({severity: 'error', summary: 'Error', detail: 'No tienes permisos para acceder a esta página'});
         this.location.back();
       }
-      if (err instanceof HttpErrorResponse && err.status === 404) {
+      /*if (err instanceof HttpErrorResponse && err.status === 404) {
         this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se ha encontrado la página'});
         this.location.back();
-      }
+      }*/
       if (err instanceof HttpErrorResponse && err.status === 500) {
         this.messageService.add({severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error'});
         this.location.back();
