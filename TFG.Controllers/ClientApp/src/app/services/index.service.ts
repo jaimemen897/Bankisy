@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {map, Observable} from 'rxjs';
-import {Pagination} from "./users.service";
+import {catchError, Observable, throwError} from 'rxjs';
 import {BankAccount} from "../models/BankAccount";
 import {BankAccountCreate} from "../models/BankAccountCreate";
 import {Transaction} from "../models/Transaction";
 import {User} from "../models/User";
+import {TransactionCreate} from "../models/TransactionCreate";
+import {MessageService} from "primeng/api";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ import {User} from "../models/User";
 export class IndexService {
   private apiUrl = 'http://localhost:5196/index';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private messageService: MessageService) {
   }
 
   getUserByToken(): Observable<User> {
@@ -22,23 +23,77 @@ export class IndexService {
   }
 
   getTotalBalanceByUserId(id: string): Observable<number> {
-    const url = `${this.apiUrl}/user/${id}/totalbalance`;
+    const url = `${this.apiUrl}/${id}/totalbalance`;
     return this.http.get<number>(url);
   }
 
   getTransactionsByUserId(id: string): Observable<Transaction[]> {
-    const url = `${this.apiUrl}/user/${id}/transactions`;
+    const url = `${this.apiUrl}/${id}/transactions`;
     return this.http.get<Transaction[]>(url);
   }
 
   getExpensesByUserId(id: string): Observable<Transaction[]> {
-    const url = `${this.apiUrl}/user/${id}/expenses`;
+    const url = `${this.apiUrl}/${id}/expenses`;
     return this.http.get<Transaction[]>(url);
   }
 
   getIncomesByUserId(id: string): Observable<Transaction[]> {
-    const url = `${this.apiUrl}/user/${id}/incomes`;
+    const url = `${this.apiUrl}/${id}/incomes`;
     return this.http.get<Transaction[]>(url);
+  }
+
+  getBankAccountsByUserId(id: string): Observable<BankAccount[]> {
+    const url = `${this.apiUrl}/${id}/bankaccounts`;
+    return this.http.get<BankAccount[]>(url);
+  }
+
+  addBankAccount(BankAccount: BankAccountCreate): Observable<BankAccount> {
+    return this.http.post<BankAccount>(this.apiUrl + '/bankaccount', BankAccount);
+  }
+
+  addTransaction(Transaction: TransactionCreate): Observable<Transaction> {
+    return this.http.post<Transaction>(this.apiUrl + '/transaction', Transaction).pipe(
+      catchError(error => {
+        if (error.status === 400 || error.status === 400) {
+          if (error.error.title === 'Insufficient funds in the origin account') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Fondos insuficientes en la cuenta de origen'
+            });
+          }
+
+          if (error.error.title === 'Origin and destination accounts cannot be the same') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Las cuentas de origen y destino no pueden ser iguales'
+            });
+          }
+          if (error.error.title === 'Transaction amount must be greater than zero') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'La cantidad de la transacción debe ser mayor que cero'
+            });
+          }
+        } else if (error.status === 404) {
+          if (error.error.title === 'Account origin not found') {
+            this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de origen no encontrada'});
+          }
+          if (error.error.title === 'Account destination not found') {
+            this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de destino no encontrada'});
+          }
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
+          });
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   /*getBalanceByIban(iban: string): Observable<number> {

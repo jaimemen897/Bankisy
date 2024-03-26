@@ -26,9 +26,9 @@
                 Máximo 50 caracteres</p>
             }
             <span class="p-input-filled my-2">
-          <input id="password" formControlName="password" type="password" pInputText placeholder="Password"
+              <input id="password" formControlName="password" type="password" pInputText placeholder="Password"
                  class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendLogin()">
-        </span>
+            </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
                 La contraseña es obligatoria</p>

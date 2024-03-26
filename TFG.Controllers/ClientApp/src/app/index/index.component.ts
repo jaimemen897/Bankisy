@@ -1,13 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {IndexService} from "../services/index.service";
 import {User} from "../models/User";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
-import {UserService} from "../services/users.service";
-import {BankAccountService} from "../services/bankaccounts.service";
 import {CardModule} from "primeng/card";
 import {Transaction} from "../models/Transaction";
-
+import {BankAccount} from "../models/BankAccount";
+import {PanelModule} from "primeng/panel";
+import {AvatarModule} from "primeng/avatar";
+import {MenuModule} from "primeng/menu";
+import {ToastModule} from "primeng/toast";
+import {TableModule} from "primeng/table";
+import {TagModule} from "primeng/tag";
+import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/bankaccount-create.component";
+import {DialogModule} from "primeng/dialog";
+import {CreateTransactionComponent} from "../transactions/create/create-transaction.component";
+import {CurrencyPipe, DatePipe, NgClass} from "@angular/common";
 
 @Component({
   selector: 'app-index',
@@ -15,15 +23,30 @@ import {Transaction} from "../models/Transaction";
   imports: [
     ButtonModule,
     TooltipModule,
-    CardModule
+    CardModule,
+    PanelModule,
+    AvatarModule,
+    MenuModule,
+    ToastModule,
+    TableModule,
+    TagModule,
+    BankaccountCreateComponent,
+    DialogModule,
+    CreateTransactionComponent,
+    CurrencyPipe,
+    DatePipe,
+    NgClass
   ],
   templateUrl: './index.component.html',
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit {
 
-  constructor(private indexService: IndexService, private userService: UserService) {
+  constructor(private indexService: IndexService) {
   }
+
+  @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
+  @ViewChild(BankaccountCreateComponent) bankAccountCreate!: BankaccountCreateComponent
 
   user!: User;
 
@@ -33,6 +56,12 @@ export class IndexComponent implements OnInit {
   transactions: Transaction[];
   incomes: Transaction[];
   expenses: Transaction[];
+  bankAccounts: BankAccount[];
+
+  displayDialogBankAccount: boolean = false;
+  displayDialogTransaction: boolean = false;
+  updating: boolean = false;
+  items: { label?: string; icon?: string; separator?: boolean, command?: () => void }[];
 
   ngOnInit(): void {
     this.indexService.getUserByToken().subscribe(user => {
@@ -40,7 +69,30 @@ export class IndexComponent implements OnInit {
       this.getBalanceByUserId(this.user.id);
       this.getIncomesByUserId(this.user.id);
       this.getExpensesByUserId(this.user.id);
+      this.getTransactionsByUserId(this.user.id);
+      this.getBankAccountsByUserId(this.user.id);
     });
+
+    this.items = [
+      {
+        label: 'Recargar',
+        icon: 'pi pi-refresh',
+        command: () => {
+          this.refresh();
+        }
+      },
+      {
+        label: 'Search',
+        icon: 'pi pi-search'
+      },
+      {
+        separator: true
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-times'
+      }
+    ];
   }
 
   getBalanceByUserId(id: string) {
@@ -68,4 +120,74 @@ export class IndexComponent implements OnInit {
       this.totalExpenses = expenses.reduce((acc, expense) => acc + expense.amount, 0);
     });
   }
+
+  getBankAccountsByUserId(id: string) {
+    this.indexService.getBankAccountsByUserId(id).subscribe(bankAccounts => {
+      this.bankAccounts = bankAccounts;
+    });
+  }
+
+  getAccountName(accountType: string) {
+    switch (accountType) {
+      case 'Saving':
+        return 'Ahorro';
+      case 'Current':
+        return 'Corriente';
+      case 'FixedTerm':
+        return 'Plazo fijo';
+      case 'Payroll':
+        return 'Nómina';
+      case 'Student':
+        return 'Estudiante';
+      default:
+        return 'Otro';
+    }
+  }
+
+  getBalanceColor(balance: number) {
+    if (balance > 1000) {
+      return 'success';
+    } else if (balance > 0) {
+      return 'info'
+    } else if (balance < 0) {
+      return 'danger';
+    } else {
+      return 'info';
+    }
+  }
+
+  refresh() {
+    this.updating = true;
+    this.ngOnInit()
+    setTimeout(() => {
+      this.updating = false;
+    }, 200);
+  }
+
+  goToCreateBankAccount() {
+    this.displayDialogBankAccount = true;
+    this.bankAccountCreate.loadUser(this.user);
+  }
+
+  createBankAccount() {
+    this.displayDialogBankAccount = false;
+    this.ngOnInit();
+  }
+
+  createTransaction() {
+    this.displayDialogTransaction = false;
+    this.transactionCreate.loadUser();
+    this.indexService.getBankAccountsByUserId(this.user.id).subscribe(bankAccounts => {
+      this.bankAccounts = bankAccounts;
+    });
+    this.ngOnInit();
+  }
+
+  closeDialog() {
+    this.displayDialogBankAccount = false;
+    this.displayDialogTransaction = false;
+  }
+
+  protected readonly console = console;
+  protected readonly BankAccount = BankAccount;
 }

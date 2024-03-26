@@ -236,7 +236,4 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
             cache.Remove("GetBankAccount-" + iban);
         }
     }
-
-    /*BY USER*/
-    
 }

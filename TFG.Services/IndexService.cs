@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
@@ -10,7 +11,7 @@ using TFG.Services.mappers;
 
 namespace TFG.Services;
 
-public class IndexService(BankContext bankContext)
+public class IndexService(BankContext bankContext, BankAccountService bankAccountService, TransactionService transactionService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
     
@@ -94,5 +95,15 @@ public class IndexService(BankContext bankContext)
         }
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+    }
+    
+    public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
+    {
+        return await bankAccountService.CreateBankAccount(bankAccount);
+    } 
+    
+    public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
+    {
+        return await transactionService.CreateTransaction(transaction);
     }
 }

@@ -1,11 +1,12 @@
+<router-outlet></router-outlet>
+<p-toast></p-toast>
 <p-card>
   <div class="grid">
     @if (user) {
-
       <div class="col-12">
         <div class="flex flex-column sm:flex-row align-items-center gap-4">
           <div class="flex flex-column sm:flex-row align-items-center gap-3">
-            <img [src]="user.avatar" class="w-3rem h-3rem flex-shrink-0" alt="User Image">
+            <p-avatar size="large" shape="circle" image="{{user.avatar}}"/>
             <div class="flex flex-column align-items-center sm:align-items-start">
           <span class="text-900 font-bold text-4xl">
             @if (user.gender == 'Male') {
@@ -34,8 +35,9 @@
       </div>
       <!--SALDO-->
       <div class="col-12 md:col-6 xl:col-4">
-        <div class="card h-full flex flex-column align-items-center justify-content-center bg-gray-200 border-round-3xl p-3">
-          <i class="pi pi-euro text-blue-400 text-4xl mb-4"></i>
+        <div
+          class="card h-full flex flex-column align-items-center justify-content-center bg-blue-400 border-round-3xl p-3">
+          <i class="pi pi-euro text-4xl mb-4"></i>
           <span class="text-900 text-lg mb-4 font-medium">Saldo</span>
           <span class="text-900 text-2xl font-bold">{{ totalBalance }}€</span>
         </div>
@@ -43,8 +45,9 @@
 
       <!--INGRESOS-->
       <div class="col-12 md:col-6 xl:col-4">
-        <div class="card h-full flex flex-column align-items-center justify-content-center bg-gray-200 border-round-3xl p-3">
-          <i class="pi pi-arrow-up text-green-400 text-4xl mb-4"></i>
+        <div
+          class="card h-full flex flex-column align-items-center justify-content-center bg-green-400 border-round-3xl p-3">
+          <i class="pi pi-arrow-up text-4xl mb-4"></i>
           <span class="text-900 text-lg mb-4 font-medium">Ingresos</span>
           <span class="text-900 text-2xl text-success font-bold">{{ totalIncomes }}€</span>
         </div>
@@ -52,16 +55,100 @@
 
       <!--GASTOS-->
       <div class="col-12 md:col-6 xl:col-4">
-        <div class="card h-full flex flex-column align-items-center justify-content-center bg-gray-200 border-round-3xl p-3">
-          <i class="pi pi-arrow-down text-red-400 text-4xl mb-4"></i>
+        <div
+          class="card h-full flex flex-column align-items-center justify-content-center bg-red-400 border-round-3xl p-3">
+          <i class="pi pi-arrow-down text-4xl mb-4"></i>
           <span class="text-900 text-lg mb-4 font-medium">Gastos</span>
           <span class="text-900 text-2xl text-danger font-bold">{{ totalExpenses }}€</span>
         </div>
       </div>
+
+      <!--CUENTAS-->
+      <p-panel [toggleable]="true" class="w-full p-3">
+        <ng-template pTemplate="header">
+          <div class="flex align-items-center gap-2">
+            <p-avatar size="large" shape="square" image="assets/wallet.png"/>
+            <span class="font-bold">Tus cuentas</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="icons">
+          <button class="p-panel-header-icon p-link mr-2" (click)="refresh()">
+            <span class="pi pi-refresh" [ngClass]="{'rotate-icon': updating}"></span>
+          </button>
+        </ng-template>
+        <p-table [value]="bankAccounts" [tableStyle]="{ 'min-width': '50rem' }">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>IBAN</th>
+              <th>Saldo</th>
+              <th>Usuarios</th>
+              <th>Tipo de cuenta</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-account>
+            <tr>
+              <td>{{ account.iban }}</td>
+              <td>
+                <p-tag [value]="account.balance + '€'" [severity]="getBalanceColor(account.balance)"></p-tag>
+              </td>
+              <td>{{ account.usersName }}</td>
+              <td>{{ getAccountName(account.accountType) }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-panel>
+      <p-button label="Crear una cuenta de banco" (click)="goToCreateBankAccount()" class="m-2"></p-button>
+      <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogBankAccount" [modal]="true" [resizable]="false"
+                [contentStyle]="{height: '16rem'}" [closable]="false">
+        <app-bankaccount-create (onSave)="createBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
+      </p-dialog>
+
+      <!--TRANSACCIONES-->
+      <p-panel [toggleable]="true" class="w-full p-3">
+        <ng-template pTemplate="header">
+          <div class="flex align-items-center gap-2">
+            <p-avatar size="large" shape="square" image="assets/transaction.png"/>
+            <span class="font-bold">Tus transacciones</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="icons">
+          <button class="p-panel-header-icon p-link mr-2" (click)="refresh()">
+            <span class="pi pi-refresh" [ngClass]="{'rotate-icon': updating}"></span>
+          </button>
+        </ng-template>
+        <p-table [value]="transactions" [tableStyle]="{ 'min-width': '50rem' }">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Id</th>
+              <th>Importe</th>
+              <th>Concepto</th>
+              <th>Cuenta origen</th>
+              <th>Cuenta destino</th>
+              <th>Fecha</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-transaction>
+            <tr>
+              <td>{{ transaction.id }}</td>
+              <td>
+                <p-tag [value]="transaction.amount + '€'" [severity]="getBalanceColor(transaction.amount)"></p-tag>
+              </td>
+              <td>{{ transaction.concept }}</td>
+              <td>{{ transaction.ibanAccountOrigin }}</td>
+              <td>{{ transaction.ibanAccountDestination }}</td>
+              <td>{{ transaction.date | date: 'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-panel>
+      <p-button label="Realizar transferencia" (click)="displayDialogTransaction = true" class="m-2"></p-button>
+
+      <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogTransaction" [modal]="true" [resizable]="false"
+                [contentStyle]="{height: '29rem'}" [closable]="false">
+        <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
+      </p-dialog>
     }
+
 
   </div>
 </p-card>
-
-
-

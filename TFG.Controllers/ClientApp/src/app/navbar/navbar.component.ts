@@ -24,26 +24,12 @@ export class NavbarComponent {
         {
           label: 'Usuarios',
           icon: 'pi pi-fw pi-user',
-          routerLink: ['/users'],
-          items: [
-            {
-              label: 'Crear usuario',
-              icon: 'pi pi-fw pi-user-plus',
-              routerLink: ['/register/create']
-            }
-          ]
+          routerLink: ['/users']
         },
         {
           label: 'Cuentas de banco',
           icon: 'pi pi-fw pi-money-bill',
-          routerLink: ['/bankaccounts'],
-          items: [
-            {
-              label: 'Crear cuenta de banco',
-              icon: 'pi pi-fw pi-plus',
-              routerLink: ['/bankaccounts/create']
-            }
-          ]
+          routerLink: ['/bankaccounts']
         },
         {
           label: 'Transacciones',
