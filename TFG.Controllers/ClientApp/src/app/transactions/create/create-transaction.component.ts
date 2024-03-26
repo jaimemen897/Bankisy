@@ -64,7 +64,6 @@ export class CreateTransactionComponent implements OnInit {
         this.bankAccounts = bankAccounts;
       });
     });
-
   }
 
   createTransaction() {

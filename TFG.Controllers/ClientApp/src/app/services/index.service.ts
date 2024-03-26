@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {catchError, Observable, throwError} from 'rxjs';
+import {catchError, map, Observable, throwError} from 'rxjs';
 import {BankAccount} from "../models/BankAccount";
 import {BankAccountCreate} from "../models/BankAccountCreate";
 import {Transaction} from "../models/Transaction";
 import {User} from "../models/User";
 import {TransactionCreate} from "../models/TransactionCreate";
 import {MessageService} from "primeng/api";
+import {Pagination} from "./users.service";
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,29 @@ export class IndexService {
     return this.http.get<Transaction[]>(url);
   }
 
+  getTransactionsByUserI(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string): Observable<Pagination<Transaction[]>> {
+    let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+    if (orderBy) {
+      url += `&orderBy=${orderBy}`;
+    }
+    if (descending) {
+      url += `&descending=${descending}`;
+    }
+    if (search) {
+      url += `&search=${search}`;
+    }
+    return this.http.get<Pagination<Transaction[]>>(url).pipe(
+      map(response => ({
+        currentPage: response.currentPage,
+        totalPages: response.totalPages,
+        pageSize: response.pageSize,
+        totalCount: response.totalCount,
+        totalRecords: response.totalRecords,
+        items: response.items
+      }))
+    );
+  }
+
   getExpensesByUserId(id: string): Observable<Transaction[]> {
     const url = `${this.apiUrl}/${id}/expenses`;
     return this.http.get<Transaction[]>(url);
@@ -48,13 +72,40 @@ export class IndexService {
   }
 
   addBankAccount(BankAccount: BankAccountCreate): Observable<BankAccount> {
-    return this.http.post<BankAccount>(this.apiUrl + '/bankaccount', BankAccount);
+    return this.http.post<BankAccount>(this.apiUrl + '/bankaccount', BankAccount).pipe(
+      catchError(error => {
+        /*Users not found*/
+        if (error.status === 400) {
+          if (error.error.title === 'Users not found') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Uno o varios de los usuarios no existen'
+            });
+          }
+          if (error.error.title === 'Invalid account type. Valid values are: Saving, Current, FixedTerm, Payroll, Student') {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Tipo de cuenta inválido. Los valores válidos son: Ahorro, Corriente, PlazoFijo, Nómina, Estudiante'
+            });
+          }
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
+          });
+        }
+        return throwError(() => error);
+      })
+    );
   }
 
   addTransaction(Transaction: TransactionCreate): Observable<Transaction> {
     return this.http.post<Transaction>(this.apiUrl + '/transaction', Transaction).pipe(
       catchError(error => {
-        if (error.status === 400 || error.status === 400) {
+        if (error.status === 400) {
           if (error.error.title === 'Insufficient funds in the origin account') {
             this.messageService.add({
               severity: 'error',
@@ -62,7 +113,6 @@ export class IndexService {
               detail: 'Fondos insuficientes en la cuenta de origen'
             });
           }
-
           if (error.error.title === 'Origin and destination accounts cannot be the same') {
             this.messageService.add({
               severity: 'error',

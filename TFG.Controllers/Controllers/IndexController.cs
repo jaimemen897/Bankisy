@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.transactions;
 using TFG.Services;
+using TFG.Services.Pagination;
 
 namespace TFG.Controllers.Controllers;
 
@@ -23,11 +24,20 @@ public class IndexController(IndexService indexService) : ControllerBase
         return await indexService.GetTotalBalanceByUserId(userId);
     }
     
-    [HttpGet("{userId}/transactions")]
+    /*[HttpGet("{userId}/transactions")]
     public async Task<List<TransactionResponseDto>> GetTransactionsByUserId(Guid userId)
     {
         return await indexService.GetTransactionsByUserId(userId);
+    }*/
+    
+    [HttpGet("transactions/{userId}")]
+    public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactionsByUserId(Guid userId, [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false, [FromQuery] string? search = null)
+    {
+        return await indexService.GetTransactionsByUserId(userId, pageNumber, pageSize, orderBy, descending, search);
     }
+    
+    
     
     [HttpGet("{userId}/expenses")]
     public async Task<List<TransactionResponseDto>> GetExpensesByUserId(Guid userId)
