@@ -106,7 +106,7 @@
             <p-overlayPanel #infoPanel>
               <ng-template pTemplate="content">
                 <h4 class="text-left">IBAN: {{ account.iban }}</h4>
-                <p class="text-left">Tipo de cuenta: {{ account.accountType }}</p>
+                <p class="text-left">Tipo de cuenta: {{ getAccountName(account.accountType) }}</p>
                 <p class="text-left">Usuario: {{ account.usersName }}</p>
                 <p class="text-left">Saldo: {{ account.balance }}</p>
                 <p class="text-left">Estado: {{ account.isDeleted ? 'Inactiva' : 'Activa' }}</p>

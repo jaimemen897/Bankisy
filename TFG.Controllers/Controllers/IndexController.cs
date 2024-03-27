@@ -24,19 +24,12 @@ public class IndexController(IndexService indexService) : ControllerBase
         return await indexService.GetTotalBalanceByUserId(userId);
     }
     
-    /*[HttpGet("{userId}/transactions")]
-    public async Task<List<TransactionResponseDto>> GetTransactionsByUserId(Guid userId)
-    {
-        return await indexService.GetTransactionsByUserId(userId);
-    }*/
-    
     [HttpGet("transactions/{userId}")]
     public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactionsByUserId(Guid userId, [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false, [FromQuery] string? search = null)
     {
         return await indexService.GetTransactionsByUserId(userId, pageNumber, pageSize, orderBy, descending, search);
     }
-    
     
     
     [HttpGet("{userId}/expenses")]
@@ -61,5 +54,11 @@ public class IndexController(IndexService indexService) : ControllerBase
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
         return await indexService.CreateTransaction(transaction);
+    }
+        
+    [HttpGet("{iban}/transactions")]
+    public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban)
+    {
+        return await indexService.GetTransactionsByIban(iban);
     }
 }

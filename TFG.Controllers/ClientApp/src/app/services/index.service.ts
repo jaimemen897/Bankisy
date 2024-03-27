@@ -146,6 +146,10 @@ export class IndexService {
     );
   }
 
+  getTransactionsByIban(iban: string): Observable<Transaction[]>{
+    return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
+  }
+
   /*getBalanceByIban(iban: string): Observable<number> {
     const url = `${this.apiUrl}/me/bankaccounts/${iban}/balance`;
     return this.http.get<number>(url);

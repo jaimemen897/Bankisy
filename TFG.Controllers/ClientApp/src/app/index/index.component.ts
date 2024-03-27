@@ -16,6 +16,9 @@ import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/ban
 import {DialogModule} from "primeng/dialog";
 import {CreateTransactionComponent} from "../transactions/create/create-transaction.component";
 import {CurrencyPipe, DatePipe, NgClass} from "@angular/common";
+import {OverlayPanelModule} from "primeng/overlaypanel";
+import {MessageService} from "primeng/api";
+import {ScrollPanelModule} from "primeng/scrollpanel";
 
 @Component({
   selector: 'app-index',
@@ -35,18 +38,21 @@ import {CurrencyPipe, DatePipe, NgClass} from "@angular/common";
     CreateTransactionComponent,
     CurrencyPipe,
     DatePipe,
-    NgClass
+    NgClass,
+    OverlayPanelModule,
+    ScrollPanelModule
   ],
   templateUrl: './index.component.html',
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit {
 
-  constructor(private indexService: IndexService) {
+  constructor(private indexService: IndexService, private messageService: MessageService) {
   }
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
   @ViewChild(BankaccountCreateComponent) bankAccountCreate!: BankaccountCreateComponent
+  @ViewChild('transactionPanel') transactionPanel!: any;
 
   user!: User;
 
@@ -61,6 +67,7 @@ export class IndexComponent implements OnInit {
   totalIncomes: number;
   totalExpenses: number;
   transactions: Transaction[];
+  transactionsByBankAccount: Transaction[];
   incomes: Transaction[];
   expenses: Transaction[];
   bankAccounts: BankAccount[];
@@ -76,7 +83,6 @@ export class IndexComponent implements OnInit {
       this.getBalanceByUserId(this.user.id);
       this.getIncomesByUserId(this.user.id);
       this.getExpensesByUserId(this.user.id);
-      /*this.getTransactionsByUserId(this.user.id);*/
       this.getBankAccountsByUserId(this.user.id);
     });
 
@@ -170,6 +176,23 @@ export class IndexComponent implements OnInit {
     }
   }
 
+  getTransactionsByIban(iban: string) {
+    this.transactionsByBankAccount = [];
+    this.indexService.getTransactionsByIban(iban).subscribe(data => {
+      this.transactionsByBankAccount = data;
+      if (this.transactionsByBankAccount.length !== 0){
+      } else {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Sin transacciones',
+          detail: 'No hay transacciones en esta cuenta',
+          life: 2000,
+          closable: false
+        });
+      }
+    });
+  }
+
   refresh() {
     this.updating = true;
     this.ngOnInit()
@@ -227,6 +250,6 @@ export class IndexComponent implements OnInit {
     this.displayDialogTransaction = false;
   }
 
+
   protected readonly console = console;
-  protected readonly BankAccount = BankAccount;
 }

@@ -38,25 +38,6 @@ public class IndexService(
         return bankAccounts.Sum(ba => ba.Balance);
     }
 
-    /*public async Task<List<TransactionResponseDto>> GetTransactionsByUserId(Guid userId)
-    {
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
-        var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
-            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
-
-        var transactions = new List<Transaction>();
-
-        foreach (var bankAccount in bankAccounts)
-        {
-            transactions.AddRange(await bankContext.Transactions
-                .Where(t => bankAccount.Iban == t.IbanAccountOrigin || bankAccount.Iban == t.IbanAccountDestination)
-                .ToListAsync());
-        }
-
-        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
-    }*/
-
     public async Task<Pagination<TransactionResponseDto>> GetTransactionsByUserId(Guid userId, int pageNumber, int pageSize,
         string orderBy, bool descending, string? search = null)
     {
@@ -135,5 +116,10 @@ public class IndexService(
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
         return await transactionService.CreateTransaction(transaction);
+    }
+    
+    public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban)
+    { 
+        return await bankAccountService.GetTransactionsForAccount(iban);
     }
 }

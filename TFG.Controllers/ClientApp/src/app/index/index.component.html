@@ -83,6 +83,7 @@
               <th>Saldo</th>
               <th>Usuarios</th>
               <th>Tipo de cuenta</th>
+              <th></th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-account>
@@ -93,10 +94,56 @@
               </td>
               <td>{{ account.usersName }}</td>
               <td>{{ getAccountName(account.accountType) }}</td>
+              <td>
+                <div class="flex gap-2">
+                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info"/>
+                  <p-button (click)="transactionPanel.toggle($event)" icon="pi pi-money-bill" severity="success"/>
+                </div>
+              </td>
             </tr>
+
+            <!--PANELES DESPLEGABLES-->
+            <p-overlayPanel #infoPanel>
+              <ng-template pTemplate="content">
+                <h4 class="text-left">IBAN: {{ account.iban }}</h4>
+                <p class="text-left">Tipo de cuenta: {{ getAccountName(account.accountType) }}</p>
+                <p class="text-left">Usuario: {{ account.usersName }}</p>
+                <p class="text-left">Saldo: {{ account.balance }}</p>
+                <p class="text-left">Estado: {{ account.isDeleted ? 'Inactiva' : 'Activa' }}</p>
+              </ng-template>
+            </p-overlayPanel>
+
+            <p-overlayPanel #transactionPanel (onShow)="getTransactionsByIban(account.iban)">
+              <ng-template pTemplate="content">
+                <h4 class="text-left">Transacciones de la cuenta</h4>
+                <p-scrollPanel [style]="{height: '250px', width: '300px'}" styleClass="custombar1">
+                  <div class="flex flex-column gap-2">
+                    {{ console.log(account.iban) }}
+                    @for (transaction of transactionsByBankAccount; track transactionsByBankAccount) {
+                      @if (transaction.ibanAccountOrigin == account.iban) {
+                        <div class="flex inline-flex gap-2 bg-red-100 p-2 w-full justify-content-between">
+                          <p class="text-truncate w-auto"> {{ transaction.concept }}</p>
+                          <p class="text-truncate w-auto"> {{ transaction.date | date: 'dd/MM' }}</p>
+                          <p class="text-truncate w-auto"> -{{ transaction.amount }}€</p>
+                        </div>
+                      } @else if (transaction.ibanAccountDestination == account.iban) {
+                        <div class="flex inline-flex gap-2 bg-green-100 p-2 w-full justify-content-between">
+                          <p class="text-truncate w-auto"> {{ transaction.concept }}</p>
+                          <p class="text-truncate w-auto"> {{ transaction.date | date: 'dd/MM' }}</p>
+                          <p class="text-truncate w-auto"> {{ transaction.amount }}€</p>
+                        </div>
+                      }
+                    }
+                  </div>
+                </p-scrollPanel>
+              </ng-template>
+            </p-overlayPanel>
+
           </ng-template>
         </p-table>
       </p-panel>
+
+
       <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()" class="m-2"></p-button>
       <p-dialog header="Crear cuenta bancaria" [(visible)]="displayDialogBankAccount" [modal]="true"
                 [resizable]="false"
@@ -118,7 +165,8 @@
           </button>
         </ng-template>
         <p-table [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[5, 10, 20]" [value]="transactions"
-                 [tableStyle]="{ 'min-width': '50rem' }" [lazy]="true" (onLazyLoad)="lazyLoad($event)" [totalRecords]="totalRecords">
+                 [tableStyle]="{ 'min-width': '50rem' }" [lazy]="true" (onLazyLoad)="lazyLoad($event)"
+                 [totalRecords]="totalRecords">
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="id" style="width:7%">Id
@@ -148,7 +196,8 @@
             <tr>
               <td>{{ transaction.id }}</td>
               <td>
-                <p-tag [value]="transaction.amount + '€'" [severity]="getBalanceColor(transaction.amount)" class="text-truncate"></p-tag>
+                <p-tag [value]="transaction.amount + '€'" [severity]="getBalanceColor(transaction.amount)"
+                       class="text-truncate"></p-tag>
               </td>
               <td>{{ transaction.concept }}</td>
               <td>{{ transaction.ibanAccountOrigin }}</td>
