@@ -57,4 +57,9 @@ export class BankAccountService {
   deleteBankAccount(iban: string): Observable<BankAccount> {
     return this.http.delete<BankAccount>(this.apiUrl + '/' + iban);
   }
+
+  //TRANSACTIONS FOR BANK ACCOUNT
+  getTransactionsByIban(iban: string): Observable<Transaction[]>{
+    return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
+  }
 }

@@ -85,8 +85,6 @@ export class BankaccountCreateComponent {
         this.updateSelectedUsersValidators();
         this.label = 'Actualizar';
         let accountTypeTranslated = AccountType[bankAccount.accountType as keyof typeof AccountType];
-        console.log(bankAccount.accountType);
-        console.log(accountTypeTranslated);
         this.formGroup.controls.selectedAccountType.setValue(accountTypeTranslated);
         this.formGroup.controls.selectedUsers.setValue(this.users.filter(user => bankAccount.usersId.includes(user.id)));
         this.iban = iban;
@@ -104,8 +102,7 @@ export class BankaccountCreateComponent {
 
     /*UPDATE*/
     if (this.isUpdateMode) {
-      let accountType = this.formGroup.value.selectedAccountType.value;
-      console.log(accountType);
+      let accountType = accountTypeTranslated;
       let usersId = this.formGroup.value.selectedUsers.map((user: { id: any; }) => user.id);
 
       let bankAccount = new BankAccountCreate();

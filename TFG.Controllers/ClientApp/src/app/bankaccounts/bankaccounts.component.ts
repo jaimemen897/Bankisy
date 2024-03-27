@@ -6,7 +6,7 @@ import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
 import {DropdownModule} from "primeng/dropdown";
 import {TagModule} from "primeng/tag";
-import {DatePipe, NgClass} from "@angular/common";
+import {DatePipe, NgClass, NgIf} from "@angular/common";
 import {InputTextModule} from "primeng/inputtext";
 import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
@@ -18,6 +18,7 @@ import {BankAccountService} from "../services/bankaccounts.service";
 import {DialogModule} from "primeng/dialog";
 import {BankaccountCreateComponent} from "./bankaccount-create/bankaccount-create.component";
 import {AccountType} from "../models/AccountType";
+import {Transaction} from "../models/Transaction";
 
 @Component({
   selector: 'app-bankaccounts',
@@ -38,7 +39,8 @@ import {AccountType} from "../models/AccountType";
     ConfirmDialogModule,
     DialogModule,
     BankaccountCreateComponent,
-    DatePipe
+    DatePipe,
+    NgIf
   ],
   templateUrl: './bankaccounts.component.html',
   styleUrl: './bankaccounts.component.css'
@@ -48,6 +50,7 @@ export class BankaccountsComponent {
   }
 
   @ViewChild(BankaccountCreateComponent) bankAccountCreateComponent!: BankaccountCreateComponent;
+  @ViewChild('transactionPanel') transactionPanel!: any;
   bankAccounts: BankAccount[] = [];
   rows: number = 10;
   totalRecords: number = 0;
@@ -61,9 +64,10 @@ export class BankaccountsComponent {
   accountsTypes: string[] = [AccountType.Saving, AccountType.Current, AccountType.FixedTerm, AccountType.Payroll, AccountType.Student];
   users: String[] = [];
   status: String[] = ['Active', 'Inactive'];
+  transactions: Transaction[] = [];
   headerSaveUpdateBankAccount: string = 'Crear cuenta de banco';
 
-  /*DATA, ORDERS AND FILTERS*/
+  //DATA, ORDERS AND FILTERS
   lazyLoad(event: any) {
     let pageNumber = Math.floor(event.first / event.rows) + 1;
     let sortField = event.sortField;
@@ -76,6 +80,7 @@ export class BankaccountsComponent {
       for (let bankAccount of this.bankAccounts) {
         this.users.push(bankAccount.usersName.join(', '))
       }
+      this.users = this.users.filter((value, index) => this.users.indexOf(value) === index);
     });
   }
 
@@ -139,7 +144,7 @@ export class BankaccountsComponent {
     });
   }
 
-  /*REDIRECTIONS*/
+  //REDIRECTIONS
   goToCreateBankAccount() {
     this.headerSaveUpdateBankAccount = 'Crear cuenta de banco';
     this.displayDialog = true;
@@ -150,10 +155,6 @@ export class BankaccountsComponent {
     this.headerSaveUpdateBankAccount = 'Actualizar cuenta de banco';
     this.displayDialog = true;
     this.bankAccountCreateComponent.loadBankAccount(iban);
-  }
-
-  goToTransactions(iban: string) {
-    this.router.navigate(['/transactions', iban]);
   }
 
   deleteBankAccount(iban: string) {
@@ -195,7 +196,24 @@ export class BankaccountsComponent {
     this.router.navigate(['/users']);
   }
 
-  /*COLORS*/
+  getTransactionsByIban(iban: string, event: any) {
+    this.bankAccountService.getTransactionsByIban(iban).subscribe(data => {
+      this.transactions = data;
+      if (this.transactions.length !== 0){
+        this.transactionPanel.toggle(event);
+      } else {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Sin transacciones',
+          detail: 'No hay transacciones en esta cuenta',
+          life: 2000,
+          closable: false
+        });
+      }
+    });
+  }
+
+  //COLORS
   getSeverity(accountType: string) {
     if (accountType === 'Saving' || accountType === 'Ahorros') {
       return 'success';
@@ -249,4 +267,6 @@ export class BankaccountsComponent {
   closeDialog() {
     this.displayDialog = false;
   }
+
+  protected readonly console = console;
 }
