@@ -28,13 +28,13 @@ export class IndexService {
     return this.http.get<number>(url);
   }
 
-  getTransactionsByUserId(id: string): Observable<Transaction[]> {
+  /*getTransactionsByUserId(id: string): Observable<Transaction[]> {
     const url = `${this.apiUrl}/${id}/transactions`;
     return this.http.get<Transaction[]>(url);
-  }
+  }*/
 
-  getTransactionsByUserI(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string): Observable<Pagination<Transaction[]>> {
-    let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+  getTransactionsByUserId(id:string,pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string): Observable<Pagination<Transaction>> {
+    let url = `${this.apiUrl}/transactions/${id}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
     if (orderBy) {
       url += `&orderBy=${orderBy}`;
     }
@@ -44,7 +44,7 @@ export class IndexService {
     if (search) {
       url += `&search=${search}`;
     }
-    return this.http.get<Pagination<Transaction[]>>(url).pipe(
+    return this.http.get<Pagination<Transaction>>(url).pipe(
       map(response => ({
         currentPage: response.currentPage,
         totalPages: response.totalPages,

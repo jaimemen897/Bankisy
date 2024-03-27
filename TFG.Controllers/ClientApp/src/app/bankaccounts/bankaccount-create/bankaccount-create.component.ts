@@ -10,6 +10,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {ButtonModule} from "primeng/button";
 import {User} from "../../models/User";
 import {IndexService} from "../../services/index.service";
+import {AccountType} from "../../models/AccountType";
 
 @Component({
   selector: 'app-bankaccount-create',
@@ -24,7 +25,7 @@ import {IndexService} from "../../services/index.service";
   templateUrl: './bankaccount-create.component.html',
   styleUrl: './bankaccount-create.component.css'
 })
-export class BankaccountCreateComponent implements OnInit {
+export class BankaccountCreateComponent {
 
   constructor(private bankAccountService: BankAccountService, private usersService: UserService, private router: Router,
               private messageService: MessageService, private indexService: IndexService) {
@@ -40,24 +41,14 @@ export class BankaccountCreateComponent implements OnInit {
   iban!: string;
 
   users!: User[]
-  accountsTypes: string[] = ['Saving', 'Current', 'FixedTerm', 'Payroll', 'Student'];
+  accountsTypes: string[] = [AccountType.Saving, AccountType.Current, AccountType.FixedTerm, AccountType.Payroll, AccountType.Student];
 
   label: string = 'Crear';
 
   @Output() onSave: EventEmitter<any> = new EventEmitter();
   @Output() onCancel: EventEmitter<any> = new EventEmitter();
 
-  ngOnInit() {
-    if (this.isNewUser) {
-      this.usersService.getAllUsers().subscribe(users => {
-        this.users = users;
-      });
-    }
-
-    this.updateSelectedUsersValidators();
-    this.formGroup.reset()
-  }
-
+  //CHANGE SELECTED USERS VALIDATORS DEPENDING ON THE MODE
   updateSelectedUsersValidators() {
     const selectedUsersControl = this.formGroup.get('selectedUsers') as FormControl;
     if (this.isNewUser) {
@@ -68,22 +59,35 @@ export class BankaccountCreateComponent implements OnInit {
     selectedUsersControl.updateValueAndValidity();
   }
 
-  //this is called when a user is creating an account for himself
+  //USERS CREATE AN ACCOUNT
   loadUser(userId: User) {
     this.isNewUser = true;
     this.updateSelectedUsersValidators();
     this.formGroup.controls.selectedUsers.setValue([userId]);
   }
 
-  //this is called when updating a bank account from the admin
+  //ADMIN CREATE AN ACCOUNT FOR A USER
+  loadUsers() {
+    this.isNewUser = false;
+    this.usersService.getAllUsers().subscribe(users => {
+      this.users = users;
+    });
+    this.updateSelectedUsersValidators();
+  }
+
+  //ADMIN UPDATE AN ACCOUNT FOR A USER
   loadBankAccount(iban: string) {
     if (!this.isNewUser) {
+      this.loadUsers();
       this.bankAccountService.getBankAccountById(iban).subscribe(bankAccount => {
         this.isNewUser = false;
-        this.updateSelectedUsersValidators();
         this.isUpdateMode = true;
+        this.updateSelectedUsersValidators();
         this.label = 'Actualizar';
-        this.formGroup.controls.selectedAccountType.setValue(bankAccount.accountType);
+        let accountTypeTranslated = AccountType[bankAccount.accountType as keyof typeof AccountType];
+        console.log(bankAccount.accountType);
+        console.log(accountTypeTranslated);
+        this.formGroup.controls.selectedAccountType.setValue(accountTypeTranslated);
         this.formGroup.controls.selectedUsers.setValue(this.users.filter(user => bankAccount.usersId.includes(user.id)));
         this.iban = iban;
       });
@@ -95,10 +99,13 @@ export class BankaccountCreateComponent implements OnInit {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos'});
       return;
     }
+    //permite mostrar en el html el valor en español de accountType y pasar al back el valor en ingles
+    let accountTypeTranslated = Object.keys(AccountType).find(key => AccountType[key as keyof typeof AccountType] === this.formGroup.value.selectedAccountType) as keyof typeof AccountType;
 
     /*UPDATE*/
     if (this.isUpdateMode) {
-      let accountType = this.formGroup.value.selectedAccountType;
+      let accountType = this.formGroup.value.selectedAccountType.value;
+      console.log(accountType);
       let usersId = this.formGroup.value.selectedUsers.map((user: { id: any; }) => user.id);
 
       let bankAccount = new BankAccountCreate();
@@ -116,7 +123,7 @@ export class BankaccountCreateComponent implements OnInit {
       /*USER CREATE*/
     } else if (this.isNewUser) {
       let bankAccount = new BankAccountCreate();
-      bankAccount.accountType = this.formGroup.value.selectedAccountType;
+      bankAccount.accountType = accountTypeTranslated;
       bankAccount.usersId = this.formGroup.controls.selectedUsers.value.map((user: { id: any; }) => user.id);
 
       this.indexService.addBankAccount(bankAccount).subscribe(() => {
@@ -128,7 +135,7 @@ export class BankaccountCreateComponent implements OnInit {
       /*ADMIN CREATE*/
     } else {
       let bankAccount = new BankAccountCreate();
-      bankAccount.accountType = this.formGroup.value.selectedAccountType;
+      bankAccount.accountType = accountTypeTranslated;
       bankAccount.usersId = this.formGroup.value.selectedUsers.map((user: { id: any; }) => user.id);
 
       this.bankAccountService.addBankAccount(bankAccount).subscribe(() => {

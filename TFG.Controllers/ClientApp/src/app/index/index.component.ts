@@ -50,6 +50,13 @@ export class IndexComponent implements OnInit {
 
   user!: User;
 
+  rows: number = 5;
+  totalRecords: number = 0;
+  search: string;
+  filter!: string;
+  sortField!: string;
+  sortOrder!: number;
+
   totalBalance: number;
   totalIncomes: number;
   totalExpenses: number;
@@ -69,7 +76,7 @@ export class IndexComponent implements OnInit {
       this.getBalanceByUserId(this.user.id);
       this.getIncomesByUserId(this.user.id);
       this.getExpensesByUserId(this.user.id);
-      this.getTransactionsByUserId(this.user.id);
+      /*this.getTransactionsByUserId(this.user.id);*/
       this.getBankAccountsByUserId(this.user.id);
     });
 
@@ -95,15 +102,20 @@ export class IndexComponent implements OnInit {
     ];
   }
 
-  getBalanceByUserId(id: string) {
-    this.indexService.getTotalBalanceByUserId(id).subscribe(balance => {
-      this.totalBalance = balance;
+  lazyLoad(event: any) {
+    let pageNumber = Math.floor(event.first / event.rows) + 1;
+    let sortField = event.sortField;
+    let sortOrder = event.sortOrder;
+
+    this.indexService.getTransactionsByUserId(this.user.id, pageNumber, event.rows, sortField, sortOrder === -1, this.search).subscribe(data => {
+      this.transactions = data.items;
+      this.totalRecords = data.totalCount;
     });
   }
 
-  getTransactionsByUserId(id: string) {
-    this.indexService.getTransactionsByUserId(id).subscribe(transactions => {
-      this.transactions = transactions;
+  getBalanceByUserId(id: string) {
+    this.indexService.getTotalBalanceByUserId(id).subscribe(balance => {
+      this.totalBalance = balance;
     });
   }
 
@@ -149,6 +161,8 @@ export class IndexComponent implements OnInit {
       return 'success';
     } else if (balance > 0) {
       return 'info'
+    } else if (balance == 0) {
+      return 'warning';
     } else if (balance < 0) {
       return 'danger';
     } else {
@@ -162,6 +176,31 @@ export class IndexComponent implements OnInit {
     setTimeout(() => {
       this.updating = false;
     }, 200);
+  }
+
+  onSortChange(event: any) {
+    let value = event.value;
+
+    if (value.indexOf('!') === 0) {
+      this.sortOrder = -1;
+      this.sortField = value.substring(1, value.length);
+    } else {
+      this.sortOrder = 1;
+      this.sortField = value;
+    }
+  }
+
+  clearOrders() {
+    this.refresh();
+    this.sortField = '';
+    this.sortOrder = 1;
+  }
+
+  clearFilters() {
+    this.search = '';
+    this.filter = '';
+
+    this.refresh();
   }
 
   goToCreateBankAccount() {

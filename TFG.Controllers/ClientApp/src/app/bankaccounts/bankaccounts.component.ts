@@ -17,6 +17,7 @@ import {BankAccount} from "../models/BankAccount";
 import {BankAccountService} from "../services/bankaccounts.service";
 import {DialogModule} from "primeng/dialog";
 import {BankaccountCreateComponent} from "./bankaccount-create/bankaccount-create.component";
+import {AccountType} from "../models/AccountType";
 
 @Component({
   selector: 'app-bankaccounts',
@@ -52,16 +53,17 @@ export class BankaccountsComponent {
   totalRecords: number = 0;
   displayDialog: boolean = false;
 
-  sortOptions!: SelectItem[];
   sortField!: string;
   sortOrder!: number;
   search: string;
   filter!: string;
 
-  accountsTypes: String[] = ['Saving', 'Current', 'FixedTerm', 'Payroll', 'Student'];
+  accountsTypes: string[] = [AccountType.Saving, AccountType.Current, AccountType.FixedTerm, AccountType.Payroll, AccountType.Student];
   users: String[] = [];
   status: String[] = ['Active', 'Inactive'];
+  headerSaveUpdateBankAccount: string = 'Crear cuenta de banco';
 
+  /*DATA, ORDERS AND FILTERS*/
   lazyLoad(event: any) {
     let pageNumber = Math.floor(event.first / event.rows) + 1;
     let sortField = event.sortField;
@@ -75,13 +77,9 @@ export class BankaccountsComponent {
         this.users.push(bankAccount.usersName.join(', '))
       }
     });
-
-    this.sortOptions = [
-      {label: 'Mayor saldo', value: '!balance'},
-      {label: 'Menor saldo', value: 'balance'}
-    ];
   }
 
+  //IBAN, SALDO, ESTADO
   onSearch(event: any) {
     this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, event.target.value, this.filter).subscribe(data => {
       this.bankAccounts = data.items;
@@ -90,6 +88,7 @@ export class BankaccountsComponent {
     });
   }
 
+  //USUARIOS
   onSearchUser(event: any) {
     this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, event.value).subscribe(data => {
       this.bankAccounts = data.items;
@@ -98,8 +97,10 @@ export class BankaccountsComponent {
     });
   }
 
+  //TIPO CUENTA
   onSearchFilter(event: any) {
-    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, event.value).subscribe(data => {
+    let accountTypeTranslated = Object.keys(AccountType).find(key => AccountType[key as keyof typeof AccountType] === event.value) as keyof typeof AccountType;
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, accountTypeTranslated).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
       this.filter = event.value;
@@ -118,7 +119,35 @@ export class BankaccountsComponent {
     }
   }
 
+  clearOrders() {
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
+
+    this.sortField = '';
+    this.sortOrder = 1;
+  }
+
+  clearFilters() {
+    this.search = '';
+    this.filter = '';
+
+    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
+  }
+
+  /*REDIRECTIONS*/
+  goToCreateBankAccount() {
+    this.headerSaveUpdateBankAccount = 'Crear cuenta de banco';
+    this.displayDialog = true;
+    this.bankAccountCreateComponent.loadUsers();
+  }
+
   goToEditBankAccount(iban: string) {
+    this.headerSaveUpdateBankAccount = 'Actualizar cuenta de banco';
     this.displayDialog = true;
     this.bankAccountCreateComponent.loadBankAccount(iban);
   }
@@ -166,16 +195,17 @@ export class BankaccountsComponent {
     this.router.navigate(['/users']);
   }
 
+  /*COLORS*/
   getSeverity(accountType: string) {
-    if (accountType === 'Saving') {
+    if (accountType === 'Saving' || accountType === 'Ahorros') {
       return 'success';
-    } else if (accountType === 'Current') {
+    } else if (accountType === 'Current' || accountType === 'Corriente') {
       return 'info';
-    } else if (accountType === 'FixedTerm') {
+    } else if (accountType === 'FixedTerm' || accountType === 'Plazo fijo') {
       return 'warning';
-    } else if (accountType === 'Payroll') {
+    } else if (accountType === 'Payroll' || accountType === 'Nómina') {
       return 'danger';
-    } else if (accountType === 'Student') {
+    } else if (accountType === 'Student' || accountType === 'Estudiante') {
       return 'primary';
     } else {
       return 'secondary';
@@ -183,8 +213,10 @@ export class BankaccountsComponent {
   }
 
   getBalanceColor(balance: number) {
-    if (balance > 0) {
+    if (balance > 1000) {
       return 'success';
+    } else if (balance == 0) {
+      return 'warning';
     } else if (balance < 0) {
       return 'danger';
     } else {
@@ -192,32 +224,26 @@ export class BankaccountsComponent {
     }
   }
 
-  clearOrders() {
-    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
-      this.bankAccounts = data.items;
-      this.totalRecords = data.totalCount;
-    });
-
-    this.sortField = '';
-    this.sortOrder = 1;
-  }
-
-  clearFilters() {
-    this.search = '';
-    this.filter = '';
-
-    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
-      this.bankAccounts = data.items;
-      this.totalRecords = data.totalCount;
-    });
+  getAccountName(accountType: string) {
+    switch (accountType) {
+      case 'Saving':
+        return 'Ahorro';
+      case 'Current':
+        return 'Corriente';
+      case 'FixedTerm':
+        return 'Plazo fijo';
+      case 'Payroll':
+        return 'Nómina';
+      case 'Student':
+        return 'Estudiante';
+      default:
+        return 'Otro';
+    }
   }
 
   saveBankAccount() {
     this.displayDialog = false;
-    this.bankAccountService.getBankAccounts(1, this.rows).subscribe(data => {
-      this.bankAccounts = data.items;
-      this.totalRecords = data.totalCount;
-    });
+    this.lazyLoad({first: 1, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
   }
 
   closeDialog() {

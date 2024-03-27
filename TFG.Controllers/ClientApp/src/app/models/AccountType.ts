@@ -1,7 +1,7 @@
 export enum AccountType {
-  Saving = 'Saving',
-  Current = 'Current',
-  FixedTerm = 'FixedTerm',
-  Payroll = 'Payroll',
-  Student = 'Student'
+  Saving = 'Ahorros',
+  Current = 'Corriente',
+  FixedTerm = 'Plazo fijo',
+  Payroll = 'Nómina',
+  Student = 'Estudiante'
 }
