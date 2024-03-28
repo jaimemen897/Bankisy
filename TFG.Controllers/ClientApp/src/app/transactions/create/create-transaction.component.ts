@@ -51,7 +51,7 @@ export class CreateTransactionComponent implements OnInit {
   ngOnInit() {
     this.indexService.getUserByToken().subscribe(user => {
       this.user = user;
-      this.indexService.getBankAccountsByUserId(this.user.id).subscribe(bankAccounts => {
+      this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
         this.bankAccounts = bankAccounts;
       });
     });
@@ -60,7 +60,7 @@ export class CreateTransactionComponent implements OnInit {
   loadUser() {
     this.indexService.getUserByToken().subscribe(user => {
       this.user = user;
-      this.indexService.getBankAccountsByUserId(this.user.id).subscribe(bankAccounts => {
+      this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
         this.bankAccounts = bankAccounts;
       });
     });

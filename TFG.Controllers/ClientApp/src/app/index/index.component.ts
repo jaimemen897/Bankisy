@@ -82,10 +82,10 @@ export class IndexComponent implements OnInit {
   ngOnInit(): void {
     this.indexService.getUserByToken().subscribe(user => {
       this.user = user;
-      this.getBalanceByUserId(this.user.id);
-      this.getIncomesByUserId(this.user.id);
-      this.getExpensesByUserId(this.user.id);
-      this.getBankAccountsByUserId(this.user.id);
+      this.getBalanceByUserId();
+      this.getIncomesByUserId();
+      this.getExpensesByUserId();
+      this.getBankAccountsByUserId();
     });
 
     this.items = [
@@ -115,35 +115,35 @@ export class IndexComponent implements OnInit {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    this.indexService.getTransactionsByUserId(this.user.id, pageNumber, event.rows, sortField, sortOrder === -1, this.search).subscribe(data => {
+    this.indexService.getTransactionsByUserId(pageNumber, event.rows, sortField, sortOrder === -1, this.search).subscribe(data => {
       this.transactions = data.items;
       this.totalRecords = data.totalCount;
     });
   }
 
   //GET DATA
-  getBalanceByUserId(id: string) {
-    this.indexService.getTotalBalanceByUserId(id).subscribe(balance => {
+  getBalanceByUserId() {
+    this.indexService.getTotalBalanceByUserId().subscribe(balance => {
       this.totalBalance = balance;
     });
   }
 
-  getIncomesByUserId(id: string) {
-    this.indexService.getIncomesByUserId(id).subscribe(incomes => {
+  getIncomesByUserId() {
+    this.indexService.getIncomesByUserId().subscribe(incomes => {
       this.incomes = incomes;
       this.totalIncomes = incomes.reduce((acc, income) => acc + income.amount, 0);
     });
   }
 
-  getExpensesByUserId(id: string) {
-    this.indexService.getExpensesByUserId(id).subscribe(expenses => {
+  getExpensesByUserId() {
+    this.indexService.getExpensesByUserId().subscribe(expenses => {
       this.expenses = expenses;
       this.totalExpenses = expenses.reduce((acc, expense) => acc + expense.amount, 0);
     });
   }
 
-  getBankAccountsByUserId(id: string) {
-    this.indexService.getBankAccountsByUserId(id).subscribe(bankAccounts => {
+  getBankAccountsByUserId() {
+    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
     });
   }
@@ -245,6 +245,7 @@ export class IndexComponent implements OnInit {
   goToCreateBankAccount() {
     this.displayDialogBankAccount = true;
     this.bankAccountCreate.loadUser(this.user);
+    this.refresh();
   }
 
   createBankAccount() {
@@ -258,12 +259,13 @@ export class IndexComponent implements OnInit {
       life: 2000,
       closable: false
     });
+    this.refresh();
   }
 
   createTransaction() {
     this.displayDialogTransaction = false;
     this.transactionCreate.loadUser();
-    this.indexService.getBankAccountsByUserId(this.user.id).subscribe(bankAccounts => {
+    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
     });
     this.ngOnInit();
