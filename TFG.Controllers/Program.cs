@@ -27,6 +27,7 @@ builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<IndexService>();
 builder.Services.AddScoped<CardService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>

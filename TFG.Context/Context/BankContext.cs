@@ -17,7 +17,7 @@ public class BankContext(DbContextOptions<BankContext> options) : DbContext(opti
     {
         modelBuilder.Entity<User>()
             .HasMany(u => u.BankAccounts)
-            .WithMany(u => u.UsersId)
+            .WithMany(u => u.Users)
             .UsingEntity("UserBankAccount",
                 l => l.HasOne(typeof(BankAccount)).WithMany().HasForeignKey("BankAccountsId").HasPrincipalKey(nameof(BankAccount.Iban)),
                 r => r.HasOne(typeof(User)).WithMany().HasForeignKey("UsersId").HasPrincipalKey(nameof(User.Id)),

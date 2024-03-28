@@ -14,7 +14,7 @@ public class BankAccount
     
     [Column("is_deleted")] public bool IsDeleted { get; set; }
 
-    public List<User> UsersId { get; set; } = [];
+    public List<User> Users { get; set; } = [];
     
     public ICollection<Transaction> TransactionsOrigin { get; set; } = new List<Transaction>();
 

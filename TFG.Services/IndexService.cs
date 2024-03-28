@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
+using TFG.Context.DTOs.cards;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
@@ -15,32 +16,47 @@ namespace TFG.Services;
 public class IndexService(
     BankContext bankContext,
     BankAccountService bankAccountService,
-    TransactionService transactionService)
+    TransactionService transactionService,
+    CardService cardService,
+    SessionService sessionService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
-    
-    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
+
+    //BANK ACCOUNTS
+    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId()
     {
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
+        var user = await sessionService.GetMyself();
+
+        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.Users).ToListAsync();
         var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
+            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
             .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
 
         return bankAccounts ?? throw new HttpException(404, "BankAccounts not found");
     }
 
-    public async Task<decimal> GetTotalBalanceByUserId(Guid userId)
+    public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
+        return await bankAccountService.CreateBankAccount(bankAccount);
+    }
+
+    //BALANCE
+    public async Task<decimal> GetTotalBalanceByUserId()
+    {
+        var user = await sessionService.GetMyself();
+        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.Users).ToListAsync();
         var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
+            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
             .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
         return bankAccounts.Sum(ba => ba.Balance);
     }
 
-    public async Task<Pagination<TransactionResponseDto>> GetTransactionsByUserId(Guid userId, int pageNumber, int pageSize,
-        string orderBy, bool descending, string? search = null)
+    //TRANSACTIONS
+    public async Task<Pagination<TransactionResponseDto>> GetTransactionsByUserId(int pageNumber,
+        int pageSize, string orderBy, bool descending, string? search = null)
     {
+        var user = await sessionService.GetMyself();
+
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
 
@@ -51,17 +67,19 @@ public class IndexService(
         }
 
         var bankAccountIbans = await bankContext.BankAccounts
-            .Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
+            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
             .Select(account => account.Iban)
             .ToListAsync();
 
         var transactionQuery = bankContext.Transactions
-            .Where(t => bankAccountIbans.Contains(t.IbanAccountOrigin) || bankAccountIbans.Contains(t.IbanAccountDestination));
+            .Where(t => bankAccountIbans.Contains(t.IbanAccountOrigin) ||
+                        bankAccountIbans.Contains(t.IbanAccountDestination));
 
         if (!string.IsNullOrEmpty(search))
         {
             transactionQuery = transactionQuery.Where(t => t.IbanAccountOrigin.ToLower().Contains(search.ToLower()) ||
-                                                           t.IbanAccountDestination.ToLower().Contains(search.ToLower()));
+                                                           t.IbanAccountDestination.ToLower()
+                                                               .Contains(search.ToLower()));
         }
 
         var paginatedTransactions = await transactionQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
@@ -70,11 +88,13 @@ public class IndexService(
         return paginatedTransactions;
     }
 
-    public async Task<List<TransactionResponseDto>> GetExpensesByUserId(Guid userId)
+    public async Task<List<TransactionResponseDto>> GetExpensesByUserId()
     {
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
+        var user = await sessionService.GetMyself();
+
+        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.Users).ToListAsync();
         var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
+            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
             .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
 
         var transactions = new List<Transaction>();
@@ -89,11 +109,12 @@ public class IndexService(
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
 
-    public async Task<List<TransactionResponseDto>> GetIncomesByUserId(Guid userId)
+    public async Task<List<TransactionResponseDto>> GetIncomesByUserId()
     {
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.UsersId).ToListAsync();
+        var user = await sessionService.GetMyself();
+        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.Users).ToListAsync();
         var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.UsersId.Any(u => u.Id == userId))
+            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
             .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
 
         var transactions = new List<Transaction>();
@@ -108,18 +129,120 @@ public class IndexService(
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
 
-    public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
-    {
-        return await bankAccountService.CreateBankAccount(bankAccount);
-    }
-
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
+        var user = await sessionService.GetMyself();
+
+        var bankAccount = await bankAccountService.GetBankAccount(transaction.IbanAccountOrigin);
+        if (bankAccount.UsersId.All(id => id != user.Id))
+        {
+            throw new HttpException(403, "You are not the owner of the account");
+        }
+        
         return await transactionService.CreateTransaction(transaction);
     }
-    
+
     public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban)
-    { 
+    {
+        var user = await sessionService.GetMyself();
+        var bankAccount = await bankAccountService.GetBankAccount(iban);
+        if (bankAccount.UsersId.All(id => id != user.Id))
+        {
+            throw new HttpException(403, "You are not the owner of the account");
+        }
+        
         return await bankAccountService.GetTransactionsForAccount(iban);
+    }
+
+    //CARDS
+    public async Task<ActionResult<CardResponseDto>> GetCardByCardNumber(string cardNumber)
+    {
+        var user = await sessionService.GetMyself();
+        var card = await cardService.GetCardByCardNumber(cardNumber);
+        if (card.User.Id != user.Id)
+        {
+            throw new HttpException(403, "You are not the owner of the card");
+        }
+        
+        return await cardService.GetCardByCardNumber(cardNumber);
+    }
+
+    public async Task<ActionResult<CardResponseDto>> CreateCard(CardCreateDto cardCreateDto)
+    {
+        var user = await sessionService.GetMyself();
+        
+        if (cardCreateDto.UserId != user.Id)
+        {
+            throw new HttpException(403, "You are not the owner of the card");
+        }
+        
+        return await cardService.CreateCard(cardCreateDto);
+    }
+
+    public async Task<ActionResult<CardResponseDto>> UpdateCard(string cardNumber, CardUpdateDto cardUpdateDto)
+    {
+        await ValidateCardWithUser(cardNumber);
+        
+        return await cardService.UpdateCard(cardNumber, cardUpdateDto);
+    }
+
+    public async Task DeleteCard(string cardNumber)
+    {
+        await ValidateCardWithUser(cardNumber);
+        
+        await cardService.DeleteCard(cardNumber);
+    }
+
+    public async Task<ActionResult<CardResponseDto>> RenovateCard(string cardNumber)
+    {
+        await ValidateCardWithUser(cardNumber);
+        return await cardService.RenovateCard(cardNumber);
+    }
+
+    public async Task BlockCard(string cardNumber)
+    {
+        await ValidateCardWithUser(cardNumber);
+        await cardService.BlockCard(cardNumber);
+    }
+
+    public async Task UnblockCard(string cardNumber)
+    {
+        await ValidateCardWithUser(cardNumber);
+        await cardService.UnblockCard(cardNumber);
+    }
+
+    public async Task ActivateCard(string cardNumber)
+    {
+        await ValidateCardWithUser(cardNumber);
+        await cardService.ActivateCard(cardNumber);
+    }
+
+    public async Task<List<CardResponseDto>> GetCardsByUserId()
+    {
+        var user = await sessionService.GetMyself();
+        return await cardService.GetCardsByUserId(user.Id);
+    }
+
+    public async Task<List<CardResponseDto>> GetCardsByIban(string iban)
+    {
+        var user = await sessionService.GetMyself();
+        var bankAccount = await bankAccountService.GetBankAccount(iban);
+        if (bankAccount.UsersId.All(id => id != user.Id))
+        {
+            throw new HttpException(403, "You are not the owner of the account");
+        }
+        return await cardService.GetCardsByIban(iban);
+    }
+    
+    //PRIVATE METHODS
+    private async Task ValidateCardWithUser(string cardNumber)
+    {
+        var user = await sessionService.GetMyself();
+        var card = await cardService.GetCardByCardNumber(cardNumber);
+        
+        if (card.User.Id != user.Id)
+        {
+            throw new HttpException(403, "You are not the owner of the card");
+        }
     }
 }
