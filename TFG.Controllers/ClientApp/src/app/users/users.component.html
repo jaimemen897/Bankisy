@@ -72,10 +72,10 @@
                                       invalidFileTypeMessageDetail="Solo se permiten imágenes"/>
                       </div>
                     </p-overlayPanel>
-                    <p-button (click)="op.toggle($event)" icon="pi pi-user"></p-button>
-                    <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning"/>
-                    <p-button (click)="up.toggle($event)" icon="pi pi-upload" severity="help"/>
-                    <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger"></p-button>
+                    <p-button (click)="op.toggle($event)" icon="pi pi-user" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                    <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning" pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                    <p-button (click)="up.toggle($event)" icon="pi pi-upload" severity="help" pTooltip="Subir avatar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                    <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger" pTooltip="Borrar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
                   </div>
                 </div>
               </div>

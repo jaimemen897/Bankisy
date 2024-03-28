@@ -1,5 +1,5 @@
 <body>
-  <app-navbar></app-navbar>
+  <app-navbar *ngIf="!isInLoginOrRegister()"></app-navbar>
   <div class="container">
     <router-outlet></router-outlet>
   </div>

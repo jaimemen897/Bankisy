@@ -17,8 +17,9 @@ import {DialogModule} from "primeng/dialog";
 import {CreateTransactionComponent} from "../transactions/create/create-transaction.component";
 import {CurrencyPipe, DatePipe, NgClass} from "@angular/common";
 import {OverlayPanelModule} from "primeng/overlaypanel";
-import {MessageService} from "primeng/api";
+import {MenuItem, MessageService} from "primeng/api";
 import {ScrollPanelModule} from "primeng/scrollpanel";
+
 
 @Component({
   selector: 'app-index',
@@ -75,8 +76,9 @@ export class IndexComponent implements OnInit {
   displayDialogBankAccount: boolean = false;
   displayDialogTransaction: boolean = false;
   updating: boolean = false;
-  items: { label?: string; icon?: string; separator?: boolean, command?: () => void }[];
+  items: MenuItem[];
 
+  //LOAD
   ngOnInit(): void {
     this.indexService.getUserByToken().subscribe(user => {
       this.user = user;
@@ -119,6 +121,7 @@ export class IndexComponent implements OnInit {
     });
   }
 
+  //GET DATA
   getBalanceByUserId(id: string) {
     this.indexService.getTotalBalanceByUserId(id).subscribe(balance => {
       this.totalBalance = balance;
@@ -176,6 +179,16 @@ export class IndexComponent implements OnInit {
     }
   }
 
+  getTransactionColor(transaction: Transaction) {
+    if(this.bankAccounts.find(bankAccount => bankAccount.iban === transaction.ibanAccountOrigin) !== undefined){
+      return 'warning';
+    } else if(this.bankAccounts.find(bankAccount => bankAccount.iban === transaction.ibanAccountDestination) !== undefined){
+      return 'success';
+    } else {
+      return 'info';
+    }
+  }
+
   getTransactionsByIban(iban: string) {
     this.transactionsByBankAccount = [];
     this.indexService.getTransactionsByIban(iban).subscribe(data => {
@@ -193,9 +206,11 @@ export class IndexComponent implements OnInit {
     });
   }
 
+  //ORDER, FILTER, PAGINATE
   refresh() {
     this.updating = true;
     this.ngOnInit()
+    this.lazyLoad({first: 0, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
     setTimeout(() => {
       this.updating = false;
     }, 200);
@@ -226,6 +241,7 @@ export class IndexComponent implements OnInit {
     this.refresh();
   }
 
+  //CREATE
   goToCreateBankAccount() {
     this.displayDialogBankAccount = true;
     this.bankAccountCreate.loadUser(this.user);
@@ -234,6 +250,14 @@ export class IndexComponent implements OnInit {
   createBankAccount() {
     this.displayDialogBankAccount = false;
     this.ngOnInit();
+    this.lazyLoad({first: 0, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Cuenta creada',
+      detail: 'La cuenta se ha creado correctamente',
+      life: 2000,
+      closable: false
+    });
   }
 
   createTransaction() {
@@ -243,13 +267,18 @@ export class IndexComponent implements OnInit {
       this.bankAccounts = bankAccounts;
     });
     this.ngOnInit();
+    this.lazyLoad({first: 0, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Transacción creada',
+      detail: 'La transacción se ha creado correctamente',
+      life: 2000,
+      closable: false
+    });
   }
 
   closeDialog() {
     this.displayDialogBankAccount = false;
     this.displayDialogTransaction = false;
   }
-
-
-  protected readonly console = console;
 }

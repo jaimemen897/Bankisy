@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
 using TFG.Services;
-using TFG.Services.Seeders;
 
 var myAllowSpecificOrigins = "AllowAngularApp";
 Env.Load();
@@ -27,6 +26,7 @@ builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<IndexService>();
+builder.Services.AddScoped<CardService>();
 builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>

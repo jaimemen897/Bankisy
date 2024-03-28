@@ -1,9 +1,11 @@
 using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using TFG.Context.DTOs.bankAccount;
+using TFG.Context.DTOs.cards;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.DTOs.users;
 using TFG.Context.Models;
+using TFG.Services.Security;
 
 namespace TFG.Services.mappers;
 
@@ -72,8 +74,40 @@ public abstract class MapperConfig
 
             /*TRANSACTIONS*/
             cfg.CreateMap<TransactionCreateDto, Transaction>();
-
+            
             cfg.CreateMap<Transaction, TransactionResponseDto>();
+            
+            /*CARDS*/
+            cfg.CreateMap<CardCreateDto, Card>()
+                .ForMember(dest => dest.CardNumber, act => act.MapFrom(src => new Random().NextInt64(1000000000000000, 9999999999999999).ToString()))
+                .ForMember(dest => dest.Pin, act => act.MapFrom(src => AesOperation.EncryptString("cOtaCSQZGwhAZx3afFShMyNtuEiammK", src.Pin)))
+                .ForMember(dest => dest.CardType, act => act.MapFrom(src => Enum.Parse<CardType>(src.CardType)))
+                .ForMember(dest => dest.IsBlocked, act => act.MapFrom(src => false))
+                .ForMember(dest => dest.ExpirationDate, act => act.MapFrom(src => DateTime.Now.AddYears(4).ToUniversalTime()))
+                .ForMember(dest => dest.Cvv, act => act.MapFrom(src => AesOperation.EncryptString("X7V8NMadvSsUsmq391Gw48a", new Random().Next(100, 999).ToString())))
+                .ForMember(dest => dest.IsDeleted, act => act.MapFrom(src => false))
+                .ForMember(dest => dest.User, act => act.Ignore())
+                .ForMember(dest => dest.BankAccount, act => act.Ignore());
+
+            cfg.CreateMap<Card, CardResponseDto>()
+                .ForMember(dest => dest.CardType, act => act.MapFrom(src => src.CardType.ToString()))
+                .ForMember(dest => dest.Cvv,
+                    act => act.MapFrom(src => AesOperation.DecryptString("X7V8NMadvSsUsmq391Gw48a", src.Cvv)))
+                .ForMember(dest => dest.Pin,
+                    act => act.MapFrom(src => AesOperation.DecryptString("cOtaCSQZGwhAZx3afFShMyNtuEiammK", src.Pin)));
+            
+            cfg.CreateMap<CardUpdateDto, Card>()
+                .ForMember(dest => dest.Pin, act => act.Ignore())
+                .ForMember(dest => dest.CardType, act => act.Ignore())
+                .ForMember(dest => dest.UserId, act => act.Ignore())
+                .ForMember(dest => dest.BankAccountIban, act => act.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    dest.Pin = src.Pin != null ? AesOperation.EncryptString("cOtaCSQZGwhAZx3afFShMyNtuEiammK", src.Pin) : dest.Pin;
+                    dest.CardType = src.CardType != null ? (CardType)Enum.Parse(typeof(CardType), src.CardType) : dest.CardType;
+                    dest.UserId = src.UserId ?? dest.UserId;
+                    dest.BankAccountIban = src.BankAccountIban ?? dest.BankAccountIban;
+                });
         });
 
         return new Mapper(config);

@@ -17,4 +17,8 @@ export class AppComponent implements OnInit {
       this.messages1 = this.messages1.concat(message);
     });
   }
+
+  isInLoginOrRegister(){
+    return window.location.href.includes('login') || window.location.href.includes('register');
+  }
 }

@@ -128,13 +128,13 @@
               </ng-template>
             </p-overlayPanel>
 
-            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info"/>
-            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning"/>
+            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning" pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             <p-button icon="pi pi-money-bill"
                       (click)="getTransactionsByIban(account.iban, $event)"
-                      severity="success"/>
+                      severity="success" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             <div class="card flex justify-content-center">
-              <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger"></p-button>
+              <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger" pTooltip="Borrar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             </div>
           </div>
         </td>

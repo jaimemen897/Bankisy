@@ -19,6 +19,8 @@ public class BankAccount
     public ICollection<Transaction> TransactionsOrigin { get; set; } = new List<Transaction>();
 
     public ICollection<Transaction> TransactionsDestination { get; set; } = new List<Transaction>();
+    
+    public List<Card> Cards { get; set; } = [];
 }
 
 public enum AccountType

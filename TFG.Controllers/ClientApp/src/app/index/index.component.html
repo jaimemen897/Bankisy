@@ -96,8 +96,8 @@
               <td>{{ getAccountName(account.accountType) }}</td>
               <td>
                 <div class="flex gap-2">
-                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info"/>
-                  <p-button (click)="transactionPanel.toggle($event)" icon="pi pi-money-bill" severity="success"/>
+                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                  <p-button (click)="transactionPanel.toggle($event)" icon="pi pi-money-bill" severity="success" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
                 </div>
               </td>
             </tr>
@@ -116,21 +116,30 @@
             <p-overlayPanel #transactionPanel (onShow)="getTransactionsByIban(account.iban)">
               <ng-template pTemplate="content">
                 <h4 class="text-left">Transacciones de la cuenta</h4>
-                <p-scrollPanel [style]="{height: '250px', width: '300px'}" styleClass="custombar1">
+                <p-scrollPanel [style]="{height: '250px', width: '400px'}" styleClass="custombar1">
+
                   <div class="flex flex-column gap-2">
-                    {{ console.log(account.iban) }}
+                    <div class="flex inline-flex gap-2 bg-blue-100 p-2 w-full justify-content-between">
+                      <!--negrita-->
+                      <p class="flex-1 font-bold"> Concepto</p>
+                      <p class="flex-1 font-bold"> Fecha</p>
+                      <p class="flex-1 font-bold"> Importe</p>
+                    </div>
+
                     @for (transaction of transactionsByBankAccount; track transactionsByBankAccount) {
                       @if (transaction.ibanAccountOrigin == account.iban) {
-                        <div class="flex inline-flex gap-2 bg-red-100 p-2 w-full justify-content-between">
-                          <p class="text-truncate w-auto"> {{ transaction.concept }}</p>
-                          <p class="text-truncate w-auto"> {{ transaction.date | date: 'dd/MM' }}</p>
-                          <p class="text-truncate w-auto"> -{{ transaction.amount }}€</p>
+                        <div
+                          class="flex inline-flex gap-2 bg-red-100 p-2 w-full justify-content-between align-items-center">
+                          <p class="flex-1"> {{ transaction.concept }}</p>
+                          <p class="flex-1"> {{ transaction.date | date: 'dd/MM' }}</p>
+                          <p class="flex-1"> -{{ transaction.amount }}€</p>
                         </div>
                       } @else if (transaction.ibanAccountDestination == account.iban) {
-                        <div class="flex inline-flex gap-2 bg-green-100 p-2 w-full justify-content-between">
-                          <p class="text-truncate w-auto"> {{ transaction.concept }}</p>
-                          <p class="text-truncate w-auto"> {{ transaction.date | date: 'dd/MM' }}</p>
-                          <p class="text-truncate w-auto"> {{ transaction.amount }}€</p>
+                        <div
+                          class="flex inline-flex gap-2 bg-green-100 p-2 w-full justify-content-between align-items-center">
+                          <p class="flex-1"> {{ transaction.concept }}</p>
+                          <p class="flex-1"> {{ transaction.date | date: 'dd/MM' }}</p>
+                          <p class="flex-1"> {{ transaction.amount }}€</p>
                         </div>
                       }
                     }
@@ -196,8 +205,7 @@
             <tr>
               <td>{{ transaction.id }}</td>
               <td>
-                <p-tag [value]="transaction.amount + '€'" [severity]="getBalanceColor(transaction.amount)"
-                       class="text-truncate"></p-tag>
+                <p-tag [value]="transaction.amount + '€'" [severity]="getTransactionColor(transaction)"></p-tag>
               </td>
               <td>{{ transaction.concept }}</td>
               <td>{{ transaction.ibanAccountOrigin }}</td>
@@ -208,7 +216,7 @@
           </ng-template>
           <!--TODO: BOTÓN PARA DESCARGAR FACTURAS-->
           <ng-template pTemplate="paginatorleft">
-            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text" (click)="displayDialogTransaction = true"></p-button>
           </ng-template>
           <ng-template pTemplate="paginatorright">
             <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
