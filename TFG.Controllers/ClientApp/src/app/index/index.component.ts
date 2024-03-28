@@ -117,7 +117,7 @@ export class IndexComponent implements OnInit {
 
     this.indexService.getTransactionsByUserId(pageNumber, event.rows, sortField, sortOrder === -1, this.search).subscribe(data => {
       this.transactions = data.items;
-      this.totalRecords = data.totalCount;
+      this.totalRecords = data.totalRecords;
     });
   }
 
@@ -180,9 +180,9 @@ export class IndexComponent implements OnInit {
   }
 
   getTransactionColor(transaction: Transaction) {
-    if(this.bankAccounts.find(bankAccount => bankAccount.iban === transaction.ibanAccountOrigin) !== undefined){
+    if (this.bankAccounts.find(bankAccount => bankAccount.iban === transaction.ibanAccountOrigin) !== undefined) {
       return 'warning';
-    } else if(this.bankAccounts.find(bankAccount => bankAccount.iban === transaction.ibanAccountDestination) !== undefined){
+    } else if (this.bankAccounts.find(bankAccount => bankAccount.iban === transaction.ibanAccountDestination) !== undefined) {
       return 'success';
     } else {
       return 'info';
@@ -193,7 +193,7 @@ export class IndexComponent implements OnInit {
     this.transactionsByBankAccount = [];
     this.indexService.getTransactionsByIban(iban).subscribe(data => {
       this.transactionsByBankAccount = data;
-      if (this.transactionsByBankAccount.length !== 0){
+      if (this.transactionsByBankAccount.length !== 0) {
       } else {
         this.messageService.add({
           severity: 'info',
@@ -211,6 +211,9 @@ export class IndexComponent implements OnInit {
     this.updating = true;
     this.ngOnInit()
     this.lazyLoad({first: 0, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
+    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+      this.bankAccounts = bankAccounts;
+    });
     setTimeout(() => {
       this.updating = false;
     }, 200);
@@ -243,15 +246,23 @@ export class IndexComponent implements OnInit {
 
   //CREATE
   goToCreateBankAccount() {
-    this.displayDialogBankAccount = true;
-    this.bankAccountCreate.loadUser(this.user);
     this.refresh();
+    this.bankAccountCreate.loadUser(this.user);
+    this.displayDialogBankAccount = true;
+  }
+
+  goToCreateTransaction() {
+    this.refresh();
+    this.transactionCreate.loadUser();
+    this.displayDialogTransaction = true;
   }
 
   createBankAccount() {
+    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+      this.bankAccounts = bankAccounts;
+    });
     this.displayDialogBankAccount = false;
-    this.ngOnInit();
-    this.lazyLoad({first: 0, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
+    this.refresh();
     this.messageService.add({
       severity: 'success',
       summary: 'Cuenta creada',
@@ -259,17 +270,12 @@ export class IndexComponent implements OnInit {
       life: 2000,
       closable: false
     });
-    this.refresh();
   }
 
   createTransaction() {
+    this.refresh();
     this.displayDialogTransaction = false;
     this.transactionCreate.loadUser();
-    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
-      this.bankAccounts = bankAccounts;
-    });
-    this.ngOnInit();
-    this.lazyLoad({first: 0, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
     this.messageService.add({
       severity: 'success',
       summary: 'Transacción creada',

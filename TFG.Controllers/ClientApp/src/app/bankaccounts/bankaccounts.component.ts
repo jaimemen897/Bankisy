@@ -73,7 +73,6 @@ export class BankaccountsComponent {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-
     this.bankAccountService.getBankAccounts(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalRecords;
@@ -170,7 +169,7 @@ export class BankaccountsComponent {
           closable: false
         });
         this.bankAccountService.deleteBankAccount(iban).subscribe(() => {
-          this.bankAccountService.getBankAccounts(1, this.rows).subscribe((data) => {
+          this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
             this.bankAccounts = data.items;
             this.totalRecords = data.totalCount;
           });

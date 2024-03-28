@@ -21,7 +21,7 @@ export class IndexService {
   }
 
   getUserByToken(): Observable<User> {
-    const headers = new HttpHeaders().set('token', localStorage.getItem('token') || '');
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + localStorage.getItem('token'));
     return this.http.get<User>('http://localhost:5196/session/me', {headers});
   }
 
