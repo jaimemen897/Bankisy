@@ -78,6 +78,36 @@ namespace TFG.Context.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "cards",
+                columns: table => new
+                {
+                    card_number = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
+                    pin = table.Column<string>(type: "text", nullable: false),
+                    card_type = table.Column<int>(type: "integer", nullable: false),
+                    expiration_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    cvv = table.Column<string>(type: "text", nullable: false),
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    bank_account_iban = table.Column<string>(type: "character varying(34)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_cards", x => x.card_number);
+                    table.ForeignKey(
+                        name: "FK_cards_bank_accounts_bank_account_iban",
+                        column: x => x.bank_account_iban,
+                        principalTable: "bank_accounts",
+                        principalColumn: "iban",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_cards_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserBankAccount",
                 columns: table => new
                 {
@@ -102,6 +132,16 @@ namespace TFG.Context.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_cards_bank_account_iban",
+                table: "cards",
+                column: "bank_account_iban");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_cards_user_id",
+                table: "cards",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_transactions_iban_account_destination",
                 table: "transactions",
                 column: "iban_account_destination");
@@ -120,6 +160,9 @@ namespace TFG.Context.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "cards");
+
             migrationBuilder.DropTable(
                 name: "transactions");
 

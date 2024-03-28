@@ -1,4 +1,3 @@
-using System.Linq.Dynamic.Core;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +66,12 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
         return user ?? throw new HttpException(404, "User not found");
     }
+    
+    public async Task<UserResponseDto> GetUserByEmail(string email)
+    {
+        var userEntity = await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email) ?? throw new HttpException(404, "User not found");
+        return _mapper.Map<UserResponseDto>(userEntity);
+    }
 
     public async Task<UserResponseDto[]> GetAllUsers()
     {
@@ -101,30 +106,39 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         }
     }
 
-    private async Task IsValid(UserUpdateDto userUpdateDto)
+    private async Task IsValid(UserUpdateDto userUpdateDto, User user)
     {
         if (userUpdateDto.Gender != null && !Enum.TryParse(typeof(Gender), userUpdateDto.Gender, true, out _))
         {
             throw new HttpException(400,
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
         }
-
         var userExists = await bankContext.Users.AnyAsync(u => u.Username == userUpdateDto.Username);
-        if (userExists)
+
+
+        if (userUpdateDto.Username != null && user.Username != userUpdateDto.Username)
         {
-            throw new HttpException(400, "Username already exists");
+            if (userExists)
+            {
+                throw new HttpException(400, "Username already exists");
+            }
         }
 
-        userExists = await bankContext.Users.AnyAsync(u => u.Dni == userUpdateDto.Dni);
-        if (userExists)
+        if (userUpdateDto.Dni != null && user.Dni != userUpdateDto.Dni)
         {
-            throw new HttpException(400, "DNI already exists");
+            userExists = await bankContext.Users.AnyAsync(u => u.Dni == userUpdateDto.Dni);
+            if (userExists)
+            {
+                throw new HttpException(400, "DNI already exists");
+            }
         }
-
-        userExists = await bankContext.Users.AnyAsync(u => u.Email == userUpdateDto.Email);
-        if (userExists)
+        if (userUpdateDto.Email != null && user.Email != userUpdateDto.Email)
         {
-            throw new HttpException(400, "Email already exists");
+            userExists = await bankContext.Users.AnyAsync(u => u.Email == userUpdateDto.Email);
+            if (userExists)
+            {
+                throw new HttpException(400, "Email already exists");
+            }
         }
     }
 
@@ -142,8 +156,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
     public async Task<UserResponseDto> UpdateUser(Guid id, UserUpdateDto user)
     {
-        await IsValid(user);
         var userToUpdate = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        await IsValid(user, userToUpdate);
 
         userToUpdate = _mapper.Map(user, userToUpdate);
         await bankContext.SaveChangesAsync();

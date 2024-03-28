@@ -89,10 +89,9 @@
                 <p>Fecha: {{ transaction.date | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
               </ng-template>
             </p-overlayPanel>
-            <p-button (click)="op.toggle($event)" icon="pi pi-info-circle" severity="info"/>
-            <p-button icon="pi pi-money-bill" (click)="goToTransactions(transaction.id)" severity="success"/>
+            <p-button (click)="op.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             <div class="card flex justify-content-center">
-              <p-button (click)="deleteTransaction(transaction.id)" icon="pi pi-trash" severity="danger"></p-button>
+              <p-button (click)="deleteTransaction(transaction.id)" icon="pi pi-trash" severity="danger" pTooltip="Borrar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             </div>
           </div>
         </td>

@@ -3,7 +3,7 @@
 <div class="card">
   <p-table [value]="bankAccounts" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
            [rowsPerPageOptions]="[10, 25, 50]" (onLazyLoad)="lazyLoad($event)"
-           [totalRecords]="totalRecords" [rows]="rows" [tableStyle]="{ 'min-width': '75rem' }"
+           [totalRecords]="totalRecords" [rows]="rows" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}"
            [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']">
     <ng-template pTemplate="header">
       <tr>
@@ -22,7 +22,6 @@
         </th>
         <th style="width:22%">
           <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
-
       </tr>
       <tr>
         <!--BUSCAR POR IBAN-->
@@ -34,7 +33,7 @@
         <th>
           <p-columnFilter field="accountType" matchMode="in" [showMenu]="false">
             <ng-template pTemplate="filter" let-value>
-              <p-dropdown [ngModel]="value" [options]="accountsTypes" (onChange)="onSearchFilter($event)"
+              <p-dropdown [options]="accountsTypes" (onChange)="onSearchFilter($event)"
                           placeholder="Tipo de cuenta"
                           [showClear]="true" class="text-color-secondary">
                 <ng-template let-option pTemplate="item">
@@ -49,7 +48,8 @@
           <p-columnFilter field="users" matchMode="in" [showMenu]="false">
             <ng-template pTemplate="filter" let-value>
               <p-multiSelect [ngModel]="value" [options]="users" placeholder="Buscar por usuario"
-                             (onChange)="onSearchUser($event)">
+                             (onChange)="onSearchUser($event)" display="chip" [showHeader]="false"
+                             [style]="{'max-width': '15rem', 'width': '15rem'}">
                 <ng-template let-option pTemplate="item">
                   <div class="inline-block vertical-align-middle">
                     <img [alt]="option" src="https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg"
@@ -83,11 +83,10 @@
           {{ account.iban }}
         </td>
         <td>
-          <p-tag [value]="account.accountType" [severity]="getSeverity(account.accountType)"></p-tag>
+          <p-tag [value]="getAccountName(account.accountType)" [severity]="getSeverity(account.accountType)"></p-tag>
         </td>
         <td>
           <div class="inline-block vertical-align-middle">
-            <!--border radius-->
             <div class="bg-blue-50 border-50 border-round inline-block">
               <img [alt]="account.usersName"
                    src="https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg"
@@ -104,20 +103,38 @@
         </td>
         <td>
           <div class="flex gap-2">
-            <p-overlayPanel #op>
+            <p-overlayPanel #infoPanel>
               <ng-template pTemplate="content">
                 <h4 class="text-left">IBAN: {{ account.iban }}</h4>
-                <p class="text-left">Tipo de cuenta: {{ account.accountType }}</p>
+                <p class="text-left">Tipo de cuenta: {{ getAccountName(account.accountType) }}</p>
                 <p class="text-left">Usuario: {{ account.usersName }}</p>
                 <p class="text-left">Saldo: {{ account.balance }}</p>
                 <p class="text-left">Estado: {{ account.isDeleted ? 'Inactiva' : 'Activa' }}</p>
               </ng-template>
             </p-overlayPanel>
-            <p-button (click)="op.toggle($event)" icon="pi pi-info-circle" severity="info"/>
-            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning"/>
-            <p-button icon="pi pi-money-bill" (click)="goToTransactions(account.iban)" severity="success"/>
+            <p-overlayPanel #transactionPanel>
+              <ng-template pTemplate="content">
+                <p-scroller [items]="transactions" [itemSize]="5" scrollHeight="15rem"
+                            styleClass="border-1 surface-border" [style]="{'width': '200px', 'height': 'auto'}">
+                  <ng-template pTemplate="item" let-item let-options="options">
+                    <div class="flex inline-flex align-items-center p-2"
+                         [ngClass]="{'bg-gray-100': options.index % 2 === 0}">
+                      <div class="flex inline-flex w-full border-gray-50 border-1 p-2">
+                        <span>{{ item.concept }} - {{ item.date | date: 'dd/MM' }} - {{ item.amount }}€</span>
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-scroller>
+              </ng-template>
+            </p-overlayPanel>
+
+            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning" pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button icon="pi pi-money-bill"
+                      (click)="getTransactionsByIban(account.iban, $event)"
+                      severity="success" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             <div class="card flex justify-content-center">
-              <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger"></p-button>
+              <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger" pTooltip="Borrar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             </div>
           </div>
         </td>
@@ -130,9 +147,9 @@
       </tr>
     </ng-template>
   </p-table>
-  <p-button label="Crear cuenta bancaria" (click)="displayDialog = true"></p-button>
+  <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()"></p-button>
 
-  <p-dialog header="Crear cuenta bancaria" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
+  <p-dialog [header]="headerSaveUpdateBankAccount" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
             [contentStyle]="{height: '21rem'}" [closable]="false">
     <app-bankaccount-create (onSave)="saveBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
   </p-dialog>

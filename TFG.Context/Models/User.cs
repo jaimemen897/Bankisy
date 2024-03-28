@@ -33,6 +33,8 @@ public class User
     [Column("updated_at")] public DateTime UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
 
     public List<BankAccount> BankAccounts { get; set; } = [];
+    
+    public List<Card> Cards { get; set; } = [];
 }
 
 public enum Roles

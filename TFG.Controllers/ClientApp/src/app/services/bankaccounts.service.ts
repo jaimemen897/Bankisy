@@ -4,6 +4,7 @@ import {map, Observable} from 'rxjs';
 import {Pagination} from "./users.service";
 import {BankAccount} from "../models/BankAccount";
 import {BankAccountCreate} from "../models/BankAccountCreate";
+import {Transaction} from "../models/Transaction";
 
 @Injectable({
   providedIn: 'root'
@@ -55,5 +56,10 @@ export class BankAccountService {
 
   deleteBankAccount(iban: string): Observable<BankAccount> {
     return this.http.delete<BankAccount>(this.apiUrl + '/' + iban);
+  }
+
+  //TRANSACTIONS FOR BANK ACCOUNT
+  getTransactionsByIban(iban: string): Observable<Transaction[]>{
+    return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
   }
 }

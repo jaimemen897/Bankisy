@@ -46,6 +46,53 @@ namespace TFG.Context.Migrations
                     b.ToTable("bank_accounts");
                 });
 
+            modelBuilder.Entity("TFG.Context.Models.Card", b =>
+                {
+                    b.Property<string>("CardNumber")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("card_number");
+
+                    b.Property<string>("BankAccountIban")
+                        .IsRequired()
+                        .HasColumnType("character varying(34)")
+                        .HasColumnName("bank_account_iban");
+
+                    b.Property<int>("CardType")
+                        .HasColumnType("integer")
+                        .HasColumnName("card_type");
+
+                    b.Property<string>("Cvv")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("cvv");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expiration_date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Pin")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("pin");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("CardNumber");
+
+                    b.HasIndex("BankAccountIban");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("cards");
+                });
+
             modelBuilder.Entity("TFG.Context.Models.Transaction", b =>
                 {
                     b.Property<int>("Id")
@@ -165,6 +212,25 @@ namespace TFG.Context.Migrations
                     b.ToTable("UserBankAccount");
                 });
 
+            modelBuilder.Entity("TFG.Context.Models.Card", b =>
+                {
+                    b.HasOne("TFG.Context.Models.BankAccount", "BankAccount")
+                        .WithMany("Cards")
+                        .HasForeignKey("BankAccountIban")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TFG.Context.Models.User", "User")
+                        .WithMany("Cards")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BankAccount");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TFG.Context.Models.Transaction", b =>
                 {
                     b.HasOne("TFG.Context.Models.BankAccount", "BankAccountDestinationIban")
@@ -201,9 +267,16 @@ namespace TFG.Context.Migrations
 
             modelBuilder.Entity("TFG.Context.Models.BankAccount", b =>
                 {
+                    b.Navigation("Cards");
+
                     b.Navigation("TransactionsDestination");
 
                     b.Navigation("TransactionsOrigin");
+                });
+
+            modelBuilder.Entity("TFG.Context.Models.User", b =>
+                {
+                    b.Navigation("Cards");
                 });
 #pragma warning restore 612, 618
         }

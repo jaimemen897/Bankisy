@@ -30,6 +30,14 @@ public class SessionService(UsersService usersService)
         return GetToken(userMapped);
     }
     
+    public async Task<UserResponseDto> GetUserByToken(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+        var email = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value ?? throw new HttpException(401, "Invalid token");
+        return await usersService.GetUserByEmail(email) ?? throw new HttpException(404, "User not found");
+    }
+    
     private static string GetToken(User user)
     {
         var claims = new List<Claim>

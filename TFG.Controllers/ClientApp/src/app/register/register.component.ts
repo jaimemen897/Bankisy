@@ -13,6 +13,12 @@ import {Token} from "../login/login.component";
 import {AuthService} from "../services/auth.service";
 import {UserService} from "../services/users.service";
 import {UserCreate} from "../models/UserCreate";
+import {DropdownModule} from "primeng/dropdown";
+
+interface Gender {
+  name: string;
+  value: string;
+}
 
 @Component({
   selector: 'app-register',
@@ -28,7 +34,8 @@ import {UserCreate} from "../models/UserCreate";
     ToastModule,
     PasswordModule,
     RadioButtonModule,
-    NgIf
+    NgIf,
+    DropdownModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
@@ -39,6 +46,7 @@ export class RegisterComponent implements OnInit {
 
   mode: 'create' | 'update' | 'register';
   id: string;
+  genders: Gender[];
 
   formGroup = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
@@ -52,11 +60,18 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id') as string;
     this.mode = this.route.snapshot.paramMap.get('mode') as 'create' | 'update' | 'register';
+    this.genders = [
+      {name: 'Hombre', value: 'Male'},
+      {name: 'Mujer', value: 'Female'},
+      {name: 'Otro', value: 'Other'},
+      {name: 'Prefiero no decirlo', value: 'Prefer not to say'}
+    ];
 
     if (this.mode === 'update') {
       this.formGroup.controls.password.clearValidators();
       this.formGroup.controls.password.setValidators([Validators.minLength(3), Validators.maxLength(50)]);
       this.usersService.getUserById(this.route.snapshot.paramMap.get('id') ?? '').subscribe(user => {
+          console.log(this.formGroup.controls.gender.value);
           this.formGroup.controls.name.setValue(user.name);
           this.formGroup.controls.email.setValue(user.email);
           this.formGroup.controls.username.setValue(user.username);
@@ -68,13 +83,13 @@ export class RegisterComponent implements OnInit {
   }
 
   sendForm() {
-    const id = this.route.snapshot.paramMap.get('id') ?? '';
-    let name = this.formGroup.controls.name.value ?? '';
-    let email = this.formGroup.controls.email.value ?? '';
-    let username = this.formGroup.controls.username.value ?? '';
-    let dni = this.formGroup.controls.dni.value ?? '';
-    let gender = this.formGroup.controls.gender.value ?? '';
-    let password = this.formGroup.controls.password.value ?? '';
+    const id = this.route.snapshot.paramMap.get('id') as string;
+    let name = this.formGroup.controls.name.value as string;
+    let email = this.formGroup.controls.email.value as string;
+    let username = this.formGroup.controls.username.value as string;
+    let dni = this.formGroup.controls.dni.value as string;
+    let gender = this.formGroup.controls.gender.value as string;
+    let password = this.formGroup.controls.password.value as string;
     if (this.formGroup.valid) {
       let user: UserCreate = {
         name: name,
@@ -101,13 +116,13 @@ export class RegisterComponent implements OnInit {
         case 'register': {
           this.authService.register(name, email, username, dni, gender, password).subscribe((data: Token) => {
               localStorage.setItem('token', data.token);
-              this.router.navigate(['/users']);
+              this.router.navigate(['/index']);
             }
           );
           break;
         }
         default: {
-          this.router.navigate(['/users']);
+          this.router.navigate(['/index']);
         }
       }
     } else {
@@ -129,10 +144,6 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  isValid() {
-    return this.formGroup.valid;
-  }
-
   goBack() {
     this.location.back();
   }
@@ -144,7 +155,7 @@ export class RegisterComponent implements OnInit {
       case 'update':
         return 'Actualizar usuario';
       case 'register':
-        return 'Crear usuario';
+        return 'Crear cuenta';
       default:
         return 'Siguiente';
     }

@@ -41,7 +41,7 @@
               <div class="flex flex-column xl:flex-row xl:align-items-center justify-content-center gap-4"
                    [ngClass]="{ 'border-top-1 surface-border': users.indexOf(user) !== 0 }">
 
-                <img class="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" [src]="user.avatar"
+                <img class="w-9 sm:w-16rem xl:w-10rem xl:block mx-auto border-round" [src]="user.avatar"
                      [alt]="user.name"/>
 
                 <div
@@ -72,10 +72,10 @@
                                       invalidFileTypeMessageDetail="Solo se permiten imágenes"/>
                       </div>
                     </p-overlayPanel>
-                    <p-button (click)="op.toggle($event)" icon="pi pi-user"></p-button>
-                    <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning"/>
-                    <p-button (click)="up.toggle($event)" icon="pi pi-upload" severity="help"/>
-                    <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger"></p-button>
+                    <p-button (click)="op.toggle($event)" icon="pi pi-user" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                    <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning" pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                    <p-button (click)="up.toggle($event)" icon="pi pi-upload" severity="help" pTooltip="Subir avatar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                    <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger" pTooltip="Borrar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
                   </div>
                 </div>
               </div>

@@ -1,11 +1,14 @@
 <div class="card flex justify-content-center align-items-center m-2 overflow-visible">
   <div class="flex flex-column gap-3">
     <form [formGroup]="formGroup" class="flex flex-column gap-3">
-      <p-multiSelect [options]="users" formControlName="selectedUsers" optionLabel="name" placeholder="Seleccione el usuario"
-                     display="chip" [showClear]="true" styleClass="w-20rem"/>
+      @if (!isNewUser) {
+        <p-multiSelect [options]="users" formControlName="selectedUsers" optionLabel="name"
+                       placeholder="Seleccione el usuario"
+                       display="chip" [showClear]="true" styleClass="w-20rem" emptyMessage="No se encontraron usuarios"/>
+      }
       <p-dropdown [options]="accountsTypes" formControlName="selectedAccountType" [showClear]="true"
-                  placeholder="Elegir tipo de cuenta" styleClass="w-20rem"></p-dropdown>
-      <p-button [label]="label" [rounded]="true" (click)="createBankAccount()" styleClass="w-full mt-5"></p-button>
+                  placeholder="Elegir tipo de cuenta" styleClass="w-20rem" emptyMessage="No se han encontrado tipos de cuenta"/>
+      <p-button [label]="label" [rounded]="true" (click)="saveChanges()" styleClass="w-full mt-4"></p-button>
       <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()" styleClass="w-full"></p-button>
     </form>
   </div>
