@@ -22,10 +22,17 @@ public class SessionController(SessionService sessionService) : ControllerBase
         return await sessionService.Register(userRegister);
     }
     
-    [HttpGet("me")]
-    [Authorize]
-    public async Task<ActionResult<UserResponseDto>> GetUserByToken([FromHeader] string token)
+    [HttpGet("token/{token}")]
+    [Authorize(Policy = "Admin")]
+    public async Task<ActionResult<UserResponseDto>> GetUserByToken([FromRoute] string token)
     {
         return await sessionService.GetUserByToken(token);
+    }
+    
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<UserResponseDto>> GetMyself()
+    {
+        return await sessionService.GetMyself();
     }
 }

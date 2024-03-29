@@ -36,14 +36,14 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
             if (bankAccounts != null) return bankAccounts;
         }*/
 
-        var bankAccountsQuery = bankContext.BankAccounts.Include(ba => ba.UsersId).Where(ba => !ba.IsDeleted);
+        var bankAccountsQuery = bankContext.BankAccounts.Include(ba => ba.Users).Where(ba => !ba.IsDeleted);
         if (!string.IsNullOrWhiteSpace(search))
         {
             var userNames = search.Split(',');
 
             bankAccountsQuery = bankAccountsQuery.Where(ba => ba.Balance.ToString().Contains(search) ||
                                                               ba.Iban.Contains(search) ||
-                                                              ba.UsersId.Any(u => userNames.Contains(u.Name)));
+                                                              ba.Users.Any(u => userNames.Contains(u.Name)));
         }
 
         if (!string.IsNullOrWhiteSpace(filter))
@@ -72,7 +72,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         }*/
 
         var bankAccountEntity =
-            await bankContext.BankAccounts.Include(ba => ba.UsersId).FirstOrDefaultAsync(ba => ba.Iban == iban) ??
+            await bankContext.BankAccounts.Include(ba => ba.Users).FirstOrDefaultAsync(ba => ba.Iban == iban) ??
             throw new HttpException(404, "BankAccount not found");
 
         var bankAccount = _mapper.Map<BankAccountResponseDto>(bankAccountEntity);
@@ -151,7 +151,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
 
         var bankAccount = _mapper.Map<BankAccount>(bankAccountCreateDto);
         bankAccount.Iban = iban.ToString();
-        bankAccount.UsersId = users;
+        bankAccount.Users = users;
         foreach (var user in users)
         {
             user.BankAccounts.Add(bankAccount);
@@ -170,7 +170,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
     public async Task<BankAccountResponseDto> UpdateBankAccount(string iban, BankAccountUpdateDto bankAccount)
     {
         var bankAccountToUpdate =
-            await bankContext.BankAccounts.Include(ba => ba.UsersId).FirstOrDefaultAsync(ba => ba.Iban == iban) ??
+            await bankContext.BankAccounts.Include(ba => ba.Users).FirstOrDefaultAsync(ba => ba.Iban == iban) ??
             throw new HttpException(404, "Bank account not found");
 
         IsValid(bankAccount);
@@ -186,10 +186,10 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
                 throw new HttpException(404, "Users not found");
             }
 
-            bankAccountToUpdate.UsersId.Clear();
-            foreach (var user in users.Where(user => bankAccountToUpdate.UsersId.All(u => u.Id != user.Id)))
+            bankAccountToUpdate.Users.Clear();
+            foreach (var user in users.Where(user => bankAccountToUpdate.Users.All(u => u.Id != user.Id)))
             {
-                bankAccountToUpdate.UsersId.Add(user);
+                bankAccountToUpdate.Users.Add(user);
                 user.BankAccounts.Add(bankAccountToUpdate);
             }
 

@@ -19,21 +19,21 @@ public abstract class MapperConfig
             cfg.CreateMap<BankAccountCreateDto, BankAccount>()
                 .ForMember(dest => dest.AccountType, act => act.MapFrom(src => src.AccountType))
                 .ForMember(dest => dest.IsDeleted, act => act.MapFrom(src => false))
-                .ForMember(dest => dest.UsersId, act => act.Ignore());
+                .ForMember(dest => dest.Users, act => act.Ignore());
 
             cfg.CreateMap<BankAccountUpdateDto, BankAccount>()
                 .ForMember(dest => dest.AccountType, opt => opt.Ignore())
-                .ForMember(dest => dest.UsersId, opt => opt.Ignore())
+                .ForMember(dest => dest.Users, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.AccountType = src.AccountType != null ? (AccountType)Enum.Parse(typeof(AccountType), src.AccountType) : dest.AccountType;
-                    dest.UsersId = src.UsersId != null ? src.UsersId.Select(id => new User { Id = id }).ToList() : dest.UsersId;
+                    dest.Users = src.UsersId != null ? src.UsersId.Select(id => new User { Id = id }).ToList() : dest.Users;
                 });
 
             cfg.CreateMap<BankAccount, BankAccountResponseDto>()
                 .ForMember(dest => dest.AccountType, act => act.MapFrom(src => src.AccountType.ToString()))
-                .ForMember(dest => dest.UsersId, act => act.MapFrom(src => src.UsersId.Select(u => u.Id).ToList()))
-                .ForMember(dest => dest.UsersName, act => act.MapFrom(src => src.UsersId.Select(u => u.Name).ToList()));
+                .ForMember(dest => dest.UsersId, act => act.MapFrom(src => src.Users.Select(u => u.Id).ToList()))
+                .ForMember(dest => dest.UsersName, act => act.MapFrom(src => src.Users.Select(u => u.Name).ToList()));
 
             /*USERS*/
             cfg.CreateMap<UserCreateDto, User>()

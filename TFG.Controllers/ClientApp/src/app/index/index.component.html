@@ -223,7 +223,7 @@
           </ng-template>
         </p-table>
       </p-panel>
-      <p-button label="Realizar transferencia" (click)="displayDialogTransaction = true" class="m-2"></p-button>
+      <p-button label="Realizar transferencia" (click)="goToCreateTransaction()" class="m-2"></p-button>
 
       <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogTransaction" [modal]="true"
                 [resizable]="false"

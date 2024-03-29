@@ -10,9 +10,21 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class CardService(BankContext bankContext)
+public class CardService(BankContext bankContext, SessionService sessionService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+
+    /*private async Task VerifyUser(Guid userId)
+    {
+        var user = await sessionService.GetUser();
+        if (!user.Role.Equals("Admin"))
+        {
+            if (userId != user.Id)
+            {
+                throw new HttpException(403, "Forbidden");
+            }
+        }
+    }*/
 
     public async Task<Pagination<CardResponseDto>> GetCards(int pageNumber, int pageSize, string orderBy,
         bool descending, string? search = null, string? filter = null)
@@ -55,12 +67,39 @@ public class CardService(BankContext bankContext)
             .FirstAsync(c => c.CardNumber == cardNumber) ?? throw new HttpException(404, "Card not found");
         return _mapper.Map<CardResponseDto>(card);
     }
+    
+    public async Task<List<CardResponseDto>> GetCardsByUserId(Guid userId)
+    {
+        var cardList = await bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount).ToListAsync();
+        var cards = cardList
+            .Where(card => !card.IsDeleted && card.UserId == userId)
+            .Select(card => _mapper.Map<CardResponseDto>(card)).ToList();
+
+        return cards ?? throw new HttpException(404, "Cards not found");
+    }
+    
+    public async Task<List<CardResponseDto>> GetCardsByIban(string iban)
+    {
+        var cardList = await bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount).ToListAsync();
+        var cards = cardList
+            .Where(card => !card.IsDeleted && card.BankAccountIban == iban)
+            .Select(card => _mapper.Map<CardResponseDto>(card)).ToList();
+
+        return cards ?? throw new HttpException(404, "Cards not found");
+    }
 
     public async Task<CardResponseDto> CreateCard(CardCreateDto cardCreateDto)
     {
-        _ = await bankContext.Users.FindAsync(cardCreateDto.UserId) ?? throw new HttpException(404, "User not found");
-        _ = await bankContext.BankAccounts.FindAsync(cardCreateDto.BankAccountIban) ??
-            throw new HttpException(404, "Bank account not found");
+        var user = await bankContext.Users.FindAsync(cardCreateDto.UserId) ??
+                   throw new HttpException(404, "User not found");
+        var bankAccount = await bankContext.BankAccounts.Include(ba => ba.Users).FirstOrDefaultAsync(ba =>
+            ba.Iban == cardCreateDto.BankAccountIban) ?? throw new HttpException(404, "Bank account not found");
+
+        if (!bankAccount.Users.Contains(user))
+        {
+            throw new HttpException(400, "Bank account does not belong to the user");
+        }
+
         IsValid(cardCreateDto);
         var card = _mapper.Map<Card>(cardCreateDto);
         await bankContext.Cards.AddAsync(card);
@@ -123,6 +162,7 @@ public class CardService(BankContext bankContext)
         {
             throw new HttpException(400, "Card is already blocked");
         }
+
         card.IsBlocked = true;
         await bankContext.SaveChangesAsync();
     }
@@ -135,6 +175,7 @@ public class CardService(BankContext bankContext)
         {
             throw new HttpException(400, "Card is not blocked");
         }
+
         card.IsBlocked = false;
         await bankContext.SaveChangesAsync();
     }

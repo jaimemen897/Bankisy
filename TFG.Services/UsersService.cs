@@ -181,7 +181,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         }
 
 
-        var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.UsersId.Contains(user)).ToListAsync();
+        var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.Users.Contains(user)).ToListAsync();
         bankAccounts.ForEach(ba => ba.IsDeleted = true);
         user.IsDeleted = true;
         await bankContext.SaveChangesAsync();

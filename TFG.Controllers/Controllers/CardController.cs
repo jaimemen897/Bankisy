@@ -7,7 +7,7 @@ using TFG.Services.Pagination;
 namespace TFG.Controllers.Controllers;
 
 [ApiController]
-[Authorize]
+[Authorize(Policy = "Admin")]
 [Route("[controller]")]
 public class CardController(CardService cardService) : ControllerBase
 {

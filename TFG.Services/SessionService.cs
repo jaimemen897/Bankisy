@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TFG.Context.DTOs.users;
@@ -11,9 +12,8 @@ using TFG.Services.mappers;
 
 namespace TFG.Services;
 
-public class SessionService(UsersService usersService)
+public class SessionService(UsersService usersService, IHttpContextAccessor httpContextAccessor)
 {
-    
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
     
     public async Task<string> Login(UserLoginDto userLogin)
@@ -38,6 +38,12 @@ public class SessionService(UsersService usersService)
         return await usersService.GetUserByEmail(email) ?? throw new HttpException(404, "User not found");
     }
     
+    public async Task<UserResponseDto> GetMyself()
+    {
+        var token = httpContextAccessor.HttpContext!.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last() ?? throw new HttpException(401, "Token not found");
+        return await GetUserByToken(token);
+    }
+    
     private static string GetToken(User user)
     {
         var claims = new List<Claim>
@@ -53,7 +59,7 @@ public class SessionService(UsersService usersService)
             issuer: Environment.GetEnvironmentVariable("JWT_ISSUER"),
             audience: Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
             claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
+            expires: DateTime.Now.AddDays(4),
             signingCredentials: credentials);
 
         var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);

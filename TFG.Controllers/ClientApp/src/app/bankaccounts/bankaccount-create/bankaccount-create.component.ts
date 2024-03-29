@@ -124,7 +124,6 @@ export class BankaccountCreateComponent {
       bankAccount.usersId = this.formGroup.controls.selectedUsers.value.map((user: { id: any; }) => user.id);
 
       this.indexService.addBankAccount(bankAccount).subscribe(() => {
-        this.messageService.add({severity: 'success', summary: 'Cuenta creada', detail: 'Cuenta bancaria creada'});
         this.formGroup.reset();
         this.onSave.emit();
       });
