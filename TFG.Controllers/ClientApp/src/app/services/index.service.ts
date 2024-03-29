@@ -70,13 +70,13 @@ export class IndexService {
 
   addBankAccount(BankAccount: BankAccountCreate): Observable<BankAccount> {
     return this.http.post<BankAccount>(this.apiUrl + '/bankaccount', BankAccount).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   addTransaction(Transaction: TransactionCreate): Observable<Transaction> {
     return this.http.post<Transaction>(this.apiUrl + '/transaction', Transaction).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
@@ -90,43 +90,43 @@ export class IndexService {
 
   createCard(CardCreate: CardCreate): Observable<Card> {
     return this.http.post<Card>(`${this.apiUrl}/card`, CardCreate).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   updateCard(cardNumber: string, cardUpdateDto: CardCreate): Observable<Card> {
     return this.http.put<Card>(`${this.apiUrl}/card/${cardNumber}`, cardUpdateDto).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   deleteCard(cardNumber: string): Observable<{}> {
     return this.http.delete(`${this.apiUrl}/card/${cardNumber}`).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   renovateCard(cardNumber: string): Observable<Card> {
     return this.http.post<Card>(`${this.apiUrl}/card/${cardNumber}/renovate`, {}).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   blockCard(cardNumber: string): Observable<{}> {
     return this.http.post(`${this.apiUrl}/card/${cardNumber}/block`, {}).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   unblockCard(cardNumber: string): Observable<{}> {
     return this.http.post(`${this.apiUrl}/card/${cardNumber}/unblock`, {}).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
   activateCard(cardNumber: string): Observable<{}> {
     return this.http.post(`${this.apiUrl}/card/${cardNumber}/activate`, {}).pipe(
-      catchError(this.handleError)
+      catchError(error => this.handleError(error))
     );
   }
 
@@ -139,60 +139,56 @@ export class IndexService {
   }
 
   private handleError(error: any) {
-    catchError(error => {
-      if (error.status === 400) {
-        if (error.error.title === 'Users not found') {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Uno o varios de los usuarios no existen'
-          });
-        }
-        if (error.error.title === 'Invalid account type. Valid values are: Saving, Current, FixedTerm, Payroll, Student') {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Tipo de cuenta inválido. Los valores válidos son: Ahorro, Corriente, PlazoFijo, Nómina, Estudiante'
-          });
-        }
-        if (error.error.title === 'Insufficient funds in the origin account') {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Fondos insuficientes en la cuenta de origen'
-          });
-        }
-        if (error.error.title === 'Origin and destination accounts cannot be the same') {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Las cuentas de origen y destino no pueden ser iguales'
-          });
-        }
-        if (error.error.title === 'Transaction amount must be greater than zero') {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'La cantidad de la transacción debe ser mayor que cero'
-          });
-        }
-      } else if (error.status === 404) {
-        if (error.error.title === 'Account origin not found') {
-          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de origen no encontrada'});
-        }
-        if (error.error.title === 'Account destination not found') {
-          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de destino no encontrada'});
-        }
-      }
-      else {
+    if (error.status === 400) {
+      if (error.error.title === 'Users not found') {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
+          detail: 'Uno o varios de los usuarios no existen'
         });
       }
-      return throwError(() => error);
-    });
+      if (error.error.title === 'Invalid account type. Valid values are: Saving, Current, FixedTerm, Payroll, Student') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Tipo de cuenta inválido. Los valores válidos son: Ahorro, Corriente, PlazoFijo, Nómina, Estudiante'
+        });
+      }
+      if (error.error.title === 'Insufficient funds in the origin account') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Fondos insuficientes en la cuenta de origen'
+        });
+      }
+      if (error.error.title === 'Origin and destination accounts cannot be the same') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Las cuentas de origen y destino no pueden ser iguales'
+        });
+      }
+      if (error.error.title === 'Transaction amount must be greater than zero') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'La cantidad de la transacción debe ser mayor que cero'
+        });
+      }
+    } else if (error.status === 404) {
+      if (error.error.title === 'Account origin not found') {
+        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de origen no encontrada'});
+      }
+      if (error.error.title === 'Account destination not found') {
+        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de destino no encontrada'});
+      }
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
+      });
+    }
     return throwError(() => error);
   }
 }
