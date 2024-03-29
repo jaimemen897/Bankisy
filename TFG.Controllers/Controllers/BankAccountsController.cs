@@ -43,6 +43,12 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetIncomesForAccount(bankAccountIban);
     }
     
+    [HttpGet("user/{userId}")]
+    public async Task<ActionResult<List<BankAccountResponseDto>>> GetBankAccountsByUserId(Guid userId)
+    {
+        return await bankAccountService.GetBankAccountsByUserId(userId);
+    }
+    
     [HttpPost()]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {

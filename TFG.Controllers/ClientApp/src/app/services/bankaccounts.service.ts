@@ -46,6 +46,10 @@ export class BankAccountService {
     return this.http.get<BankAccount>(url);
   }
 
+  getBankAccountsByUserId(userId: string): Observable<BankAccount[]> {
+    return this.http.get<BankAccount[]>(`${this.apiUrl}/user/${userId}`);
+  }
+
   addBankAccount(BankAccount: BankAccountCreate): Observable<BankAccount> {
     return this.http.post<BankAccount>(this.apiUrl, BankAccount);
   }

@@ -19,6 +19,7 @@ import {CurrencyPipe, DatePipe, NgClass} from "@angular/common";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {MenuItem, MessageService} from "primeng/api";
 import {ScrollPanelModule} from "primeng/scrollpanel";
+import {AccountType} from "../models/AccountType";
 
 
 @Component({
@@ -148,21 +149,8 @@ export class IndexComponent implements OnInit {
     });
   }
 
-  getAccountName(accountType: string) {
-    switch (accountType) {
-      case 'Saving':
-        return 'Ahorro';
-      case 'Current':
-        return 'Corriente';
-      case 'FixedTerm':
-        return 'Plazo fijo';
-      case 'Payroll':
-        return 'Nómina';
-      case 'Student':
-        return 'Estudiante';
-      default:
-        return 'Otro';
-    }
+  getAccountName(accountType: string): string {
+    return AccountType[accountType as keyof typeof AccountType];
   }
 
   getBalanceColor(balance: number) {

@@ -1,0 +1,23 @@
+<div class="card flex justify-content-center align-items-center m-2 overflow-visible">
+  <div class="flex flex-column gap-3">
+    <form [formGroup]="formGroup" class="flex flex-column gap-3">
+      @if (!isNewUser) {
+        <p-dropdown [options]="users" formControlName="selectedUser" optionLabel="name" [showClear]="true"
+                    placeholder="Elegir usuario" styleClass="w-20rem"
+                    emptyMessage="No se han encontrado usuarios" (onChange)="loadBankAccounts()"/>
+      }
+
+      <p-dropdown [options]="bankAccounts" formControlName="selectedBankAccount" optionLabel="iban" [showClear]="true"
+                  placeholder="Elegir cuenta de destino" styleClass="w-20rem"
+                  emptyMessage="Sin cuentas bancarias"/>
+
+      <p-dropdown [options]="cardsType" formControlName="selectedCardType" [showClear]="true"
+                  placeholder="Elegir tipo de tarjeta" styleClass="w-20rem"
+                  emptyMessage="No se han encontrado tipos de cuenta"/>
+
+
+      <p-button [label]="label" [rounded]="true" (click)="saveChanges()" styleClass="w-full mt-6"></p-button>
+      <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()" styleClass="w-full"></p-button>
+    </form>
+  </div>
+</div>

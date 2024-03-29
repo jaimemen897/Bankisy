@@ -135,6 +135,17 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
+    
+    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
+    {
+        //bankaccount is deleted = false
+        var bankAccounts = await bankContext.BankAccounts
+            .Include(ba => ba.Users)
+            .Where(ba => ba.Users.Any(u => u.Id == userId) && !ba.IsDeleted)
+            .ToListAsync();
+        
+        return bankAccounts.Select(bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount)).ToList();
+    }
 
     public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto)
     {

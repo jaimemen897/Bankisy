@@ -35,5 +35,7 @@ public enum CardType
     Visa,
     Credit,
     Prepaid,
-    Virtual
+    Virtual,
+    Mastercard,
+    AmericanExpress
 }

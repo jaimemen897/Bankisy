@@ -241,21 +241,8 @@ export class BankaccountsComponent {
     }
   }
 
-  getAccountName(accountType: string) {
-    switch (accountType) {
-      case 'Saving':
-        return 'Ahorro';
-      case 'Current':
-        return 'Corriente';
-      case 'FixedTerm':
-        return 'Plazo fijo';
-      case 'Payroll':
-        return 'Nómina';
-      case 'Student':
-        return 'Estudiante';
-      default:
-        return 'Otro';
-    }
+  getAccountName(accountType: string): string {
+    return AccountType[accountType as keyof typeof AccountType];
   }
 
   saveBankAccount() {
@@ -266,6 +253,4 @@ export class BankaccountsComponent {
   closeDialog() {
     this.displayDialog = false;
   }
-
-  protected readonly console = console;
 }

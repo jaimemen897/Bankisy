@@ -7,6 +7,7 @@ import {BankaccountsComponent} from "../bankaccounts/bankaccounts.component";
 import {TransactionsComponent} from "../transactions/transactions.component";
 import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/bankaccount-create.component";
 import {IndexComponent} from "../index/index.component";
+import {CardComponent} from "../cards/cards.component";
 
 export const routes: Routes = [
   {path: '', redirectTo: '/index', pathMatch: 'full'},
@@ -18,6 +19,7 @@ export const routes: Routes = [
   {path: 'bankaccounts', component: BankaccountsComponent},
   {path: 'bankaccounts/:mode/:id', component: BankaccountCreateComponent},
   {path: 'transactions', component: TransactionsComponent},
+  {path: 'cards', component: CardComponent}
 ];
 
 @NgModule({
