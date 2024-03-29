@@ -13,7 +13,8 @@ import {BankAccount} from "../../models/BankAccount";
 import {CardType} from "../../models/CardType";
 import {CardService} from "../../services/card.service";
 import {CardCreate} from "../../models/CardCreate";
-
+import {InputOtpModule} from 'primeng/inputotp';
+import {InputTextModule} from "primeng/inputtext";
 
 
 @Component({
@@ -24,7 +25,9 @@ import {CardCreate} from "../../models/CardCreate";
     DropdownModule,
     MultiSelectModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    InputOtpModule,
+    InputTextModule
   ],
   templateUrl: './create-card.component.html',
   styleUrl: './create-card.component.css'

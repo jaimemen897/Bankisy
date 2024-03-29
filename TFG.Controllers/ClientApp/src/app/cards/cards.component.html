@@ -159,7 +159,7 @@
   <p-button label="Crear tarjeta" (click)="goToCreateCard()"></p-button>
 
   <p-dialog [header]="headerSaveUpdateCard" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
-            [contentStyle]="{height: '25rem'}" [closable]="false">
+            [contentStyle]="{height: '30rem'}" [closable]="false">
     <app-create-card (onSave)="saveCard()" (onCancel)="closeDialog()"></app-create-card>
   </p-dialog>
 
