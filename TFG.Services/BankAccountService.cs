@@ -18,7 +18,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
     public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy,
-        bool descending, string? search = null, string? filter = null)
+        bool descending, string? search = null, string? filter = null, bool? isDeleted = false)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -30,17 +30,10 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        /*var cacheKey = $"GetBankAccounts-{pageNumber}-{pageSize}-{orderBy}-{descending}";
-        if (cache.TryGetValue(cacheKey, out Pagination<BankAccountResponseDto>? bankAccounts))
-        {
-            if (bankAccounts != null) return bankAccounts;
-        }*/
-
-        var bankAccountsQuery = bankContext.BankAccounts.Include(ba => ba.Users).Where(ba => !ba.IsDeleted);
+        var bankAccountsQuery = bankContext.BankAccounts.Include(ba => ba.Users).AsQueryable();
         if (!string.IsNullOrWhiteSpace(search))
         {
             var userNames = search.Split(',');
-
             bankAccountsQuery = bankAccountsQuery.Where(ba => ba.Balance.ToString().Contains(search) ||
                                                               ba.Iban.Contains(search) ||
                                                               ba.Users.Any(u => userNames.Contains(u.Name)));
@@ -53,12 +46,14 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
                 bankAccountsQuery = bankAccountsQuery.Where(ba => ba.AccountType == accountTypeFilter);
             }
         }
+        
+        if (isDeleted != null)
+        {
+            bankAccountsQuery = bankAccountsQuery.Where(ba => ba.IsDeleted == isDeleted);
+        }
 
         var paginatedBankAccounts = await bankAccountsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
             bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount));
-
-        /*var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, paginatedBankAccounts, cacheEntryOptions);*/
 
         return paginatedBankAccounts;
     }
@@ -233,6 +228,20 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         }
 
         bankAccount.IsDeleted = true;
+        await bankContext.SaveChangesAsync();
+
+        await ClearCache();
+    }
+    
+    public async Task ActivateBankAccount(string iban)
+    {
+        var bankAccount = await bankContext.BankAccounts.FindAsync(iban);
+        if (bankAccount == null)
+        {
+            throw new HttpException(404, "Bank account not found");
+        }
+
+        bankAccount.IsDeleted = false;
         await bankContext.SaveChangesAsync();
 
         await ClearCache();

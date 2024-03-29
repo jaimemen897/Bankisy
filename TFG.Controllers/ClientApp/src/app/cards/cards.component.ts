@@ -55,12 +55,14 @@ export class CardComponent {
   cards: Card[] = [];
   rows: number = 10;
   totalRecords: number = 0;
-  displayDialog: boolean = false;
+  displayDialog!: boolean;
 
   sortField!: string;
   sortOrder!: number;
   search: string;
   filter!: string;
+  isDeleted!: boolean;
+  isBlocked!: boolean;
 
   cardsType: string[] = [CardType.Debit, CardType.Visa, CardType.Prepaid, CardType.Virtual, CardType.Credit, CardType.MasterCard, CardType.AmericanExpress];
   status: String[] = ['Active', 'Inactive'];
@@ -74,7 +76,15 @@ export class CardComponent {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    this.cardService.getCards(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter).subscribe(data => {
+    if (event.filters.isDeleted) {
+      this.isDeleted = event.filters.isDeleted.value;
+    }
+
+    if (event.filters.isBlocked) {
+      this.isBlocked = event.filters.isBlocked.value;
+    }
+
+    this.cardService.getCards(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
       this.cards = data.items;
       this.totalRecords = data.totalRecords;
       for (let card of this.cards) {
@@ -85,9 +95,9 @@ export class CardComponent {
     });
   }
 
-  //IBAN, SALDO, ESTADO
+  //SEARCH
   onSearch(event: any) {
-    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, event.target.value, this.filter).subscribe(data => {
+    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, event.target.value, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
       this.cards = data.items;
       this.totalRecords = data.totalCount;
       this.search = event.target.value;
@@ -96,7 +106,7 @@ export class CardComponent {
 
   //USUARIOS
   onSearchUser(event: any) {
-    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, event.value).subscribe(data => {
+    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, event.value, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
       this.cards = data.items;
       this.totalRecords = data.totalCount;
       this.filter = event.value;
@@ -106,11 +116,17 @@ export class CardComponent {
   //TIPO TARJETA
   onSearchFilter(event: any) {
     let cardTypeTranslated = Object.keys(CardType).find(key => CardType[key as keyof typeof CardType] === event.value) as keyof typeof CardType;
-    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, cardTypeTranslated).subscribe(data => {
+    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, cardTypeTranslated, this.isDeleted, this.isBlocked).subscribe(data => {
       this.cards = data.items;
       this.totalRecords = data.totalCount;
       this.filter = event.value;
     });
+  }
+
+  onSearchIsDeleted(event: any) {
+    this.isDeleted = event.checked;
+    console.log(event.checked);
+    this.lazyLoad({first: 1, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder});
   }
 
   onSortChange(event: any) {
@@ -126,7 +142,7 @@ export class CardComponent {
   }
 
   clearOrders() {
-    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
       this.cards = data.items;
       this.totalRecords = data.totalCount;
     });
@@ -138,8 +154,9 @@ export class CardComponent {
   clearFilters() {
     this.search = '';
     this.filter = '';
+    this.isDeleted = false;
 
-    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+    this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
       this.cards = data.items;
       this.totalRecords = data.totalCount;
     });
@@ -150,12 +167,18 @@ export class CardComponent {
     this.headerSaveUpdateCard = 'Crear tarjeta';
     this.displayDialog = true;
     this.cardCreateComponent.loadUsers();
+    this.refresh();
   }
 
   goToEditCard(cardNumber: string) {
     this.headerSaveUpdateCard = 'Actualizar tarjeta';
     this.cardCreateComponent.loadCard(cardNumber);
     this.displayDialog = true;
+    this.refresh();
+  }
+
+  refresh() {
+    this.lazyLoad({first: 1, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
   }
 
   deleteCard(cardNumber: string) {
@@ -171,7 +194,7 @@ export class CardComponent {
           closable: false
         });
         this.cardService.deleteCard(cardNumber).subscribe(() => {
-          this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+          this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
             this.cards = data.items;
             this.totalRecords = data.totalCount;
           });
@@ -244,45 +267,84 @@ export class CardComponent {
     this.displayDialog = false;
   }
 
-
   //ACTIONS
   renovateCard(cardNumber: string) {
     this.cardService.renovateCard(cardNumber).subscribe(() => {
-      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
         this.cards = data.items;
         this.totalRecords = data.totalCount;
+      });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Tarjeta renovada',
+        detail: 'Tarjeta renovada correctamente',
+        life: 3000,
+        closable: false
       });
     });
   }
 
   blockCard(cardNumber: string) {
-    this.cardService.blockCard(cardNumber).subscribe(() => {
-      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
-        this.cards = data.items;
-        this.totalRecords = data.totalCount;
-      });
+    this.confirmationService.confirm({
+      header: '¿Desea bloquear la tarjeta?',
+      message: 'Confirme para continuar',
+      accept: () => {
+        this.cardService.blockCard(cardNumber).subscribe(() => {
+          this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
+            this.cards = data.items;
+            this.totalRecords = data.totalCount;
+          });
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Bloqueada',
+            detail: 'Tarjeta bloqueada correctamente',
+            life: 3000,
+            closable: false
+          });
+        });
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Cancelar',
+          detail: 'No se ha bloqueado',
+          life: 3000,
+          closable: false
+        });
+      }
     });
   }
 
   unblockCard(cardNumber: string) {
     this.cardService.unblockCard(cardNumber).subscribe(() => {
-      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
         this.cards = data.items;
         this.totalRecords = data.totalCount;
+      });
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Desbloqueada',
+        detail: 'Tarjeta desbloqueada correctamente',
+        life: 3000,
+        closable: false
       });
     });
   }
 
   activateCard(cardNumber: string) {
     this.cardService.activateCard(cardNumber).subscribe(() => {
-      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter, this.isDeleted, this.isBlocked).subscribe(data => {
         this.cards = data.items;
         this.totalRecords = data.totalCount;
+      });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Activada',
+        detail: 'Tarjeta activada correctamente',
+        life: 3000,
+        closable: false
       });
     });
   }
 
-
-
-  protected readonly CardType = CardType;
 }

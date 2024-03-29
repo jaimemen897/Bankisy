@@ -16,7 +16,7 @@ export class CardService {
   constructor(private http: HttpClient, private messageService: MessageService) {
   }
 
-  getCards(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string): Observable<Pagination<Card>> {
+  getCards(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string, isDeleted?: boolean, isBlocked?: boolean): Observable<Pagination<Card>> {
     let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
     if (descending) {
       url += `&descending=${descending}`;
@@ -29,6 +29,12 @@ export class CardService {
     }
     if (filter) {
       url += `&filter=${filter}`;
+    }
+    if (isDeleted !== undefined && isDeleted !== null) {
+      url += `&isDeleted=${!isDeleted}`;
+    }
+    if (isBlocked !== undefined && isBlocked !== null) {
+      url += `&isBlocked=${isBlocked}`;
     }
     return this.http.get<Pagination<Card>>(url).pipe(
       map(response => ({

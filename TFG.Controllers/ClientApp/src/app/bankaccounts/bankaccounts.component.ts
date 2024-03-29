@@ -60,6 +60,7 @@ export class BankaccountsComponent {
   sortOrder!: number;
   search: string;
   filter!: string;
+  isDeleted!: boolean;
 
   accountsTypes: string[] = [AccountType.Saving, AccountType.Current, AccountType.FixedTerm, AccountType.Payroll, AccountType.Student];
   users: String[] = [];
@@ -73,7 +74,11 @@ export class BankaccountsComponent {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    this.bankAccountService.getBankAccounts(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter).subscribe(data => {
+    if (event.filters.isDeleted) {
+      this.isDeleted = event.filters.isDeleted.value;
+    }
+
+    this.bankAccountService.getBankAccounts(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter, this.isDeleted).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalRecords;
       for (let bankAccount of this.bankAccounts) {
@@ -187,6 +192,23 @@ export class BankaccountsComponent {
     });
   }
 
+  activateBankAccount(iban: string) {
+    this.bankAccountService.activateBankAccount(iban).subscribe(() => {
+      this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+        this.bankAccounts = data.items;
+        this.totalRecords = data.totalCount;
+      });
+    });
+
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Activada',
+      detail: 'Cuenta activada',
+      life: 3000,
+      closable: false
+    });
+  }
+
   goToLogin() {
     this.router.navigate(['/login']);
   }
@@ -198,7 +220,7 @@ export class BankaccountsComponent {
   getTransactionsByIban(iban: string, event: any) {
     this.bankAccountService.getTransactionsByIban(iban).subscribe(data => {
       this.transactions = data;
-      if (this.transactions.length !== 0){
+      if (this.transactions.length !== 0) {
         this.transactionPanel.toggle(event);
       } else {
         this.messageService.add({

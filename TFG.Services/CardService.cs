@@ -15,7 +15,7 @@ public class CardService(BankContext bankContext)
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
     public async Task<Pagination<CardResponseDto>> GetCards(int pageNumber, int pageSize, string orderBy,
-        bool descending, string? search = null, string? filter = null)
+        bool descending, string? search = null, string? filter = null, bool? isDeleted = null, bool? isBlocked = null)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -26,8 +26,7 @@ public class CardService(BankContext bankContext)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        var cardsQuery = bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount)
-            .Where(c => c.IsDeleted == false).AsQueryable();
+        var cardsQuery = bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount).AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -41,6 +40,16 @@ public class CardService(BankContext bankContext)
             {
                 cardsQuery = cardsQuery.Where(c => c.CardType == cardTypeFilter);
             }
+        }
+        
+        if (isDeleted != null)
+        {
+            cardsQuery = cardsQuery.Where(c => c.IsDeleted == isDeleted);
+        }
+        
+        if (isBlocked != null)
+        {
+            cardsQuery = cardsQuery.Where(c => c.IsBlocked == isBlocked);
         }
 
         var paginatedCards = await cardsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,

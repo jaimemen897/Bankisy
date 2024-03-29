@@ -14,9 +14,9 @@ public class CardController(CardService cardService) : ControllerBase
     [HttpGet()]
     public async Task<ActionResult<Pagination<CardResponseDto>>> GetCards([FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "cardNumber", [FromQuery] bool descending = false,
-        [FromQuery] string? search = null, [FromQuery] string? filter = null)
+        [FromQuery] string? search = null, [FromQuery] string? filter = null, [FromQuery] bool? isDeleted = null, [FromQuery] bool? isBlocked = null)
     {
-        return await cardService.GetCards(pageNumber, pageSize, orderBy, descending, search, filter);
+        return await cardService.GetCards(pageNumber, pageSize, orderBy, descending, search, filter, isDeleted, isBlocked);
     }
 
     [HttpGet("{cardNumber}")]
