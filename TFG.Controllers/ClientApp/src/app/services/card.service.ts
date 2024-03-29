@@ -1,18 +1,19 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {map, Observable} from 'rxjs';
+import {catchError, map, Observable, throwError} from 'rxjs';
 import {Pagination} from "./users.service";
 import {Transaction} from "../models/Transaction";
 import { Card } from '../models/Card';
 import {CardCreate} from "../models/CardCreate";
+import {MessageService} from "primeng/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService {
-  private apiUrl = 'http://localhost:5196/card';
+  private apiUrl = 'http://localhost:5196/card/';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private messageService: MessageService) {
   }
 
   getCards(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string): Observable<Pagination<Card>> {
@@ -47,11 +48,15 @@ export class CardService {
   }
 
   addCard(card: CardCreate): Observable<Card> {
-    return this.http.post<Card>(this.apiUrl, card);
+    return this.http.post<Card>(this.apiUrl, card).pipe(
+      catchError(this.handleError)
+    );
   }
 
   updateCard(card: CardCreate, cardNumber: string): Observable<Card> {
-    return this.http.put<Card>(this.apiUrl + '/' + cardNumber, card);
+    return this.http.put<Card>(this.apiUrl + '/' + cardNumber, card).pipe(
+      catchError(this.handleError)
+    );
   }
 
   deleteCard(cardNumber: string): Observable<Card> {
@@ -59,18 +64,105 @@ export class CardService {
   }
 
   renovateCard(cardNumber: string): Observable<Card> {
-    return this.http.put<Card>(this.apiUrl + cardNumber + '/renovate', null);
+    return this.http.post<Card>(this.apiUrl + cardNumber + '/renovate', null).pipe(
+      catchError(this.handleError)
+    );
   }
 
   blockCard(cardNumber: string): Observable<Card> {
-    return this.http.put<Card>(this.apiUrl + cardNumber + '/block', null);
+    return this.http.post<Card>(this.apiUrl + cardNumber + '/block', null).pipe(
+      catchError(this.handleError)
+    );
   }
 
   unblockCard(cardNumber: string): Observable<Card> {
-    return this.http.put<Card>(this.apiUrl + cardNumber + '/unblock', null);
+    return this.http.post<Card>(this.apiUrl + cardNumber + '/unblock', null).pipe(
+      catchError(this.handleError)
+    );
   }
 
   activateCard(cardNumber: string): Observable<Card> {
-    return this.http.put<Card>(this.apiUrl + cardNumber + '/activate', null);
+    return this.http.post<Card>(this.apiUrl + cardNumber + '/activate', null).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: any) {
+    catchError(error => {
+      if (error.status === 400) {
+        if (error.error.title === 'User not found') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Usuario no encontrado'
+          });
+        }
+        if (error.error.title === 'Bank account not found') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Cuenta bancaria no encontrada'
+          });
+        }
+        if (error.error.title === 'Bank account does not belong to the user') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'La cuenta bancaria no pertenece al usuario'
+          });
+        }
+        if (error.error.title === 'Bank account already has a card') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'La cuenta bancaria ya tiene una tarjeta'
+          });
+        }
+        if (error.error.title === 'Invalid card type. Valid values are: Debit, Visa, Credit, Prepaid, Virtual, Mastercard, AmericanExpress') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Tipo de tarjeta inválido. Los valores válidos son: Débito, Visa, Crédito, Prepago, Virtual, Mastercard, AmericanExpress'
+          });
+        }
+        if (error.error.title === 'Card is already blocked') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'La tarjeta ya está bloqueada'
+          });
+        }
+        if (error.error.title === 'Card is not blocked') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'La tarjeta no está bloqueada'
+          });
+        }
+        if (error.error.title === 'Card is not expired') {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'La tarjeta no está caducada'
+          });
+        }
+      } else if (error.status === 404) {
+        if (error.error.title === 'Account origin not found') {
+          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de origen no encontrada'});
+        }
+        if (error.error.title === 'Account destination not found') {
+          this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de destino no encontrada'});
+        }
+      }
+      else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
+        });
+      }
+      return throwError(() => error);
+    });
+    return throwError(() => error);
   }
 }

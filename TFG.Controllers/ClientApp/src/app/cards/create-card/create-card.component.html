@@ -11,18 +11,20 @@
                   placeholder="Elegir cuenta de destino" styleClass="w-20rem"
                   emptyMessage="Sin cuentas bancarias"/>
 
-      <p-dropdown [options]="cardsType" formControlName="selectedCardType" [showClear]="true"
-                  placeholder="Elegir tipo de tarjeta" styleClass="w-20rem"
-                  emptyMessage="No se han encontrado tipos de cuenta"/>
+      @if (bankAccounts && bankAccounts.length > 0) {
+        <p-dropdown [options]="cardsType" formControlName="selectedCardType" [showClear]="true"
+                    placeholder="Elegir tipo de tarjeta" styleClass="w-20rem"
+                    emptyMessage="No se han encontrado tipos de cuenta"/>
 
-      <div class="card flex justify-content-center">
-        <p-inputOtp formControlName="pin" [length]="4">
-          <ng-template pTemplate="input" let-token let-events="events">
-            <input pInputText class="custom-otp-input" (input)="events.input($event)" type="text" [attr.value]="token"
-                   [maxLength]="1"/>
-          </ng-template>
-        </p-inputOtp>
-      </div>
+        <div class="card flex justify-content-center">
+          <p-inputOtp formControlName="pin" [length]="4">
+            <ng-template pTemplate="input" let-token let-events="events">
+              <input pInputText class="custom-otp-input" (input)="events.input($event)" type="text" [attr.value]="token"
+                     [maxLength]="1"/>
+            </ng-template>
+          </p-inputOtp>
+        </div>
+      }
       <p-button [label]="label" [rounded]="true" (click)="saveChanges()" styleClass="w-full mt-6"></p-button>
       <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()" styleClass="w-full"></p-button>
     </form>

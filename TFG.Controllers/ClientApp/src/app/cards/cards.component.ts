@@ -244,5 +244,45 @@ export class CardComponent {
     this.displayDialog = false;
   }
 
+
+  //ACTIONS
+  renovateCard(cardNumber: string) {
+    this.cardService.renovateCard(cardNumber).subscribe(() => {
+      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+        this.cards = data.items;
+        this.totalRecords = data.totalCount;
+      });
+    });
+  }
+
+  blockCard(cardNumber: string) {
+    this.cardService.blockCard(cardNumber).subscribe(() => {
+      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+        this.cards = data.items;
+        this.totalRecords = data.totalCount;
+      });
+    });
+  }
+
+  unblockCard(cardNumber: string) {
+    this.cardService.unblockCard(cardNumber).subscribe(() => {
+      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+        this.cards = data.items;
+        this.totalRecords = data.totalCount;
+      });
+    });
+  }
+
+  activateCard(cardNumber: string) {
+    this.cardService.activateCard(cardNumber).subscribe(() => {
+      this.cardService.getCards(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+        this.cards = data.items;
+        this.totalRecords = data.totalCount;
+      });
+    });
+  }
+
+
+
   protected readonly CardType = CardType;
 }

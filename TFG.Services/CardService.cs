@@ -10,21 +10,9 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class CardService(BankContext bankContext, SessionService sessionService)
+public class CardService(BankContext bankContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
-
-    /*private async Task VerifyUser(Guid userId)
-    {
-        var user = await sessionService.GetUser();
-        if (!user.Role.Equals("Admin"))
-        {
-            if (userId != user.Id)
-            {
-                throw new HttpException(403, "Forbidden");
-            }
-        }
-    }*/
 
     public async Task<Pagination<CardResponseDto>> GetCards(int pageNumber, int pageSize, string orderBy,
         bool descending, string? search = null, string? filter = null)
@@ -98,6 +86,11 @@ public class CardService(BankContext bankContext, SessionService sessionService)
         if (!bankAccount.Users.Contains(user))
         {
             throw new HttpException(400, "Bank account does not belong to the user");
+        }
+
+        if (await bankContext.Cards.AnyAsync(c => c.BankAccountIban == cardCreateDto.BankAccountIban))
+        {
+            throw new HttpException(400, "Bank account already has a card");
         }
 
         IsValid(cardCreateDto);

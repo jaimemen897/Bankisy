@@ -55,7 +55,8 @@
                              [style]="{'max-width': '15rem', 'width': '15rem'}">
                 <ng-template let-option pTemplate="item">
                   <div class="inline-block vertical-align-middle">
-                    <img [alt]="option" [src]="option.avatar ? option.avatar : 'https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg'"
+                    <img [alt]="option"
+                         [src]="option.avatar ? option.avatar : 'https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg'"
                          width="24" class="vertical-align-middle"/>
                     <span class="ml-1 mt-1">{{ option }}</span>
                   </div>
@@ -139,11 +140,21 @@
                       [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             <p-button icon="pi pi-pencil" (click)="goToEditCard(card.cardNumber)" severity="warning"
                       pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            <div class="card flex justify-content-center">
-              <p-button (click)="deleteCard(card.cardNumber)" icon="pi pi-trash" severity="danger"
-                        pTooltip="Borrar"
-                        [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            </div>
+            <p-button (click)="renovateCard(card.cardNumber)" icon="pi pi-refresh" severity="info"
+                      pTooltip="Renovar"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button (click)="blockCard(card.cardNumber)" icon="pi pi-ban" severity="danger"
+                      pTooltip="Bloquear"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button (click)="unblockCard(card.cardNumber)" icon="pi pi-unlock" severity="success"
+                      pTooltip="Desbloquear"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button (click)="activateCard(card.cardNumber)" icon="pi pi-check" severity="success"
+                      pTooltip="Activar"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button (click)="deleteCard(card.cardNumber)" icon="pi pi-trash" severity="danger"
+                      pTooltip="Borrar"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
           </div>
         </td>
       </tr>
