@@ -1,0 +1,26 @@
+<router-outlet></router-outlet>
+<p-toast></p-toast>
+
+<div class="card flex justify-content-center">
+  @for (card of cards; track cards) {
+    <p-card [header]="card.cardType" [subheader]="card.cardNumber">
+      <div class="card-body">
+        <div>
+          <p>{{ card.user.name }}</p>
+        </div>
+        <div class="inline-flex gap-2">
+          <p-button label="Show CVV" (click)="showCVV(card)" icon="pi pi-eye"/>
+
+          @if (card.isBlocked) {
+            <p-button label="Unblock" (click)="unblockCard(card)" icon="pi pi-check"/>
+          } @else {
+            <p-button label="Block" (click)="blockCard(card)" icon="pi pi-ban"/>
+          }
+
+          <p-button label="Options" (click)="showOptions(card)" icon="pi pi-cog"/>
+        </div>
+
+      </div>
+    </p-card>
+  }
+</div>

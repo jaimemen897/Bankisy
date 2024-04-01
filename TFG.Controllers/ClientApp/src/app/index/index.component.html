@@ -230,6 +230,9 @@
                 [contentStyle]="{height: '29rem'}" [closable]="false">
         <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
       </p-dialog>
+
+      <!--VER TARJETAS-->
+      <p-button label="Ver tarjetas" routerLink="/card-panel" class="m-2"></p-button>
     }
   </div>
 </p-card>
