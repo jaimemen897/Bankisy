@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "primeng": "^17.8.0"
+    "@angular/animations": "^17.3.2",
+    "@angular/router": "^17.3.2",
+    "primeng": "^17.12.0"
   }
 }

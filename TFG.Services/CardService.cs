@@ -10,24 +10,12 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class CardService(BankContext bankContext, SessionService sessionService)
+public class CardService(BankContext bankContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
-    /*private async Task VerifyUser(Guid userId)
-    {
-        var user = await sessionService.GetUser();
-        if (!user.Role.Equals("Admin"))
-        {
-            if (userId != user.Id)
-            {
-                throw new HttpException(403, "Forbidden");
-            }
-        }
-    }*/
-
     public async Task<Pagination<CardResponseDto>> GetCards(int pageNumber, int pageSize, string orderBy,
-        bool descending, string? search = null, string? filter = null)
+        bool descending, string? search = null, string? filter = null, bool? isDeleted = null, bool? isBlocked = null)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -38,8 +26,7 @@ public class CardService(BankContext bankContext, SessionService sessionService)
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        var cardsQuery = bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount)
-            .Where(c => c.IsDeleted == false).AsQueryable();
+        var cardsQuery = bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount).AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -53,6 +40,16 @@ public class CardService(BankContext bankContext, SessionService sessionService)
             {
                 cardsQuery = cardsQuery.Where(c => c.CardType == cardTypeFilter);
             }
+        }
+        
+        if (isDeleted != null)
+        {
+            cardsQuery = cardsQuery.Where(c => c.IsDeleted == isDeleted);
+        }
+        
+        if (isBlocked != null)
+        {
+            cardsQuery = cardsQuery.Where(c => c.IsBlocked == isBlocked);
         }
 
         var paginatedCards = await cardsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
@@ -98,6 +95,11 @@ public class CardService(BankContext bankContext, SessionService sessionService)
         if (!bankAccount.Users.Contains(user))
         {
             throw new HttpException(400, "Bank account does not belong to the user");
+        }
+
+        if (await bankContext.Cards.AnyAsync(c => c.BankAccountIban == cardCreateDto.BankAccountIban))
+        {
+            throw new HttpException(400, "Bank account already has a card");
         }
 
         IsValid(cardCreateDto);

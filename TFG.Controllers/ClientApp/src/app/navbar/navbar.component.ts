@@ -35,6 +35,11 @@ export class NavbarComponent {
           label: 'Transacciones',
           icon: 'pi pi-fw pi-money-bill',
           routerLink: ['/transactions'],
+        },
+        {
+          label: 'Tarjetas',
+          icon: 'pi pi-fw pi-credit-card',
+          routerLink: ['/cards']
         }
       ]
     },

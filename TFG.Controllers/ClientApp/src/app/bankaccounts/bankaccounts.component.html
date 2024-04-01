@@ -17,9 +17,7 @@
         <th pSortableColumn="balance" style="width:22%">Saldo
           <p-sortIcon field="balance"/>
         </th>
-        <th pSortableColumn="isDeleted" style="width:22%">Estado
-          <p-sortIcon field="isDeleted"/>
-        </th>
+        <th pSortableColumn="isDeleted" style="width:22%">Estado</th>
         <th style="width:22%">
           <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
       </tr>
@@ -68,7 +66,7 @@
         </th>
         <!--BUSCAR POR ESTADO-->
         <th>
-          <p-columnFilter type="boolean" field="isDeleted" (input)="onSearch($event)" [showMenu]="false"/>
+          <p-columnFilter type="boolean" field="isDeleted" [showClearButton]="false"></p-columnFilter>
         </th>
         <!--CLEAR-->
         <th>
@@ -87,7 +85,7 @@
         </td>
         <td>
           <div class="inline-block vertical-align-middle">
-            <div class="bg-blue-50 border-50 border-round inline-block">
+            <div class="border-50 border-round inline-block">
               <img [alt]="account.usersName"
                    src="https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg"
                    width="24" class="vertical-align-middle"/>
@@ -128,14 +126,18 @@
               </ng-template>
             </p-overlayPanel>
 
-            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning" pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning"
+                      pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
             <p-button icon="pi pi-money-bill"
                       (click)="getTransactionsByIban(account.iban, $event)"
-                      severity="success" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            <div class="card flex justify-content-center">
-              <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger" pTooltip="Borrar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            </div>
+                      severity="success" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom"
+                      [autoHide]="true"/>
+            <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger" pTooltip="Borrar"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="!account.isDeleted"/>
+            <p-button (click)="activateBankAccount(account.iban)" icon="pi pi-undo" severity="help" pTooltip="Recuperar"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="account.isDeleted"/>
           </div>
         </td>
       </tr>

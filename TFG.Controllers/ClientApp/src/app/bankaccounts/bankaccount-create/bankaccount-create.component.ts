@@ -97,16 +97,15 @@ export class BankaccountCreateComponent {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos'});
       return;
     }
-    //permite mostrar en el html el valor en español de accountType y pasar al back el valor en ingles
+    //TRANSLATE ACCOUNT TYPE
     let accountTypeTranslated = Object.keys(AccountType).find(key => AccountType[key as keyof typeof AccountType] === this.formGroup.value.selectedAccountType) as keyof typeof AccountType;
 
     /*UPDATE*/
     if (this.isUpdateMode) {
-      let accountType = accountTypeTranslated;
       let usersId = this.formGroup.value.selectedUsers.map((user: { id: any; }) => user.id);
 
       let bankAccount = new BankAccountCreate();
-      bankAccount.accountType = accountType;
+      bankAccount.accountType = accountTypeTranslated;
       bankAccount.usersId = usersId;
 
       this.bankAccountService.updateBankAccount(bankAccount, this.iban).subscribe(() => {

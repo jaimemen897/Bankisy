@@ -1,0 +1,32 @@
+<div class="card flex justify-content-center align-items-center m-2 overflow-visible">
+  <div class="flex flex-column gap-3">
+    <form [formGroup]="formGroup" class="flex flex-column gap-3">
+      @if (!isNewUser) {
+        <p-dropdown [options]="users" formControlName="selectedUser" optionLabel="name" [showClear]="true"
+                    placeholder="Elegir usuario" styleClass="w-20rem"
+                    emptyMessage="No se han encontrado usuarios" (onChange)="loadBankAccounts()"/>
+      }
+
+      <p-dropdown [options]="bankAccounts" formControlName="selectedBankAccount" optionLabel="iban" [showClear]="true"
+                  placeholder="Elegir cuenta de destino" styleClass="w-20rem"
+                  emptyMessage="Sin cuentas bancarias"/>
+
+      @if (bankAccounts && bankAccounts.length > 0) {
+        <p-dropdown [options]="cardsType" formControlName="selectedCardType" [showClear]="true"
+                    placeholder="Elegir tipo de tarjeta" styleClass="w-20rem"
+                    emptyMessage="No se han encontrado tipos de cuenta"/>
+
+        <div class="card flex justify-content-center">
+          <p-inputOtp formControlName="pin" [length]="4">
+            <ng-template pTemplate="input" let-token let-events="events">
+              <input pInputText class="custom-otp-input" (input)="events.input($event)" type="text" [attr.value]="token"
+                     [maxLength]="1"/>
+            </ng-template>
+          </p-inputOtp>
+        </div>
+      }
+      <p-button [label]="label" [rounded]="true" (click)="saveChanges()" styleClass="w-full mt-6"></p-button>
+      <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()" styleClass="w-full"></p-button>
+    </form>
+  </div>
+</div>

@@ -15,7 +15,7 @@ export class BankAccountService {
   constructor(private http: HttpClient) {
   }
 
-  getBankAccounts(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string): Observable<Pagination<BankAccount>> {
+  getBankAccounts(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string, isDeleted?: boolean): Observable<Pagination<BankAccount>> {
     let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
     if (descending) {
       url += `&descending=${descending}`;
@@ -28,6 +28,9 @@ export class BankAccountService {
     }
     if (filter) {
       url += `&filter=${filter}`;
+    }
+    if (isDeleted !== undefined && isDeleted !== null) {
+      url += `&isDeleted=${!isDeleted}`;
     }
     return this.http.get<Pagination<BankAccount>>(url).pipe(
       map(response => ({
@@ -46,6 +49,10 @@ export class BankAccountService {
     return this.http.get<BankAccount>(url);
   }
 
+  getBankAccountsByUserId(userId: string): Observable<BankAccount[]> {
+    return this.http.get<BankAccount[]>(`${this.apiUrl}/user/${userId}`);
+  }
+
   addBankAccount(BankAccount: BankAccountCreate): Observable<BankAccount> {
     return this.http.post<BankAccount>(this.apiUrl, BankAccount);
   }
@@ -61,5 +68,9 @@ export class BankAccountService {
   //TRANSACTIONS FOR BANK ACCOUNT
   getTransactionsByIban(iban: string): Observable<Transaction[]>{
     return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
+  }
+
+  activateBankAccount(iban: string): Observable<BankAccount> {
+    return this.http.put<BankAccount>(`${this.apiUrl}/${iban}/active`, {});
   }
 }
