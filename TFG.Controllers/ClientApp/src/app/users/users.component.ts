@@ -56,9 +56,7 @@ export class UsersComponent {
   @ViewChild(CreateUsersComponent) createUsersComponent!: CreateUsersComponent;
 
   users!: User[];
-
-  layout: 'list' | 'grid' = 'list';
-  rows: number = 5;
+  rows: number = 8;
   totalRecords: number = 0;
 
   sortOptions!: SelectItem[];

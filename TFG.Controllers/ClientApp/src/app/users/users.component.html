@@ -3,17 +3,16 @@
 
 <div class="card">
   <div
-    class="dataView-container w-10 sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 mx-auto border-1 surface-border border-round">
-    <p-dataView [value]="users" [layout]="layout" [emptyMessage]="'No se han encontrado usuarios'" [lazy]="true"
-                (onLazyLoad)="lazyLoad($event)" [paginator]="true" [rows]="rows" [totalRecords]="totalRecords"
-                [rowsPerPageOptions]="[5, 10, 20]"
-                [showFirstLastIcon]="false" [sortField]="sortField"
-                [sortOrder]="sortOrder">
+    class="dataView-container w-12 sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 mx-auto border-1 surface-border border-round">
+    <p-dataView [value]="users" layout="grid" emptyMessage="No se han encontrado usuarios" [rows]="rows"
+                (onLazyLoad)="lazyLoad($event)" [paginator]="true" [totalRecords]="totalRecords" [sortOrder]="sortOrder"
+                [rowsPerPageOptions]="[8, 15, 25]" [showFirstLastIcon]="false" [sortField]="sortField" [lazy]="true">
 
       <ng-template pTemplate="header">
-        <div class="flex justify-content-between align-items-center gap-4">
-          <div class="flex align-items-center gap-4">
-            <h2 class="text-3xl font-bold flex-grow-0">Gestión de usuarios</h2>
+        <h1 class="text-3xl font-bold flex-grow-0 text-center">GESTIÓN DE USUARIOS</h1>
+
+        <div class="flex justify-content-around flex-wrap">
+          <div class="flex align-items-center justify-content-center h-4rem">
             <p-button label="Crear usuario" icon="pi pi-plus" (click)="goToAddUser()" class="p-button-success"/>
 
             <p-dialog [header]="headerSaveUpdateUser" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
@@ -21,71 +20,93 @@
 
               <app-create-users (onSave)="saveBankAccount()" (onCancel)="closeDialog()"></app-create-users>
             </p-dialog>
+          </div>
+          <div class="flex align-items-center justify-content-center h-4rem">
             <div class="p-toolbar-group-center">
               <span class="p-input-icon-left">
                 <i class="pi pi-search"></i>
-                <input pInputText placeholder="Buscar" pTooltip="Nombre, email o DNI" [autoHide]="true"
-                       (input)="onSearch($event)">
+                <input pInputText placeholder="Buscar por nombre o email" (input)="onSearch($event)"/>
               </span>
             </div>
           </div>
-          <div class="flex justify-content-end align-items-center gap-4">
+
+          <div class="flex align-items-center justify-content-center h-4rem">
             <div class="flex flex-column md:flex-row md:justify-content-between">
               <p-dropdown [options]="sortOptions" placeholder="Ordenar por nombre" (onChange)="onSortChange($event)"
                           styleClass="mb-2 md:mb-0"></p-dropdown>
             </div>
-            <p-dataViewLayoutOptions class="flex-grow-0"></p-dataViewLayoutOptions>
           </div>
         </div>
       </ng-template>
 
-      <ng-template pTemplate="list">
-        <div class="grid grid-nogutter justify-content-center align-items-center">
+      <ng-template pTemplate="grid">
+        <div class="grid grid-nogutter">
           @for (user of users; track users) {
-            <div class="col-12 p-2">
-              <div class="flex flex-column xl:flex-row xl:align-items-center justify-content-center gap-4"
-                   [ngClass]="{ 'border-top-1 surface-border': users.indexOf(user) !== 0 }">
+            <div class="col-12 sm:col-6 lg:col-12 xl:col-3 p-2">
+              <div class="p-4 border-1 surface-border surface-card border-round">
+                <div class="flex flex-wrap align-items-center justify-content-between gap-1">
+                  @if (user.role === 'Admin') {
+                    <span class="flex align-items-center gap-2 bg-cyan-100 border-round-3xl p-2">
+                      <i class="pi pi-user"></i>
+                      <span class="font-semibold">{{ user.role }}</span>
+                    </span>
+                  } @else {
+                    <span class="flex align-items-center gap-2 bg-indigo-100 border-round-3xl p-2">
+                      <i class="pi pi-user"></i>
+                      <span class="font-semibold">{{ user.role }}</span>
+                    </span>
+                  }
+                </div>
+                <div class="flex flex-column align-items-center gap-3 py-4">
+                  <img class="w-10rem h-10rem mx-auto" [src]="user.avatar" [alt]="user.name" style="object-fit: cover"/>
+                  <div class="text-2xl font-bold">{{ user.name }}</div>
+                  <p>{{ user.email }}</p>
+                </div>
+                <!--BOTONES-->
+                <div class="flex align-items-center justify-content-center gap-2">
+                  <!--INFO-->
+                  <p-overlayPanel #op>
+                    <ng-template pTemplate="content">
+                      <h4 class="text-left">{{ user.name }}</h4>
+                      <p class="text-left">Id: {{ user.id }}</p>
+                      <p class="text-left">Email: {{ user.email }}</p>
+                      <p class="text-left">Usuario: {{ user.username }}</p>
+                      <p class="text-left">DNI: {{ user.dni }}</p>
+                      <p class="text-left">Género: {{ getGenderName(user.gender) }}</p>
+                      <p class="text-left">Rol: {{ user.role }}</p>
+                    </ng-template>
+                  </p-overlayPanel>
+                  <!--SUBIR AVATAR-->
+                  <p-overlayPanel #up>
+                    <div class="flex justify-content-center">
+                      <p-fileUpload name="avatar" url="http://localhost:5196/users/{{ user.id }}/avatar"
+                                    accept="image/*" [multiple]="false" (onUpload)="onUpload()"
+                                    chooseLabel="Elegir" uploadLabel="Enviar" cancelLabel="Cancelar" method="put"
+                                    invalidFileTypeMessageDetail="Solo se permiten imágenes" cancelIcon="pi pi-times">
+                        <ng-template pTemplate="content">
+                          <div class="flex flex-column align-items-center gap-2">
+                            <i class="pi pi-upload text-5xl"></i>
+                            <span class="text-lg">Arrastra y suelta una imagen aquí</span>
+                          </div>
+                        </ng-template>
+                      </p-fileUpload>
+                    </div>
+                  </p-overlayPanel>
+                  <!--VER IMAGEN-->
+                  <p-overlayPanel #im>
+                    <img [src]="user.avatar" [alt]="user.name" class="w-16rem max-h-20rem" style="object-fit: cover;"/>
+                  </p-overlayPanel>
 
-                <img class="w-9 sm:w-16rem xl:w-10rem xl:block mx-auto border-round" [src]="user.avatar"
-                     [alt]="user.name"/>
-
-                <div
-                  class="flex flex-column sm:flex-row align-items-center xl:align-items-center justify-content-center flex-1 gap-8">
-                  <div class="flex flex-column align-items-center sm:align-items-start gap-3 w-4 text-left">
-                    <div class="text-2xl font-bold text-900">{{ user.name }}</div>
-                    <p>{{ user.email }}</p>
-                    <p-tag [value]="user.role" [severity]="getRole(user)"></p-tag>
-                  </div>
-
-                  <div class="flex align-items-center justify-content-center gap-3">
-                    <p-overlayPanel #op>
-                      <ng-template pTemplate="content">
-                        <h4 class="text-left">Nombre: {{ user.name }}</h4>
-                        <p class="text-left">Id: {{ user.id }}</p>
-                        <p class="text-left">Email: {{ user.email }}</p>
-                        <p class="text-left">Username: {{ user.username }}</p>
-                        <p class="text-left">DNI: {{ user.dni }}</p>
-                        <p class="text-left">Género: {{ getGenderName(user.gender) }}</p>
-                        <p class="text-left">Rol: {{ user.role }}</p>
-                      </ng-template>
-                    </p-overlayPanel>
-                    <p-overlayPanel #up>
-                      <div class="flex justify-content-center">
-                        <p-fileUpload name="avatar" url="http://localhost:5196/users/{{ user.id }}/avatar"
-                                      accept="image/*" [multiple]="false" (onUpload)="onUpload()"
-                                      chooseLabel="Elegir" uploadLabel="Enviar" cancelLabel="Cancelar" method="put"
-                                      invalidFileTypeMessageDetail="Solo se permiten imágenes"/>
-                      </div>
-                    </p-overlayPanel>
-                    <p-button (click)="op.toggle($event)" icon="pi pi-user" pTooltip="Información" [showDelay]="500"
-                              tooltipPosition="bottom" [autoHide]="true"/>
-                    <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="warning" pTooltip="Editar"
-                              [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-                    <p-button (click)="up.toggle($event)" icon="pi pi-upload" severity="help" pTooltip="Subir avatar"
-                              [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-                    <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger" pTooltip="Borrar"
-                              [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-                  </div>
+                  <p-button icon="pi pi-user" (click)="op.toggle($event)" severity="info" pTooltip="Información"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                  <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="secondary" pTooltip="Editar"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                  <p-button (click)="up.toggle($event)" icon="pi pi-camera" severity="help" pTooltip="Subir avatar"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                  <p-button (click)="im.toggle($event)" icon="pi pi-image" severity="success" pTooltip="Ver imagen"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                  <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger" pTooltip="Borrar"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
                 </div>
               </div>
             </div>
@@ -108,28 +129,6 @@
               </div>
             </ng-template>
           </p-confirmDialog>
-        </div>
-      </ng-template>
-
-      <ng-template pTemplate="grid">
-        <div class="grid grid-nogutter">
-          @for (user of users; track users) {
-            <div class="col-12 sm:col-6 lg:col-12 xl:col-3 p-2">
-              <div class="p-2 border-1 surface-border surface-card border-round">
-                <div class="flex flex-wrap align-items-center justify-content-between gap-1">
-              <span class="flex align-items-center gap-2">
-                <i class="pi pi-tag"></i>
-                <span class="font-semibold">{{ user.role }}</span>
-              </span>
-                </div>
-                <div class="flex flex-column align-items-center gap-3 py-5">
-                  <img class="w-9 shadow-2 border-round" [src]="user.avatar" [alt]="user.name"/>
-                  <div class="text-2xl font-bold">{{ user.name }}</div>
-                  <p>{{ user.email }}</p>
-                </div>
-              </div>
-            </div>
-          }
         </div>
       </ng-template>
 
