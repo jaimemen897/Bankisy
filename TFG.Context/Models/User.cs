@@ -6,7 +6,7 @@ namespace TFG.Context.Models;
 [Table("users")]
 public class User
 {
-    public const string ImageDefault = "https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg";
+    public const string ImageDefault = "assets/avatar.png";
 
     [Column("id"), Key] public Guid Id { get; set; }
 

@@ -14,10 +14,8 @@ export const routes: Routes = [
   {path: 'index', component: IndexComponent},
   {path: 'users', component: UsersComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'register/:mode', component: RegisterComponent},
-  {path: 'register/:id/:mode', component: RegisterComponent},
+  {path: 'register', component: RegisterComponent},
   {path: 'bankaccounts', component: BankaccountsComponent},
-  {path: 'bankaccounts/:mode/:id', component: BankaccountCreateComponent},
   {path: 'transactions', component: TransactionsComponent},
   {path: 'cards', component: CardComponent}
 ];

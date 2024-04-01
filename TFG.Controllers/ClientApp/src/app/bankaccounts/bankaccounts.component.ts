@@ -1,6 +1,6 @@
 import {Component, ViewChild} from '@angular/core';
-import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
-import {Router, RouterOutlet} from "@angular/router";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {RouterOutlet} from "@angular/router";
 import {ToastModule} from "primeng/toast";
 import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
@@ -46,7 +46,7 @@ import {Transaction} from "../models/Transaction";
   styleUrl: './bankaccounts.component.css'
 })
 export class BankaccountsComponent {
-  constructor(private bankAccountService: BankAccountService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService) {
+  constructor(private bankAccountService: BankAccountService, private confirmationService: ConfirmationService, private messageService: MessageService) {
   }
 
   @ViewChild(BankaccountCreateComponent) bankAccountCreateComponent!: BankaccountCreateComponent;
@@ -207,14 +207,6 @@ export class BankaccountsComponent {
       life: 3000,
       closable: false
     });
-  }
-
-  goToLogin() {
-    this.router.navigate(['/login']);
-  }
-
-  goToUsers() {
-    this.router.navigate(['/users']);
   }
 
   getTransactionsByIban(iban: string, event: any) {

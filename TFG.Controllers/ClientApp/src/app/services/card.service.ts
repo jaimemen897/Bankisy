@@ -147,15 +147,26 @@ export class CardService {
       }
     } else if (error.status === 404) {
       if (error.error.title === 'Account origin not found') {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de origen no encontrada'});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          closable: false,
+          detail: 'Cuenta de origen no encontrada'
+        });
       }
       if (error.error.title === 'Account destination not found') {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de destino no encontrada'});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          closable: false,
+          detail: 'Cuenta de destino no encontrada'
+        });
       }
     } else {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
+        closable: false,
         detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
       });
     }

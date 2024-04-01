@@ -35,7 +35,8 @@
         </th>
         <!--BUSCAR POR TIPO DE TARJETA-->
         <th>
-          <p-columnFilter field="cardType" matchMode="in" [showMenu]="false" [showClearButton]="false" (input)="onSearchFilter($event)">
+          <p-columnFilter field="cardType" matchMode="in" [showMenu]="false" [showClearButton]="false"
+                          (input)="onSearchFilter($event)">
             <ng-template pTemplate="filter" let-value>
               <p-dropdown [options]="cardsType" (onChange)="onSearchFilter($event)"
                           placeholder="Tipo" [showClear]="true" class="text-color-secondary"
@@ -57,7 +58,7 @@
                 <ng-template let-option pTemplate="item">
                   <div class="inline-block vertical-align-middle">
                     <img [alt]="option"
-                         [src]="option.avatar ? option.avatar : 'https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg'"
+                         [src]="option.avatar ? option.avatar : 'assets/avatar.png'"
                          width="24" class="vertical-align-middle"/>
                     <span class="ml-1 mt-1">{{ option }}</span>
                   </div>
@@ -100,7 +101,7 @@
         <td>
           <div class="inline-block vertical-align-middle">
             <img alt="Imagen de usuario"
-                 [src]="card.user.avatar ? card.user.avatar : 'https://icon-library.com/images/user-icon-flat/user-icon-flat-0.jpg'"
+                 [src]="card.user.avatar ? card.user.avatar : 'assets/avatar.png'"
                  width="24" class="vertical-align-middle"/>
             <span class="ml-1 mt-1">{{ card.user.name }}</span>
           </div>
@@ -179,7 +180,8 @@
 
   <p-button label="Crear tarjeta" (click)="goToCreateCard()"></p-button>
 
-  <p-dialog [header]="headerSaveUpdateCard" [(visible)]="displayDialog" [modal]="true" [resizable]="false" [contentStyle]="{height: '30rem'}" [closable]="false">
+  <p-dialog [header]="headerSaveUpdateCard" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
+            [contentStyle]="{height: '30rem'}" [closable]="false">
     <app-create-card (onSave)="saveCard()" (onCancel)="closeDialog()"></app-create-card>
   </p-dialog>
 
