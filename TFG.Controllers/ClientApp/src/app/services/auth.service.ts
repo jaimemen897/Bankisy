@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {catchError, Observable, throwError} from 'rxjs';
 import {MessageService} from "primeng/api";
+import {UserCreate} from "../models/UserCreate";
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +20,8 @@ export class AuthService {
     )
   }
 
-  register(name: string, email: string, username: string, dni: string, gender: string, password: string): Observable<any> {
-    return this.http.post(this.registerUrl, {name, email, username, dni, gender, password}).pipe(
+  register(userRegister: UserCreate): Observable<any> {
+    return this.http.post(this.registerUrl, userRegister).pipe(
       catchError(error => this.handleError(error))
     )
   }
@@ -49,9 +50,19 @@ export class AuthService {
         });
       }
       if (error.error.title === 'User not found') {
-        this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'Usuario no encontrado'});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          closable: false,
+          detail: 'Usuario no encontrado'
+        });
       } else {
-        this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'Usuario o contraseña incorrectos'});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          closable: false,
+          detail: 'Usuario o contraseña incorrectos'
+        });
       }
     } else {
       this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'Error en el servidor'});

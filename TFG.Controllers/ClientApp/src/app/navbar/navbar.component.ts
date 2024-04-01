@@ -57,7 +57,7 @@ export class NavbarComponent {
           label: 'Registrarse',
           icon: 'pi pi-fw pi-user-plus',
           visible: !this.isLogged(),
-          routerLink: ['/register/register']
+          routerLink: ['/register']
         },
         {
           label: 'Cerrar sesión',

@@ -27,8 +27,7 @@ import {AccountType} from "../../models/AccountType";
 })
 export class BankaccountCreateComponent {
 
-  constructor(private bankAccountService: BankAccountService, private usersService: UserService, private router: Router,
-              private messageService: MessageService, private indexService: IndexService) {
+  constructor(private bankAccountService: BankAccountService, private usersService: UserService, private messageService: MessageService, private indexService: IndexService) {
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -94,7 +93,12 @@ export class BankaccountCreateComponent {
 
   saveChanges() {
     if (!this.formGroup.valid) {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos'});
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        closable: false,
+        detail: 'Por favor, rellene todos los campos'
+      });
       return;
     }
     //TRANSLATE ACCOUNT TYPE
@@ -110,9 +114,8 @@ export class BankaccountCreateComponent {
 
       this.bankAccountService.updateBankAccount(bankAccount, this.iban).subscribe(() => {
         this.messageService.add({
-          severity: 'success', summary: 'Cuenta actualizada', detail: 'Cuenta bancaria actualizada'
+          severity: 'success', summary: 'Cuenta actualizada', closable: false, detail: 'Cuenta bancaria actualizada'
         });
-        this.router.navigate(['/bankaccounts']);
         this.onSave.emit();
       });
 
@@ -134,9 +137,13 @@ export class BankaccountCreateComponent {
       bankAccount.usersId = this.formGroup.value.selectedUsers.map((user: { id: any; }) => user.id);
 
       this.bankAccountService.addBankAccount(bankAccount).subscribe(() => {
-        this.messageService.add({severity: 'success', summary: 'Cuenta creada', detail: 'Cuenta bancaria creada'});
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Cuenta creada',
+          closable: false,
+          detail: 'Cuenta bancaria creada'
+        });
         this.formGroup.reset();
-        this.router.navigate(['/bankaccounts']);
         this.onSave.emit();
       });
     }

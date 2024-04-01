@@ -60,9 +60,5 @@ export class LoginComponent {
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'Hay errores en el formulario'});
     }
   }
-
-  goToRegister() {
-    this.router.navigate(['/register', 'register']);
-  }
 }
 
