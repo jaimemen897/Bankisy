@@ -5,5 +5,5 @@ export enum CardType {
   Prepaid = 'Prepago',
   Virtual = 'Virtual',
   AmericanExpress = 'American Express',
-  MasterCard = 'MasterCard'
+  Mastercard = 'MasterCard'
 }

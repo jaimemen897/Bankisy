@@ -64,7 +64,7 @@ export class CardComponent {
   isDeleted!: boolean;
   isBlocked!: boolean;
 
-  cardsType: string[] = [CardType.Debit, CardType.Visa, CardType.Prepaid, CardType.Virtual, CardType.Credit, CardType.MasterCard, CardType.AmericanExpress];
+  cardsType: string[] = [CardType.Debit, CardType.Visa, CardType.Prepaid, CardType.Virtual, CardType.Credit, CardType.Mastercard, CardType.AmericanExpress];
   status: String[] = ['Active', 'Inactive'];
   users: string[] = [];
   transactions: Transaction[] = [];
@@ -76,11 +76,11 @@ export class CardComponent {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    if (event.filters.isDeleted) {
+    if (event.filters && event.filters.isDeleted) {
       this.isDeleted = event.filters.isDeleted.value;
     }
 
-    if (event.filters.isBlocked) {
+    if (event.filters && event.filters.isBlocked) {
       this.isBlocked = event.filters.isBlocked.value;
     }
 

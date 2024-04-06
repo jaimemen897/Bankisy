@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Output, ViewChild} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {MultiSelectModule} from "primeng/multiselect";
@@ -50,7 +50,7 @@ export class CreateCardComponent {
 
   users!: User[]
   bankAccounts!: BankAccount[]
-  cardsType: string[] = [CardType.Debit, CardType.Visa, CardType.Credit, CardType.Prepaid, CardType.Virtual, CardType.AmericanExpress, CardType.MasterCard];
+  cardsType: string[] = [CardType.Debit, CardType.Visa, CardType.Credit, CardType.Prepaid, CardType.Virtual, CardType.AmericanExpress, CardType.Mastercard];
 
   label: string = 'Crear';
 
@@ -141,6 +141,7 @@ export class CreateCardComponent {
         this.messageService.add({
           severity: 'success', summary: 'Tarjeta actualizada', detail: 'Tarjeta actualizada'
         });
+        this.resetForm();
         this.router.navigate(['/cards']);
         this.onSave.emit();
       });
@@ -154,7 +155,7 @@ export class CreateCardComponent {
       card.pin = this.formGroup.controls.pin.value;
 
       this.indexService.createCard(card).subscribe(() => {
-        this.formGroup.reset();
+        this.resetForm();
         this.onSave.emit();
       });
 
@@ -168,17 +169,26 @@ export class CreateCardComponent {
 
       this.cardService.addCard(card).subscribe(() => {
         this.messageService.add({severity: 'success', summary: 'Tarjeta creada', detail: 'Tarjeta creada'});
-        this.formGroup.reset();
+        this.resetForm();
         this.router.navigate(['/cards']);
         this.onSave.emit();
       });
     }
   }
 
-  cancel() {
+  private resetForm() {
     this.formGroup.reset();
-    this.onCancel.emit();
+    this.isNewUser = false;
+    this.isUpdateMode = false;
+    this.label = 'Crear';
+    this.formGroup.controls.selectedUser.setValue(undefined);
+    this.formGroup.controls.selectedBankAccount.setValue(undefined);
+    this.formGroup.controls.selectedCardType.setValue(undefined);
+    this.formGroup.controls.pin.setValue('');
   }
 
-  protected readonly console = console;
+  cancel() {
+    this.resetForm();
+    this.onCancel.emit();
+  }
 }

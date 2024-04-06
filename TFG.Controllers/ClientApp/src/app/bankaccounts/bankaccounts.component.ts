@@ -74,7 +74,7 @@ export class BankaccountsComponent {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    if (event.filters.isDeleted) {
+    if (event.filters && event.filters.isDeleted) {
       this.isDeleted = event.filters.isDeleted.value;
     }
 

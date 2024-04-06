@@ -97,7 +97,7 @@ public class CardService(BankContext bankContext)
             throw new HttpException(400, "Bank account does not belong to the user");
         }
 
-        if (await bankContext.Cards.AnyAsync(c => c.BankAccountIban == cardCreateDto.BankAccountIban))
+        if (await bankContext.Cards.AnyAsync(c => c.BankAccountIban == cardCreateDto.BankAccountIban && !c.IsDeleted))
         {
             throw new HttpException(400, "Bank account already has a card");
         }
