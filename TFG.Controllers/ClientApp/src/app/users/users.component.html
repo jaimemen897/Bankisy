@@ -79,10 +79,12 @@
                   <!--SUBIR AVATAR-->
                   <p-overlayPanel #up>
                     <div class="flex justify-content-center">
-                      <p-fileUpload name="avatar" url="http://localhost:5196/users/{{ user.id }}/avatar"
-                                    accept="image/*" [multiple]="false" (onUpload)="onUpload()"
-                                    chooseLabel="Elegir" uploadLabel="Enviar" cancelLabel="Cancelar" method="put"
-                                    invalidFileTypeMessageDetail="Solo se permiten imágenes" cancelIcon="pi pi-times">
+                      <p-fileUpload name="avatar" url="http://localhost:5196/users/{{ user.id }}/avatar" accept="image/*" [multiple]="false"
+                                    (onUpload)="onUpload()" chooseLabel="Elegir" uploadLabel="Enviar" cancelLabel="Cancelar"
+                                    method="put" invalidFileTypeMessageDetail="Solo se permiten imágenes"
+                                    [chooseStyleClass]="'bg-black-alpha-90 border-transparent hover:bg-bluegray-800'"
+                                    [uploadStyleClass]="'bg-black-alpha-90 border-transparent hover:bg-bluegray-800'"
+                                    [cancelStyleClass]="'bg-black-alpha-90 border-transparent hover:bg-bluegray-800'">
                         <ng-template pTemplate="content">
                           <div class="flex flex-column align-items-center gap-2">
                             <i class="pi pi-upload text-5xl"></i>

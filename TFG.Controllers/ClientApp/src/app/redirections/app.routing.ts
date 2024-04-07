@@ -8,6 +8,7 @@ import {TransactionsComponent} from "../transactions/transactions.component";
 import {IndexComponent} from "../index/index.component";
 import {CardComponent} from "../cards/cards.component";
 import {CardPanelComponent} from "../card-panel/card-panel.component";
+import {ProfileComponent} from "../profile/profile.component";
 
 export const routes: Routes = [
   {path: '', redirectTo: '/index', pathMatch: 'full'},
@@ -18,7 +19,8 @@ export const routes: Routes = [
   {path: 'bankaccounts', component: BankaccountsComponent},
   {path: 'transactions', component: TransactionsComponent},
   {path: 'cards', component: CardComponent},
-  {path: 'card-panel', component: CardPanelComponent}
+  {path: 'card-panel', component: CardPanelComponent},
+  {path: 'profile', component: ProfileComponent}
 ];
 
 @NgModule({

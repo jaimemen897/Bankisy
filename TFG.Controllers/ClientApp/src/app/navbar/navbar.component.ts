@@ -1,8 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {MenubarModule} from "primeng/menubar";
 import {ButtonModule} from "primeng/button";
 import {NgIf} from "@angular/common";
 import {DropdownModule} from "primeng/dropdown";
+import {ToastModule} from "primeng/toast";
+import {ConfirmPopup, ConfirmPopupModule} from "primeng/confirmpopup";
+import {ConfirmationService, MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-navbar',
@@ -11,12 +14,21 @@ import {DropdownModule} from "primeng/dropdown";
     MenubarModule,
     ButtonModule,
     NgIf,
-    DropdownModule
+    DropdownModule,
+    ToastModule,
+    ConfirmPopupModule
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
+
+  constructor(private confirmationService: ConfirmationService,
+              private messageService: MessageService) {
+  }
+
+  @ViewChild(ConfirmPopup) confirmPopup!: ConfirmPopup;
+
   logout() {
     localStorage.removeItem('token');
     location.reload();
@@ -24,6 +36,25 @@ export class NavbarComponent {
 
   isLogged() {
     return localStorage.getItem('token') !== null;
+  }
+
+  accept() {
+    this.confirmPopup.accept();
+  }
+
+  reject() {
+    this.confirmPopup.reject();
+  }
+
+  confirm(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: '¿Estás seguro?',
+      accept: () => {
+        this.logout();
+      },
+
+    });
   }
 
 }

@@ -17,18 +17,18 @@
               <p>{{ card.user.name }}</p>
               <div class="gap-2 w-full flex justify-content-center pt-1">
                 <button pButton (click)="infoPanel.toggle($event)" icon="pi pi-eye"
-                        class="bg-black-alpha-70 border-transparent w-3"></button>
+                        class="bg-black-alpha-70 border-transparent w-3 hover:bg-black-alpha-30"></button>
 
                 @if (card.isBlocked) {
                   <button pButton (click)="unblockCard(card)" icon="pi pi-lock-open"
-                          class="bg-black-alpha-70 border-transparent w-3"></button>
+                          class="bg-black-alpha-70 border-transparent w-3 hover:bg-black-alpha-30"></button>
                 } @else {
                   <button pButton (click)="blockCard(card)" icon="pi pi-lock"
-                          class="bg-black-alpha-70 border-transparent w-3"></button>
+                          class="bg-black-alpha-70 border-transparent w-3 hover:bg-black-alpha-30"></button>
                 }
 
                 <button pButton (click)="showOptions($event, card)" icon="pi pi-cog"
-                        class="bg-black-alpha-70 border-transparent w-3"></button>
+                        class="bg-black-alpha-70 border-transparent w-3 hover:bg-black-alpha-30"></button>
                 <p-menu #optionMenu [model]="optionItems" [popup]="true"></p-menu>
               </div>
             </div>
@@ -79,7 +79,7 @@
           <div class="card-body w-full">
             <p>¿Deseas solicitar una nueva tarjeta de crédito?</p>
             <p>¡Haz clic en el botón de abajo!</p>
-            <button pButton label="Solicitar" class="bg-black-alpha-50 border-transparent mt-3"></button>
+            <button pButton label="Solicitar" class="bg-black-alpha-50 border-transparent mt-3  hover:bg-black-alpha-30"></button>
           </div>
         </div>
       </div>
