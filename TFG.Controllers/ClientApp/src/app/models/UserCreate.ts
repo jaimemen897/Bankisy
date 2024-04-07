@@ -3,6 +3,7 @@ export class UserCreate {
   email: string;
   username: string;
   dni: string
+  phone: string;
   gender: string;
   password: string;
 }

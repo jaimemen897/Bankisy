@@ -24,6 +24,8 @@ public class User
 
     [Column("avatar")] public string Avatar { get; set; } = ImageDefault;
     
+    [Column("phone")] public string Phone { get; set; }
+    
     [Column("role")] public Roles Role { get; set; }
 
     [Column("is_deleted")] public bool IsDeleted { get; set; }

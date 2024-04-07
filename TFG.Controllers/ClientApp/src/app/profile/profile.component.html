@@ -68,7 +68,33 @@
       <div class="inline-flex gap-3">
         <div>
             <span class="p-input-filled">
-          <input pPassword id="password" formControlName="password" type="password" pInputText placeholder="Password"
+          <input id="phone" formControlName="phone" type="text" pInputText placeholder="Teléfono"
+                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+        </span>
+          @if (formGroup.controls['phone'].invalid && formGroup.controls['phone'].touched) {
+            <p *ngIf="formGroup.controls['phone'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
+              El teléfono es obligatorio</p>
+            <p *ngIf="formGroup.controls['phone'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
+              El teléfono debe tener 9 caracteres</p>
+            <p *ngIf="formGroup.controls['phone'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
+              El teléfono debe tener 9 caracteres</p>
+          }
+        </div>
+
+        <div>
+          <p-dropdown formControlName="gender" [options]="genders" placeholder="Selecciona un género"
+                      styleClass="m-2 mr-4 w-15rem"/>
+          @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
+            <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
+              El género es obligatorio</p>
+          }
+        </div>
+      </div>
+
+      <div class="inline-flex gap-3">
+        <div>
+            <span class="p-input-filled">
+          <input pPassword id="password" formControlName="password" type="password" pInputText placeholder="Contraseña"
                  class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
         </span>
           @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
@@ -80,20 +106,23 @@
               La contraseña debe tener como máximo 50 caracteres</p>
           }
         </div>
+
         <div>
-          <p-dropdown formControlName="gender" [options]="genders" placeholder="Selecciona un género"
-                      styleClass="m-2 mr-4 w-15rem"/>
-          @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
-            <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-              El género es obligatorio</p>
+            <span class="p-input-filled">
+          <input pPassword id="confirmpassword" formControlName="confirmpassword" type="password" pInputText placeholder="Confirmar contraseña"
+                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+        </span>
+          @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              Las contraseñas no coinciden
+            </p>
           }
         </div>
-
       </div>
     </div>
   </form>
 
-  <div class="flex flex-column justify-content-center m-5">
+  <div class="flex flex-column justify-content-center m-8">
     <img [src]="avatar" alt="User avatar" class="rounded-full w-14rem h-14rem border-round-lg"
          style="object-fit: cover"/>
 

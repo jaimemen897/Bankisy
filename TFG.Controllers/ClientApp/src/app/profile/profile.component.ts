@@ -17,6 +17,7 @@ import {FileUploadModule} from "primeng/fileupload";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {TooltipModule} from "primeng/tooltip";
 import {SplitButtonModule} from "primeng/splitbutton";
+import {passwordMatchValidator} from "../register/passwordMatchValidator";
 
 @Component({
   selector: 'app-profile',
@@ -53,9 +54,11 @@ export class ProfileComponent implements OnInit {
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
     dni: new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]),
+    phone: new FormControl('', [Validators.minLength(9), Validators.maxLength(9)]),
     gender: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.minLength(3), Validators.maxLength(50)]),
-  });
+    confirmpassword: new FormControl('', [Validators.minLength(3), Validators.maxLength(50)])
+  }, {validators: passwordMatchValidator});
   items =
     [
       {
@@ -70,6 +73,7 @@ export class ProfileComponent implements OnInit {
       this.formGroup.controls.email.setValue(user.email);
       this.formGroup.controls.username.setValue(user.username);
       this.formGroup.controls.dni.setValue(user.dni);
+      this.formGroup.controls.phone.setValue(user.phone);
       let genderTranslated = Gender[user.gender as keyof typeof Gender];
       this.formGroup.controls.gender.setValue(genderTranslated);
       this.avatar = user.avatar;
@@ -84,6 +88,7 @@ export class ProfileComponent implements OnInit {
         email: this.formGroup.controls.email.value as string,
         username: this.formGroup.controls.username.value as string,
         dni: this.formGroup.controls.dni.value as string,
+        phone: this.formGroup.controls.phone.value as string,
         gender: genderTranslated,
         password: this.formGroup.controls.password.value as string
       };

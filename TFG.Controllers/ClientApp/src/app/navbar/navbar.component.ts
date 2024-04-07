@@ -23,11 +23,10 @@ import {ConfirmationService, MessageService} from "primeng/api";
 })
 export class NavbarComponent {
 
-  constructor(private confirmationService: ConfirmationService,
-              private messageService: MessageService) {
+  constructor(private confirmationService: ConfirmationService) {
   }
 
-  @ViewChild(ConfirmPopup) confirmPopup!: ConfirmPopup;
+  @ViewChild('logoutMes') confirmPopup!: ConfirmPopup;
 
   logout() {
     localStorage.removeItem('token');
@@ -47,6 +46,7 @@ export class NavbarComponent {
   }
 
   confirm(event: Event) {
+    event.stopImmediatePropagation();
     this.confirmationService.confirm({
       target: event.target as EventTarget,
       message: '¿Estás seguro?',

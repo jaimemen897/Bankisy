@@ -50,6 +50,7 @@ public abstract class MapperConfig
                 .ForMember(dest => dest.Dni, opt => opt.Ignore())
                 .ForMember(dest => dest.Gender, opt => opt.Ignore())
                 .ForMember(dest => dest.Avatar, opt => opt.Ignore())
+                .ForMember(dest => dest.Phone, opt => opt.Ignore())
                 .ForMember(dest => dest.Role, opt => opt.Ignore())
                 .ForMember(dest => dest.Password, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
@@ -61,6 +62,7 @@ public abstract class MapperConfig
                     dest.Dni = src.Dni ?? dest.Dni;
                     dest.Gender = src.Gender != null ? (Gender)Enum.Parse(typeof(Gender), src.Gender) : dest.Gender;
                     dest.Avatar = src.Avatar ?? dest.Avatar;
+                    dest.Phone = src.Phone ?? dest.Phone;
                     dest.Password = src.Password .IsNullOrEmpty() ? dest.Password : BCrypt.Net.BCrypt.HashPassword(src.Password);
                     dest.UpdatedAt = DateTime.Now.ToUniversalTime();
                 });

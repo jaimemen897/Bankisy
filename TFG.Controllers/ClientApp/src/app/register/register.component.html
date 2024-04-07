@@ -38,7 +38,7 @@
 
         <div class="inline-flex p-3">
           <div><span class="p-input-filled m-2">
-            <input id="username" formControlName="username" type="text" pInputText placeholder="Username"
+            <input id="username" formControlName="username" type="text" pInputText placeholder="Nombre de usuario"
                    class="p-3 border-round-3xl border-0 bg-gray-200">
           </span>
             @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
@@ -78,7 +78,24 @@
 
           <div>
             <span class="p-input-filled m-2">
-          <input pPassword id="password" formControlName="password" type="password" pInputText placeholder="Password"
+              <input id="phone" formControlName="phone" type="tel" pInputText placeholder="Teléfono"
+                     class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+            </span>
+            @if (formGroup.controls['phone'].invalid && formGroup.controls['phone'].touched) {
+              <p *ngIf="formGroup.controls['phone'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
+                El teléfono es obligatorio</p>
+              <p *ngIf="formGroup.controls['phone'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
+                El teléfono debe tener 9 caracteres</p>
+              <p *ngIf="formGroup.controls['phone'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
+                El teléfono debe tener 9 caracteres</p>
+            }
+          </div>
+        </div>
+
+        <div class="inline-flex p-3">
+          <div>
+            <span class="p-input-filled m-2">
+          <input pPassword id="password" formControlName="password" type="password" pInputText placeholder="Contraseña"
                  class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
         </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
@@ -90,6 +107,18 @@
                 La contraseña debe tener como máximo 50 caracteres</p>
             }
           </div>
+
+          <div>
+            <span class="p-input-filled m-2">
+              <input pPassword id="confirmpassword" formControlName="confirmpassword" type="password" pInputText placeholder="Confirmar contraseña"
+                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+            </span>
+            @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                Las contraseñas no coinciden
+              </p>
+            }
+          </div>
         </div>
 
       </div>
@@ -97,7 +126,7 @@
 
     <div class="mt-4 w-full">
       <div class="flex align-items-center justify-content-center w-full">
-        <p-button label="Crear cuenta" (click)="sendForm()" [rounded]="true"/>
+        <button pButton label="Crear cuenta" (click)="sendForm()" class="bg-black-alpha-80 p-button-rounded border-transparent hover:bg-black-alpha-60"></button>
       </div>
       <div class="flex align-items-center justify-content-center mt-2">
         <p-button label="Volver" (click)="goBack()" severity="secondary" [rounded]="true" [text]="true"/>

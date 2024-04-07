@@ -11,7 +11,7 @@
     <button pButton type="button" label="Iniciar sesión" icon="pi pi-sign-in" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/login']" *ngIf="!isLogged()"></button>
 
     <p-toast></p-toast>
-    <p-confirmPopup #confirmPopupRef>
+    <p-confirmPopup #logoutMes>
       <ng-template pTemplate="headless" let-message let-test>
         <div class="border-round p-3">
           <span>{{ message.message }}</span>

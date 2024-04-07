@@ -1,6 +1,5 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {MessageService} from "primeng/api";
-import {Router} from "@angular/router";
 import {BankAccountService} from "../../services/bankaccounts.service";
 import {BankAccountCreate} from "../../models/BankAccountCreate";
 import {MultiSelectModule} from "primeng/multiselect";

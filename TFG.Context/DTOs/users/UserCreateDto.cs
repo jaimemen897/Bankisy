@@ -23,4 +23,7 @@ public class UserCreateDto
     [StringLength(50, MinimumLength = 3)]
     public string Password { get; set; }
     public string? Avatar { get; set; }
+    [Required]
+    [StringLength(9, MinimumLength = 9)]
+    public string Phone { get; set; }
 }

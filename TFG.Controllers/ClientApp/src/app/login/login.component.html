@@ -42,7 +42,7 @@
 
         <div class="mt-4 w-full">
           <div class="flex align-items-center justify-content-center w-full">
-            <p-button label="Iniciar sesión" (click)="sendLogin()" [rounded]="true"/>
+            <button pButton label="Iniciar sesión" (click)="sendLogin()" class="bg-black-alpha-80 p-button-rounded border-transparent hover:bg-black-alpha-60"></button>
           </div>
           <div class="flex align-items-center justify-content-center">
             <p-button label="Registrarse" [text]="true" severity="secondary" [rounded]="true" routerLink="/register"/>
