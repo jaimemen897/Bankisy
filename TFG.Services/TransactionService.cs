@@ -8,12 +8,16 @@ using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
 using TFG.Services.mappers;
 using TFG.Services.Pagination;
+using SocketIOClient;
+
 
 namespace TFG.Services;
 
 public class TransactionService(BankContext bankContext, IMemoryCache cache)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+    private readonly SocketIOClient.SocketIO _socketIO = new SocketIOClient.SocketIO("http://localhost:5196");
+    
 
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
         bool descending, string? search = null)
@@ -79,6 +83,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         var transactionDto = await CreateTransactionPay(account, accountDestination, transactionCreateDto);
 
         await ClearCache();
+        
+        await _socketIO.EmitAsync("transaction", transactionDto);
 
         return transactionDto;
     }

@@ -21,7 +21,7 @@ import {MenuItem, MessageService} from "primeng/api";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {AccountType} from "../models/AccountType";
 import {Router} from "@angular/router";
-
+import {SocketService} from "../services/socket.service";
 
 @Component({
   selector: 'app-index',
@@ -50,7 +50,7 @@ import {Router} from "@angular/router";
 })
 export class IndexComponent implements OnInit {
 
-  constructor(private indexService: IndexService, private messageService: MessageService, private router: Router) {
+  constructor(private indexService: IndexService, private messageService: MessageService, private socketService: SocketService) {
   }
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
@@ -82,6 +82,16 @@ export class IndexComponent implements OnInit {
 
   //LOAD
   ngOnInit(): void {
+    this.socketService.listenForTransactions().subscribe((transaction: any) => {
+      this.refresh();
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Nueva transacción',
+        detail: 'Se ha realizado una nueva transacción',
+        life: 2000,
+        closable: false
+      });
+    });
     this.indexService.getUserByToken().subscribe(user => {
       this.user = user;
       this.getBalanceByUserId();
