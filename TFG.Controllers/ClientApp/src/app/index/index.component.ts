@@ -20,6 +20,7 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {MenuItem, MessageService} from "primeng/api";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {AccountType} from "../models/AccountType";
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -49,7 +50,7 @@ import {AccountType} from "../models/AccountType";
 })
 export class IndexComponent implements OnInit {
 
-  constructor(private indexService: IndexService, private messageService: MessageService) {
+  constructor(private indexService: IndexService, private messageService: MessageService, private router: Router) {
   }
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent

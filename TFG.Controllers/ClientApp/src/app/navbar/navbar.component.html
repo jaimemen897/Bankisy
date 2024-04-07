@@ -1,4 +1,14 @@
-<p-menubar [model]="items">
-  <ng-template pTemplate="start"></ng-template>
-  <ng-template pTemplate="end"></ng-template>
+<p-menubar styleClass="bg-black-alpha-90 border-transparent">
+  <ng-template pTemplate="start">
+    <button pButton type="button" label="Inicio" icon="pi pi-home" class="bg-transparent hover:bg-bluegray-800 hover:bg-bluegray-800 border-transparent" [routerLink]="['/']"></button>
+    <button pButton type="button" label="Usuarios" icon="pi pi-user" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/users']"></button>
+    <button pButton type="button" label="Cuentas de banco" icon="pi pi-money-bill" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/bankaccounts']"></button>
+    <button pButton type="button" label="Transacciones" icon="pi pi-money-bill" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/transactions']"></button>
+    <button pButton type="button" label="Tarjetas" icon="pi pi-credit-card" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/cards']"></button>
+  </ng-template>
+
+  <ng-template pTemplate="end">
+    <button pButton type="button" label="Iniciar sesión" icon="pi pi-sign-in" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/login']" *ngIf="!isLogged()"></button>
+    <button pButton type="button" label="Cerrar sesión" (click)="logout()" icon="pi pi-sign-out" class="bg-transparent hover:bg-bluegray-800 border-transparent " *ngIf="isLogged()"></button>
+  </ng-template>
 </p-menubar>

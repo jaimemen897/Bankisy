@@ -114,13 +114,13 @@ public class IndexController(IndexService indexService) : ControllerBase
         return Ok();
     }
     
-    [HttpGet("/cards/user")]
+    [HttpGet("cards/user")]
     public async Task<List<CardResponseDto>> GetCardsByUserId()
     {
         return await indexService.GetCardsByUserId();
     }
     
-    [HttpGet("/cards/bankaccount/{iban}")]
+    [HttpGet("cards/bankaccount/{iban}")]
     public async Task<List<CardResponseDto>> GetCardsByIban(string iban)
     {
         return await indexService.GetCardsByIban(iban);
