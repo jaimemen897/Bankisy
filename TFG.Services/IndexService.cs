@@ -1,10 +1,12 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.cards;
 using TFG.Context.DTOs.transactions;
+using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
@@ -18,7 +20,8 @@ public class IndexService(
     BankAccountService bankAccountService,
     TransactionService transactionService,
     CardService cardService,
-    SessionService sessionService)
+    SessionService sessionService,
+    UsersService usersService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
@@ -232,6 +235,27 @@ public class IndexService(
             throw new HttpException(403, "You are not the owner of the account");
         }
         return await cardService.GetCardsByIban(iban);
+    }
+    
+    //PROFILE
+    public async Task<string> UpdateProfile(UserUpdateDto userUpdateDto)
+    {
+        var user = await sessionService.GetMyself();
+        var userUpdated = await usersService.UpdateUser(user.Id, userUpdateDto);
+        User userMapped = _mapper.Map<User>(userUpdated);
+        return SessionService.GetToken(userMapped);
+    }
+    
+    public async Task<UserResponseDto> UploadAvatar(IFormFile file, string host)
+    {
+        var user = await sessionService.GetMyself();
+        return await usersService.UploadAvatar(user.Id, file, host);
+    }
+    
+    public async Task<UserResponseDto> DeleteAvatar()
+    {
+        var user = await sessionService.GetMyself();
+        return await usersService.DeleteAvatar(user.Id);
     }
     
     //PRIVATE METHODS

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.cards;
 using TFG.Context.DTOs.transactions;
+using TFG.Context.DTOs.users;
 using TFG.Services;
 using TFG.Services.Pagination;
 
@@ -124,5 +125,25 @@ public class IndexController(IndexService indexService) : ControllerBase
     public async Task<List<CardResponseDto>> GetCardsByIban(string iban)
     {
         return await indexService.GetCardsByIban(iban);
+    }
+    
+    [HttpPut("profile")]
+    public async Task<string> UpdateProfile(UserUpdateDto userUpdateDto)
+    {
+        return await indexService.UpdateProfile(userUpdateDto);
+    }
+
+    [HttpPut("avatar")]
+    public async Task<ActionResult<UserResponseDto>> UpdateAvatar([FromForm] IFormFile avatar)
+    {
+        var host = $"{Request.Scheme}://{Request.Host}";
+        return await indexService.UploadAvatar(avatar, host);
+    }
+    
+    [HttpDelete("avatar")]
+    public async Task<ActionResult> DeleteAvatar()
+    {
+        await indexService.DeleteAvatar();
+        return Ok();
     }
 }

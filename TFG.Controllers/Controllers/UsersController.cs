@@ -48,6 +48,12 @@ public class UsersController(UsersService usersService) : ControllerBase
         var host = $"{Request.Scheme}://{Request.Host}";
         return await usersService.UploadAvatar(id, avatar, host);
     }
+    
+    [HttpDelete("{id}/avatar")]
+    public async Task<ActionResult<UserResponseDto>> DeleteUserAvatar(Guid id)
+    {
+        return await usersService.DeleteAvatar(id);
+    }
 
     [HttpDelete("{id}")]
     public async Task DeleteUser(Guid id)

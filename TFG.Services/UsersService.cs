@@ -232,6 +232,28 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
         return _mapper.Map<UserResponseDto>(user);
     }
+    
+    public async Task<UserResponseDto> DeleteAvatar(Guid id)
+    {
+        var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        if (user.Avatar != User.ImageDefault)
+        {
+            var avatar = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads",
+                user.Avatar.Split("/").Last());
+            if (File.Exists(avatar))
+            {
+                File.Delete(avatar);
+            }
+
+            user.Avatar = User.ImageDefault;
+            bankContext.Entry(user).State = EntityState.Modified;
+            await bankContext.SaveChangesAsync();
+        }
+
+        await ClearCache();
+
+        return _mapper.Map<UserResponseDto>(user);
+    }
 
     public async Task<User> ValidateUserCredentials(string username, string password)
     {

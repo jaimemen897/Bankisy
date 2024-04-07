@@ -44,7 +44,7 @@ public class SessionService(UsersService usersService, IHttpContextAccessor http
         return await GetUserByToken(token);
     }
     
-    private static string GetToken(User user)
+    public static string GetToken(User user)
     {
         var claims = new List<Claim>
         {

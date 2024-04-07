@@ -10,6 +10,8 @@ import {MessageService} from "primeng/api";
 import {Pagination} from "./users.service";
 import {Card} from "../models/Card";
 import {CardCreate} from "../models/CardCreate";
+import {UserCreate} from "../models/UserCreate";
+import {Token} from "@angular/compiler";
 
 @Injectable({
   providedIn: 'root'
@@ -136,6 +138,19 @@ export class IndexService {
 
   getCardsByIban(iban: string): Observable<Card[]> {
     return this.http.get<Card[]>(`${this.apiUrl}/cards/bankaccount/${iban}`);
+  }
+
+  //PROFILE
+  updateProfile(user: UserCreate): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/profile`, user).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  deleteAvatar(): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/avatar`).pipe(
+      catchError(error => this.handleError(error))
+    );
   }
 
   private handleError(error: any) {

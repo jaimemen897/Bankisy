@@ -10,5 +10,7 @@
   <ng-template pTemplate="end">
     <button pButton type="button" label="Iniciar sesión" icon="pi pi-sign-in" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/login']" *ngIf="!isLogged()"></button>
     <button pButton type="button" label="Cerrar sesión" (click)="logout()" icon="pi pi-sign-out" class="bg-transparent hover:bg-bluegray-800 border-transparent " *ngIf="isLogged()"></button>
+    <!--profile-->
+    <button pButton type="button" label="Perfil" icon="pi pi-user" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/profile']" *ngIf="isLogged()"></button>
   </ng-template>
 </p-menubar>
