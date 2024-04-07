@@ -9,8 +9,21 @@
 
   <ng-template pTemplate="end">
     <button pButton type="button" label="Iniciar sesión" icon="pi pi-sign-in" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/login']" *ngIf="!isLogged()"></button>
-    <button pButton type="button" label="Cerrar sesión" (click)="logout()" icon="pi pi-sign-out" class="bg-transparent hover:bg-bluegray-800 border-transparent " *ngIf="isLogged()"></button>
-    <!--profile-->
+
+    <p-toast></p-toast>
+    <p-confirmPopup #confirmPopupRef>
+      <ng-template pTemplate="headless" let-message let-test>
+        <div class="border-round p-3">
+          <span>{{ message.message }}</span>
+          <div class="flex align-items-center gap-2 mt-3">
+            <button (click)="accept()" pButton label="Confirmar" class="p-button-sm p-button-outlined"></button>
+            <button (click)="reject()" pButton label="Cancelar" class="p-button-sm p-button-text"></button>
+          </div>
+        </div>
+      </ng-template>
+    </p-confirmPopup>
+
+    <button pButton type="button" label="Cerrar sesión" (click)="confirm($event)" icon="pi pi-sign-out" class="bg-transparent hover:bg-bluegray-800 border-transparent " *ngIf="isLogged()"></button>
     <button pButton type="button" label="Perfil" icon="pi pi-user" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/profile']" *ngIf="isLogged()"></button>
   </ng-template>
 </p-menubar>
