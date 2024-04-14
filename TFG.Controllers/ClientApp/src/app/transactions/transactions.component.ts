@@ -55,7 +55,7 @@ export class TransactionsComponent implements OnInit{
   users: String[] = [];
 
   ngOnInit() {
-    this.socketService.listenForTransactions().subscribe((transaction: any) => {
+    /*this.socketService.listenForTransactions().subscribe((transaction: any) => {
       this.messageService.add({
         severity: 'info',
         summary: 'Nueva transacción',
@@ -63,7 +63,7 @@ export class TransactionsComponent implements OnInit{
         life: 2000,
         closable: false
       });
-    });
+    });*/
   }
 
   lazyLoad(event: any) {

@@ -3,7 +3,7 @@
 <p-card>
   <div class="grid">
     @if (user) {
-      <div class="col-12">
+      <div class="col-12 mb-4">
         <div class="flex flex-column sm:flex-row align-items-center gap-4">
           <div class="flex flex-column sm:flex-row align-items-center gap-3">
             <p-avatar size="large" shape="square" image="{{user.avatar}}"/>
@@ -47,7 +47,7 @@
       </div>
 
       <!--CUENTAS-->
-      <p-panel [toggleable]="true" class="w-full p-3">
+      <p-panel [toggleable]="true" class="w-full p-3 mt-8">
         <ng-template pTemplate="header">
           <div class="flex align-items-center gap-2">
             <p-avatar size="large" shape="square" image="assets/wallet.png"/>
@@ -144,7 +144,7 @@
       </p-dialog>
 
       <!--TRANSACCIONES-->
-      <p-panel [toggleable]="true" class="w-full p-3">
+      <p-panel [toggleable]="true" class="w-full">
         <ng-template pTemplate="header">
           <div class="flex align-items-center gap-2">
             <p-avatar size="large" shape="square" image="assets/transaction.png"/>

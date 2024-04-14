@@ -8,7 +8,7 @@ import {io} from "socket.io-client";
 export class SocketService {
   private socket: any;
 
-  constructor() {
+  /*constructor() {
     this.socket = io('http://localhost:5196/transactions');
   }
 
@@ -18,5 +18,5 @@ export class SocketService {
         observer.next(data);
       });
     });
-  }
+  }*/
 }

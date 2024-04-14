@@ -14,3 +14,7 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+
+.p-panel .p-panel-content {
+  padding: 0;
+}

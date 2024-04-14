@@ -42,8 +42,9 @@
       <ng-template pTemplate="grid">
         <div class="grid grid-nogutter">
           @for (user of users; track users) {
+            <!--shadow only en bottom and right-->
             <div class="col-12 sm:col-6 lg:col-12 xl:col-3 p-2">
-              <div class="p-4 border-1 surface-border surface-card border-round">
+              <div class="p-4 border-1 surface-border surface-card border-round shadow-6">
                 <div class="flex flex-wrap align-items-center justify-content-between gap-1">
                   @if (user.role === 'Admin') {
                     <span class="flex align-items-center gap-2 bg-cyan-100 border-round-3xl p-2">

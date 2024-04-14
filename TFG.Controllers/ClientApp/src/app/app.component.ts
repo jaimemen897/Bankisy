@@ -1,15 +1,21 @@
 import {Component, ElementRef, HostListener, OnInit} from '@angular/core';
 import {Message, MessageService} from "primeng/api";
+import {slideInAnimation} from "./route-animations";
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html'
+  templateUrl: './app.component.html',
+  animations: [slideInAnimation]
 })
 export class AppComponent implements OnInit {
   title = 'app';
   messages1: Message[] = [];
 
   constructor(private messageService: MessageService) {
+  }
+
+  prepareRoute(outlet: any) {
+    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
   }
 
   ngOnInit() {

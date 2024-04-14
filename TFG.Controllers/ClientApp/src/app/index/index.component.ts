@@ -82,7 +82,7 @@ export class IndexComponent implements OnInit {
 
   //LOAD
   ngOnInit(): void {
-    this.socketService.listenForTransactions().subscribe((transaction: any) => {
+    /*this.socketService.listenForTransactions().subscribe((transaction: any) => {
       this.refresh();
       this.messageService.add({
         severity: 'info',
@@ -91,7 +91,7 @@ export class IndexComponent implements OnInit {
         life: 2000,
         closable: false
       });
-    });
+    });*/
     this.indexService.getUserByToken().subscribe(user => {
       this.user = user;
       this.getBalanceByUserId();
