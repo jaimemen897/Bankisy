@@ -31,3 +31,12 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.p-fileupload .p-fileupload-buttonbar {
+  background: transparent;
+  border-color: transparent;
+}
+
+.p-fileupload .p-fileupload-content {
+  border-color: transparent;
+}

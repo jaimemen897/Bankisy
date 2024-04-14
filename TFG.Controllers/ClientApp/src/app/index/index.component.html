@@ -31,7 +31,7 @@
         <div
           class="h-11rem flex flex-column align-items-center justify-content-center bg-blue-600 border-round-2xl p-3 shadow-5">
           <i class="pi pi-wallet text-4xl mb-4 text-white font-bold"></i>
-          <span class="text-900 text-2xl mb-4 font-medium text-white font-bold">SALDO EN LA CUENTA</span>
+          <span class="text-900 text-2xl mb-4 font-medium text-white font-bold">SALDO EN LAS CUENTAS</span>
           <span class="text-900 text-2xl font-bold text-white">{{ totalBalance }}€</span>
         </div>
       </div>
@@ -83,7 +83,7 @@
                             pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
                   <p-button (click)="transactionPanel.toggle($event)" icon="pi pi-money-bill" severity="success"
                             pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-                  <p-button (click)="activeBizum(account.iban)" icon="pi pi-bitcoin" severity="help"
+                  <p-button (click)="activeBizum(account.iban)" icon="pi pi-mobile" severity="help"
                             pTooltip="Activar Bizum" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
                 </div>
               </td>
@@ -213,14 +213,14 @@
       <p-button label="Realizar transferencia" (click)="goToCreateTransaction()" class="m-2"></p-button>
 
       <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogTransaction" [modal]="true"
-                [resizable]="false" [contentStyle]="{height: '29rem'}" [closable]="false">
+                [resizable]="false" [contentStyle]="{height: '31rem'}" [closable]="false">
         <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
       </p-dialog>
 
       <p-button label="Bizum" (click)="goToCreateBizum()" class="m-2"></p-button>
 
       <p-dialog header="Realizar un bizum" [(visible)]="displayDialogBizum" [modal]="true" [resizable]="false"
-                [contentStyle]="{height: '29rem'}" [closable]="false">
+                [contentStyle]="{height: '25rem'}" [closable]="false">
         <app-bizum-create (onSave)="createBizum()" (onCancel)="closeDialog()"></app-bizum-create>
       </p-dialog>
 

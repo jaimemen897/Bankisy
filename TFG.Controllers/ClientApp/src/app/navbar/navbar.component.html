@@ -1,15 +1,24 @@
 <p-menubar styleClass="bg-black-alpha-90 border-transparent border-noround">
   <ng-template pTemplate="start">
-    <button pButton type="button" label="Inicio" icon="pi pi-home" class="bg-transparent border-transparent"
-            [routerLink]="['/']"></button>
-    <button pButton type="button" label="Usuarios" icon="pi pi-user" class="bg-transparent border-transparent"
-            [routerLink]="['/users']"></button>
-    <button pButton type="button" label="Cuentas de banco" icon="pi pi-money-bill"
-            class="bg-transparent border-transparent" [routerLink]="['/bankaccounts']"></button>
-    <button pButton type="button" label="Transacciones" icon="pi pi-money-bill"
-            class="bg-transparent border-transparent" [routerLink]="['/transactions']"></button>
-    <button pButton type="button" label="Tarjetas" icon="pi pi-credit-card" class="bg-transparent border-transparent"
-            [routerLink]="['/cards']"></button>
+    @if (user) {
+      <button pButton type="button" label="Inicio" icon="pi pi-home" class="bg-transparent border-transparent"
+              [routerLink]="['/']"></button>
+      @if (user.role === 'Admin') {
+        <p-menu #menu [popup]="true" [model]="items"></p-menu>
+        <button pButton type="button" label="Acciones" (click)="menu.toggle($event)"
+                class="bg-transparent border-transparent" icon="pi pi-th-large"></button>
+      }
+      <button pButton type="button" label="Crear cuenta" icon="pi pi-plus-circle"
+              class="bg-transparent border-transparent"
+              [routerLink]="['/bankaccounts/create']"></button>
+      <button pButton type="button" label="Transferir" icon="pi pi-send" class="bg-transparent border-transparent"
+              [routerLink]="['/transactions/create']"></button>
+      <button pButton type="button" label="Bizum" icon="pi pi-mobile" class="bg-transparent border-transparent"
+              [routerLink]="['/bizum']"></button>
+      <button pButton type="button" label="Tarjetas" icon="pi pi-credit-card" class="bg-transparent border-transparent"
+              [routerLink]="['/card-panel']"></button>
+    }
+
   </ng-template>
 
   <ng-template pTemplate="end">
