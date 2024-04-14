@@ -81,7 +81,7 @@
 
           <div class="flex flex-column gap-2">
             <p-dropdown formControlName="gender" [options]="genders" placeholder="Selecciona un género"
-                        styleClass="mr-4 w-15rem"/>
+                        styleClass="w-16rem"/>
             @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
               <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
                 El género es obligatorio</p>

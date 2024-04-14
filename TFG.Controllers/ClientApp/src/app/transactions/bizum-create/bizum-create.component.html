@@ -1,0 +1,45 @@
+<div class="card flex justify-content-center align-items-center m-2 overflow-hidden">
+  <div class="flex flex-column gap-3">
+    <form [formGroup]="formGroup" class="flex flex-column gap-3 p-1">
+      <div class="flex flex-column gap-1">
+        <input type="text" pInputText formControlName="phoneUserDestination" placeholder="Teléfono destinatario"
+               class="p-3 border-round-3xl border-0 bg-gray-200">
+        @if (formGroup.controls['phoneUserDestination'].invalid && formGroup.controls['phoneUserDestination'].touched) {
+          <p *ngIf="formGroup.controls['phoneUserDestination'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
+            Debe especificar el destinatario</p>
+          <p *ngIf="formGroup.controls['phoneUserDestination'].errors?.pattern" class="text-red-500 text-xs m-0 ml-3">
+            El formato no es correcto</p>
+        }
+      </div>
+      <div class="flex flex-column gap-1">
+        <input type="number" pInputText formControlName="amount" placeholder="Cantidad"
+               class="p-3 border-round-3xl border-0 bg-gray-200 mb-0">
+        @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
+          <p *ngIf="formGroup.controls['amount'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
+            La cantidad es obligatoria</p>
+          <p *ngIf="formGroup.controls['amount'].errors?.min" class="text-red-500 text-xs m-0 ml-3">
+            El valor mínimo es 0,50€</p>
+          <p *ngIf="formGroup.controls['amount'].errors?.max" class="text-red-500 text-xs m-0 ml-3">
+            El valor máximo son 500€</p>
+          <p *ngIf="formGroup.controls['amount'].errors?.pattern" class="text-red-500 text-xs m-0 ml-3">
+            El formato no es correcto</p>
+        }
+      </div>
+
+      <div class="flex flex-column gap-1">
+        <input type="text" pInputText formControlName="concept" placeholder="Concepto"
+               class="p-3 border-round-3xl border-0 bg-gray-200">
+        @if (formGroup.controls['concept'].invalid && formGroup.controls['concept'].touched) {
+          <p *ngIf="formGroup.controls['concept'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
+            El concepto es obligatorio</p>
+          <p *ngIf="formGroup.controls['concept'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
+            El concepto no puede tener menos de 3 caracteres</p>
+          <p *ngIf="formGroup.controls['concept'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
+            El concepto no puede tener más de 30 caracteres</p>
+        }
+      </div>
+      <p-button label="Confirmar" [rounded]="true" (click)="createBizum()" styleClass="w-full mt-5"></p-button>
+      <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()" styleClass="w-full"></p-button>
+    </form>
+  </div>
+</div>

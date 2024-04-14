@@ -6,7 +6,7 @@ import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
 import {DropdownModule} from "primeng/dropdown";
 import {TagModule} from "primeng/tag";
-import {DatePipe, NgClass, NgIf} from "@angular/common";
+import {DatePipe, NgClass, NgIf, NgStyle} from "@angular/common";
 import {InputTextModule} from "primeng/inputtext";
 import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
@@ -40,7 +40,8 @@ import {Transaction} from "../models/Transaction";
     DialogModule,
     BankaccountCreateComponent,
     DatePipe,
-    NgIf
+    NgIf,
+    NgStyle
   ],
   templateUrl: './bankaccounts.component.html',
   styleUrl: './bankaccounts.component.css'

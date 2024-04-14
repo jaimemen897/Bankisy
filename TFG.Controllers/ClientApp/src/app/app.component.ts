@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Message, MessageService} from "primeng/api";
 import {slideInAnimation} from "./route-animations";
 
@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
     });
   }
 
-  isInLoginOrRegister(){
+  isInLoginOrRegister() {
     return window.location.href.includes('login') || window.location.href.includes('register');
   }
 }

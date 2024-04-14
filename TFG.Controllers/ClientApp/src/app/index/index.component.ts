@@ -20,8 +20,8 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {MenuItem, MessageService} from "primeng/api";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {AccountType} from "../models/AccountType";
-import {Router} from "@angular/router";
 import {SocketService} from "../services/socket.service";
+import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.component";
 
 @Component({
   selector: 'app-index',
@@ -43,7 +43,8 @@ import {SocketService} from "../services/socket.service";
     DatePipe,
     NgClass,
     OverlayPanelModule,
-    ScrollPanelModule
+    ScrollPanelModule,
+    BizumCreateComponent
   ],
   templateUrl: './index.component.html',
   styleUrl: './index.component.css'
@@ -55,6 +56,7 @@ export class IndexComponent implements OnInit {
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
   @ViewChild(BankaccountCreateComponent) bankAccountCreate!: BankaccountCreateComponent
+  @ViewChild(BizumCreateComponent) bizumCreateComponent!: BizumCreateComponent
   @ViewChild('transactionPanel') transactionPanel!: any;
 
   user!: User;
@@ -77,6 +79,7 @@ export class IndexComponent implements OnInit {
 
   displayDialogBankAccount: boolean = false;
   displayDialogTransaction: boolean = false;
+  displayDialogBizum: boolean = false;
   updating: boolean = false;
   items: MenuItem[];
 
@@ -252,8 +255,16 @@ export class IndexComponent implements OnInit {
 
   goToCreateTransaction() {
     this.refresh();
+    console.log(this.transactionCreate)
     this.transactionCreate.loadUser();
     this.displayDialogTransaction = true;
+  }
+
+  goToCreateBizum() {
+    this.refresh();
+    console.log(this.bizumCreateComponent)
+    this.bizumCreateComponent.loadUser();
+    this.displayDialogBizum = true;
   }
 
   createBankAccount() {
@@ -284,8 +295,35 @@ export class IndexComponent implements OnInit {
     });
   }
 
+  createBizum() {
+    this.refresh()
+    this.displayDialogBizum = false;
+    this.bizumCreateComponent.loadUser()
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Bizum realizado',
+      detail: 'El Bizum se ha realizado correctamente',
+      life: 2000,
+      closable: false
+    });
+  }
+
+  activeBizum(iban: string){
+    this.indexService.activeBizum(iban).subscribe(data => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Bizum activado',
+        detail: 'Los bizums se han activado en esta cuenta',
+        life: 2000,
+        closable: false
+      });
+    });
+
+  }
+
   closeDialog() {
     this.displayDialogBankAccount = false;
     this.displayDialogTransaction = false;
+    this.displayDialogBizum = false;
   }
 }

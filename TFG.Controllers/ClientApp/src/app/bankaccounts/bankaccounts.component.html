@@ -31,8 +31,7 @@
         <th>
           <p-columnFilter field="accountType" matchMode="in" [showMenu]="false">
             <ng-template pTemplate="filter" let-value>
-              <p-dropdown [options]="accountsTypes" (onChange)="onSearchFilter($event)"
-                          placeholder="Tipo de cuenta"
+              <p-dropdown [options]="accountsTypes" (onChange)="onSearchFilter($event)" placeholder="Tipo de cuenta"
                           [showClear]="true" class="text-color-secondary">
                 <ng-template let-option pTemplate="item">
                   <p-tag [value]="option" [severity]="getSeverity(option)"></p-tag>
@@ -61,7 +60,7 @@
         <!--BUSCAR POR SALDO-->
         <th>
           <p-columnFilter type="text" field="balance" (input)="onSearch($event)" placeholder="Saldo"
-                          [showMenu]="false"/>
+                          [showMenu]="false" pStyleClass="p-3 border-round-3xl border-0 bg-gray-200"/>
         </th>
         <!--BUSCAR POR ESTADO-->
         <th>

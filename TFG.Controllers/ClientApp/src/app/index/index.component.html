@@ -79,8 +79,12 @@
               <td>{{ getAccountName(account.accountType) }}</td>
               <td>
                 <div class="flex gap-2">
-                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-                  <p-button (click)="transactionPanel.toggle($event)" icon="pi pi-money-bill" severity="success" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info"
+                            pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                  <p-button (click)="transactionPanel.toggle($event)" icon="pi pi-money-bill" severity="success"
+                            pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+                  <p-button (click)="activeBizum(account.iban)" icon="pi pi-bitcoin" severity="help"
+                            pTooltip="Activar Bizum" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
                 </div>
               </td>
             </tr>
@@ -134,7 +138,6 @@
           </ng-template>
         </p-table>
       </p-panel>
-
 
       <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()" class="m-2"></p-button>
       <p-dialog header="Crear cuenta bancaria" [(visible)]="displayDialogBankAccount" [modal]="true"
@@ -199,7 +202,8 @@
           </ng-template>
           <!--TODO: BOTÓN PARA DESCARGAR FACTURAS-->
           <ng-template pTemplate="paginatorleft">
-            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text" (click)="displayDialogTransaction = true"></p-button>
+            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"
+                      (click)="displayDialogTransaction = true"></p-button>
           </ng-template>
           <ng-template pTemplate="paginatorright">
             <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
@@ -209,9 +213,15 @@
       <p-button label="Realizar transferencia" (click)="goToCreateTransaction()" class="m-2"></p-button>
 
       <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogTransaction" [modal]="true"
-                [resizable]="false"
-                [contentStyle]="{height: '29rem'}" [closable]="false">
+                [resizable]="false" [contentStyle]="{height: '29rem'}" [closable]="false">
         <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
+      </p-dialog>
+
+      <p-button label="Bizum" (click)="goToCreateBizum()" class="m-2"></p-button>
+
+      <p-dialog header="Realizar un bizum" [(visible)]="displayDialogBizum" [modal]="true" [resizable]="false"
+                [contentStyle]="{height: '29rem'}" [closable]="false">
+        <app-bizum-create (onSave)="createBizum()" (onCancel)="closeDialog()"></app-bizum-create>
       </p-dialog>
 
       <!--VER TARJETAS-->

@@ -83,7 +83,7 @@
 
         <div>
           <p-dropdown formControlName="gender" [options]="genders" placeholder="Selecciona un género"
-                      styleClass="m-2 mr-4 w-15rem"/>
+                      styleClass="w-16rem"/>
           @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
             <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
               El género es obligatorio</p>
@@ -109,7 +109,8 @@
 
         <div>
             <span class="p-input-filled">
-          <input pPassword id="confirmpassword" formControlName="confirmpassword" type="password" pInputText placeholder="Confirmar contraseña"
+          <input pPassword id="confirmpassword" formControlName="confirmpassword" type="password" pInputText
+                 placeholder="Confirmar contraseña"
                  class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
         </span>
           @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
