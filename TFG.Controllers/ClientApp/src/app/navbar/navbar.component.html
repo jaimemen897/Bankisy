@@ -1,14 +1,21 @@
-<p-menubar styleClass="bg-black-alpha-90 border-transparent">
+<p-menubar styleClass="bg-black-alpha-90 border-transparent border-noround">
   <ng-template pTemplate="start">
-    <button pButton type="button" label="Inicio" icon="pi pi-home" class="bg-transparent hover:bg-bluegray-800 hover:bg-bluegray-800 border-transparent" [routerLink]="['/']"></button>
-    <button pButton type="button" label="Usuarios" icon="pi pi-user" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/users']"></button>
-    <button pButton type="button" label="Cuentas de banco" icon="pi pi-money-bill" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/bankaccounts']"></button>
-    <button pButton type="button" label="Transacciones" icon="pi pi-money-bill" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/transactions']"></button>
-    <button pButton type="button" label="Tarjetas" icon="pi pi-credit-card" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/cards']"></button>
+    <button pButton type="button" label="Inicio" icon="pi pi-home" class="bg-transparent border-transparent"
+            [routerLink]="['/']"></button>
+    <button pButton type="button" label="Usuarios" icon="pi pi-user" class="bg-transparent border-transparent"
+            [routerLink]="['/users']"></button>
+    <button pButton type="button" label="Cuentas de banco" icon="pi pi-money-bill"
+            class="bg-transparent border-transparent" [routerLink]="['/bankaccounts']"></button>
+    <button pButton type="button" label="Transacciones" icon="pi pi-money-bill"
+            class="bg-transparent border-transparent" [routerLink]="['/transactions']"></button>
+    <button pButton type="button" label="Tarjetas" icon="pi pi-credit-card" class="bg-transparent border-transparent"
+            [routerLink]="['/cards']"></button>
   </ng-template>
 
   <ng-template pTemplate="end">
-    <button pButton type="button" label="Iniciar sesión" icon="pi pi-sign-in" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/login']" *ngIf="!isLogged()"></button>
+    <button pButton type="button" label="Iniciar sesión" icon="pi pi-sign-in"
+            class="bg-transparent border-transparent" [routerLink]="['/login']"
+            *ngIf="!isLogged()"></button>
 
     <p-toast></p-toast>
     <p-confirmPopup #logoutMes>
@@ -23,7 +30,10 @@
       </ng-template>
     </p-confirmPopup>
 
-    <button pButton type="button" label="Cerrar sesión" (click)="confirm($event)" icon="pi pi-sign-out" class="bg-transparent hover:bg-bluegray-800 border-transparent " *ngIf="isLogged()"></button>
-    <button pButton type="button" label="Perfil" icon="pi pi-user" class="bg-transparent hover:bg-bluegray-800 border-transparent" [routerLink]="['/profile']" *ngIf="isLogged()"></button>
+    <button pButton type="button" label="Cerrar sesión" (click)="confirm($event)" icon="pi pi-sign-out"
+            class="bg-transparent border-transparent " *ngIf="isLogged()"></button>
+    <button pButton type="button" label="Perfil" icon="pi pi-user"
+            class="bg-transparent border-transparent" [routerLink]="['/profile']"
+            *ngIf="isLogged()"></button>
   </ng-template>
 </p-menubar>

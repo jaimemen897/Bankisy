@@ -8,4 +8,6 @@ public class BankAccountCreateDto
     public string AccountType { get; set; }
     [Required]
     public List<Guid> UsersId { get; set; }
+    [Required]
+    public bool AcceptBizum { get; set; }
 }

@@ -133,7 +133,6 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
     
     public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
     {
-        //bankaccount is deleted = false
         var bankAccounts = await bankContext.BankAccounts
             .Include(ba => ba.Users)
             .Where(ba => ba.Users.Any(u => u.Id == userId) && !ba.IsDeleted)

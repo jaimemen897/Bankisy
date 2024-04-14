@@ -29,6 +29,12 @@ public class TransactionsController(TransactionService transactionService) : Con
     {
         return await transactionService.CreateTransaction(transaction);
     }
+    
+    [HttpPost("bizum")]
+    public async Task<ActionResult<BizumResponseDto>> CreateBizum(BizumCreateDto transaction)
+    {
+        return await transactionService.CreateBizum(transaction);
+    }
 
     [HttpDelete("{id}")]
     public async Task DeleteTransaction(int id)

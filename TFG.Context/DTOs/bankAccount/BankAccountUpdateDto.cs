@@ -6,4 +6,5 @@ public class BankAccountUpdateDto
 {
     public string? AccountType { get; set; }
     public List<Guid>? UsersId { get; set; }
+    public bool? AcceptBizum { get; set; }
 }

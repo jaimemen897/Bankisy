@@ -24,10 +24,12 @@ public abstract class MapperConfig
             cfg.CreateMap<BankAccountUpdateDto, BankAccount>()
                 .ForMember(dest => dest.AccountType, opt => opt.Ignore())
                 .ForMember(dest => dest.Users, opt => opt.Ignore())
+                .ForMember(dest => dest.AcceptBizum, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
                     dest.AccountType = src.AccountType != null ? (AccountType)Enum.Parse(typeof(AccountType), src.AccountType) : dest.AccountType;
                     dest.Users = src.UsersId != null ? src.UsersId.Select(id => new User { Id = id }).ToList() : dest.Users;
+                    dest.AcceptBizum = src.AcceptBizum ?? dest.AcceptBizum;
                 });
 
             cfg.CreateMap<BankAccount, BankAccountResponseDto>()
@@ -78,6 +80,16 @@ public abstract class MapperConfig
             cfg.CreateMap<TransactionCreateDto, Transaction>();
             
             cfg.CreateMap<Transaction, TransactionResponseDto>();
+
+            cfg.CreateMap<BizumCreateDto, BizumResponseDto>()
+                .ForMember(dest => dest.Date, act => act.MapFrom(src => DateTime.Now.ToUniversalTime()));
+            
+            cfg.CreateMap<BizumResponseDto, BizumCreateDto>();
+            
+            cfg.CreateMap<BizumCreateDto, BizumExtendedCreateDto>()
+                .ForMember(dest => dest.IbanAccountDestination, act => act.Ignore());
+            
+            cfg.CreateMap<BizumExtendedCreateDto, TransactionCreateDto>();
             
             /*CARDS*/
             cfg.CreateMap<CardCreateDto, Card>()
