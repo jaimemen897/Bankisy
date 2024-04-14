@@ -46,7 +46,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
                 bankAccountsQuery = bankAccountsQuery.Where(ba => ba.AccountType == accountTypeFilter);
             }
         }
-        
+
         if (isDeleted != null)
         {
             bankAccountsQuery = bankAccountsQuery.Where(ba => ba.IsDeleted == isDeleted);
@@ -130,14 +130,14 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
-    
+
     public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
     {
         var bankAccounts = await bankContext.BankAccounts
             .Include(ba => ba.Users)
             .Where(ba => ba.Users.Any(u => u.Id == userId) && !ba.IsDeleted)
             .ToListAsync();
-        
+
         return bankAccounts.Select(bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount)).ToList();
     }
 
@@ -231,7 +231,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
 
         await ClearCache();
     }
-    
+
     public async Task ActivateBankAccount(string iban)
     {
         var bankAccount = await bankContext.BankAccounts.FindAsync(iban);
@@ -243,6 +243,29 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         bankAccount.IsDeleted = false;
         await bankContext.SaveChangesAsync();
 
+        await ClearCache();
+    }
+
+    public async Task ActiveBizum(string iban, Guid userId)
+    {
+        var bankAccount = await bankContext.BankAccounts.Include(ba => ba.Users)
+                              .FirstOrDefaultAsync(ba => ba.Iban == iban && !ba.IsDeleted) ??
+                          throw new HttpException(404, "Bank account not found");
+
+        var bankAccounts = await bankContext.BankAccounts.Include(ba => ba.Users)
+            .Where(ba => ba.Users.Any(u => u.Id == userId) && !ba.IsDeleted)
+            .ToListAsync();
+
+        _ = await bankContext.Users.FindAsync(userId) ?? throw new HttpException(404, "User not found");
+
+        if (bankAccounts.All(ba => ba.Users.All(u => u.Id != userId)))
+        {
+            throw new HttpException(404, "User not found in bank account");
+        }
+
+        bankAccounts.ForEach(ba => ba.AcceptBizum = false);
+        bankAccount.AcceptBizum = true;
+        await bankContext.SaveChangesAsync();
         await ClearCache();
     }
 

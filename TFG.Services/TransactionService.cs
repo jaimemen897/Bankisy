@@ -93,15 +93,13 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         return transactionDto;
     }
 
-    public async Task<BizumResponseDto> CreateBizum(BizumCreateDto bizumCreateDto)
+    public async Task<BizumResponseDto> CreateBizum(BizumCreateDto bizumCreateDto, Guid userId)
     {
-        var user = await bankContext.Users.FirstOrDefaultAsync(u => u.Phone == bizumCreateDto.PhoneNumberUserOrigin) ??
-                   throw new HttpException(404, "User not found");
+        var user = await bankContext.Users.FindAsync(userId) ?? throw new HttpException(404, "User not found");
 
         var account = await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
-                          b.Iban == bizumCreateDto.IbanAccountOrigin && b.Users.Any(u => u.Id == user.Id) &&
-                          !b.IsDeleted) ??
-                      throw new HttpException(404, "Account origin not found");
+                          b.Users.Any(u => u.Id == user.Id) && b.AcceptBizum && !b.IsDeleted) ??
+                      throw new HttpException(404, "Account origin not found or not accepting Bizum");
 
         var userDestination =
             await bankContext.Users.FirstOrDefaultAsync(u => u.Phone == bizumCreateDto.PhoneNumberUserDestination) ??
@@ -123,40 +121,11 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         ValidateBizum(user, userDestination, account, bizumCreateDto);
 
         await CreateTransactionPay(account, accountDestination, transactionCreate);
-        
+
         await ClearCache();
-        
+
         return _mapper.Map<BizumResponseDto>(bizumCreateDto);
     }
-
-    /*private async Task<BizumResponseDto> CreateBizumPay(BankAccount accountOrigin, BankAccount accountDestination, BizumCreateDto bizumCreateDto)
-    {
-        var transactionCreate = new TransactionCreateDto
-        {
-            Amount = bizumCreateDto.Amount,
-            Concept = bizumCreateDto.Concept,
-            IbanAccountOrigin = accountOrigin.Iban,
-            IbanAccountDestination = accountDestination.Iban
-        };
-        var transaction = _mapper.Map<Transaction>(transactionCreate);
-        accountOrigin.TransactionsOrigin.Add(transaction);
-        accountDestination.TransactionsDestination.Add(transaction);
-        bankContext.Transactions.Add(transaction);
-
-        accountOrigin.Balance -= transaction.Amount;
-        accountDestination.Balance += transaction.Amount;
-
-        await bankContext.SaveChangesAsync();
-
-        return new BizumResponseDto
-        {
-            Amount = transaction.Amount,
-            Concept = transaction.Concept,
-            Date = transaction.Date,
-            PhoneNumberUserOrigin = bizumCreateDto.PhoneNumberUserOrigin,
-            PhoneNumberUserDestination = bizumCreateDto.PhoneNumberUserDestination
-        };
-    }*/
 
     private async Task<TransactionResponseDto> CreateTransactionPay(BankAccount accountOrigin,
         BankAccount accountDestination, TransactionCreateDto transactionCreateDto)

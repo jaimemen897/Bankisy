@@ -14,9 +14,6 @@ public class BizumCreateDto
 
     [Required]
     public string PhoneNumberUserOrigin { get; set; }
-    
-    [Required]
-    public string IbanAccountOrigin { get; set; }
 
     [Required]
     public string PhoneNumberUserDestination { get; set;}
