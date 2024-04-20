@@ -6,6 +6,7 @@ export class User {
   dni: string;
   gender: string;
   avatar: string;
+  phone: string;
   password: string;
   role: string;
   isDeleted: boolean;

@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.bankAccount;
@@ -65,15 +66,23 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     }
 
     [HttpDelete("{iban}")]
-    public async Task DeleteBankAccount(string iban)
+    public async Task<ActionResult> DeleteBankAccount(string iban)
     {
         await bankAccountService.DeleteBankAccount(iban);
+        return NoContent();
     }
     
     [HttpPut("{iban}/active")]
     public async Task<ActionResult> ActiveBankAccount(string iban)
     {
         await bankAccountService.ActivateBankAccount(iban);
+        return Ok();
+    }
+    
+    [HttpPost("{iban}/active-bizum/{userId}")]
+    public async Task<ActionResult> ActiveBizum(string iban, Guid userId)
+    {
+        await bankAccountService.ActiveBizum(iban, userId);
         return Ok();
     }
 }

@@ -5,4 +5,5 @@ export class BankAccount {
   usersId: string[];
   usersName: string[];
   isDeleted: boolean;
+  acceptBizum: boolean;
 }

@@ -31,8 +31,7 @@
         <th>
           <p-columnFilter field="accountType" matchMode="in" [showMenu]="false">
             <ng-template pTemplate="filter" let-value>
-              <p-dropdown [options]="accountsTypes" (onChange)="onSearchFilter($event)"
-                          placeholder="Tipo de cuenta"
+              <p-dropdown [options]="accountsTypes" (onChange)="onSearchFilter($event)" placeholder="Tipo de cuenta"
                           [showClear]="true" class="text-color-secondary">
                 <ng-template let-option pTemplate="item">
                   <p-tag [value]="option" [severity]="getSeverity(option)"></p-tag>
@@ -61,7 +60,7 @@
         <!--BUSCAR POR SALDO-->
         <th>
           <p-columnFilter type="text" field="balance" (input)="onSearch($event)" placeholder="Saldo"
-                          [showMenu]="false"/>
+                          [showMenu]="false" pStyleClass="p-3 border-round-3xl border-0 bg-gray-200"/>
         </th>
         <!--BUSCAR POR ESTADO-->
         <th>
@@ -123,18 +122,25 @@
               </ng-template>
             </p-overlayPanel>
 
-            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="warning"
-                      pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="secondary"
+                      pTooltip="Información"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"
+                      styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
+            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="secondary"
+                      pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"
+                      styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
             <p-button icon="pi pi-money-bill"
                       (click)="getTransactionsByIban(account.iban, $event)"
-                      severity="success" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom"
-                      [autoHide]="true"/>
-            <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="danger" pTooltip="Borrar"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="!account.isDeleted"/>
-            <p-button (click)="activateBankAccount(account.iban)" icon="pi pi-undo" severity="help" pTooltip="Recuperar"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="account.isDeleted"/>
+                      severity="secondary" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom"
+                      [autoHide]="true" styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
+            <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="secondary"
+                      pTooltip="Borrar"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="!account.isDeleted"
+                      styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
+            <p-button (click)="activateBankAccount(account.iban)" icon="pi pi-undo" severity="secondary"
+                      pTooltip="Recuperar"
+                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="account.isDeleted"
+                      styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
           </div>
         </td>
       </tr>
@@ -146,7 +152,10 @@
       </tr>
     </ng-template>
   </p-table>
-  <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()"></p-button>
+
+  <div class="flex justify-content-center align-items-center w-full p-6">
+    <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()"></p-button>
+  </div>
 
   <p-dialog [header]="headerSaveUpdateBankAccount" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
             [contentStyle]="{height: '21rem'}" [closable]="false">

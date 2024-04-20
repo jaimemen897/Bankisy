@@ -12,6 +12,8 @@ import {Card} from "../models/Card";
 import {CardCreate} from "../models/CardCreate";
 import {UserCreate} from "../models/UserCreate";
 import {Token} from "@angular/compiler";
+import {BizumCreate} from "../models/BizumCreate";
+import {Bizum} from "../models/Bizum";
 
 @Injectable({
   providedIn: 'root'
@@ -153,6 +155,18 @@ export class IndexService {
     );
   }
 
+  activeBizum(iban: string): Observable<{}> {
+    return this.http.post(`${this.apiUrl}/bankaccount/${iban}/active-bizum`, {}).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  createBizum(bizumCreate: BizumCreate): Observable<Bizum> {
+    return this.http.post<Bizum>(`${this.apiUrl}/transaction/bizum`, bizumCreate).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   private handleError(error: any) {
     if (error.status === 400) {
       if (error.error.title === 'Users not found') {
@@ -188,6 +202,27 @@ export class IndexService {
           severity: 'error',
           summary: 'Error',
           detail: 'La cantidad de la transacción debe ser mayor que cero'
+        });
+      }
+      if (error.error.title === 'Account origin not found or not accepting Bizum') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cuenta de origen no encontrada o no acepta Bizum'
+        });
+      }
+      if (error.error.title === 'User destination not found') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Usuario de destino no encontrado'
+        });
+      }
+      if (error.error.title === 'Account destination not found or not accepting Bizum') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Cuenta de destino no encontrada o no acepta Bizum'
         });
       }
     } else if (error.status === 404) {

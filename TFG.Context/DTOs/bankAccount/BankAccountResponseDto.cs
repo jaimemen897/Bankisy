@@ -8,4 +8,5 @@ public class BankAccountResponseDto
     public List<Guid> UsersId { get; set; }
     public List<string> UsersName { get; set; }
     public bool IsDeleted { get; set; }
+    public bool AcceptBizum { get; set; }
 }

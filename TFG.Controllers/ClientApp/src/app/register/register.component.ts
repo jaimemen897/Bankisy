@@ -15,6 +15,7 @@ import {UserService} from "../services/users.service";
 import {UserCreate} from "../models/UserCreate";
 import {DropdownModule} from "primeng/dropdown";
 import {Gender} from "../models/Gender";
+import {passwordMatchValidator} from "./passwordMatchValidator";
 
 @Component({
   selector: 'app-register',
@@ -48,9 +49,13 @@ export class RegisterComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
     dni: new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]),
+    phone: new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]),
     gender: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
-  });
+    confirmpassword: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)])
+  }, {validators: passwordMatchValidator});
+
+
 
   sendForm() {
     if (this.formGroup.valid) {
@@ -60,6 +65,7 @@ export class RegisterComponent {
         email: this.formGroup.controls.email.value as string,
         username: this.formGroup.controls.username.value as string,
         dni: this.formGroup.controls.dni.value as string,
+        phone: this.formGroup.controls.phone.value as string,
         gender: genderTranslated,
         password: this.formGroup.controls.password.value as string
       };

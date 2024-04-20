@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {Router, RouterOutlet} from "@angular/router";
 import {ToastModule} from "primeng/toast";
@@ -15,6 +15,7 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {Transaction} from "../models/Transaction";
 import {TransactionsService} from "../services/transactions.service";
+import {SocketService} from "../services/socket.service";
 
 @Component({
   selector: 'app-transactions',
@@ -38,8 +39,8 @@ import {TransactionsService} from "../services/transactions.service";
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.css'
 })
-export class TransactionsComponent {
-  constructor(private transactionService: TransactionsService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService) {
+export class TransactionsComponent implements OnInit{
+  constructor(private transactionService: TransactionsService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private socketService: SocketService) {
   }
 
   transactions: Transaction[] = [];
@@ -52,6 +53,18 @@ export class TransactionsComponent {
   search: string;
 
   users: String[] = [];
+
+  ngOnInit() {
+    /*this.socketService.listenForTransactions().subscribe((transaction: any) => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Nueva transacción',
+        detail: 'Se ha realizado una nueva transacción',
+        life: 2000,
+        closable: false
+      });
+    });*/
+  }
 
   lazyLoad(event: any) {
     let pageNumber = Math.floor(event.first / event.rows) + 1;
@@ -96,14 +109,6 @@ export class TransactionsComponent {
       this.sortOrder = 1;
       this.sortField = value;
     }
-  }
-
-  goToAddTransaction() {
-    this.router.navigate(['/transactions/create']);
-  }
-
-  goToTransactions(id: string) {
-    this.router.navigate(['/transactions', id]);
   }
 
   deleteTransaction(id: string) {

@@ -42,6 +42,12 @@ public class IndexService(
     {
         return await bankAccountService.CreateBankAccount(bankAccount);
     }
+    
+    public async Task ActiveBizum(string iban)
+    {
+        var user = await sessionService.GetMyself();
+        await bankAccountService.ActiveBizum(iban, user.Id);
+    }
 
     //BALANCE
     public async Task<decimal> GetTotalBalanceByUserId()
@@ -155,6 +161,12 @@ public class IndexService(
         }
         
         return await bankAccountService.GetTransactionsForAccount(iban);
+    }
+    
+    public async Task<BizumResponseDto> CreateBizum(BizumCreateDto bizumCreateDto)
+    {
+        var user = await sessionService.GetMyself();
+        return await transactionService.CreateBizum(bizumCreateDto, user.Id);
     }
 
     //CARDS

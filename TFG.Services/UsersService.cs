@@ -39,7 +39,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         if (!string.IsNullOrWhiteSpace(search))
         {
             usersQuery = usersQuery.Where(user =>
-                user.Name.ToLower().Contains(search.ToLower()) || user.Email.ToLower().Contains(search.ToLower()));
+                user.Name.ToLower().Contains(search.ToLower()) || user.Email.ToLower().Contains(search.ToLower()) ||
+                user.Phone.Contains(search));
         }
 
         var paginatedUsers = await usersQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
@@ -66,10 +67,11 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
         return user ?? throw new HttpException(404, "User not found");
     }
-    
+
     public async Task<UserResponseDto> GetUserByEmail(string email)
     {
-        var userEntity = await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email) ?? throw new HttpException(404, "User not found");
+        var userEntity = await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email) ??
+                         throw new HttpException(404, "User not found");
         return _mapper.Map<UserResponseDto>(userEntity);
     }
 
@@ -113,6 +115,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
             throw new HttpException(400,
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
         }
+
         var userExists = await bankContext.Users.AnyAsync(u => u.Username == userUpdateDto.Username);
 
 
@@ -132,6 +135,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
                 throw new HttpException(400, "DNI already exists");
             }
         }
+
         if (userUpdateDto.Email != null && user.Email != userUpdateDto.Email)
         {
             userExists = await bankContext.Users.AnyAsync(u => u.Email == userUpdateDto.Email);
@@ -232,7 +236,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
 
         return _mapper.Map<UserResponseDto>(user);
     }
-    
+
     public async Task<UserResponseDto> DeleteAvatar(Guid id)
     {
         var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");

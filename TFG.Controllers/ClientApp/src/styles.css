@@ -15,3 +15,28 @@ body {
   box-sizing: border-box;
 }
 
+.p-panel .p-panel-content {
+  padding: 0;
+}
+
+.p-dropdown {
+  border-radius: 1.5rem !important;
+  padding: 0.3rem !important;
+  background-color: var(--gray-200) !important;
+  border-color: var(--surface-0) !important;
+}
+
+.p-paginator .p-dropdown .p-dropdown-label{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.p-fileupload .p-fileupload-buttonbar {
+  background: transparent;
+  border-color: transparent;
+}
+
+.p-fileupload .p-fileupload-content {
+  border-color: transparent;
+}

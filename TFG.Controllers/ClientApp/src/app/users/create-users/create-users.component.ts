@@ -17,6 +17,7 @@ import {PaginatorModule} from "primeng/paginator";
 import {InputTextModule} from "primeng/inputtext";
 import {NgIf} from "@angular/common";
 import {PasswordModule} from "primeng/password";
+import {passwordMatchValidator} from "../../register/passwordMatchValidator";
 
 @Component({
   selector: 'app-create-users',
@@ -43,9 +44,12 @@ export class CreateUsersComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
     username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
     dni: new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]),
+    phone: new FormControl('', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]),
     gender: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
-  });
+    confirmpassword: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)])
+  }, {validators: passwordMatchValidator});
+
 
   isUpdateMode: boolean = false;
   id!: string;
@@ -62,13 +66,18 @@ export class CreateUsersComponent {
     this.id = userId;
     this.label = 'Actualizar';
     this.formGroup.controls.password.clearValidators();
+    this.formGroup.controls.confirmpassword.clearValidators();
     this.formGroup.controls.password.setValidators([Validators.minLength(3), Validators.maxLength(50)]);
+    this.formGroup.controls.confirmpassword.setValidators([Validators.minLength(3), Validators.maxLength(50)]);
     this.formGroup.controls.password.updateValueAndValidity();
+    this.formGroup.controls.confirmpassword.updateValueAndValidity();
+
     this.userService.getUserById(userId).subscribe(user => {
       this.formGroup.controls.name.setValue(user.name);
       this.formGroup.controls.email.setValue(user.email);
       this.formGroup.controls.username.setValue(user.username);
       this.formGroup.controls.dni.setValue(user.dni);
+      this.formGroup.controls.phone.setValue(user.phone);
       let genderTranslated = Gender[user.gender as keyof typeof Gender];
       this.formGroup.controls.gender.setValue(genderTranslated);
     });
@@ -87,6 +96,7 @@ export class CreateUsersComponent {
     userCreate.email = this.formGroup.controls.email.value;
     userCreate.username = this.formGroup.controls.username.value;
     userCreate.dni = this.formGroup.controls.dni.value;
+    userCreate.phone = this.formGroup.controls.phone.value;
     userCreate.gender = genderTranslated;
     userCreate.password = this.formGroup.controls.password.value;
 
