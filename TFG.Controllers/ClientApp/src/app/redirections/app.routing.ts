@@ -9,6 +9,9 @@ import {IndexComponent} from "../index/index.component";
 import {CardComponent} from "../cards/cards.component";
 import {CardPanelComponent} from "../card-panel/card-panel.component";
 import {ProfileComponent} from "../profile/profile.component";
+import {TransactionCreate} from "../models/TransactionCreate";
+import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.component";
+import {CreateTransactionComponent} from "../transactions/create/create-transaction.component";
 
 export const routes: Routes = [
   {path: '', redirectTo: '/index', pathMatch: 'full', data: { animation: 'IndexPage' }},
@@ -20,7 +23,10 @@ export const routes: Routes = [
   {path: 'transactions', component: TransactionsComponent, data: { animation: 'TransactionsPage' }},
   {path: 'cards', component: CardComponent, data: { animation: 'CardsPage' }},
   {path: 'card-panel', component: CardPanelComponent, data: { animation: 'CardPanelPage' }},
-  {path: 'profile', component: ProfileComponent, data: { animation: 'ProfilePage' }}
+  {path: 'profile', component: ProfileComponent, data: { animation: 'ProfilePage' }},
+  {path: 'transactions/create', component: CreateTransactionComponent, data: { animation: 'TransactionsPage' }},
+  {path: 'bizum', component: BizumCreateComponent, data: { animation: 'TransactionsPage' }},
+
 ];
 
 @NgModule({
