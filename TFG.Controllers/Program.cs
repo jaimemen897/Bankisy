@@ -27,13 +27,14 @@ builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<IndexService>();
 builder.Services.AddScoped<CardService>();
+builder.Services.AddScoped<StripeService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: myAllowSpecificOrigins,
-        policy => { policy.WithOrigins("https://localhost:44464").AllowAnyHeader().AllowAnyMethod(); });
+    options.AddPolicy(myAllowSpecificOrigins,
+        origins => { origins.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
 });
 builder.Services.AddAuthentication(options =>
 {

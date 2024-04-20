@@ -128,13 +128,6 @@ export class UserService {
           detail: 'Usuario o contraseña incorrectos'
         });
       }
-    } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        closable: false,
-        detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
-      });
     }
     return throwError(() => error);
   }

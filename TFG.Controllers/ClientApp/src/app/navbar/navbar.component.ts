@@ -58,7 +58,7 @@ export class NavbarComponent implements OnInit {
         label: 'Tarjetas',
         icon: 'pi pi-credit-card',
         routerLink: ['/cards']
-      },
+      }
 
     ];
   }

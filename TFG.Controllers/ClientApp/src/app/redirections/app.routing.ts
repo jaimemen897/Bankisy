@@ -12,6 +12,7 @@ import {ProfileComponent} from "../profile/profile.component";
 import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.component";
 import {CreateTransactionComponent} from "../transactions/create/create-transaction.component";
 import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/bankaccount-create.component";
+import {DepositComponent} from "../deposit/deposit.component";
 
 export const routes: Routes = [
   {path: '', redirectTo: '/index', pathMatch: 'full', data: {animation: 'IndexPage'}},
@@ -27,6 +28,7 @@ export const routes: Routes = [
   {path: 'transactions/create', component: CreateTransactionComponent, data: {animation: 'TransactionsPage'}},
   {path: 'bizum', component: BizumCreateComponent, data: {animation: 'TransactionsPage'}},
   {path: 'bankaccounts/create', component: BankaccountCreateComponent, data: {animation: 'BankAccountsPage'}},
+  {path: 'deposit', component: DepositComponent, data: {animation: 'DepositPage'}}
 ];
 
 @NgModule({
