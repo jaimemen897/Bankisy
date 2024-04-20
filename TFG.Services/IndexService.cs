@@ -62,7 +62,7 @@ public class IndexService(
 
     //TRANSACTIONS
     public async Task<Pagination<TransactionResponseDto>> GetTransactionsByUserId(int pageNumber,
-        int pageSize, string orderBy, bool descending, string? search = null)
+        int pageSize, string orderBy, bool descending, string? search = null, string? filter = null)
     {
         var user = await sessionService.GetMyself();
 
@@ -89,6 +89,13 @@ public class IndexService(
             transactionQuery = transactionQuery.Where(t => t.IbanAccountOrigin.ToLower().Contains(search.ToLower()) ||
                                                            t.IbanAccountDestination.ToLower()
                                                                .Contains(search.ToLower()));
+        }
+        
+        if (!string.IsNullOrEmpty(filter))
+        {
+            var date = DateTime.Parse(filter);
+            date = date.ToUniversalTime();
+            transactionQuery = transactionQuery.Where(t => t.Date.Date >= date.Date);
         }
 
         var paginatedTransactions = await transactionQuery.ToPagination(pageNumber, pageSize, orderBy, descending,

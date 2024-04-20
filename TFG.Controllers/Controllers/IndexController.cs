@@ -30,9 +30,9 @@ public class IndexController(IndexService indexService) : ControllerBase
     public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactionsByUserId(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false,
-        [FromQuery] string? search = null)
+        [FromQuery] string? search = null, [FromQuery] string? filter = null)
     {
-        return await indexService.GetTransactionsByUserId(pageNumber, pageSize, orderBy, descending, search);
+        return await indexService.GetTransactionsByUserId(pageNumber, pageSize, orderBy, descending, search, filter);
     }
 
     [HttpGet("expenses")]

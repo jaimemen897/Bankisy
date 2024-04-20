@@ -22,6 +22,9 @@ import {ScrollPanelModule} from "primeng/scrollpanel";
 import {AccountType} from "../models/AccountType";
 import {SocketService} from "../services/socket.service";
 import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.component";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {InplaceModule} from "primeng/inplace";
+import {InputTextModule} from "primeng/inputtext";
 
 @Component({
   selector: 'app-index',
@@ -44,7 +47,10 @@ import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.co
     NgClass,
     OverlayPanelModule,
     ScrollPanelModule,
-    BizumCreateComponent
+    BizumCreateComponent,
+    ProgressSpinnerModule,
+    InplaceModule,
+    InputTextModule
   ],
   templateUrl: './index.component.html',
   styleUrl: './index.component.css'
@@ -78,10 +84,13 @@ export class IndexComponent implements OnInit {
   bankAccounts: BankAccount[];
 
   displayDialogBankAccount: boolean = false;
+  displayDialogBankAccountNewUser: boolean = false;
+  displayCreateBankAccount: boolean = false;
   displayDialogTransaction: boolean = false;
   displayDialogBizum: boolean = false;
   updating: boolean = false;
   items: MenuItem[];
+  transactionsDate: MenuItem[];
 
   //LOAD
   ngOnInit(): void {
@@ -123,6 +132,54 @@ export class IndexComponent implements OnInit {
         icon: 'pi pi-times'
       }
     ];
+    this.transactionsDate = [
+      {
+        label: 'Hoy',
+        icon: 'pi pi-calendar',
+        command: () => {
+          this.filter = new Date().toISOString().split('T')[0];
+          this.refresh();
+        }
+      },
+      {
+        label: 'Última semana',
+        icon: 'pi pi-calendar-plus',
+        command: () => {
+          let date = new Date();
+          date.setDate(date.getDate() - 7);
+          this.filter = date.toISOString().split('T')[0];
+          this.refresh();
+        }
+      },
+      {
+        label: 'Último mes',
+        icon: 'pi pi-calendar-minus',
+        command: () => {
+          let date = new Date();
+          date.setMonth(date.getMonth() - 1);
+          this.filter = date.toISOString().split('T')[0];
+          this.refresh();
+        }
+      },
+      {
+        label: 'Último año',
+        icon: 'pi pi-calendar-minus',
+        command: () => {
+          let date = new Date();
+          date.setFullYear(date.getFullYear() - 1);
+          this.filter = date.toISOString().split('T')[0];
+          this.refresh();
+        }
+      },
+      {
+        label: 'Todos',
+        icon: 'pi pi-calendar-minus',
+        command: () => {
+          this.filter = '';
+          this.refresh();
+        }
+      }
+    ];
   }
 
   lazyLoad(event: any) {
@@ -130,7 +187,7 @@ export class IndexComponent implements OnInit {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    this.indexService.getTransactionsByUserId(pageNumber, event.rows, sortField, sortOrder === -1, this.search).subscribe(data => {
+    this.indexService.getTransactionsByUserId(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter).subscribe(data => {
       this.transactions = data.items;
       this.totalRecords = data.totalRecords;
     });
@@ -160,6 +217,9 @@ export class IndexComponent implements OnInit {
   getBankAccountsByUserId() {
     this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
+      if (this.bankAccounts.length === 0) {
+        this.displayDialogBankAccountNewUser = true;
+      }
     });
   }
 
@@ -253,6 +313,13 @@ export class IndexComponent implements OnInit {
     this.displayDialogBankAccount = true;
   }
 
+  goToCreateBankAccountNewUser() {
+    this.refresh();
+    this.bankAccountCreate.loadUser(this.user);
+    this.displayDialogBankAccountNewUser = true;
+    this.displayCreateBankAccount = true;
+  }
+
   goToCreateTransaction() {
     this.refresh();
     console.log(this.transactionCreate)
@@ -272,6 +339,7 @@ export class IndexComponent implements OnInit {
       this.bankAccounts = bankAccounts;
     });
     this.displayDialogBankAccount = false;
+    this.displayDialogBankAccountNewUser = false;
     this.refresh();
     this.messageService.add({
       severity: 'success',
@@ -325,5 +393,7 @@ export class IndexComponent implements OnInit {
     this.displayDialogBankAccount = false;
     this.displayDialogTransaction = false;
     this.displayDialogBizum = false;
+    this.displayDialogBankAccountNewUser = false;
+    this.displayCreateBankAccount = false;
   }
 }

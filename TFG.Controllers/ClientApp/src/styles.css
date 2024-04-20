@@ -40,3 +40,7 @@ body {
 .p-fileupload .p-fileupload-content {
   border-color: transparent;
 }
+
+.p-button:active, .p-button:focus {
+  box-shadow: none;
+}

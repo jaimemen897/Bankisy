@@ -3,6 +3,21 @@
 <p-card>
   <div class="grid">
     @if (user) {
+      @if (bankAccounts && bankAccounts.length == 0) {
+        <p-dialog
+          [header]="'¡Hola ' + user.name + '! Parece que aún no tienes ninguna cuenta bancaria. Vamos a crear una para ti.'"
+          [visible]="displayDialogBankAccountNewUser" [modal]="true" [style]="{ width: '200vh', height: '70vh' }"
+          [draggable]="false" [resizable]="false">
+          <div class="flex flex-column justify-content-center align-items-center align-content-center h-full">
+            <p-button [ngClass]="{'hidden': displayCreateBankAccount}" label="Empecemos eligiendo el tipo de cuenta"
+                      (click)="goToCreateBankAccountNewUser()" class="m-2"></p-button>
+            <div [ngClass]="{'hidden': !displayCreateBankAccount}">
+              <app-bankaccount-create (onSave)="createBankAccount()"
+                                      (onCancel)="closeDialog()"></app-bankaccount-create>
+            </div>
+          </div>
+        </p-dialog>
+      }
       <div class="col-12 mb-4">
         <div class="flex flex-column sm:flex-row align-items-center gap-4">
           <div class="flex flex-column sm:flex-row align-items-center gap-3">
@@ -47,7 +62,7 @@
       </div>
 
       <!--CUENTAS-->
-      <p-panel [toggleable]="true" class="w-full p-3 mt-8">
+      <p-panel [toggleable]="true" class="w-full mt-8">
         <ng-template pTemplate="header">
           <div class="flex align-items-center gap-2">
             <p-avatar size="large" shape="square" image="assets/wallet.png"/>
@@ -141,10 +156,10 @@
 
       <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()" class="m-2"></p-button>
       <p-dialog header="Crear cuenta bancaria" [(visible)]="displayDialogBankAccount" [modal]="true"
-                [resizable]="false"
-                [contentStyle]="{height: '16rem'}" [closable]="false">
+                [resizable]="false" [contentStyle]="{height: '16rem'}" [closable]="false">
         <app-bankaccount-create (onSave)="createBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
       </p-dialog>
+
 
       <!--TRANSACCIONES-->
       <p-panel [toggleable]="true" class="w-full">
@@ -155,6 +170,9 @@
           </div>
         </ng-template>
         <ng-template pTemplate="icons">
+          <p-menu #transactionDate [model]="transactionsDate" [popup]="true"></p-menu>
+          <button pButton type="button" (click)="transactionDate.toggle($event)" icon="pi pi-bars" label="Filtrar"
+                  class="bg-transparent border-transparent text-black-alpha-80"></button>
           <button class="p-panel-header-icon p-link mr-2" (click)="refresh()">
             <span class="pi pi-refresh" [ngClass]="{'rotate-icon': updating}"></span>
           </button>
@@ -226,6 +244,12 @@
 
       <!--VER TARJETAS-->
       <p-button label="Ver tarjetas" routerLink="/card-panel" class="m-2"></p-button>
+
+    } @else {
+      <div class="card flex justify-content-center w-full h-screen">
+        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
+                           animationDuration=".5s"></p-progressSpinner>
+      </div>
     }
   </div>
 </p-card>

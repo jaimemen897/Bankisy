@@ -34,7 +34,7 @@ export class IndexService {
     return this.http.get<number>(url);
   }
 
-  getTransactionsByUserId(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string): Observable<Pagination<Transaction>> {
+  getTransactionsByUserId(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string): Observable<Pagination<Transaction>> {
     let url = `${this.apiUrl}/transactions?pageNumber=${pageNumber}&pageSize=${pageSize}`;
     if (orderBy) {
       url += `&orderBy=${orderBy}`;
@@ -44,6 +44,9 @@ export class IndexService {
     }
     if (search) {
       url += `&search=${search}`;
+    }
+    if (filter) {
+      url += `&filter=${filter}`;
     }
     return this.http.get<Pagination<Transaction>>(url).pipe(
       map(response => ({

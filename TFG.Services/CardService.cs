@@ -70,7 +70,8 @@ public class CardService(BankContext bankContext)
         var cardList = await bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount).ToListAsync();
         var cards = cardList
             .Where(card => !card.IsDeleted && card.UserId == userId)
-            .Select(card => _mapper.Map<CardResponseDto>(card)).ToList();
+            .Select(card => _mapper.Map<CardResponseDto>(card))
+            .OrderBy(card => card.CardNumber).ToList();
 
         return cards ?? throw new HttpException(404, "Cards not found");
     }
