@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
-import {DepositService} from "../services/deposit.service";
 import {InputTextModule} from "primeng/inputtext";
 import {FormsModule} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
+import {CheckoutService} from "../services/checkout.service";
+import {loadStripe} from "@stripe/stripe-js";
 
 @Component({
   selector: 'app-deposit',
@@ -16,21 +17,44 @@ import {ButtonModule} from "primeng/button";
   styleUrl: './deposit.component.css'
 })
 export class DepositComponent {
+  accountId: string;
+  amount: number = 10;
+  sessionID: string;
 
-  constructor(private depositService: DepositService) {
+  constructor(private checkoutService: CheckoutService) { }
+
+  async createCheckoutSession() {
+    this.checkoutService.createCheckoutSession(this.amount).subscribe(response => {
+      this.sessionID = response.id;
+      this.redirectToCheckout();
+    });
   }
 
-  amount: number;
+  async redirectToCheckout() {
+    const stripe = await loadStripe('pk_test_51P7eS8D74icxIHcUPVwMabVBGZqDBTx8YBhItr2Ht61LQuBLsaBnSCls9AfxtdmAb0Ju8uweakHj8K9v7dTeCwWP00cTmOWBgn');
+    if (stripe !== null) {
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: this.sessionID
+      });
 
-  deposit() {
-    const depositCreate = {
-      Source: 'tok_visa',
-      Amount: this.amount
-    };
-    this.depositService.deposit(depositCreate).subscribe(
-      () => {
-        console.log('Deposit successful');
+      if (error) {
+        console.error('Error:', error);
       }
-    );
+    } else {
+      console.error('Stripe failed to initialize.');
+    }
+  }
+
+  createConnectAccount() {
+    this.checkoutService.createConnectAccount().subscribe(response => {
+      console.log(response);
+      this.accountId = response.accountId;
+    });
+  }
+
+  transferFunds(accountId: string, amount: number){
+    this.checkoutService.transferFunds(accountId, amount).subscribe(response => {
+      console.log(response);
+    });
   }
 }

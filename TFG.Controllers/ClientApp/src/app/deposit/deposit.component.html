@@ -1,5 +1,22 @@
-<div class="flex w-full justify-content-center align-items-center h-full gap-2 p-8">
-  <input pInputText type="number" [(ngModel)]="amount" placeholder="Introduce una cantidad" />
-  <button pButton (click)="deposit()">Depositar</button>
-</div>
+<div class="card w-full flex justify-content-center align-items-center flex-column">
+  <div class="flex flex-column gap-2">
+    <h1>Depósito</h1>
 
+    <button pButton (click)="createCheckoutSession()">Ir a la página de pago</button>
+
+    <button pButton (click)="createConnectAccount()">Crear cuenta</button>
+
+    <div class="flex gap-4 justify-content-between align-items-center">
+      <label for="accountId">ID de la cuenta:</label>
+      <input pInputText type="text" id="accountId" [(ngModel)]="accountId">
+    </div>
+
+    <div class="flex gap-4 justify-content-between align-items-center">
+      <label for="amount">Cantidad a transferir:</label>
+      <input pInputText type="number" id="amount" [(ngModel)]="amount">
+    </div>
+
+    <button pButton (click)="transferFunds(accountId, amount)">Transferir fondos</button>
+  </div>
+
+</div>

@@ -13,6 +13,7 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    <None Include="wwwroot\checkout.js" />
   </ItemGroup>
 
   <ItemGroup>

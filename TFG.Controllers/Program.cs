@@ -27,7 +27,7 @@ builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<IndexService>();
 builder.Services.AddScoped<CardService>();
-builder.Services.AddScoped<StripeService>();
+builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(connectionString); });
 builder.Services.AddProblemDetails();
@@ -68,7 +68,7 @@ if (!app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 }
-
+Stripe.StripeConfiguration.ApiKey = "sk_test_51P7eS8D74icxIHcU4kn0dVmFuoZQhnf4gbAydb4NTzXzfI0oJTFjliD1H46CNyf2yrBuon0v3RwcHpJiUGkOZTYB00btmbH4Ic";
 /*app.UseHttpsRedirection();*/
 app.UseExceptionHandler();
 app.UseDefaultFiles();
