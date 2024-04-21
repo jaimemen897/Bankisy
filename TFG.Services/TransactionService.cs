@@ -194,6 +194,27 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         await ClearCache();
     }
 
+    public async Task AddPaymentIntent(decimal ammount, string iban)
+    {
+        var account = await bankContext.BankAccounts.FindAsync(iban) ??
+                      throw new HttpException(404, "Account origin not found");
+
+        var transaction = new Transaction
+        {
+            Amount = ammount,
+            Concept = "Ingreso por Stripe",
+            Date = DateTime.UtcNow,
+            IbanAccountOrigin = iban,
+            IbanAccountDestination = iban
+        };
+
+        account.TransactionsOrigin.Add(transaction);
+        account.Balance += transaction.Amount;
+
+        bankContext.Transactions.Add(transaction);
+        await bankContext.SaveChangesAsync();
+    }
+
     private async Task ClearCache()
     {
         var ids = await bankContext.Transactions.Select(t => t.Id).ToListAsync();

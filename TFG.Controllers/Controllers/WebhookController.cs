@@ -1,14 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
+using TFG.Services;
 
 namespace TFG.Controllers.Controllers;
 
-[Route("webhook")]
 [ApiController]
-public class WebhookController : Controller
+[Authorize(Policy = "Admin")]
+[Route("[controller]")]
+public class WebhookController (IndexService indexService) : Controller
 {
-    // This is your Stripe CLI webhook secret for testing your endpoint locally.
-    const string endpointSecret = "whsec_c8ea8f06c1f738abf20901f88e119db5d264856e45901ed14be89f10347ddcd1";
+    const string EndpointSecret = "whsec_c8ea8f06c1f738abf20901f88e119db5d264856e45901ed14be89f10347ddcd1";
 
     //stripe listen --forward-to localhost:5196/webhook
     [HttpPost]
@@ -18,18 +20,14 @@ public class WebhookController : Controller
         try
         {
             var stripeEvent = EventUtility.ConstructEvent(json,
-                Request.Headers["Stripe-Signature"], endpointSecret);
-
-            // Handle the event
+                Request.Headers["Stripe-Signature"], EndpointSecret);
+            
             if (stripeEvent.Type == Events.PaymentIntentSucceeded)
             {
-                var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-                Console.WriteLine("PaymentIntent was successful!");
-            }
-            else if (stripeEvent.Type == Events.PaymentMethodAttached)
-            {
-                var paymentMethod = stripeEvent.Data.Object as PaymentMethod;
-                Console.WriteLine("PaymentMethod was attached to a Customer!");
+                PaymentIntent paymentIntent = (PaymentIntent)stripeEvent.Data.Object;
+                var ammount = paymentIntent.Amount / 100;
+                var userId = Guid.Parse(paymentIntent.Metadata["userId"]);
+                await indexService.AddPaymentIntent(ammount, userId);
             }
             else
             {

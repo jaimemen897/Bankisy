@@ -70,6 +70,7 @@ if (!app.Environment.IsDevelopment())
 }
 Stripe.StripeConfiguration.ApiKey = "sk_test_51P7eS8D74icxIHcU4kn0dVmFuoZQhnf4gbAydb4NTzXzfI0oJTFjliD1H46CNyf2yrBuon0v3RwcHpJiUGkOZTYB00btmbH4Ic";
 /*app.UseHttpsRedirection();*/
+app.UseWebSockets();
 app.UseExceptionHandler();
 app.UseDefaultFiles();
 app.UseStaticFiles();

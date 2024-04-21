@@ -44,17 +44,4 @@ export class DepositComponent {
       console.error('Stripe failed to initialize.');
     }
   }
-
-  createConnectAccount() {
-    this.checkoutService.createConnectAccount().subscribe(response => {
-      console.log(response);
-      this.accountId = response.accountId;
-    });
-  }
-
-  transferFunds(accountId: string, amount: number){
-    this.checkoutService.transferFunds(accountId, amount).subscribe(response => {
-      console.log(response);
-    });
-  }
 }

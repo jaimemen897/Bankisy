@@ -2,13 +2,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Stripe.Checkout;
+using TFG.Services;
+using SessionService = Stripe.Checkout.SessionService;
 
 namespace TFG.Controllers.Controllers;
 
 [Route("create-checkout-session")]
 [Authorize]
 [ApiController]
-public class CheckoutApiController : Controller
+public class CheckoutApiController(IndexService indexService) : Controller
 {
     public class AmountModel
     {
@@ -18,6 +20,7 @@ public class CheckoutApiController : Controller
     [HttpPost]
     public ActionResult CreateCheckoutSession([FromBody] AmountModel amountModel)
     {
+        var user = indexService.GetMyself();
         var options = new SessionCreateOptions
         {
             PaymentMethodTypes = new List<string>
@@ -43,6 +46,13 @@ public class CheckoutApiController : Controller
             Mode = "payment",
             SuccessUrl = "https://localhost:44464/",
             CancelUrl = "https://localhost:44464/deposit",
+            PaymentIntentData = new SessionPaymentIntentDataOptions
+            {
+                Metadata = new Dictionary<string, string>
+                {
+                    { "userId", user.Id.ToString() }
+                }
+            }
         };
 
         var service = new SessionService();

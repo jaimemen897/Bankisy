@@ -32,6 +32,7 @@ export class NavbarComponent implements OnInit {
 
   user!: User;
   items: MenuItem[];
+  visibleSidebar: boolean = false;
 
   ngOnInit() {
     this.indexService.getUserByToken().subscribe(

@@ -15,12 +15,4 @@ export class CheckoutService {
     console.log(amount)
     return this.http.post<{ id: string }>(`${this.apiUrl}`, { amount: amount });
   }
-
-  createConnectAccount(): Observable<{ accountId: string }> {
-    return this.http.post<{ accountId: string }>(`${this.apiUrl}/create-connect-account`, {});
-  }
-
-  transferFunds(accountId: string, amount: number) {
-    return this.http.post(`${this.apiUrl}/transfer-funds`, { accountId, amount });
-  }
 }
