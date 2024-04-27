@@ -1,10 +1,11 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table (onLazyLoad)="lazyLoad($event)" [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']" [lazy]="true" [paginator]="true"
-           [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows"
-           [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [totalRecords]="totalRecords"
-           [value]="bankAccounts">
+  <p-table (onLazyLoad)="lazyLoad($event)" [value]="bankAccounts"
+           [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']" [lazy]="true"
+           [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows" [totalRecords]="totalRecords"
+           [showCurrentPageReport]="false" [showFirstLastIcon]="false"
+           [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="IBAN" style="width:22%">IBAN
@@ -19,7 +20,7 @@
         </th>
         <th pSortableColumn="isDeleted" style="width:22%">Estado</th>
         <th style="width:22%">
-          <p-button (onClick)="clearOrders()" [text]="true" class="w-12" label="Quitar orden"/>
+          <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
       </tr>
       <tr>
         <!--BUSCAR POR IBAN-->
@@ -31,12 +32,13 @@
         <th>
           <p-columnFilter [showMenu]="false" field="accountType" matchMode="in">
             <ng-template let-value pTemplate="filter">
-              <p-dropdown (onChange)="onSearchFilter($event)" [options]="accountsTypes" [showClear]="true"
-                          class="text-color-secondary" placeholder="Tipo de cuenta">
+              <p-multiSelect (onChange)="onSearchFilter($event)" [ngModel]="value" [options]="accountsTypes"
+                             [showHeader]="false" [style]="{'max-width': '15rem', 'width': '15rem'}" display="chip"
+                             placeholder="Tipo de cuenta" [maxSelectedLabels]="1" [selectionLimit]="1" [focusOnHover]="true">
                 <ng-template let-option pTemplate="item">
                   <p-tag [severity]="getSeverity(option)" [value]="option"></p-tag>
                 </ng-template>
-              </p-dropdown>
+              </p-multiSelect>
             </ng-template>
           </p-columnFilter>
         </th>
@@ -46,7 +48,7 @@
             <ng-template let-value pTemplate="filter">
               <p-multiSelect (onChange)="onSearchUser($event)" [ngModel]="value" [options]="users"
                              [showHeader]="false" [style]="{'max-width': '15rem', 'width': '15rem'}" display="chip"
-                             placeholder="Buscar por usuario">
+                             placeholder="Buscar por usuario" [focusOnHover]="true">
                 <ng-template let-option pTemplate="item">
                   <div class="inline-block vertical-align-middle">
                     <img [alt]="option" class="vertical-align-middle" src="assets/avatar.png" width="24"/>
@@ -59,7 +61,8 @@
         </th>
         <!--BUSCAR POR SALDO-->
         <th>
-          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="balance" pStyleClass="p-3 border-round-3xl border-0 bg-gray-200"
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="balance"
+                          pStyleClass="p-3 border-round-3xl border-0 bg-secondary"
                           placeholder="Saldo" type="text"/>
         </th>
         <!--BUSCAR POR ESTADO-->
@@ -68,7 +71,7 @@
         </th>
         <!--CLEAR-->
         <th>
-          <p-button (onClick)="clearFilters()" [text]="true" class="w-12" label="Limpiar filtros"/>
+          <p-button (onClick)="clearFilters()" text class="w-12" label="Limpiar filtros"/>
         </th>
       </tr>
     </ng-template>
@@ -92,8 +95,9 @@
           <p-tag [severity]="getBalanceColor(account.balance)" [value]="account.balance.toString() + '€'"></p-tag>
         </td>
         <td>
-          <i [ngClass]="{ 'text-green-500 pi-check-circle': !account.isDeleted, 'text-red-500 pi-times-circle': account.isDeleted }"
-             class="pi"></i>
+          <i
+            [ngClass]="{ 'text-green-500 pi-check-circle': !account.isDeleted, 'text-red-500 pi-times-circle': account.isDeleted }"
+            class="pi"></i>
         </td>
         <td>
           <div class="flex gap-2">
@@ -153,7 +157,8 @@
     <p-button (click)="goToCreateBankAccount()" label="Crear cuenta bancaria"></p-button>
   </div>
 
-  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: '21rem'}" [header]="headerSaveUpdateBankAccount"
+  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: '21rem'}"
+            [header]="headerSaveUpdateBankAccount"
             [modal]="true" [resizable]="false">
     <app-bankaccount-create (onCancel)="closeDialog()" (onSave)="saveBankAccount()"></app-bankaccount-create>
   </p-dialog>
@@ -169,9 +174,8 @@
         <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
         <p class="mb-0 text-left">{{ message.message }}</p>
         <div class="flex align-items-center justify-content-center gap-2 mt-4">
-          <button (click)="cd.accept()" class="w-8rem p-button-danger" label="Eliminar" pButton></button>
-          <button (click)="cd.reject()" class="p-button-danger p-button-outlined" label="Cancelar"
-                  pButton></button>
+          <p-button (click)="cd.accept()" label="Eliminar" styleClass="bg-red-500"/>
+          <p-button (click)="cd.reject()" label="Cancelar" styleClass="bg-gray-500"/>
         </div>
       </div>
     </ng-template>

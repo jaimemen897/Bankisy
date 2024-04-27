@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Message, MessageService} from "primeng/api";
 import {slideInAnimation} from "./route-animations";
 import {SocketService} from "./services/socket.service";
+import {DOCUMENT} from "@angular/common";
+
 
 @Component({
   selector: 'app-root',
@@ -11,8 +13,14 @@ import {SocketService} from "./services/socket.service";
 export class AppComponent implements OnInit {
   title = 'app';
   messages1: Message[] = [];
+  themeSelection: boolean = false;
 
-  constructor(private messageService: MessageService, private socketService: SocketService) {
+  constructor(@Inject(DOCUMENT) private document: Document, private messageService: MessageService, private socketService: SocketService) {
+    let theme = window.localStorage.getItem('theme');
+    if (theme){
+      this.themeSelection = theme == 'dark';
+      this.changeTheme(this.themeSelection);
+    }
   }
 
   ngOnInit() {
@@ -29,5 +37,12 @@ export class AppComponent implements OnInit {
 
   isInLoginOrRegister() {
     return window.location.href.includes('login') || window.location.href.includes('register');
+  }
+
+  changeTheme(state: boolean) {
+    let theme = state ? 'dark' : 'light';
+    window.localStorage.setItem('theme', theme);
+    let themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
+    themeLink.href = 'aura-' + theme + '-blue.css';
   }
 }

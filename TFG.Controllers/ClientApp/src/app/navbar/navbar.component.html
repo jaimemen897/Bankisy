@@ -1,36 +1,22 @@
 <p-menubar styleClass="bg-primary border-transparent border-noround">
   <ng-template pTemplate="start">
     @if (user) {
-      <button pButton type="button" label="Inicio" icon="pi pi-home" class="bg-transparent border-transparent"
-              [routerLink]="['/']"></button>
+      <p-button label="Inicio" icon="pi pi-home" [routerLink]="['/']"/>
       @if (user.role === 'Admin') {
         <p-menu #menu [popup]="true" [model]="items"></p-menu>
-        <button pButton type="button" label="Acciones" (click)="menu.toggle($event)"
-                class="bg-transparent border-transparent" icon="pi pi-th-large"></button>
+        <p-button label="Acciones" (click)="menu.toggle($event)" icon="pi pi-th-large"/>
       }
-      <button pButton type="button" label="Crear cuenta" icon="pi pi-plus-circle"
-              class="bg-transparent border-transparent"
-              [routerLink]="['/bankaccounts/create']"></button>
-      <button pButton type="button" label="Transferir" icon="pi pi-send" class="bg-transparent border-transparent"
-              [routerLink]="['/transactions/create']"></button>
-      <button pButton type="button" label="Bizum" icon="pi pi-mobile" class="bg-transparent border-transparent"
-              [routerLink]="['/bizum']"></button>
-      <button pButton type="button" label="Tarjetas" icon="pi pi-credit-card" class="bg-transparent border-transparent"
-              [routerLink]="['/card-panel']"></button>
-      <button pButton type="button" label="Ingresar" icon="pi pi-money-bill" class="bg-transparent border-transparent"
-              [routerLink]="['/deposit']"></button>
+      <p-button label="Crear cuenta" icon="pi pi-plus-circle" [routerLink]="['/bankaccounts/create']"/>
+      <p-button label="Transferir" icon="pi pi-send" [routerLink]="['/transactions/create']"/>
+      <p-button label="Bizum" icon="pi pi-mobile" [routerLink]="['/bizum']"/>
+      <p-button label="Tarjetas" icon="pi pi-credit-card" [routerLink]="['/card-panel']"/>
+      <p-button label="Ingresar" icon="pi pi-money-bill" [routerLink]="['/deposit']"/>
     }
   </ng-template>
 
   <ng-template pTemplate="end">
-    <button *ngIf="!isLogged()" [routerLink]="['/login']" class="bg-transparent border-transparent" icon="pi pi-sign-in"
-            label="Iniciar sesión" pButton
-            type="button"></button>
-
-    <button (click)="logout()" *ngIf="isLogged()" class="bg-transparent border-transparent " icon="pi pi-sign-out" label="Cerrar sesión"
-            pButton type="button"></button>
-    <button *ngIf="isLogged()" [routerLink]="['/profile']" class="bg-transparent border-transparent" icon="pi pi-user"
-            label="Perfil" pButton
-            type="button"></button>
+    <p-button *ngIf="!isLogged()" [routerLink]="['/login']" icon="pi pi-sign-in" label="Iniciar sesión"/>
+    <p-button (click)="logout()" *ngIf="isLogged()" icon="pi pi-sign-out" label="Cerrar sesión"/>
+    <p-button *ngIf="isLogged()" [routerLink]="['/profile']" icon="pi pi-user" label="Perfil"/>
   </ng-template>
 </p-menubar>

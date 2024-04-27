@@ -23,7 +23,7 @@
           <i class="pi pi-lock"></i>
         </th>
         <th>
-          <p-button (onClick)="clearOrders()" [text]="true" class="w-12" label="Quitar orden"/>
+          <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
         </th>
       </tr>
 
@@ -82,7 +82,7 @@
         </th>
         <!--CLEAR-->
         <th>
-          <p-button (onClick)="clearFilters()" [text]="true" class="w-12" label="Limpiar filtros"/>
+          <p-button (onClick)="clearFilters()" text class="w-12" label="Limpiar filtros"/>
         </th>
       </tr>
     </ng-template>
@@ -197,9 +197,8 @@
         <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
         <p class="mb-0 text-left">{{ message.message }}</p>
         <div class="flex align-items-center justify-content-center gap-2 mt-4">
-          <button (click)="cd.accept()" class="w-8rem p-button-danger" label="Eliminar" pButton></button>
-          <button (click)="cd.reject()" class="p-button-danger p-button-outlined" label="Cancelar"
-                  pButton></button>
+          <p-button (click)="cd.accept()" label="Eliminar" styleClass="bg-red-500"/>
+          <p-button (click)="cd.reject()" label="Cancelar" styleClass="bg-gray-500"/>
         </div>
       </div>
     </ng-template>

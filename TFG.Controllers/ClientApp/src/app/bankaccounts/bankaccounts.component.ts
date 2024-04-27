@@ -19,6 +19,8 @@ import {DialogModule} from "primeng/dialog";
 import {BankaccountCreateComponent} from "./bankaccount-create/bankaccount-create.component";
 import {AccountType} from "../models/AccountType";
 import {Transaction} from "../models/Transaction";
+import {StyleClassModule} from "primeng/styleclass";
+import {CascadeSelectModule} from "primeng/cascadeselect";
 
 @Component({
   selector: 'app-bankaccounts',
@@ -41,7 +43,9 @@ import {Transaction} from "../models/Transaction";
     BankaccountCreateComponent,
     DatePipe,
     NgIf,
-    NgStyle
+    NgStyle,
+    StyleClassModule,
+    CascadeSelectModule
   ],
   templateUrl: './bankaccounts.component.html',
   styleUrl: './bankaccounts.component.css'
@@ -109,7 +113,9 @@ export class BankaccountsComponent {
 
   //TIPO CUENTA
   onSearchFilter(event: any) {
-    let accountTypeTranslated = Object.keys(AccountType).find(key => AccountType[key as keyof typeof AccountType] === event.value) as keyof typeof AccountType;
+    console.log(event.value[0])
+    let accountTypeTranslated = Object.keys(AccountType).find(key => AccountType[key as keyof typeof AccountType] === event.value[0]) as keyof typeof AccountType;
+    console.log(accountTypeTranslated)
     this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, accountTypeTranslated).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;

@@ -1,4 +1,3 @@
-@import "primeng/resources/themes/aura-light-noir/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
@@ -21,10 +20,11 @@ body {
 }
 
 .p-dropdown {
-  border-radius: 1.5rem !important;
-  padding: 0.3rem !important;
-  background-color: var(--gray-200) !important;
-  border-color: var(--surface-0) !important;
+  padding: 0.4rem !important;
+  /*background-color: var(--gray-200) !important;*/
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
 .p-paginator .p-dropdown .p-dropdown-label {
@@ -46,8 +46,16 @@ body {
   box-shadow: none;
 }
 
-.p-inputtext:focus {
+.p-inputtext {
   border: none;
   outline: none;
   box-shadow: none;
 }
+
+.p-multiselect {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+

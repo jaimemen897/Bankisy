@@ -10,7 +10,8 @@
         <div class="inline-flex p-3">
           <div>
           <span class="p-input-filled m-2">
-          <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="name" id="name" pInputText placeholder="Nombre"
+          <input class="p-3 border-round-3xl border-0 bg-secondary" formControlName="name" id="name" pInputText
+                 placeholder="Nombre"
                  type="text">
           </span>
             @if (formGroup.controls['name'].invalid && formGroup.controls['name'].touched) {
@@ -24,7 +25,8 @@
           </div>
           <div>
           <span class="p-input-filled m-2">
-          <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="email" id="email" pInputText placeholder="Email"
+          <input class="p-3 border-round-3xl border-0 bg-secondary" formControlName="email" id="email" pInputText
+                 placeholder="Email"
                  type="text">
           </span>
             @if (formGroup.controls['email'].invalid && formGroup.controls['email'].touched) {
@@ -38,7 +40,8 @@
 
         <div class="inline-flex p-3">
           <div><span class="p-input-filled m-2">
-            <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="username" id="username" pInputText placeholder="Nombre de usuario"
+            <input class="p-3 border-round-3xl border-0 bg-secondary" formControlName="username" id="username"
+                   pInputText placeholder="Nombre de usuario"
                    type="text">
           </span>
             @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
@@ -51,7 +54,8 @@
             }</div>
 
           <div><span class="p-input-filled m-2">
-            <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="dni" id="dni" pInputText placeholder="DNI"
+            <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0 bg-secondary"
+                   formControlName="dni" id="dni" pInputText placeholder="DNI"
                    type="text">
           </span>
             @if (formGroup.controls['dni'].invalid && formGroup.controls['dni'].touched) {
@@ -69,7 +73,7 @@
         <div class="inline-flex p-3 justify-content-between">
           <div>
             <p-dropdown [options]="genders" formControlName="gender" placeholder="Selecciona un género"
-                        styleClass="ml-2 mr-2 w-16rem"/>
+                        styleClass="ml-2 mr-2 w-16rem bg-secondary border-round-3xl"/>
             @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
               <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
                 El género es obligatorio</p>
@@ -78,7 +82,8 @@
 
           <div>
             <span class="p-input-filled m-2">
-              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="phone" id="phone" pInputText
+              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-secondary"
+                     formControlName="phone" id="phone" pInputText
                      placeholder="Teléfono" type="tel">
             </span>
             @if (formGroup.controls['phone'].invalid && formGroup.controls['phone'].touched) {
@@ -95,9 +100,9 @@
         <div class="inline-flex p-3">
           <div>
             <span class="p-input-filled m-2">
-          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="password" id="password" pInputText pPassword
-                 placeholder="Contraseña" type="password">
-        </span>
+              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-secondary" type="password"
+                     formControlName="password" id="password" pInputText pPassword placeholder="Contraseña"/>
+            </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
                 La contraseña es obligatoria</p>
@@ -110,9 +115,9 @@
 
           <div>
             <span class="p-input-filled m-2">
-              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="confirmpassword" id="confirmpassword" pInputText
-                     pPassword
-                     placeholder="Confirmar contraseña" type="password">
+              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-secondary"
+                     formControlName="confirmpassword" id="confirmpassword" pInputText
+                     pPassword placeholder="Confirmar contraseña" type="password">
             </span>
             @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
               <p class="text-red-500 text-xs m-0 ml-3">
@@ -127,10 +132,10 @@
 
     <div class="mt-4 w-full">
       <div class="flex align-items-center justify-content-center w-full">
-        <p-button (click)="sendForm()" label="Crear cuenta"/>
+        <p-button (click)="sendForm()" rounded label="Crear cuenta"/>
       </div>
       <div class="flex align-items-center justify-content-center mt-2">
-        <p-button (click)="goBack()" [rounded]="true" [text]="true" label="Volver" severity="secondary"/>
+        <p-button (click)="goBack()" rounded text label="Volver" severity="secondary"/>
       </div>
     </div>
   </p-card>

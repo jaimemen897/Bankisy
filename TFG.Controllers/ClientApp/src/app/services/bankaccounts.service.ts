@@ -32,6 +32,7 @@ export class BankAccountService {
     if (isDeleted !== undefined && isDeleted !== null) {
       url += `&isDeleted=${!isDeleted}`;
     }
+    console.log(url);
     return this.http.get<Pagination<BankAccount>>(url).pipe(
       map(response => ({
         currentPage: response.currentPage,

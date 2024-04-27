@@ -1,10 +1,11 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table (onLazyLoad)="lazyLoad($event)" [globalFilterFields]="['concept', 'amount', 'ibanAccountOrigin', 'ibanAccountDestination']" [lazy]="true" [paginator]="true"
-           [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows"
-           [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '75rem' }" [totalRecords]="totalRecords"
-           [value]="transactions">
+  <p-table (onLazyLoad)="lazyLoad($event)"
+           [globalFilterFields]="['concept', 'amount', 'ibanAccountOrigin', 'ibanAccountDestination']" [lazy]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows" [showFirstLastIcon]="false" [value]="transactions"
+           [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '75rem' }" [totalRecords]="totalRecords"
+           [paginator]="true">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="concept" style="width:22%">Concepto
@@ -23,13 +24,14 @@
           <p-sortIcon field="date"/>
         </th>
         <th style="width:22%">
-          <p-button (onClick)="clearOrders()" [text]="true" class="w-12" label="Quitar orden"/>
+          <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
         </th>
       </tr>
       <tr>
         <!--BUSCAR POR CONCEPTO-->
         <th>
-          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="concept" placeholder="Buscar por concepto"
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="concept"
+                          placeholder="Buscar por concepto"
                           type="text"/>
         </th>
         <!--BUSCAR POR CANTIDAD-->
@@ -54,7 +56,7 @@
         </th>
         <!--CLEAR-->
         <th>
-          <p-button (onClick)="clearFilters()" [text]="true" class="w-12" label="Limpiar filtros"/>
+          <p-button (onClick)="clearFilters()" text class="w-12" label="Limpiar filtros"/>
         </th>
       </tr>
     </ng-template>
@@ -117,9 +119,8 @@
         <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
         <p class="mb-0 text-left">{{ message.message }}</p>
         <div class="flex align-items-center justify-content-center gap-2 mt-4">
-          <button (click)="cd.accept()" class="w-8rem p-button-danger" label="Eliminar" pButton></button>
-          <button (click)="cd.reject()" class="p-button-danger p-button-outlined" label="Cancelar"
-                  pButton></button>
+          <p-button (click)="cd.accept()" label="Eliminar" styleClass="p-button-danger"/>
+          <p-button (click)="cd.reject()" label="Cancelar" styleClass="p-button-secondary"/>
         </div>
       </div>
     </ng-template>

@@ -10,8 +10,8 @@
       <p-dropdown [options]="accountsTypes" [showClear]="true" emptyMessage="No se han encontrado tipos de cuenta"
                   formControlName="selectedAccountType" placeholder="Elegir tipo de cuenta"
                   styleClass="w-20rem"/>
-      <p-button (click)="saveChanges()" [label]="label" [rounded]="true" styleClass="w-full mt-4"></p-button>
-      <p-button (click)="cancel()" [rounded]="true" label="Cancelar" severity="danger" styleClass="w-full"></p-button>
+      <p-button (click)="saveChanges()" [label]="label" rounded styleClass="w-full mt-4"></p-button>
+      <p-button (click)="cancel()" rounded label="Cancelar" severity="danger" styleClass="w-full"></p-button>
     </form>
   </div>
 </div>
