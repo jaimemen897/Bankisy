@@ -12,11 +12,6 @@ namespace TFG.Controllers.Controllers;
 [ApiController]
 public class CheckoutApiController(IndexService indexService) : Controller
 {
-    public class AmountModel
-    {
-        public long Amount { get; set; }
-    }
-    
     [HttpPost]
     public ActionResult CreateCheckoutSession([FromBody] AmountModel amountModel)
     {
@@ -25,11 +20,11 @@ public class CheckoutApiController(IndexService indexService) : Controller
         {
             PaymentMethodTypes = new List<string>
             {
-                "card",
+                "card"
             },
             LineItems = new List<SessionLineItemOptions>
             {
-                new SessionLineItemOptions
+                new()
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
@@ -37,11 +32,11 @@ public class CheckoutApiController(IndexService indexService) : Controller
                         Currency = "eur",
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
-                            Name = "Stubborn Attachments",
-                        },
+                            Name = "Stubborn Attachments"
+                        }
                     },
-                    Quantity = 1,
-                },
+                    Quantity = 1
+                }
             },
             Mode = "payment",
             SuccessUrl = "https://localhost:44464/",
@@ -56,7 +51,7 @@ public class CheckoutApiController(IndexService indexService) : Controller
         };
 
         var service = new SessionService();
-        Session session = service.Create(options);
+        var session = service.Create(options);
 
         return Json(new { id = session.Id });
     }
@@ -66,11 +61,11 @@ public class CheckoutApiController(IndexService indexService) : Controller
     {
         var options = new AccountCreateOptions
         {
-            Type = "standard",
+            Type = "standard"
         };
 
         var service = new AccountService();
-        Account account = service.Create(options);
+        var account = service.Create(options);
 
         return Json(new { accountId = account.Id });
     }
@@ -82,12 +77,17 @@ public class CheckoutApiController(IndexService indexService) : Controller
         {
             Amount = amount,
             Currency = "usd",
-            Destination = accountId,
+            Destination = accountId
         };
 
         var service = new TransferService();
-        Transfer transfer = service.Create(options);
+        var transfer = service.Create(options);
 
         return Json(new { transferId = transfer.Id });
+    }
+
+    public class AmountModel
+    {
+        public long Amount { get; set; }
     }
 }

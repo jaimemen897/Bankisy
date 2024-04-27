@@ -4,12 +4,14 @@
       @if (!isNewUser) {
         <p-multiSelect [options]="users" formControlName="selectedUsers" optionLabel="name"
                        placeholder="Seleccione el usuario"
-                       display="chip" [showClear]="true" styleClass="w-20rem" emptyMessage="No se encontraron usuarios"/>
+                       display="chip" [showClear]="true" styleClass="w-20rem"
+                       emptyMessage="No se encontraron usuarios"/>
       }
-      <p-dropdown [options]="accountsTypes" formControlName="selectedAccountType" [showClear]="true"
-                  placeholder="Elegir tipo de cuenta" styleClass="w-20rem" emptyMessage="No se han encontrado tipos de cuenta"/>
-      <p-button [label]="label" [rounded]="true" (click)="saveChanges()" styleClass="w-full mt-4"></p-button>
-      <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()" styleClass="w-full"></p-button>
+      <p-dropdown [options]="accountsTypes" [showClear]="true" emptyMessage="No se han encontrado tipos de cuenta"
+                  formControlName="selectedAccountType" placeholder="Elegir tipo de cuenta"
+                  styleClass="w-20rem"/>
+      <p-button (click)="saveChanges()" [label]="label" [rounded]="true" styleClass="w-full mt-4"></p-button>
+      <p-button (click)="cancel()" [rounded]="true" label="Cancelar" severity="danger" styleClass="w-full"></p-button>
     </form>
   </div>
 </div>

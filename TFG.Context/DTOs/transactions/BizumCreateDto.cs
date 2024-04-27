@@ -12,9 +12,7 @@ public class BizumCreateDto
     [Range(0.01, double.MaxValue, ErrorMessage = "The amount must be greater than 0")]
     public decimal Amount { get; set; }
 
-    [Required]
-    public string PhoneNumberUserOrigin { get; set; }
+    [Required] public string PhoneNumberUserOrigin { get; set; }
 
-    [Required]
-    public string PhoneNumberUserDestination { get; set;}
+    [Required] public string PhoneNumberUserDestination { get; set; }
 }

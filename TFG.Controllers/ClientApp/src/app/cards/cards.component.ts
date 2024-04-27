@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {Router, RouterOutlet} from "@angular/router";
 import {ToastModule} from "primeng/toast";
 import {TableModule} from "primeng/table";
@@ -18,7 +18,6 @@ import {DialogModule} from "primeng/dialog";
 import {CardType} from "../models/CardType";
 import {Transaction} from "../models/Transaction";
 import {CardService} from "../services/card.service";
-import {User} from "../models/User";
 import {CreateCardComponent} from "./create-card/create-card.component";
 
 @Component({

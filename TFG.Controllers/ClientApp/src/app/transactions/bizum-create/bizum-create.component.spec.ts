@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { BizumCreateComponent } from './bizum-create.component';
+import {BizumCreateComponent} from './bizum-create.component';
 
 describe('BizumCreateComponent', () => {
   let component: BizumCreateComponent;
@@ -10,8 +10,8 @@ describe('BizumCreateComponent', () => {
     await TestBed.configureTestingModule({
       imports: [BizumCreateComponent]
     })
-    .compileComponents();
-    
+      .compileComponents();
+
     fixture = TestBed.createComponent(BizumCreateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

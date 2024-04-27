@@ -6,16 +6,16 @@
   <p-card>
     <div class="inline-flex p-6">
       <div class="col flex align-items-center justify-content-center">
-        <img src="assets/login-img.png" alt="login" class="w-5">
+        <img alt="login" class="w-5" src="assets/login-img.png">
       </div>
 
       <div class="col flex align-items-center justify-content-center flex-column">
         <h1 class="text-2xl font-bold text-center">Iniciar sesión</h1>
-        <form [formGroup]="formGroup" id="loginForm" class="mt-4">
+        <form [formGroup]="formGroup" class="mt-4" id="loginForm">
           <div class="flex flex-column">
             <span class="p-input-filled my-2">
-              <input id="username" formControlName="username" type="text" pInputText placeholder="Username"
-                     class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendLogin()">
+              <input (keyup.enter)="sendLogin()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="username" id="username" pInputText
+                     placeholder="Username" type="text">
             </span>
             @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
               <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -26,8 +26,8 @@
                 Máximo 50 caracteres</p>
             }
             <span class="p-input-filled my-2">
-              <input id="password" formControlName="password" type="password" pInputText placeholder="Password"
-                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendLogin()">
+              <input (keyup.enter)="sendLogin()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="password" id="password" pInputText
+                     placeholder="Password" type="password">
             </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -41,11 +41,11 @@
         </form>
 
         <div class="mt-4 w-full">
-          <div class="flex align-items-center justify-content-center w-full">
-            <button pButton label="Iniciar sesión" (click)="sendLogin()" class="bg-black-alpha-80 p-button-rounded border-transparent hover:bg-black-alpha-60"></button>
+          <div class="flex align-items-center justify-content-center w-full gap-1">
+            <p-button (click)="sendLogin()" label="Iniciar sesión" rounded></p-button>
           </div>
           <div class="flex align-items-center justify-content-center">
-            <p-button label="Registrarse" [text]="true" severity="secondary" [rounded]="true" routerLink="/register"/>
+            <p-button [text]="true" label="Registrarse" rounded routerLink="/register" severity="secondary"/>
           </div>
         </div>
       </div>

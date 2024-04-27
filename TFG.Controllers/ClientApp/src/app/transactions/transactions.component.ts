@@ -39,7 +39,7 @@ import {SocketService} from "../services/socket.service";
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.css'
 })
-export class TransactionsComponent implements OnInit{
+export class TransactionsComponent implements OnInit {
   constructor(private transactionService: TransactionsService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private socketService: SocketService) {
   }
 

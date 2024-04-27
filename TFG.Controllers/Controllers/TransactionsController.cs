@@ -11,9 +11,10 @@ namespace TFG.Controllers.Controllers;
 [Route("[controller]")]
 public class TransactionsController(TransactionService transactionService) : ControllerBase
 {
-    [HttpGet()]
+    [HttpGet]
     public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactions([FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false, [FromQuery] string? search = null)
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false,
+        [FromQuery] string? search = null)
     {
         return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, search);
     }
@@ -24,12 +25,12 @@ public class TransactionsController(TransactionService transactionService) : Con
         return await transactionService.GetTransaction(id);
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
         return await transactionService.CreateTransaction(transaction);
     }
-    
+
     [HttpPost("bizum/{userId}")]
     public async Task<ActionResult<BizumResponseDto>> CreateBizum(BizumCreateDto transaction, Guid userId)
     {

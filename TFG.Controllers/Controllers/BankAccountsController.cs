@@ -1,4 +1,3 @@
-using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.bankAccount;
@@ -13,7 +12,7 @@ namespace TFG.Controllers.Controllers;
 [Route("[controller]")]
 public class BankAccountsController(BankAccountService bankAccountService) : ControllerBase
 {
-    [HttpGet()]
+    [HttpGet]
     public async Task<ActionResult<Pagination<BankAccountResponseDto>>> GetBankAccounts([FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Iban", [FromQuery] bool descending = false,
         [FromQuery] string? search = null, [FromQuery] string? filter = null, [FromQuery] bool? isDeleted = null)
@@ -52,7 +51,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetBankAccountsByUserId(userId);
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {
         return await bankAccountService.CreateBankAccount(bankAccount);
@@ -71,14 +70,14 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         await bankAccountService.DeleteBankAccount(iban);
         return NoContent();
     }
-    
+
     [HttpPut("{iban}/active")]
     public async Task<ActionResult> ActiveBankAccount(string iban)
     {
         await bankAccountService.ActivateBankAccount(iban);
         return Ok();
     }
-    
+
     [HttpPost("{iban}/active-bizum/{userId}")]
     public async Task<ActionResult> ActiveBizum(string iban, Guid userId)
     {

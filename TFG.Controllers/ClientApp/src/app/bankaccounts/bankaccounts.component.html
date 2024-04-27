@@ -1,10 +1,10 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table [value]="bankAccounts" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
-           [rowsPerPageOptions]="[10, 25, 50]" (onLazyLoad)="lazyLoad($event)"
-           [totalRecords]="totalRecords" [rows]="rows" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}"
-           [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']">
+  <p-table (onLazyLoad)="lazyLoad($event)" [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']" [lazy]="true" [paginator]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows"
+           [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [totalRecords]="totalRecords"
+           [value]="bankAccounts">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="IBAN" style="width:22%">IBAN
@@ -19,22 +19,22 @@
         </th>
         <th pSortableColumn="isDeleted" style="width:22%">Estado</th>
         <th style="width:22%">
-          <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
+          <p-button (onClick)="clearOrders()" [text]="true" class="w-12" label="Quitar orden"/>
       </tr>
       <tr>
         <!--BUSCAR POR IBAN-->
         <th>
-          <p-columnFilter type="text" field="iban" (input)="onSearch($event)" placeholder="Buscar por IBAN"
-                          [showMenu]="false"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="iban" placeholder="Buscar por IBAN"
+                          type="text"/>
         </th>
         <!--BUSCAR POR ACCOUNT TYPE-->
         <th>
-          <p-columnFilter field="accountType" matchMode="in" [showMenu]="false">
-            <ng-template pTemplate="filter" let-value>
-              <p-dropdown [options]="accountsTypes" (onChange)="onSearchFilter($event)" placeholder="Tipo de cuenta"
-                          [showClear]="true" class="text-color-secondary">
+          <p-columnFilter [showMenu]="false" field="accountType" matchMode="in">
+            <ng-template let-value pTemplate="filter">
+              <p-dropdown (onChange)="onSearchFilter($event)" [options]="accountsTypes" [showClear]="true"
+                          class="text-color-secondary" placeholder="Tipo de cuenta">
                 <ng-template let-option pTemplate="item">
-                  <p-tag [value]="option" [severity]="getSeverity(option)"></p-tag>
+                  <p-tag [severity]="getSeverity(option)" [value]="option"></p-tag>
                 </ng-template>
               </p-dropdown>
             </ng-template>
@@ -42,14 +42,14 @@
         </th>
         <!--BUSCAR POR USUARIO-->
         <th>
-          <p-columnFilter field="users" matchMode="in" [showMenu]="false">
-            <ng-template pTemplate="filter" let-value>
-              <p-multiSelect [ngModel]="value" [options]="users" placeholder="Buscar por usuario"
-                             (onChange)="onSearchUser($event)" display="chip" [showHeader]="false"
-                             [style]="{'max-width': '15rem', 'width': '15rem'}">
+          <p-columnFilter [showMenu]="false" field="users" matchMode="in">
+            <ng-template let-value pTemplate="filter">
+              <p-multiSelect (onChange)="onSearchUser($event)" [ngModel]="value" [options]="users"
+                             [showHeader]="false" [style]="{'max-width': '15rem', 'width': '15rem'}" display="chip"
+                             placeholder="Buscar por usuario">
                 <ng-template let-option pTemplate="item">
                   <div class="inline-block vertical-align-middle">
-                    <img [alt]="option" src="assets/avatar.png" width="24" class="vertical-align-middle"/>
+                    <img [alt]="option" class="vertical-align-middle" src="assets/avatar.png" width="24"/>
                     <span class="ml-1 mt-1">{{ option }}</span>
                   </div>
                 </ng-template>
@@ -59,41 +59,41 @@
         </th>
         <!--BUSCAR POR SALDO-->
         <th>
-          <p-columnFilter type="text" field="balance" (input)="onSearch($event)" placeholder="Saldo"
-                          [showMenu]="false" pStyleClass="p-3 border-round-3xl border-0 bg-gray-200"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="balance" pStyleClass="p-3 border-round-3xl border-0 bg-gray-200"
+                          placeholder="Saldo" type="text"/>
         </th>
         <!--BUSCAR POR ESTADO-->
         <th>
-          <p-columnFilter type="boolean" field="isDeleted" [showClearButton]="false"></p-columnFilter>
+          <p-columnFilter [showClearButton]="false" field="isDeleted" type="boolean"></p-columnFilter>
         </th>
         <!--CLEAR-->
         <th>
-          <p-button label="Limpiar filtros" (onClick)="clearFilters()" [text]="true" class="w-12"/>
+          <p-button (onClick)="clearFilters()" [text]="true" class="w-12" label="Limpiar filtros"/>
         </th>
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-account>
+    <ng-template let-account pTemplate="body">
       <tr>
         <td>
           {{ account.iban }}
         </td>
         <td>
-          <p-tag [value]="getAccountName(account.accountType)" [severity]="getSeverity(account.accountType)"></p-tag>
+          <p-tag [severity]="getSeverity(account.accountType)" [value]="getAccountName(account.accountType)"></p-tag>
         </td>
         <td>
           <div class="inline-block vertical-align-middle">
             <div class="border-50 border-round inline-block">
-              <img [alt]="account.usersName" src="assets/avatar.png" width="24" class="vertical-align-middle"/>
+              <img [alt]="account.usersName" class="vertical-align-middle" src="assets/avatar.png" width="24"/>
               <span class="ml-1 mt-1">{{ account.usersName }}</span></div>
           </div>
         </td>
         <td>
-          <p-tag [value]="account.balance.toString() + '€'" [severity]="getBalanceColor(account.balance)"></p-tag>
+          <p-tag [severity]="getBalanceColor(account.balance)" [value]="account.balance.toString() + '€'"></p-tag>
         </td>
         <td>
-          <i class="pi"
-             [ngClass]="{ 'text-green-500 pi-check-circle': !account.isDeleted, 'text-red-500 pi-times-circle': account.isDeleted }"></i>
+          <i [ngClass]="{ 'text-green-500 pi-check-circle': !account.isDeleted, 'text-red-500 pi-times-circle': account.isDeleted }"
+             class="pi"></i>
         </td>
         <td>
           <div class="flex gap-2">
@@ -108,11 +108,11 @@
             </p-overlayPanel>
             <p-overlayPanel #transactionPanel>
               <ng-template pTemplate="content">
-                <p-scroller [items]="transactions" [itemSize]="5" scrollHeight="15rem"
-                            styleClass="border-1 surface-border" [style]="{'width': '200px', 'height': 'auto'}">
-                  <ng-template pTemplate="item" let-item let-options="options">
-                    <div class="flex inline-flex align-items-center p-2"
-                         [ngClass]="{'bg-gray-100': options.index % 2 === 0}">
+                <p-scroller [itemSize]="5" [items]="transactions" [style]="{'width': '200px', 'height': 'auto'}"
+                            scrollHeight="15rem" styleClass="border-1 surface-border">
+                  <ng-template let-item let-options="options" pTemplate="item">
+                    <div [ngClass]="{'bg-gray-100': options.index % 2 === 0}"
+                         class="flex inline-flex align-items-center p-2">
                       <div class="flex inline-flex w-full border-gray-50 border-1 p-2">
                         <span>{{ item.concept }} - {{ item.date | date: 'dd/MM' }} - {{ item.amount }}€</span>
                       </div>
@@ -122,25 +122,21 @@
               </ng-template>
             </p-overlayPanel>
 
-            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="secondary"
-                      pTooltip="Información"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"
-                      styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
-            <p-button icon="pi pi-pencil" (click)="goToEditBankAccount(account.iban)" severity="secondary"
-                      pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"
-                      styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
-            <p-button icon="pi pi-money-bill"
-                      (click)="getTransactionsByIban(account.iban, $event)"
-                      severity="secondary" pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom"
-                      [autoHide]="true" styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
-            <p-button (click)="deleteBankAccount(account.iban)" icon="pi pi-trash" severity="secondary"
-                      pTooltip="Borrar"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="!account.isDeleted"
-                      styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
-            <p-button (click)="activateBankAccount(account.iban)" icon="pi pi-undo" severity="secondary"
-                      pTooltip="Recuperar"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="account.isDeleted"
-                      styleClass="bg-black-alpha-80 border-transparent hover:bg-black-alpha-70"/>
+            <p-button (click)="infoPanel.toggle($event)" [autoHide]="true" [showDelay]="500"
+                      icon="pi pi-info-circle"
+                      pTooltip="Información" severity="secondary" tooltipPosition="bottom"/>
+            <p-button (click)="goToEditBankAccount(account.iban)" [autoHide]="true" [showDelay]="500"
+                      icon="pi pi-pencil" pTooltip="Editar" severity="secondary" tooltipPosition="bottom"/>
+            <p-button (click)="getTransactionsByIban(account.iban, $event)"
+                      [autoHide]="true"
+                      [showDelay]="500" icon="pi pi-money-bill" pTooltip="Transacciones" severity="secondary"
+                      tooltipPosition="bottom"/>
+            <p-button (click)="deleteBankAccount(account.iban)" *ngIf="!account.isDeleted" [autoHide]="true"
+                      [showDelay]="500"
+                      icon="pi pi-trash" pTooltip="Borrar" severity="secondary" tooltipPosition="bottom"/>
+            <p-button (click)="activateBankAccount(account.iban)" *ngIf="account.isDeleted" [autoHide]="true"
+                      [showDelay]="500"
+                      icon="pi pi-undo" pTooltip="Recuperar" severity="secondary" tooltipPosition="bottom"/>
           </div>
         </td>
       </tr>
@@ -154,17 +150,17 @@
   </p-table>
 
   <div class="flex justify-content-center align-items-center w-full p-6">
-    <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()"></p-button>
+    <p-button (click)="goToCreateBankAccount()" label="Crear cuenta bancaria"></p-button>
   </div>
 
-  <p-dialog [header]="headerSaveUpdateBankAccount" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
-            [contentStyle]="{height: '21rem'}" [closable]="false">
-    <app-bankaccount-create (onSave)="saveBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
+  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: '21rem'}" [header]="headerSaveUpdateBankAccount"
+            [modal]="true" [resizable]="false">
+    <app-bankaccount-create (onCancel)="closeDialog()" (onSave)="saveBankAccount()"></app-bankaccount-create>
   </p-dialog>
 
   <p-toast></p-toast>
   <p-confirmDialog #cd>
-    <ng-template pTemplate="headless" let-message>
+    <ng-template let-message pTemplate="headless">
       <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
         <div
           class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
@@ -173,9 +169,9 @@
         <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
         <p class="mb-0 text-left">{{ message.message }}</p>
         <div class="flex align-items-center justify-content-center gap-2 mt-4">
-          <button pButton label="Eliminar" (click)="cd.accept()" class="w-8rem p-button-danger"></button>
-          <button pButton label="Cancelar" (click)="cd.reject()"
-                  class="p-button-danger p-button-outlined"></button>
+          <button (click)="cd.accept()" class="w-8rem p-button-danger" label="Eliminar" pButton></button>
+          <button (click)="cd.reject()" class="p-button-danger p-button-outlined" label="Cancelar"
+                  pButton></button>
         </div>
       </div>
     </ng-template>

@@ -4,10 +4,10 @@
 
     <div class="flex gap-4 justify-content-between align-items-center mb-2">
       <label for="amount">Cantidad a ingresar</label>
-      <input pInputText type="number" id="amount" [(ngModel)]="amount">
+      <input [(ngModel)]="amount" id="amount" pInputText type="number">
     </div>
 
-    <button pButton label="Ir a la página de pago" (click)="createCheckoutSession()" class="w-full bg-black-alpha-90 text-white"></button>
+    <p-button (click)="createCheckoutSession()" label="Ir a la página de pago" styleClass="w-full"></p-button>
   </div>
 
 </div>

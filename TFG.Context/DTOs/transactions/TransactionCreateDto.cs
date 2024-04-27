@@ -12,9 +12,7 @@ public class TransactionCreateDto
     [Range(0.01, double.MaxValue, ErrorMessage = "The amount must be greater than 0")]
     public decimal Amount { get; set; }
 
-    [Required]
-    public string IbanAccountOrigin { get; set; }
+    [Required] public string IbanAccountOrigin { get; set; }
 
-    [Required]
-    public string IbanAccountDestination { get; set; }
+    [Required] public string IbanAccountDestination { get; set; }
 }

@@ -15,10 +15,11 @@ namespace TFG.Services;
 public class SessionService(UsersService usersService, IHttpContextAccessor httpContextAccessor)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
-    
+
     public async Task<string> Login(UserLoginDto userLogin)
     {
-        var user = await usersService.ValidateUserCredentials(userLogin.Username, userLogin.Password) ?? throw new HttpException(401, "Invalid credentials");
+        var user = await usersService.ValidateUserCredentials(userLogin.Username, userLogin.Password) ??
+                   throw new HttpException(401, "Invalid credentials");
 
         return GetToken(user);
     }
@@ -29,21 +30,23 @@ public class SessionService(UsersService usersService, IHttpContextAccessor http
         var userMapped = _mapper.Map<User>(user);
         return GetToken(userMapped);
     }
-    
+
     public async Task<UserResponseDto> GetUserByToken(string token)
     {
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-        var email = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value ?? throw new HttpException(401, "Invalid token");
+        var email = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value ??
+                    throw new HttpException(401, "Invalid token");
         return await usersService.GetUserByEmail(email) ?? throw new HttpException(404, "User not found");
     }
-    
+
     public async Task<UserResponseDto> GetMyself()
     {
-        var token = httpContextAccessor.HttpContext!.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last() ?? throw new HttpException(401, "Token not found");
+        var token = httpContextAccessor.HttpContext!.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ")
+            .Last() ?? throw new HttpException(401, "Token not found");
         return await GetUserByToken(token);
     }
-    
+
     public static string GetToken(User user)
     {
         var claims = new List<Claim>
@@ -52,13 +55,15 @@ public class SessionService(UsersService usersService, IHttpContextAccessor http
             new(ClaimTypes.Role, user.Role.ToString())
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ?? throw new HttpException(500, "JWT_SECRET not found")));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
+                                                                  throw new HttpException(500,
+                                                                      "JWT_SECRET not found")));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: Environment.GetEnvironmentVariable("JWT_ISSUER"),
-            audience: Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-            claims: claims,
+            Environment.GetEnvironmentVariable("JWT_ISSUER"),
+            Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+            claims,
             expires: DateTime.Now.AddDays(4),
             signingCredentials: credentials);
 

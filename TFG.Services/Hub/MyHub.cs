@@ -1,8 +1,8 @@
-namespace TFG.Services.Hub;
-
 using Microsoft.AspNetCore.SignalR;
 
-public class MyHub : Hub
+namespace TFG.Services.Hub;
+
+public class MyHub : Microsoft.AspNetCore.SignalR.Hub
 {
     public async Task SendMessage(string user, string message)
     {

@@ -7,9 +7,9 @@
                     emptyMessage="No se han encontrado usuarios" (onChange)="loadBankAccounts()"/>
       }
 
-      <p-dropdown [options]="bankAccounts" formControlName="selectedBankAccount" optionLabel="iban" [showClear]="true"
-                  placeholder="Elegir cuenta de destino" styleClass="w-20rem"
-                  emptyMessage="Sin cuentas bancarias"/>
+      <p-dropdown [options]="bankAccounts" [showClear]="true" emptyMessage="Sin cuentas bancarias" formControlName="selectedBankAccount"
+                  optionLabel="iban" placeholder="Elegir cuenta de destino"
+                  styleClass="w-20rem"/>
 
       @if (bankAccounts && bankAccounts.length > 0) {
         <p-dropdown [options]="cardsType" formControlName="selectedCardType" [showClear]="true"
@@ -25,8 +25,8 @@
           </p-inputOtp>
         </div>
       }
-      <p-button [label]="label" [rounded]="true" (click)="saveChanges()" styleClass="w-full mt-6"></p-button>
-      <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()" styleClass="w-full"></p-button>
+      <p-button (click)="saveChanges()" [label]="label" [rounded]="true" styleClass="w-full mt-6"></p-button>
+      <p-button (click)="cancel()" [rounded]="true" label="Cancelar" severity="danger" styleClass="w-full"></p-button>
     </form>
   </div>
 </div>

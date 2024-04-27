@@ -1,4 +1,4 @@
-<p-menubar styleClass="bg-black-alpha-90 border-transparent border-noround">
+<p-menubar styleClass="bg-primary border-transparent border-noround">
   <ng-template pTemplate="start">
     @if (user) {
       <button pButton type="button" label="Inicio" icon="pi pi-home" class="bg-transparent border-transparent"
@@ -23,14 +23,14 @@
   </ng-template>
 
   <ng-template pTemplate="end">
-    <button pButton type="button" label="Iniciar sesión" icon="pi pi-sign-in"
-            class="bg-transparent border-transparent" [routerLink]="['/login']"
-            *ngIf="!isLogged()"></button>
+    <button *ngIf="!isLogged()" [routerLink]="['/login']" class="bg-transparent border-transparent" icon="pi pi-sign-in"
+            label="Iniciar sesión" pButton
+            type="button"></button>
 
-    <button pButton type="button" label="Cerrar sesión" (click)="logout()" icon="pi pi-sign-out"
-            class="bg-transparent border-transparent " *ngIf="isLogged()"></button>
-    <button pButton type="button" label="Perfil" icon="pi pi-user"
-            class="bg-transparent border-transparent" [routerLink]="['/profile']"
-            *ngIf="isLogged()"></button>
+    <button (click)="logout()" *ngIf="isLogged()" class="bg-transparent border-transparent " icon="pi pi-sign-out" label="Cerrar sesión"
+            pButton type="button"></button>
+    <button *ngIf="isLogged()" [routerLink]="['/profile']" class="bg-transparent border-transparent" icon="pi pi-user"
+            label="Perfil" pButton
+            type="button"></button>
   </ng-template>
 </p-menubar>

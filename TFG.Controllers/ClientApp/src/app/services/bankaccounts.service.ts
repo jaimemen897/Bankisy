@@ -66,7 +66,7 @@ export class BankAccountService {
   }
 
   //TRANSACTIONS FOR BANK ACCOUNT
-  getTransactionsByIban(iban: string): Observable<Transaction[]>{
+  getTransactionsByIban(iban: string): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
   }
 

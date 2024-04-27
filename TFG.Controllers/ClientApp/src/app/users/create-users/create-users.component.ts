@@ -1,13 +1,7 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import {BankAccountService} from "../../services/bankaccounts.service";
 import {UserService} from "../../services/users.service";
-import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
-import {IndexService} from "../../services/index.service";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {User} from "../../models/User";
-import {AccountType} from "../../models/AccountType";
-import {BankAccountCreate} from "../../models/BankAccountCreate";
 import {Gender} from "../../models/Gender";
 import {UserCreate} from "../../models/UserCreate";
 import {ButtonModule} from "primeng/button";

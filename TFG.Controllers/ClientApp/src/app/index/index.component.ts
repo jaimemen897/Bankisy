@@ -366,7 +366,7 @@ export class IndexComponent implements OnInit {
     });
   }
 
-  activeBizum(iban: string){
+  activeBizum(iban: string) {
     this.indexService.activeBizum(iban).subscribe(data => {
       this.messageService.add({
         severity: 'success',

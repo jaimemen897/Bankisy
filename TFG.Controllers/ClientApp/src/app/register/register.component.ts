@@ -56,7 +56,6 @@ export class RegisterComponent {
   }, {validators: passwordMatchValidator});
 
 
-
   sendForm() {
     if (this.formGroup.valid) {
       let genderTranslated = Object.keys(Gender).find(key => Gender[key as keyof typeof Gender] === this.formGroup.value.gender) as keyof typeof Gender;

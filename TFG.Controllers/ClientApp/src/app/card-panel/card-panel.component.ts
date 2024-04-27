@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Card} from "../models/Card";
-import {CardService} from "../services/card.service";
 import {MessageService} from "primeng/api";
 import {CardModule} from "primeng/card";
 import {RouterOutlet} from "@angular/router";
@@ -15,8 +14,8 @@ import {MenuModule} from "primeng/menu";
 import {CardType} from "../models/CardType";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {TableModule} from "primeng/table";
-import {Transaction} from "../models/Transaction";
 import {OverlayPanelModule} from "primeng/overlaypanel";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @Component({
   selector: 'app-card-panel',
@@ -34,12 +33,13 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
     ScrollPanelModule,
     TableModule,
     OverlayPanelModule,
-    DatePipe
+    DatePipe,
+    ProgressSpinnerModule
   ],
   templateUrl: './card-panel.component.html',
   styleUrl: './card-panel.component.css'
 })
-export class CardPanelComponent implements OnInit{
+export class CardPanelComponent implements OnInit {
 
   constructor(private messageService: MessageService, private indexService: IndexService) {
   }
@@ -56,23 +56,31 @@ export class CardPanelComponent implements OnInit{
   }
 
   showPin(card: Card) {
-    this.messageService.add({severity:'info', summary:'PIN', detail: card.pin});
+    this.messageService.add({severity: 'info', summary: 'PIN', detail: card.pin});
   }
 
   showCvv(card: Card) {
-    this.messageService.add({severity:'info', summary:'CVV', detail: card.cvv});
+    this.messageService.add({severity: 'info', summary: 'CVV', detail: card.cvv});
   }
 
   blockCard(card: Card) {
     this.indexService.blockCard(card.cardNumber).subscribe(() => {
-      this.messageService.add({severity:'info', summary:'Tarjeta bloqueada', detail: 'Tarjeta bloqueada correctamente'});
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Tarjeta bloqueada',
+        detail: 'Tarjeta bloqueada correctamente'
+      });
       this.refresh();
     });
   }
 
   unblockCard(card: Card) {
     this.indexService.unblockCard(card.cardNumber).subscribe(() => {
-      this.messageService.add({severity:'info', summary:'Tarjeta desbloqueada', detail: 'Tarjeta desbloqueada correctamente'});
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Tarjeta desbloqueada',
+        detail: 'Tarjeta desbloqueada correctamente'
+      });
       this.refresh();
     });
   }
