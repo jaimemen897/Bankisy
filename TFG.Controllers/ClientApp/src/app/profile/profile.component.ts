@@ -123,7 +123,7 @@ export class ProfileComponent implements OnInit {
       severity: 'info',
       summary: 'Subido',
       detail: 'Avatar subido',
-      life: 3000,
+      life: 2000,
       closable: false
     });
     this.indexService.getUserByToken().subscribe(user => {
@@ -137,7 +137,7 @@ export class ProfileComponent implements OnInit {
         severity: 'info',
         summary: 'Eliminado',
         detail: 'Avatar eliminado',
-        life: 3000,
+        life: 2000,
         closable: false
       });
       this.indexService.getUserByToken().subscribe(user => {

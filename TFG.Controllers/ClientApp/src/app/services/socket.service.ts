@@ -1,22 +1,29 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import {io} from "socket.io-client";
+import * as signalR from '@microsoft/signalr';
+import {MessageService} from "primeng/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
-  private socket: any;
+  constructor(private messageService: MessageService) {
+  }
+  private hubConnection: signalR.HubConnection;
 
-  /*constructor() {
-    this.socket = io('http://localhost:5196/transactions');
+  public startConnection = () => {
+    this.hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl('http://localhost:5196/myHub')
+      .build();
+
+    this.hubConnection
+      .start()
+      .then(() => console.log('Connection success, waiting for messages'))
+      .catch(err => console.log('Error while starting connection: ' + err));
   }
 
-  listenForTransactions(): Observable<any> {
-    return new Observable(observer => {
-      this.socket.on('transaction', (data: any) => {
-        observer.next(data);
-      });
+  public transferNotification = () => {
+    this.hubConnection.on('ReceiveMessage', (user, message) => {
+      this.messageService.add({severity:'info', summary: user, detail: message, life: 2000, closable: false});
     });
-  }*/
+  }
 }

@@ -121,7 +121,7 @@ export class TransactionsComponent implements OnInit{
           severity: 'info',
           summary: 'Eliminada',
           detail: 'La transacción ha sido eliminada',
-          life: 3000,
+          life: 2000,
           closable: false
         });
         this.transactionService.deleteTransaction(id).subscribe(() => {
@@ -136,7 +136,7 @@ export class TransactionsComponent implements OnInit{
           severity: 'error',
           summary: 'Cancelar',
           detail: 'No se ha eliminado',
-          life: 3000,
+          life: 2000,
           closable: false
         });
       }

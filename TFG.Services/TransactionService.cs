@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using TFG.Context.Context;
@@ -6,14 +7,16 @@ using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
+using TFG.Services.Hub;
 using TFG.Services.mappers;
 using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class TransactionService(BankContext bankContext, IMemoryCache cache)
+public class TransactionService(BankContext bankContext, IMemoryCache cache, IHubContext<MyHub> hubContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+    private readonly IHubContext<MyHub> _hubContext = hubContext;
     private SocketIOClient.SocketIO _socketIo;
 
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
@@ -139,6 +142,11 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
         accountDestination.Balance += transaction.Amount;
 
         await bankContext.SaveChangesAsync();
+        
+        var recipientUsername = accountDestination.Users.FirstOrDefault()?.Username ?? "";
+        
+        await _hubContext.Clients.User(recipientUsername).SendAsync("ReceiveMessage", "Transferencia recibida",
+            $"Se ha recibido una transferencia de {transaction.Amount}€");
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
 
