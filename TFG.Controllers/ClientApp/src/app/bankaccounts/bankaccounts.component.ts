@@ -171,7 +171,7 @@ export class BankaccountsComponent {
           severity: 'info',
           summary: 'Eliminada',
           detail: 'Cuenta eliminada',
-          life: 3000,
+          life: 2000,
           closable: false
         });
         this.bankAccountService.deleteBankAccount(iban).subscribe(() => {
@@ -186,7 +186,7 @@ export class BankaccountsComponent {
           severity: 'error',
           summary: 'Cancelar',
           detail: 'No se ha eliminado',
-          life: 3000,
+          life: 2000,
           closable: false
         });
       }
@@ -205,7 +205,7 @@ export class BankaccountsComponent {
       severity: 'info',
       summary: 'Activada',
       detail: 'Cuenta activada',
-      life: 3000,
+      life: 2000,
       closable: false
     });
   }

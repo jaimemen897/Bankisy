@@ -155,7 +155,7 @@ export class UsersComponent {
           severity: 'info',
           summary: 'Eliminado',
           detail: 'Usuario eliminado',
-          life: 3000,
+          life: 2000,
           closable: false
         });
         this.userService.deleteUser(id).subscribe(() => {
@@ -170,7 +170,7 @@ export class UsersComponent {
           severity: 'error',
           summary: 'Cancelar',
           detail: 'No se ha eliminado',
-          life: 3000,
+          life: 2000,
           closable: false
         });
       }
@@ -182,7 +182,7 @@ export class UsersComponent {
       severity: 'info',
       summary: 'Subido',
       detail: 'Avatar subido',
-      life: 3000,
+      life: 2000,
       closable: false
     });
 

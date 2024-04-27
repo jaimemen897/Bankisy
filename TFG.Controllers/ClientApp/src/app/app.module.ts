@@ -15,6 +15,7 @@ import {AuthInterceptor} from "./interceptors/auth.interceptor";
 import {UserService} from "./services/users.service";
 import {ErrorHttpInterceptor} from "./interceptors/error-http.interceptor";
 import {NavbarComponent} from "./navbar/navbar.component";
+import {NgxStripeModule} from "ngx-stripe";
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {NavbarComponent} from "./navbar/navbar.component";
     LoginComponent,
     BrowserAnimationsModule,
     MessagesModule,
-    NavbarComponent
+    NavbarComponent,
+    NgxStripeModule.forRoot('pk_test_51P7eS8D74icxIHcUPVwMabVBGZqDBTx8YBhItr2Ht61LQuBLsaBnSCls9AfxtdmAb0Ju8uweakHj8K9v7dTeCwWP00cTmOWBgn')
   ],
   providers: [MessageService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

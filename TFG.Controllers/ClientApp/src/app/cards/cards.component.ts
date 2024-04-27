@@ -190,7 +190,7 @@ export class CardComponent {
           severity: 'info',
           summary: 'Eliminada',
           detail: 'Tarjeta eliminada correctamente',
-          life: 3000,
+          life: 2000,
           closable: false
         });
         this.cardService.deleteCard(cardNumber).subscribe(() => {
@@ -205,7 +205,7 @@ export class CardComponent {
           severity: 'error',
           summary: 'Cancelar',
           detail: 'No se ha eliminado',
-          life: 3000,
+          life: 2000,
           closable: false
         });
       }
@@ -278,7 +278,7 @@ export class CardComponent {
         severity: 'success',
         summary: 'Tarjeta renovada',
         detail: 'Tarjeta renovada correctamente',
-        life: 3000,
+        life: 2000,
         closable: false
       });
     });
@@ -298,7 +298,7 @@ export class CardComponent {
             severity: 'info',
             summary: 'Bloqueada',
             detail: 'Tarjeta bloqueada correctamente',
-            life: 3000,
+            life: 2000,
             closable: false
           });
         });
@@ -308,7 +308,7 @@ export class CardComponent {
           severity: 'error',
           summary: 'Cancelar',
           detail: 'No se ha bloqueado',
-          life: 3000,
+          life: 2000,
           closable: false
         });
       }
@@ -325,7 +325,7 @@ export class CardComponent {
         severity: 'info',
         summary: 'Desbloqueada',
         detail: 'Tarjeta desbloqueada correctamente',
-        life: 3000,
+        life: 2000,
         closable: false
       });
     });
@@ -341,7 +341,7 @@ export class CardComponent {
         severity: 'success',
         summary: 'Activada',
         detail: 'Tarjeta activada correctamente',
-        life: 3000,
+        life: 2000,
         closable: false
       });
     });

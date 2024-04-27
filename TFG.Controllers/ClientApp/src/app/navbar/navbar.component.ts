@@ -9,6 +9,7 @@ import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {IndexService} from "../services/index.service";
 import {User} from "../models/User";
 import {MenuModule} from "primeng/menu";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
   selector: 'app-navbar',
@@ -20,18 +21,20 @@ import {MenuModule} from "primeng/menu";
     DropdownModule,
     ToastModule,
     ConfirmPopupModule,
-    MenuModule
+    MenuModule,
+    ConfirmDialogModule
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit {
 
-  constructor(private confirmationService: ConfirmationService, private indexService: IndexService) {
+  constructor(private confirmationService: ConfirmationService, private indexService: IndexService, private messageService: MessageService) {
   }
 
   user!: User;
   items: MenuItem[];
+  visibleSidebar: boolean = false;
 
   ngOnInit() {
     this.indexService.getUserByToken().subscribe(
@@ -58,7 +61,7 @@ export class NavbarComponent implements OnInit {
         label: 'Tarjetas',
         icon: 'pi pi-credit-card',
         routerLink: ['/cards']
-      },
+      }
 
     ];
   }
@@ -81,17 +84,4 @@ export class NavbarComponent implements OnInit {
   reject() {
     this.confirmPopup.reject();
   }
-
-  confirm(event: Event) {
-    event.stopImmediatePropagation();
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: '¿Estás seguro?',
-      accept: () => {
-        this.logout();
-      },
-
-    });
-  }
-
 }

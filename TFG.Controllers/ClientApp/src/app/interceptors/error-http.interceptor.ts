@@ -7,7 +7,8 @@ import {Location} from "@angular/common";
 
 @Injectable()
 export class ErrorHttpInterceptor implements HttpInterceptor {
-  constructor(private router: Router, private messageService: MessageService, private location: Location) {}
+  constructor(private router: Router, private messageService: MessageService, private location: Location) {
+  }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(catchError(err => {
@@ -15,14 +16,17 @@ export class ErrorHttpInterceptor implements HttpInterceptor {
         this.router.navigate(['login']);
       }
       if (err instanceof HttpErrorResponse && err.status === 403) {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'No tienes permisos para acceder a esta página'});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No tienes permisos para acceder a esta página'
+        });
         this.location.back();
       }
       if (err instanceof HttpErrorResponse && err.status === 500) {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error'});
-        this.location.back();
+        this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'Ha ocurrido un error', life: 1000});
+        this.router.navigate(['/']);
       }
-
       return throwError(err);
     }));
   }

@@ -1,0 +1,13 @@
+<div class="card w-full flex justify-content-center align-items-center flex-column">
+  <div class="flex flex-column gap-2">
+    <h1>Ingresar dinero</h1>
+
+    <div class="flex gap-4 justify-content-between align-items-center mb-2">
+      <label for="amount">Cantidad a ingresar</label>
+      <input pInputText type="number" id="amount" [(ngModel)]="amount">
+    </div>
+
+    <button pButton label="Ir a la página de pago" (click)="createCheckoutSession()" class="w-full bg-black-alpha-90 text-white"></button>
+  </div>
+
+</div>

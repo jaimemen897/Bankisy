@@ -235,12 +235,6 @@ export class IndexService {
       if (error.error.title === 'Account destination not found') {
         this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de destino no encontrada'});
       }
-    } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
-      });
     }
     return throwError(() => error);
   }

@@ -162,13 +162,6 @@ export class CardService {
           detail: 'Cuenta de destino no encontrada'
         });
       }
-    } else {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        closable: false,
-        detail: 'Ha ocurrido un error inténtelo de nuevo más tarde'
-      });
     }
     return throwError(() => error);
   }

@@ -24,6 +24,11 @@ public class IndexService(
     UsersService usersService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+    
+    public UserResponseDto GetMyself()
+    {
+        return sessionService.GetMyself().Result;
+    }
 
     //BANK ACCOUNTS
     public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId()
@@ -275,6 +280,13 @@ public class IndexService(
     {
         var user = await sessionService.GetMyself();
         return await usersService.DeleteAvatar(user.Id);
+    }
+    
+    //PAYMENT INTENT
+    public async Task AddPaymentIntent(decimal ammount, Guid userId)
+    {
+        var bankAccount = await bankAccountService.GetPrincipalAccount(userId);
+        await transactionService.AddPaymentIntent(ammount, bankAccount.Iban);
     }
     
     //PRIVATE METHODS
