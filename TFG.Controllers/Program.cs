@@ -69,6 +69,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("User",
         policy => policy.RequireAssertion(context => context.User.IsInRole("User") || context.User.IsInRole("Admin")))
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+
 builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
+using TFG.Context.DTOs.transactions;
 using TFG.Services;
 
 namespace TFG.Controllers.Controllers;

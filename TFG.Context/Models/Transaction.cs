@@ -19,7 +19,7 @@ public class Transaction
     public decimal Amount { get; set; }
     
     [Column("iban_account_origin"), ForeignKey("BankAccountOriginIban")]
-    public string IbanAccountOrigin { get; set; }
+    public string? IbanAccountOrigin { get; set; }
 
     [Column("iban_account_destination"), ForeignKey("BankAccountDestinationIban")]
     public string IbanAccountDestination { get; set; }

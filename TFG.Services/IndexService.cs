@@ -286,7 +286,12 @@ public class IndexService(
     public async Task AddPaymentIntent(decimal ammount, Guid userId)
     {
         var bankAccount = await bankAccountService.GetPrincipalAccount(userId);
-        await transactionService.AddPaymentIntent(ammount, bankAccount.Iban);
+        IncomeCreateDto incomeCreateDto = new IncomeCreateDto()
+        {
+            Amount = ammount,
+            IbanAccountDestination = bankAccount.Iban
+        };
+        await transactionService.AddPaymentIntent(incomeCreateDto);
     }
     
     //PRIVATE METHODS

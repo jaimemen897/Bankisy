@@ -13,11 +13,10 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class TransactionService(BankContext bankContext, IMemoryCache cache, IHubContext<MyHub> hubContext)
+public class TransactionService(BankContext bankContext, IMemoryCache cache)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
-    private readonly IHubContext<MyHub> _hubContext = hubContext;
-    private SocketIOClient.SocketIO _socketIo;
+    private readonly IHubContext<MyHub> _hubContext;
 
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
         bool descending, string? search = null)
@@ -31,12 +30,6 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
             throw new HttpException(400, "Invalid orderBy parameter");
         }
 
-        /*var cacheKey = $"GetTransactions-{pageNumber}-{pageSize}-{orderBy}-{descending}";
-        if (cache.TryGetValue(cacheKey, out Pagination<TransactionResponseDto>? transactions))
-        {
-            if (transactions != null) return transactions;
-        }*/
-
         var transactionsQuery = bankContext.Transactions.AsQueryable();
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -49,9 +42,6 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         var paginatedTransactions = await transactionsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
             transaction => _mapper.Map<TransactionResponseDto>(transaction));
-
-        /*var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, paginatedTransactions, cacheEntryOptions);*/
 
         return paginatedTransactions;
     }
@@ -87,11 +77,6 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         var transactionDto = await CreateTransactionPay(account, accountDestination, transactionCreateDto);
 
         await ClearCache();
-
-        /*_socketIo = new SocketIOClient.SocketIO("http://localhost:5196");
-        _socketIo.ConnectAsync().Wait();
-
-        await _socketIo.EmitAsync("transaction", transactionDto);*/
 
         return transactionDto;
     }
@@ -142,11 +127,12 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         accountDestination.Balance += transaction.Amount;
 
         await bankContext.SaveChangesAsync();
-        
+
         var recipientUsername = accountDestination.Users.FirstOrDefault()?.Username ?? "";
-        
+
         await _hubContext.Clients.User(recipientUsername).SendAsync("ReceiveMessage", "Transferencia recibida",
             $"Se ha recibido una transferencia de {transaction.Amount}€");
+
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
 
@@ -202,18 +188,18 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         await ClearCache();
     }
 
-    public async Task AddPaymentIntent(decimal ammount, string iban)
+    public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto)
     {
-        var account = await bankContext.BankAccounts.FindAsync(iban) ??
+        var account = await bankContext.BankAccounts.FindAsync(incomeCreateDto.IbanAccountDestination) ??
                       throw new HttpException(404, "Account origin not found");
 
         var transaction = new Transaction
         {
-            Amount = ammount,
+            Amount = incomeCreateDto.Amount,
             Concept = "Ingreso por Stripe",
             Date = DateTime.UtcNow,
-            IbanAccountOrigin = iban,
-            IbanAccountDestination = iban
+            IbanAccountOrigin = null,
+            IbanAccountDestination = account.Iban
         };
 
         account.TransactionsOrigin.Add(transaction);
@@ -226,7 +212,6 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     private async Task ClearCache()
     {
         var ids = await bankContext.Transactions.Select(t => t.Id).ToListAsync();
-        /*cache.Remove("GetTransactions-1-10-Id-False");*/
         foreach (var id in ids)
         {
             cache.Remove("GetTransaction-" + id);
