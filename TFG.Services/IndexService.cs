@@ -285,6 +285,12 @@ public class IndexService(
     //PAYMENT INTENT
     public async Task AddPaymentIntent(decimal ammount, Guid userId)
     {
+        var user = await sessionService.GetMyself();
+        if (userId != user.Id)
+        {
+            throw new HttpException(403, "You are not the owner of the account");
+        }
+        
         var bankAccount = await bankAccountService.GetPrincipalAccount(userId);
         IncomeCreateDto incomeCreateDto = new IncomeCreateDto()
         {

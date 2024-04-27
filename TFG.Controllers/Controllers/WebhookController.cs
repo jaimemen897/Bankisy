@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using TFG.Context.DTOs.transactions;
 using TFG.Services;
 
 namespace TFG.Controllers.Controllers;
 
 [ApiController]
-[Authorize(Policy = "Admin")]
 [Route("[controller]")]
 public class WebhookController (IndexService indexService) : Controller
 {
@@ -29,10 +27,6 @@ public class WebhookController (IndexService indexService) : Controller
                 var ammount = paymentIntent.Amount / 100;
                 var userId = Guid.Parse(paymentIntent.Metadata["userId"]);
                 await indexService.AddPaymentIntent(ammount, userId);
-            }
-            else
-            {
-                Console.WriteLine("Unhandled event type: {0}", stripeEvent.Type);
             }
 
             return Ok();

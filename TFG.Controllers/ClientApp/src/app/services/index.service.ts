@@ -228,6 +228,13 @@ export class IndexService {
           detail: 'Cuenta de destino no encontrada o no acepta Bizum'
         });
       }
+      if (error.error.title === 'You are not the owner of the account') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No eres el propietario de la cuenta'
+        });
+      }
     } else if (error.status === 404) {
       if (error.error.title === 'Account origin not found') {
         this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de origen no encontrada'});

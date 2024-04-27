@@ -202,7 +202,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
             IbanAccountDestination = account.Iban
         };
 
-        account.TransactionsOrigin.Add(transaction);
+        account.TransactionsDestination.Add(transaction);
         account.Balance += transaction.Amount;
 
         bankContext.Transactions.Add(transaction);

@@ -12,7 +12,6 @@ export class CheckoutService {
   constructor(private http: HttpClient) { }
 
   createCheckoutSession(amount: number): Observable<{ id: string }> {
-    console.log(amount)
     return this.http.post<{ id: string }>(`${this.apiUrl}`, { amount: amount });
   }
 }
