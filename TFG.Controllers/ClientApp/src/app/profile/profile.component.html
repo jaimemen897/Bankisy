@@ -1,7 +1,7 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="flex justify-content-center mt-4">
-  <form [formGroup]="formGroup" id="registerForm" class="flex flex-column gap-4 w-50rem">
+  <form [formGroup]="formGroup" class="flex flex-column gap-4 w-50rem" id="registerForm">
     <h1>Perfil</h1>
 
     <div class="inline-flex flex-column gap-4">
@@ -9,8 +9,8 @@
       <div class="inline-flex gap-3">
         <div>
             <span class="p-input-filled">
-              <input id="name" formControlName="name" type="text" pInputText placeholder="Nombre"
-                     class="p-3 border-round-3xl border-0 bg-gray-200">
+              <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="name" id="name" pInputText placeholder="Nombre"
+                     type="text">
             </span>
           @if (formGroup.controls['name'].invalid && formGroup.controls['name'].touched) {
             <p *ngIf="formGroup.controls['name'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -23,8 +23,8 @@
         </div>
         <div>
             <span class="p-input-filled">
-              <input id="email" formControlName="email" type="text" pInputText placeholder="Email"
-                     class="p-3 border-round-3xl border-0 bg-gray-200">
+              <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="email" id="email" pInputText placeholder="Email"
+                     type="text">
             </span>
           @if (formGroup.controls['email'].invalid && formGroup.controls['email'].touched) {
             <p *ngIf="formGroup.controls['email'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -37,8 +37,8 @@
 
       <div class="inline-flex gap-3">
         <div><span class="p-input-filled">
-            <input id="username" formControlName="username" type="text" pInputText placeholder="Username"
-                   class="p-3 border-round-3xl border-0 bg-gray-200">
+            <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="username" id="username" pInputText placeholder="Username"
+                   type="text">
           </span>
           @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
             <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -50,8 +50,8 @@
           }</div>
 
         <div><span class="p-input-filled">
-            <input id="dni" formControlName="dni" type="text" pInputText placeholder="DNI" (input)="validateDNI($event)"
-                   class="p-3 border-round-3xl border-0 bg-gray-200">
+            <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="dni" id="dni" pInputText placeholder="DNI"
+                   type="text">
           </span>
           @if (formGroup.controls['dni'].invalid && formGroup.controls['dni'].touched) {
             <p *ngIf="formGroup.controls['dni'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -68,8 +68,8 @@
       <div class="inline-flex gap-3">
         <div>
             <span class="p-input-filled">
-          <input id="phone" formControlName="phone" type="text" pInputText placeholder="Teléfono"
-                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="phone" id="phone" pInputText
+                 placeholder="Teléfono" type="text">
         </span>
           @if (formGroup.controls['phone'].invalid && formGroup.controls['phone'].touched) {
             <p *ngIf="formGroup.controls['phone'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -82,7 +82,7 @@
         </div>
 
         <div>
-          <p-dropdown formControlName="gender" [options]="genders" placeholder="Selecciona un género"
+          <p-dropdown [options]="genders" formControlName="gender" placeholder="Selecciona un género"
                       styleClass="w-16rem"/>
           @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
             <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -94,8 +94,8 @@
       <div class="inline-flex gap-3">
         <div>
             <span class="p-input-filled">
-          <input pPassword id="password" formControlName="password" type="password" pInputText placeholder="Contraseña"
-                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="password" id="password" pInputText pPassword
+                 placeholder="Contraseña" type="password">
         </span>
           @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
             <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -109,9 +109,9 @@
 
         <div>
             <span class="p-input-filled">
-          <input pPassword id="confirmpassword" formControlName="confirmpassword" type="password" pInputText
-                 placeholder="Confirmar contraseña"
-                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="confirmpassword" id="confirmpassword" pInputText
+                 pPassword
+                 placeholder="Confirmar contraseña" type="password">
         </span>
           @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
             <p class="text-red-500 text-xs m-0 ml-3">
@@ -127,19 +127,16 @@
     <img [src]="avatar" alt="User avatar" class="rounded-full w-14rem h-14rem border-round-lg"
          style="object-fit: cover"/>
 
-    <p-splitButton icon="pi pi-camera" (onClick)="up.toggle($event)" [model]="items" pTooltip="Subir avatar"
-                   [showDelay]="500" [style]="{backgroundColor: 'black', width: '14rem'}" [autoHide]="true"
-                   tooltipPosition="bottom" styleClass="w-full mt-2" rounded>
+    <p-splitButton (onClick)="up.toggle($event)" [autoHide]="true" [model]="items" [showDelay]="500"
+                   [style]="{backgroundColor: 'black', width: '14rem'}" icon="pi pi-camera" pTooltip="Subir avatar"
+                   rounded styleClass="w-full mt-2" tooltipPosition="bottom">
     </p-splitButton>
 
     <p-overlayPanel #up>
       <div class="flex justify-content-center">
-        <p-fileUpload name="avatar" url="http://localhost:5196/index/avatar" accept="image/*" [multiple]="false"
-                      (onUpload)="onUpload()" chooseLabel="Elegir" uploadLabel="Enviar" cancelLabel="Cancelar"
-                      method="put" invalidFileTypeMessageDetail="Solo se permiten imágenes"
-                      [chooseStyleClass]="'bg-black-alpha-90 border-transparent hover:bg-black-alpha-70'"
-                      [uploadStyleClass]="'bg-black-alpha-90 border-transparent hover:bg-black-alpha-70'"
-                      [cancelStyleClass]="'bg-black-alpha-90 border-transparent hover:bg-black-alpha-70'">
+        <p-fileUpload (onUpload)="onUpload()" [multiple]="false" accept="image/*" cancelLabel="Cancelar"
+                      chooseLabel="Elegir" invalidFileTypeMessageDetail="Solo se permiten imágenes" method="put" name="avatar"
+                      uploadLabel="Enviar" url="http://localhost:5196/index/avatar">
           <ng-template pTemplate="content">
             <div class="flex flex-column align-items-center gap-2">
               <i class="pi pi-upload text-5xl"></i>
@@ -154,9 +151,9 @@
 
 <div class="mt-4 w-full">
   <div class="flex align-items-center justify-content-center w-full">
-    <p-button label="Guardar cambios" (click)="sendForm()" [rounded]="true" styleClass="bg-black-alpha-90 border-transparent hover:bg-black-alpha-70"/>
+    <p-button (click)="sendForm()" label="Guardar cambios" rounded/>
   </div>
   <div class="flex align-items-center justify-content-center mt-2">
-    <p-button label="Volver" (click)="goBack()" severity="secondary" [rounded]="true" [text]="true"/>
+    <p-button (click)="goBack()" label="Volver" rounded severity="secondary" text/>
   </div>
 </div>

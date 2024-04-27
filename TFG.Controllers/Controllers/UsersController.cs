@@ -11,9 +11,10 @@ namespace TFG.Controllers.Controllers;
 [Authorize(Policy = "Admin")]
 public class UsersController(UsersService usersService) : ControllerBase
 {
-    [HttpGet()]
+    [HttpGet]
     public async Task<ActionResult<Pagination<UserResponseDto>>> GetUsers([FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Name", [FromQuery] bool descending = false, [FromQuery] string? search = null)
+        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Name", [FromQuery] bool descending = false,
+        [FromQuery] string? search = null)
     {
         return await usersService.GetUsers(pageNumber, pageSize, orderBy, descending, search);
     }
@@ -23,14 +24,14 @@ public class UsersController(UsersService usersService) : ControllerBase
     {
         return await usersService.GetUserAsync(id);
     }
-    
+
     [HttpGet("all")]
     public async Task<ActionResult<UserResponseDto[]>> GetAllUsers()
     {
         return await usersService.GetAllUsers();
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<ActionResult<UserResponseDto>> CreateUser(UserCreateDto user)
     {
         return await usersService.CreateUser(user);
@@ -41,14 +42,14 @@ public class UsersController(UsersService usersService) : ControllerBase
     {
         return await usersService.UpdateUser(id, user);
     }
-    
+
     [HttpPut("{id}/avatar")]
     public async Task<ActionResult<UserResponseDto>> UpdateUserAvatar(Guid id, [FromForm] IFormFile avatar)
     {
         var host = $"{Request.Scheme}://{Request.Host}";
         return await usersService.UploadAvatar(id, avatar, host);
     }
-    
+
     [HttpDelete("{id}/avatar")]
     public async Task<ActionResult<UserResponseDto>> DeleteUserAvatar(Guid id)
     {

@@ -1,6 +1,6 @@
 export class BizumCreate {
-    concept: string;
-    amount: number;
-    phoneNumberUserOrigin: string;
-    phoneNumberUserDestination: string;
+  concept: string;
+  amount: number;
+  phoneNumberUserOrigin: string;
+  phoneNumberUserDestination: string;
 }

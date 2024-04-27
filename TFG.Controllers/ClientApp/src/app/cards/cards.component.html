@@ -1,10 +1,10 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table [value]="cards" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
-           [rowsPerPageOptions]="[10, 25, 50]" (onLazyLoad)="lazyLoad($event)"
-           [totalRecords]="totalRecords" [rows]="rows" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}"
-           [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']">
+  <p-table (onLazyLoad)="lazyLoad($event)" [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']" [lazy]="true" [paginator]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows"
+           [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [totalRecords]="totalRecords"
+           [value]="cards">
     <ng-template pTemplate="header">
 
       <tr>
@@ -23,26 +23,26 @@
           <i class="pi pi-lock"></i>
         </th>
         <th>
-          <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
+          <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
         </th>
       </tr>
 
       <tr>
         <!--BUSCAR POR NÚMERO DE TARJETA-->
         <th>
-          <p-columnFilter type="text" field="cardNumber" (input)="onSearch($event)" placeholder="Número"
-                          [showMenu]="false"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="cardNumber" placeholder="Número"
+                          type="text"/>
         </th>
         <!--BUSCAR POR TIPO DE TARJETA-->
         <th>
-          <p-columnFilter field="cardType" matchMode="in" [showMenu]="false" [showClearButton]="false"
-                          (input)="onSearchFilter($event)">
-            <ng-template pTemplate="filter" let-value>
-              <p-dropdown [options]="cardsType" (onChange)="onSearchFilter($event)"
-                          placeholder="Tipo" [showClear]="true" class="text-color-secondary"
-                          [style]="{'max-width': '10rem', 'width': '10rem'}">
+          <p-columnFilter (input)="onSearchFilter($event)" [showClearButton]="false" [showMenu]="false" field="cardType"
+                          matchMode="in">
+            <ng-template let-value pTemplate="filter">
+              <p-dropdown (onChange)="onSearchFilter($event)" [options]="cardsType"
+                          [showClear]="true" [style]="{'max-width': '10rem', 'width': '10rem'}" class="text-color-secondary"
+                          placeholder="Tipo">
                 <ng-template let-option pTemplate="item">
-                  <p-tag [value]="option" [severity]="getSeverity(option)"></p-tag>
+                  <p-tag [severity]="getSeverity(option)" [value]="option"></p-tag>
                 </ng-template>
               </p-dropdown>
             </ng-template>
@@ -50,16 +50,16 @@
         </th>
         <!--BUSCAR POR USUARIO-->
         <th>
-          <p-columnFilter field="username" matchMode="in" [showMenu]="false">
-            <ng-template pTemplate="filter" let-value>
-              <p-multiSelect [ngModel]="value" [options]="users" placeholder="Nombre"
-                             (onChange)="onSearchUser($event)" display="chip" [showHeader]="false"
-                             [style]="{'max-width': '10rem', 'width': '10rem'}">
+          <p-columnFilter [showMenu]="false" field="username" matchMode="in">
+            <ng-template let-value pTemplate="filter">
+              <p-multiSelect (onChange)="onSearchUser($event)" [ngModel]="value" [options]="users"
+                             [showHeader]="false" [style]="{'max-width': '10rem', 'width': '10rem'}" display="chip"
+                             placeholder="Nombre">
                 <ng-template let-option pTemplate="item">
                   <div class="inline-block vertical-align-middle">
                     <img [alt]="option"
                          [src]="option.avatar ? option.avatar : 'assets/avatar.png'"
-                         width="24" class="vertical-align-middle"/>
+                         class="vertical-align-middle" width="24"/>
                     <span class="ml-1 mt-1">{{ option }}</span>
                   </div>
                 </ng-template>
@@ -69,25 +69,25 @@
         </th>
         <!--BUSCAR POR CUENTA BANCARIA-->
         <th>
-          <p-columnFilter type="text" field="bankAccount" (input)="onSearch($event)" placeholder="Buscar por cuenta"
-                          [showMenu]="false"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="bankAccount" placeholder="Buscar por cuenta"
+                          type="text"/>
         </th>
         <!--BUSCAR POR ACTIVA-->
         <th>
-          <p-columnFilter type="boolean" field="isDeleted" [showClearButton]="false"></p-columnFilter>
+          <p-columnFilter [showClearButton]="false" field="isDeleted" type="boolean"></p-columnFilter>
         </th>
         <!--BUSCAR POR BLOQUEADA-->
         <th>
-          <p-columnFilter type="boolean" field="isBlocked" [showClearButton]="false"></p-columnFilter>
+          <p-columnFilter [showClearButton]="false" field="isBlocked" type="boolean"></p-columnFilter>
         </th>
         <!--CLEAR-->
         <th>
-          <p-button label="Limpiar filtros" (onClick)="clearFilters()" [text]="true" class="w-12"/>
+          <p-button (onClick)="clearFilters()" text class="w-12" label="Limpiar filtros"/>
         </th>
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-card>
+    <ng-template let-card pTemplate="body">
       <tr>
         <!--NUMERO DE TARJETA-->
         <td>
@@ -95,14 +95,14 @@
         </td>
         <!--TIPO DE TARJETA-->
         <td>
-          <p-tag [value]="getCardTypeValue(card.cardType)" [severity]="getSeverity(card.cardType)"></p-tag>
+          <p-tag [severity]="getSeverity(card.cardType)" [value]="getCardTypeValue(card.cardType)"></p-tag>
         </td>
         <!--USUARIO-->
         <td>
           <div class="inline-block vertical-align-middle">
-            <img alt="Imagen de usuario"
-                 [src]="card.user.avatar ? card.user.avatar : 'assets/avatar.png'"
-                 width="24" class="vertical-align-middle"/>
+            <img [src]="card.user.avatar ? card.user.avatar : 'assets/avatar.png'"
+                 alt="Imagen de usuario"
+                 class="vertical-align-middle" width="24"/>
             <span class="ml-1 mt-1">{{ card.user.name }}</span>
           </div>
         </td>
@@ -112,13 +112,13 @@
         </td>
         <!--ACTIVA-->
         <td>
-          <i class="pi"
-             [ngClass]="{ 'text-green-500 pi-check-circle': !card.isDeleted, 'text-red-500 pi-times-circle': card.isDeleted }"></i>
+          <i [ngClass]="{ 'text-green-500 pi-check-circle': !card.isDeleted, 'text-red-500 pi-times-circle': card.isDeleted }"
+             class="pi"></i>
         </td>
         <!--BLOQUEADA-->
         <td>
-          <i class="pi"
-             [ngClass]="{ 'text-green-500 pi-check-circle': card.isBlocked, 'text-red-500 pi-times-circle': !card.isBlocked }"></i>
+          <i [ngClass]="{ 'text-green-500 pi-check-circle': card.isBlocked, 'text-red-500 pi-times-circle': !card.isBlocked }"
+             class="pi"></i>
         </td>
         <!--ACCIONES-->
         <td>
@@ -134,36 +134,36 @@
                 <p class="text-left">Usuario: {{ card.user.name }}</p>
                 <p class="text-left">Cuenta bancaria: {{ card.bankAccount.iban }}</p>
                 <p class="text-left">Activa:
-                  <i class="pi"
-                     [ngClass]="{ 'text-green-500 pi-check-circle': !card.isDeleted, 'text-red-500 pi-times-circle': card.isDeleted }"></i>
+                  <i [ngClass]="{ 'text-green-500 pi-check-circle': !card.isDeleted, 'text-red-500 pi-times-circle': card.isDeleted }"
+                     class="pi"></i>
                 </p>
                 <p class="text-left">Bloqueada: <i
-                  class="pi"
-                  [ngClass]="{ 'text-green-500 pi-check-circle': card.isBlocked, 'text-red-500 pi-times-circle': !card.isBlocked }"></i>
+                  [ngClass]="{ 'text-green-500 pi-check-circle': card.isBlocked, 'text-red-500 pi-times-circle': !card.isBlocked }"
+                  class="pi"></i>
                 </p>
               </ng-template>
             </p-overlayPanel>
 
             <!--ACCIONES-->
-            <p-button (click)="infoPanel.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            <p-button icon="pi pi-pencil" (click)="goToEditCard(card.cardNumber)" severity="warning"
-                      pTooltip="Editar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            <p-button (click)="renovateCard(card.cardNumber)" icon="pi pi-refresh" severity="secondary"
-                      pTooltip="Renovar"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-            <p-button (click)="blockCard(card.cardNumber)" icon="pi pi-ban" severity="help"
-                      pTooltip="Bloquear"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="!card.isBlocked"/>
-            <p-button (click)="unblockCard(card.cardNumber)" icon="pi pi-unlock" severity="success"
-                      pTooltip="Desbloquear"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="card.isBlocked"/>
-            <p-button (click)="activateCard(card.cardNumber)" icon="pi pi-check" severity="success"
-                      pTooltip="Activar"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="card.isDeleted"/>
-            <p-button (click)="deleteCard(card.cardNumber)" icon="pi pi-trash" severity="danger"
-                      pTooltip="Borrar"
-                      [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" *ngIf="!card.isDeleted"/>
+            <p-button (click)="infoPanel.toggle($event)" [autoHide]="true" [showDelay]="500" icon="pi pi-info-circle"
+                      pTooltip="Información" severity="info" tooltipPosition="bottom"/>
+            <p-button (click)="goToEditCard(card.cardNumber)" [autoHide]="true" [showDelay]="500"
+                      icon="pi pi-pencil" pTooltip="Editar" severity="warning" tooltipPosition="bottom"/>
+            <p-button (click)="renovateCard(card.cardNumber)" [autoHide]="true" [showDelay]="500"
+                      icon="pi pi-refresh"
+                      pTooltip="Renovar" severity="secondary" tooltipPosition="bottom"/>
+            <p-button (click)="blockCard(card.cardNumber)" *ngIf="!card.isBlocked" [autoHide]="true"
+                      [showDelay]="500"
+                      icon="pi pi-ban" pTooltip="Bloquear" severity="help" tooltipPosition="bottom"/>
+            <p-button (click)="unblockCard(card.cardNumber)" *ngIf="card.isBlocked" [autoHide]="true"
+                      [showDelay]="500"
+                      icon="pi pi-unlock" pTooltip="Desbloquear" severity="success" tooltipPosition="bottom"/>
+            <p-button (click)="activateCard(card.cardNumber)" *ngIf="card.isDeleted" [autoHide]="true"
+                      [showDelay]="500"
+                      icon="pi pi-check" pTooltip="Activar" severity="success" tooltipPosition="bottom"/>
+            <p-button (click)="deleteCard(card.cardNumber)" *ngIf="!card.isDeleted" [autoHide]="true"
+                      [showDelay]="500"
+                      icon="pi pi-trash" pTooltip="Borrar" severity="danger" tooltipPosition="bottom"/>
           </div>
         </td>
       </tr>
@@ -178,17 +178,17 @@
     </ng-template>
   </p-table>
 
-  <p-button label="Crear tarjeta" (click)="goToCreateCard()"></p-button>
+  <p-button (click)="goToCreateCard()" label="Crear tarjeta"></p-button>
 
-  <p-dialog [header]="headerSaveUpdateCard" [(visible)]="displayDialog" [modal]="true" [resizable]="false"
-            [contentStyle]="{height: '30rem'}" [closable]="false">
-    <app-create-card (onSave)="saveCard()" (onCancel)="closeDialog()"></app-create-card>
+  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: '30rem'}" [header]="headerSaveUpdateCard"
+            [modal]="true" [resizable]="false">
+    <app-create-card (onCancel)="closeDialog()" (onSave)="saveCard()"></app-create-card>
   </p-dialog>
 
   <!--DELETE DIALOG-->
   <p-toast></p-toast>
   <p-confirmDialog #cd>
-    <ng-template pTemplate="headless" let-message>
+    <ng-template let-message pTemplate="headless">
       <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
         <div
           class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
@@ -197,9 +197,8 @@
         <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
         <p class="mb-0 text-left">{{ message.message }}</p>
         <div class="flex align-items-center justify-content-center gap-2 mt-4">
-          <button pButton label="Eliminar" (click)="cd.accept()" class="w-8rem p-button-danger"></button>
-          <button pButton label="Cancelar" (click)="cd.reject()"
-                  class="p-button-danger p-button-outlined"></button>
+          <p-button (click)="cd.accept()" label="Eliminar" styleClass="bg-red-500"/>
+          <p-button (click)="cd.reject()" label="Cancelar" styleClass="bg-gray-500"/>
         </div>
       </div>
     </ng-template>

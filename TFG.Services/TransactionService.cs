@@ -13,11 +13,10 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class TransactionService(BankContext bankContext, IMemoryCache cache, IHubContext<MyHub> hubContext)
+public class TransactionService(BankContext bankContext, IMemoryCache cache)
 {
+    private readonly IHubContext<MyHub> _hubContext;
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
-    private readonly IHubContext<MyHub> _hubContext = hubContext;
-    private SocketIOClient.SocketIO _socketIo;
 
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
         bool descending, string? search = null)
@@ -27,31 +26,18 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         if (!typeof(TransactionResponseDto).GetProperties()
                 .Any(p => string.Equals(p.Name, orderBy, StringComparison.CurrentCultureIgnoreCase)))
-        {
             throw new HttpException(400, "Invalid orderBy parameter");
-        }
-
-        /*var cacheKey = $"GetTransactions-{pageNumber}-{pageSize}-{orderBy}-{descending}";
-        if (cache.TryGetValue(cacheKey, out Pagination<TransactionResponseDto>? transactions))
-        {
-            if (transactions != null) return transactions;
-        }*/
 
         var transactionsQuery = bankContext.Transactions.AsQueryable();
         if (!string.IsNullOrWhiteSpace(search))
-        {
             transactionsQuery = transactionsQuery.Where(t => t.IbanAccountOrigin.Contains(search) ||
                                                              t.IbanAccountDestination.Contains(search) ||
                                                              t.Concept.Contains(search) ||
                                                              t.Date.ToString().Contains(search) ||
                                                              t.Amount.ToString().Contains(search));
-        }
 
         var paginatedTransactions = await transactionsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
             transaction => _mapper.Map<TransactionResponseDto>(transaction));
-
-        /*var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, paginatedTransactions, cacheEntryOptions);*/
 
         return paginatedTransactions;
     }
@@ -60,9 +46,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     {
         var cacheKey = $"GetTransaction-{id}";
         if (cache.TryGetValue(cacheKey, out TransactionResponseDto? transaction))
-        {
-            if (transaction != null) return transaction;
-        }
+            if (transaction != null)
+                return transaction;
 
         var transactionEntity = await bankContext.Transactions.FindAsync(id) ??
                                 throw new HttpException(404, "Transaction not found");
@@ -87,11 +72,6 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         var transactionDto = await CreateTransactionPay(account, accountDestination, transactionCreateDto);
 
         await ClearCache();
-
-        /*_socketIo = new SocketIOClient.SocketIO("http://localhost:5196");
-        _socketIo.ConnectAsync().Wait();
-
-        await _socketIo.EmitAsync("transaction", transactionDto);*/
 
         return transactionDto;
     }
@@ -142,11 +122,12 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         accountDestination.Balance += transaction.Amount;
 
         await bankContext.SaveChangesAsync();
-        
+
         var recipientUsername = accountDestination.Users.FirstOrDefault()?.Username ?? "";
-        
+
         await _hubContext.Clients.User(recipientUsername).SendAsync("ReceiveMessage", "Transferencia recibida",
             $"Se ha recibido una transferencia de {transaction.Amount}€");
+
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
 
@@ -154,47 +135,31 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         BizumCreateDto bizumCreateDto)
     {
         if (user.Id == userDestination.Id)
-        {
             throw new HttpException(400, "Origin and destination users cannot be the same");
-        }
 
         if (accountorigin.Balance < bizumCreateDto.Amount)
-        {
             throw new HttpException(400, "Insufficient funds in the origin account");
-        }
 
-        if (bizumCreateDto.Amount <= 0)
-        {
-            throw new HttpException(400, "Transaction amount must be greater than zero");
-        }
+        if (bizumCreateDto.Amount <= 0) throw new HttpException(400, "Transaction amount must be greater than zero");
     }
 
     private static void ValidateTransaction(BankAccount accountOrigin, BankAccount accountDestination,
         TransactionCreateDto transactionCreateDto)
     {
         if (accountOrigin.Iban == accountDestination.Iban)
-        {
             throw new HttpException(400, "Origin and destination accounts cannot be the same");
-        }
 
         if (accountOrigin.Balance < transactionCreateDto.Amount)
-        {
             throw new HttpException(400, "Insufficient funds in the origin account");
-        }
 
         if (transactionCreateDto.Amount <= 0)
-        {
             throw new HttpException(400, "Transaction amount must be greater than zero");
-        }
     }
 
     public async Task DeleteTransaction(int id)
     {
         var transaction = await bankContext.Transactions.FindAsync(id);
-        if (transaction == null)
-        {
-            throw new HttpException(404, "Transaction not found");
-        }
+        if (transaction == null) throw new HttpException(404, "Transaction not found");
 
         bankContext.Transactions.Remove(transaction);
         await bankContext.SaveChangesAsync();
@@ -202,21 +167,21 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         await ClearCache();
     }
 
-    public async Task AddPaymentIntent(decimal ammount, string iban)
+    public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto)
     {
-        var account = await bankContext.BankAccounts.FindAsync(iban) ??
+        var account = await bankContext.BankAccounts.FindAsync(incomeCreateDto.IbanAccountDestination) ??
                       throw new HttpException(404, "Account origin not found");
 
         var transaction = new Transaction
         {
-            Amount = ammount,
+            Amount = incomeCreateDto.Amount,
             Concept = "Ingreso por Stripe",
             Date = DateTime.UtcNow,
-            IbanAccountOrigin = iban,
-            IbanAccountDestination = iban
+            IbanAccountOrigin = null,
+            IbanAccountDestination = account.Iban
         };
 
-        account.TransactionsOrigin.Add(transaction);
+        account.TransactionsDestination.Add(transaction);
         account.Balance += transaction.Amount;
 
         bankContext.Transactions.Add(transaction);
@@ -226,10 +191,6 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     private async Task ClearCache()
     {
         var ids = await bankContext.Transactions.Select(t => t.Id).ToListAsync();
-        /*cache.Remove("GetTransactions-1-10-Id-False");*/
-        foreach (var id in ids)
-        {
-            cache.Remove("GetTransaction-" + id);
-        }
+        foreach (var id in ids) cache.Remove("GetTransaction-" + id);
     }
 }

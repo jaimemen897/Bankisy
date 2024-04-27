@@ -1,22 +1,23 @@
 <div class="card flex justify-content-center align-items-center m-2 overflow-hidden">
   <div class="flex flex-column gap-3">
     <form [formGroup]="formGroup" class="flex flex-column gap-3 p-1">
-      <p-dropdown [options]="bankAccounts" formControlName="ibanAccountOrigin" [showClear]="true"
-                  placeholder="Cuenta origen" styleClass="w-20rem" optionLabel="iban"
-                  emptyMessage="No hay cuentas disponibles"/>
+      <p-dropdown [options]="bankAccounts" [showClear]="true" emptyMessage="No hay cuentas disponibles"
+                  formControlName="ibanAccountOrigin" optionLabel="iban" placeholder="Cuenta origen"
+                  styleClass="w-20rem"/>
       <div class="flex flex-column gap-1">
-        <input type="text" pInputText formControlName="ibanAccountDestination" placeholder="Cuenta destino"
-               class="p-3 border-round-3xl border-0 bg-gray-200">
+        <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="ibanAccountDestination" pInputText placeholder="Cuenta destino"
+               type="text">
         @if (formGroup.controls['ibanAccountDestination'].invalid && formGroup.controls['ibanAccountDestination'].touched) {
-          <p *ngIf="formGroup.controls['ibanAccountDestination'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
+          <p *ngIf="formGroup.controls['ibanAccountDestination'].errors?.required"
+             class="text-red-500 text-xs m-0 ml-3">
             La cuenta destino es obligatoria</p>
           <p *ngIf="formGroup.controls['ibanAccountDestination'].errors?.pattern" class="text-red-500 text-xs m-0 ml-3">
             El formato no es correcto</p>
         }
       </div>
       <div class="flex flex-column gap-1">
-        <input type="number" pInputText formControlName="amount" placeholder="Cantidad"
-               class="p-3 border-round-3xl border-0 bg-gray-200 mb-0">
+        <input class="p-3 border-round-3xl border-0 bg-gray-200 mb-0" formControlName="amount" pInputText placeholder="Cantidad"
+               type="number">
         @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
           <p *ngIf="formGroup.controls['amount'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
             La cantidad es obligatoria</p>
@@ -30,8 +31,8 @@
       </div>
 
       <div class="flex flex-column gap-1">
-        <input type="text" pInputText formControlName="concept" placeholder="Concepto"
-               class="p-3 border-round-3xl border-0 bg-gray-200">
+        <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="concept" pInputText placeholder="Concepto"
+               type="text">
         @if (formGroup.controls['concept'].invalid && formGroup.controls['concept'].touched) {
           <p *ngIf="formGroup.controls['concept'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
             El concepto es obligatorio</p>
@@ -41,8 +42,8 @@
             El concepto no puede tener más de 30 caracteres</p>
         }
       </div>
-      <p-button label="Confirmar" [rounded]="true" (click)="createTransaction()" styleClass="w-full mt-5"></p-button>
-      <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()" styleClass="w-full"></p-button>
+      <p-button (click)="createTransaction()" rounded label="Confirmar" styleClass="w-full mt-5"></p-button>
+      <p-button (click)="cancel()" rounded label="Cancelar" severity="danger" styleClass="w-full"></p-button>
     </form>
   </div>
 </div>

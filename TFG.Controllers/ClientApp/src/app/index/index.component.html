@@ -34,30 +34,30 @@
       <!--INGRESOS-->
       <div class="col-12 md:col-6 xl:col-4">
         <div
-          class="h-11rem flex flex-column align-items-center justify-content-center bg-green-600 border-round-2xl p-3 shadow-5">
-          <i class="pi pi-angle-up text-4xl mb-4 text-white font-bold"></i>
-          <span class="text-900 text-2xl mb-4 font-medium text-white font-bold">INGRESOS</span>
-          <span class="text-900 text-2xl font-bold text-white">+ {{ totalIncomes }}€</span>
+          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-blue-400">
+          <i class="pi pi-angle-up text-4xl mb-4 text-secondary font-bold"></i>
+          <span class="text-900 text-2xl mb-4 font-medium text-secondary font-bold">INGRESOS</span>
+          <span class="text-900 text-2xl font-bold text-secondary">+ {{ totalIncomes }}€</span>
         </div>
       </div>
 
       <!--SALDO-->
       <div class="col-12 md:col-6 xl:col-4">
         <div
-          class="h-11rem flex flex-column align-items-center justify-content-center bg-blue-600 border-round-2xl p-3 shadow-5">
-          <i class="pi pi-wallet text-4xl mb-4 text-white font-bold"></i>
-          <span class="text-900 text-2xl mb-4 font-medium text-white font-bold">SALDO EN LAS CUENTAS</span>
-          <span class="text-900 text-2xl font-bold text-white">{{ totalBalance }}€</span>
+          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-primary">
+          <i class="pi pi-wallet text-4xl mb-4 text-secondary font-bold"></i>
+          <span class="text-900 text-2xl mb-4 font-medium text-secondary font-bold">SALDO EN LAS CUENTAS</span>
+          <span class="text-900 text-2xl font-bold text-secondary">{{ totalBalance }}€</span>
         </div>
       </div>
 
       <!--GASTOS-->
       <div class="col-12 md:col-6 xl:col-4">
         <div
-          class="h-11rem flex flex-column align-items-center justify-content-center bg-red-600 border-round-2xl p-3 shadow-5">
-          <i class="pi pi-angle-down text-4xl mb-4 text-white font-bold"></i>
-          <span class="text-900 text-2xl mb-4 font-medium text-white font-bold">GASTOS</span>
-          <span class="text-900 text-2xl font-bold text-white">- {{ totalExpenses }}€</span>
+          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-yellow-400">
+          <i class="pi pi-angle-down text-4xl mb-4 text-secondary font-bold"></i>
+          <span class="text-900 text-2xl mb-4 font-medium text-secondary font-bold">GASTOS</span>
+          <span class="text-900 text-2xl font-bold text-secondary">- {{ totalExpenses }}€</span>
         </div>
       </div>
 
@@ -70,9 +70,9 @@
           </div>
         </ng-template>
         <ng-template pTemplate="icons">
-          <button class="p-panel-header-icon p-link mr-2" (click)="refresh()">
+          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="refresh()">
             <span class="pi pi-refresh" [ngClass]="{'rotate-icon': updating}"></span>
-          </button>
+          </p-button>
         </ng-template>
         <p-table [value]="bankAccounts" [tableStyle]="{ 'min-width': '50rem' }">
           <ng-template pTemplate="header">
@@ -171,11 +171,10 @@
         </ng-template>
         <ng-template pTemplate="icons">
           <p-menu #transactionDate [model]="transactionsDate" [popup]="true"></p-menu>
-          <button pButton type="button" (click)="transactionDate.toggle($event)" icon="pi pi-bars" label="Filtrar"
-                  class="bg-transparent border-transparent text-black-alpha-80"></button>
-          <button class="p-panel-header-icon p-link mr-2" (click)="refresh()">
+          <p-button type="button" (click)="transactionDate.toggle($event)" icon="pi pi-bars" label="Filtrar"/>
+          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="refresh()">
             <span class="pi pi-refresh" [ngClass]="{'rotate-icon': updating}"></span>
-          </button>
+          </p-button>
         </ng-template>
         <p-table [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[5, 10, 20]" [value]="transactions"
                  [tableStyle]="{ 'min-width': '50rem' }" [lazy]="true" (onLazyLoad)="lazyLoad($event)"
@@ -201,7 +200,7 @@
                 <p-sortIcon field="date"/>
               </th>
               <th style="width:10%">
-                <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
+                <p-button label="Quitar orden" (onClick)="clearOrders()" text class="w-12"/>
               </th>
             </tr>
           </ng-template>
@@ -247,8 +246,7 @@
 
     } @else {
       <div class="card flex justify-content-center w-full h-screen">
-        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="8" fill="var(--surface-ground)"
-                           animationDuration=".5s"></p-progressSpinner>
+        <p-progressSpinner styleClass="w-6rem h-6rem" strokeWidth="8" fill="var(--surface-ground)"></p-progressSpinner>
       </div>
     }
   </div>

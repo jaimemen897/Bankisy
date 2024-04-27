@@ -8,24 +8,24 @@ public class User
 {
     public const string ImageDefault = "assets/avatar.png";
 
-    [Column("id"), Key] public Guid Id { get; set; }
+    [Column("id")] [Key] public Guid Id { get; set; }
 
     [Column("name")] public string Name { get; set; }
 
     [Column("email")] public string Email { get; set; }
-    
+
     [Column("username")] public string Username { get; set; }
-    
+
     [Column("dni")] public string Dni { get; set; }
-    
+
     [Column("gender")] public Gender Gender { get; set; }
 
     [Column("password")] public string Password { get; set; }
 
     [Column("avatar")] public string Avatar { get; set; } = ImageDefault;
-    
+
     [Column("phone")] public string Phone { get; set; }
-    
+
     [Column("role")] public Roles Role { get; set; }
 
     [Column("is_deleted")] public bool IsDeleted { get; set; }
@@ -35,7 +35,7 @@ public class User
     [Column("updated_at")] public DateTime UpdatedAt { get; set; } = DateTime.Now.ToUniversalTime();
 
     public List<BankAccount> BankAccounts { get; set; } = [];
-    
+
     public List<Card> Cards { get; set; } = [];
 }
 

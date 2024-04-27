@@ -11,12 +11,14 @@ namespace TFG.Controllers.Controllers;
 [Route("[controller]")]
 public class CardController(CardService cardService) : ControllerBase
 {
-    [HttpGet()]
+    [HttpGet]
     public async Task<ActionResult<Pagination<CardResponseDto>>> GetCards([FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "cardNumber", [FromQuery] bool descending = false,
-        [FromQuery] string? search = null, [FromQuery] string? filter = null, [FromQuery] bool? isDeleted = null, [FromQuery] bool? isBlocked = null)
+        [FromQuery] string? search = null, [FromQuery] string? filter = null, [FromQuery] bool? isDeleted = null,
+        [FromQuery] bool? isBlocked = null)
     {
-        return await cardService.GetCards(pageNumber, pageSize, orderBy, descending, search, filter, isDeleted, isBlocked);
+        return await cardService.GetCards(pageNumber, pageSize, orderBy, descending, search, filter, isDeleted,
+            isBlocked);
     }
 
     [HttpGet("{cardNumber}")]
@@ -25,7 +27,7 @@ public class CardController(CardService cardService) : ControllerBase
         return await cardService.GetCardByCardNumber(cardNumber);
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<ActionResult<CardResponseDto>> CreateCard(CardCreateDto cardCreateDto)
     {
         return await cardService.CreateCard(cardCreateDto);

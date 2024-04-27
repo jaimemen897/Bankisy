@@ -2,6 +2,7 @@
   .menu-superior {
     display: none;
   }
+
   .boton-hamburguesa {
     display: block;
   }
@@ -11,6 +12,7 @@
   .menu-superior {
     display: block;
   }
+
   .boton-hamburguesa {
     display: none;
   }

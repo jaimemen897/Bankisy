@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {catchError, map, Observable, throwError} from 'rxjs';
 import {Pagination} from "./users.service";
-import {Transaction} from "../models/Transaction";
 import {Card} from '../models/Card';
 import {CardCreate} from "../models/CardCreate";
 import {MessageService} from "primeng/api";

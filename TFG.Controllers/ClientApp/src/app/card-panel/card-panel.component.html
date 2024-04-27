@@ -3,67 +3,69 @@
 
 <div class="flex justify-content-center">
   <div class="m-8 grid w-10">
-    @for (card of cards; track cards) {
-      <div class="sm:col-12 md:col-12 lg:col-12 xl:col-6">
-        <div class="flex justify-content-center flex-column align-items-center gap-5">
-          <div class="p-5 border-round-3xl shadow-2 w-30rem" [ngStyle]="getBackgroundColor(card)">
-            <div class="inline-flex gap-2 align-items-center">
-              <p-avatar image="assets/{{ card.cardType }}.png" styleClass="mr-2" size="large"></p-avatar>
-              <h2>{{ getCardTypeValue(card.cardType) }}</h2>
-            </div>
+    @if (cards) {
+      @for (card of cards; track cards) {
+        <div class="sm:col-12 md:col-12 lg:col-12 xl:col-6">
+          <div class="flex justify-content-center flex-column align-items-center gap-5">
+            <div class="p-5 border-round-3xl shadow-2 w-30rem" [ngStyle]="getBackgroundColor(card)">
+              <div class="inline-flex gap-2 align-items-center">
+                <p-avatar image="assets/{{ card.cardType }}.png" styleClass="mr-2" size="large"></p-avatar>
+                <h2>{{ getCardTypeValue(card.cardType) }}</h2>
+              </div>
 
-            <div class="card-body w-full">
-              <h2>{{ card.cardNumber }}</h2>
-              <p>{{ card.user.name }}</p>
-              <div class="gap-2 w-full flex justify-content-center pt-1">
-                <button pButton (click)="infoPanel.toggle($event)" icon="pi pi-eye"
-                        class="bg-black-alpha-70 border-transparent w-3 hover:bg-black-alpha-30"></button>
+              <div class="card-body w-full">
+                <h2>{{ card.cardNumber }}</h2>
+                <p>{{ card.user.name }}</p>
+                <div class="gap-2 w-full flex justify-content-center">
+                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-eye"/>
 
-                @if (card.isBlocked) {
-                  <button pButton (click)="unblockCard(card)" icon="pi pi-lock-open"
-                          class="bg-black-alpha-70 border-transparent w-3 hover:bg-black-alpha-30"></button>
-                } @else {
-                  <button pButton (click)="blockCard(card)" icon="pi pi-lock"
-                          class="bg-black-alpha-70 border-transparent w-3 hover:bg-black-alpha-30"></button>
-                }
+                  @if (card.isBlocked) {
+                    <p-button (click)="unblockCard(card)" icon="pi pi-lock-open"/>
+                  } @else {
+                    <p-button (click)="blockCard(card)" icon="pi pi-lock"/>
+                  }
 
-                <button pButton (click)="showOptions($event, card)" icon="pi pi-cog"
-                        class="bg-black-alpha-70 border-transparent w-3 hover:bg-black-alpha-30"></button>
-                <p-menu #optionMenu [model]="optionItems" [popup]="true"></p-menu>
+                  <p-button (click)="showOptions($event, card)" icon="pi pi-cog"></p-button>
+                  <p-menu #optionMenu [model]="optionItems" [popup]="true"></p-menu>
+                </div>
               </div>
             </div>
-          </div>
 
-          <p-overlayPanel #infoPanel>
-            <ng-template pTemplate="content">
-              <h4 class="text-left">Información de la tarjeta</h4>
-              <p>Titular: {{ card.user.name }}</p>
-              <p>Fecha de vencimiento: {{ card.expirationDate | date: 'MM/yy' }}</p>
-              <p>Saldo: {{ card.bankAccount.balance }}</p>
-              <p>CVV: {{ card.cvv }}</p>
-              <p>PIN: {{ card.pin }}</p>
-              <p>Estado: {{ card.isBlocked ? 'Bloqueada' : 'Activa' }}</p>
-            </ng-template>
-          </p-overlayPanel>
+            <p-overlayPanel #infoPanel>
+              <ng-template pTemplate="content">
+                <h4 class="text-left">Información de la tarjeta</h4>
+                <p>Titular: {{ card.user.name }}</p>
+                <p>Fecha de vencimiento: {{ card.expirationDate | date: 'MM/yy' }}</p>
+                <p>Saldo: {{ card.bankAccount.balance }}</p>
+                <p>CVV: {{ card.cvv }}</p>
+                <p>PIN: {{ card.pin }}</p>
+                <p>Estado: {{ card.isBlocked ? 'Bloqueada' : 'Activa' }}</p>
+              </ng-template>
+            </p-overlayPanel>
+          </div>
         </div>
+      }
+      <!--solicitar una tarjeta-->
+      <div class="col-6 flex justify-content-center flex-column align-items-center">
+        <div class="p-5 border-round-3xl shadow-2 w-30rem h-18rem" [ngStyle]="getBackgroundColor()">
+          <div class="flex justify-content-center flex-column">
+            <div class="inline-flex gap-2 align-items-center">
+              <p-avatar image="assets/new.png" styleClass="mr-2" size="large"></p-avatar>
+              <h2>Solicitar tarjeta</h2>
+            </div>
+            <div class="card-body w-full">
+              <p>¿Deseas solicitar una nueva tarjeta de crédito?</p>
+              <p>¡Haz clic en el botón de abajo!</p>
+              <p-button label="Solicitar" icon="pi pi-credit-card"></p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="card flex justify-content-center w-full h-screen">
+        <p-progressSpinner styleClass="w-6rem h-6rem" strokeWidth="8" fill="var(--surface-ground)"></p-progressSpinner>
       </div>
     }
-    <!--solicitar una tarjeta-->
-    <div class="col-6 flex justify-content-center flex-column align-items-center">
-      <div class="p-5 border-round-3xl shadow-2 w-30rem h-18rem" [ngStyle]="getBackgroundColor()">
-        <div class="flex justify-content-center flex-column">
-          <div class="inline-flex gap-2 align-items-center">
-            <p-avatar image="assets/new.png" styleClass="mr-2" size="large"></p-avatar>
-            <h2>Solicitar tarjeta</h2>
-          </div>
-          <div class="card-body w-full">
-            <p>¿Deseas solicitar una nueva tarjeta de crédito?</p>
-            <p>¡Haz clic en el botón de abajo!</p>
-            <button pButton label="Solicitar" class="bg-black-alpha-50 border-transparent mt-3  hover:bg-black-alpha-30"></button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 

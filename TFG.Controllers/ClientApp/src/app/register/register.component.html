@@ -10,8 +10,9 @@
         <div class="inline-flex p-3">
           <div>
           <span class="p-input-filled m-2">
-          <input id="name" formControlName="name" type="text" pInputText placeholder="Nombre"
-                 class="p-3 border-round-3xl border-0 bg-gray-200">
+          <input class="p-3 border-round-3xl border-0 bg-secondary" formControlName="name" id="name" pInputText
+                 placeholder="Nombre"
+                 type="text">
           </span>
             @if (formGroup.controls['name'].invalid && formGroup.controls['name'].touched) {
               <p *ngIf="formGroup.controls['name'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -24,8 +25,9 @@
           </div>
           <div>
           <span class="p-input-filled m-2">
-          <input id="email" formControlName="email" type="text" pInputText placeholder="Email"
-                 class="p-3 border-round-3xl border-0 bg-gray-200">
+          <input class="p-3 border-round-3xl border-0 bg-secondary" formControlName="email" id="email" pInputText
+                 placeholder="Email"
+                 type="text">
           </span>
             @if (formGroup.controls['email'].invalid && formGroup.controls['email'].touched) {
               <p *ngIf="formGroup.controls['email'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -38,8 +40,9 @@
 
         <div class="inline-flex p-3">
           <div><span class="p-input-filled m-2">
-            <input id="username" formControlName="username" type="text" pInputText placeholder="Nombre de usuario"
-                   class="p-3 border-round-3xl border-0 bg-gray-200">
+            <input class="p-3 border-round-3xl border-0 bg-secondary" formControlName="username" id="username"
+                   pInputText placeholder="Nombre de usuario"
+                   type="text">
           </span>
             @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
               <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -51,8 +54,9 @@
             }</div>
 
           <div><span class="p-input-filled m-2">
-            <input id="dni" formControlName="dni" type="text" pInputText placeholder="DNI" (input)="validateDNI($event)"
-                   class="p-3 border-round-3xl border-0 bg-gray-200">
+            <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0 bg-secondary"
+                   formControlName="dni" id="dni" pInputText placeholder="DNI"
+                   type="text">
           </span>
             @if (formGroup.controls['dni'].invalid && formGroup.controls['dni'].touched) {
               <p *ngIf="formGroup.controls['dni'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -68,8 +72,8 @@
 
         <div class="inline-flex p-3 justify-content-between">
           <div>
-            <p-dropdown formControlName="gender" [options]="genders" placeholder="Selecciona un género"
-                        styleClass="ml-2 mr-2 w-16rem"/>
+            <p-dropdown [options]="genders" formControlName="gender" placeholder="Selecciona un género"
+                        styleClass="ml-2 mr-2 w-16rem bg-secondary border-round-3xl"/>
             @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
               <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
                 El género es obligatorio</p>
@@ -78,8 +82,9 @@
 
           <div>
             <span class="p-input-filled m-2">
-              <input id="phone" formControlName="phone" type="tel" pInputText placeholder="Teléfono"
-                     class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-secondary"
+                     formControlName="phone" id="phone" pInputText
+                     placeholder="Teléfono" type="tel">
             </span>
             @if (formGroup.controls['phone'].invalid && formGroup.controls['phone'].touched) {
               <p *ngIf="formGroup.controls['phone'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -95,9 +100,9 @@
         <div class="inline-flex p-3">
           <div>
             <span class="p-input-filled m-2">
-          <input pPassword id="password" formControlName="password" type="password" pInputText placeholder="Contraseña"
-                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
-        </span>
+              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-secondary" type="password"
+                     formControlName="password" id="password" pInputText pPassword placeholder="Contraseña"/>
+            </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
                 La contraseña es obligatoria</p>
@@ -110,8 +115,9 @@
 
           <div>
             <span class="p-input-filled m-2">
-              <input pPassword id="confirmpassword" formControlName="confirmpassword" type="password" pInputText placeholder="Confirmar contraseña"
-                 class="p-3 border-round-3xl border-0 bg-gray-200" (keyup.enter)="sendForm()">
+              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-secondary"
+                     formControlName="confirmpassword" id="confirmpassword" pInputText
+                     pPassword placeholder="Confirmar contraseña" type="password">
             </span>
             @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
               <p class="text-red-500 text-xs m-0 ml-3">
@@ -126,10 +132,10 @@
 
     <div class="mt-4 w-full">
       <div class="flex align-items-center justify-content-center w-full">
-        <button pButton label="Crear cuenta" (click)="sendForm()" class="bg-black-alpha-80 p-button-rounded border-transparent hover:bg-black-alpha-60"></button>
+        <p-button (click)="sendForm()" rounded label="Crear cuenta"/>
       </div>
       <div class="flex align-items-center justify-content-center mt-2">
-        <p-button label="Volver" (click)="goBack()" severity="secondary" [rounded]="true" [text]="true"/>
+        <p-button (click)="goBack()" rounded text label="Volver" severity="secondary"/>
       </div>
     </div>
   </p-card>

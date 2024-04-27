@@ -6,8 +6,8 @@
         <div class="inline-flex gap-3 mt-2">
           <div>
           <span class="p-input-filled">
-          <input id="name" formControlName="name" type="text" pInputText placeholder="Nombre"
-                 class="p-3 border-round-3xl border-0 bg-gray-200">
+          <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="name" id="name" pInputText placeholder="Nombre"
+                 type="text">
           </span>
             @if (formGroup.controls['name'].invalid && formGroup.controls['name'].touched) {
               <p *ngIf="formGroup.controls['name'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -21,8 +21,8 @@
 
           <div>
           <span class="p-input-filled">
-          <input id="email" formControlName="email" type="text" pInputText placeholder="Email"
-                 class="p-3 border-round-3xl border-0 bg-gray-200">
+          <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="email" id="email" pInputText placeholder="Email"
+                 type="text">
           </span>
             @if (formGroup.controls['email'].invalid && formGroup.controls['email'].touched) {
               <p *ngIf="formGroup.controls['email'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -35,8 +35,8 @@
 
         <div class="inline-flex gap-3">
           <div><span class="p-input-filled">
-            <input id="username" formControlName="username" type="text" pInputText placeholder="Username"
-                   class="p-3 border-round-3xl border-0 bg-gray-200">
+            <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="username" id="username" pInputText placeholder="Username"
+                   type="text">
           </span>
             @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
               <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -48,8 +48,8 @@
             }</div>
 
           <div><span class="p-input-filled">
-            <input id="dni" formControlName="dni" type="text" pInputText placeholder="DNI" (input)="validateDNI($event)"
-                   class="p-3 border-round-3xl border-0 bg-gray-200">
+            <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="dni" id="dni" pInputText placeholder="DNI"
+                   type="text">
           </span>
             @if (formGroup.controls['dni'].invalid && formGroup.controls['dni'].touched) {
               <p *ngIf="formGroup.controls['dni'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -66,8 +66,8 @@
         <div class="inline-flex gap-3">
           <div>
             <span class="p-input-filled">
-              <input id="phone" formControlName="phone" type="text" pInputText placeholder="Teléfono"
-                 class="p-3 border-round-3xl border-0 bg-gray-200">
+              <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="phone" id="phone" pInputText placeholder="Teléfono"
+                     type="text">
             </span>
             @if (formGroup.controls['phone'].invalid && formGroup.controls['phone'].touched) {
               <p *ngIf="formGroup.controls['phone'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -80,7 +80,7 @@
           </div>
 
           <div class="flex flex-column gap-2">
-            <p-dropdown formControlName="gender" [options]="genders" placeholder="Selecciona un género"
+            <p-dropdown [options]="genders" formControlName="gender" placeholder="Selecciona un género"
                         styleClass="w-16rem"/>
             @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
               <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -92,8 +92,9 @@
         <div class="inline-flex gap-3">
           <div>
             <span class="p-input-filled">
-              <input pPassword id="password" formControlName="password" type="password" pInputText placeholder="Contraseña"
-                 class="p-3 border-round-3xl border-0 bg-gray-200">
+              <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="password" id="password" pInputText pPassword
+                     placeholder="Contraseña"
+                     type="password">
             </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -107,9 +108,9 @@
 
           <div>
             <span class="p-input-filled">
-              <input pPassword id="confirmpassword" formControlName="confirmpassword" type="password" pInputText
-                 placeholder="Confirmar contraseña"
-                 class="p-3 border-round-3xl border-0 bg-gray-200">
+              <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="confirmpassword" id="confirmpassword" pInputText pPassword
+                     placeholder="Confirmar contraseña"
+                     type="password">
             </span>
             @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
               <p class="text-red-500 text-xs m-0 ml-3">
@@ -120,8 +121,8 @@
         </div>
 
         <div class="flex flex-column mt-4 gap-2">
-          <p-button [label]="label" [rounded]="true" (click)="saveChanges()" styleClass="w-full"></p-button>
-          <p-button label="Cancelar" [rounded]="true" severity="danger" (click)="cancel()"
+          <p-button (click)="saveChanges()" [label]="label" rounded styleClass="w-full"></p-button>
+          <p-button (click)="cancel()" rounded label="Cancelar" severity="danger"
                     styleClass="w-full"></p-button>
         </div>
       </div>

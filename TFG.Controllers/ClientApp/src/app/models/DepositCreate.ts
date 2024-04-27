@@ -1,4 +1,4 @@
-export class DepositCreate{
-  Source : string;
-  Amount : number;
+export class DepositCreate {
+  Source: string;
+  Amount: number;
 }

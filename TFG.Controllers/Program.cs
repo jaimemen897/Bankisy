@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
 using TFG.Services;
 using TFG.Services.Hub;
+using BankAccountService = TFG.Services.BankAccountService;
+using CardService = TFG.Services.CardService;
 
 var myAllowSpecificOrigins = "AllowAngularApp";
 Env.Load();
@@ -26,7 +29,10 @@ builder.Services.AddScoped<IndexService>();
 builder.Services.AddScoped<CardService>();
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddDbContext<BankContext>(options => { options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnectionString")); });
+builder.Services.AddDbContext<BankContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnectionString"));
+});
 builder.Services.AddProblemDetails();
 /*builder.Services.AddCors(options =>
 {
@@ -69,6 +75,7 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("User",
         policy => policy.RequireAssertion(context => context.User.IsInRole("User") || context.User.IsInRole("Admin")))
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+
 builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
 
@@ -80,7 +87,9 @@ if (!app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 }
-Stripe.StripeConfiguration.ApiKey = "sk_test_51P7eS8D74icxIHcU4kn0dVmFuoZQhnf4gbAydb4NTzXzfI0oJTFjliD1H46CNyf2yrBuon0v3RwcHpJiUGkOZTYB00btmbH4Ic";
+
+StripeConfiguration.ApiKey =
+    "sk_test_51P7eS8D74icxIHcU4kn0dVmFuoZQhnf4gbAydb4NTzXzfI0oJTFjliD1H46CNyf2yrBuon0v3RwcHpJiUGkOZTYB00btmbH4Ic";
 /*app.UseHttpsRedirection();*/
 app.UseExceptionHandler();
 app.UseCors(myAllowSpecificOrigins);

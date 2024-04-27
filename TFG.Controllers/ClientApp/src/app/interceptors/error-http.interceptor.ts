@@ -24,7 +24,13 @@ export class ErrorHttpInterceptor implements HttpInterceptor {
         this.location.back();
       }
       if (err instanceof HttpErrorResponse && err.status === 500) {
-        this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'Ha ocurrido un error', life: 1000});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          closable: false,
+          detail: 'Ha ocurrido un error',
+          life: 1000
+        });
         this.router.navigate(['/']);
       }
       return throwError(err);

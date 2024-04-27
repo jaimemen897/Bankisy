@@ -1,10 +1,11 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table [value]="transactions" [lazy]="true" [paginator]="true" [showCurrentPageReport]="true"
-           [rowsPerPageOptions]="[10, 25, 50]" (onLazyLoad)="lazyLoad($event)"
-           [totalRecords]="totalRecords" [rows]="rows" [tableStyle]="{ 'min-width': '75rem' }"
-           [globalFilterFields]="['concept', 'amount', 'ibanAccountOrigin', 'ibanAccountDestination']">
+  <p-table (onLazyLoad)="lazyLoad($event)"
+           [globalFilterFields]="['concept', 'amount', 'ibanAccountOrigin', 'ibanAccountDestination']" [lazy]="true"
+           [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows" [showFirstLastIcon]="false" [value]="transactions"
+           [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '75rem' }" [totalRecords]="totalRecords"
+           [paginator]="true">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="concept" style="width:22%">Concepto
@@ -23,49 +24,50 @@
           <p-sortIcon field="date"/>
         </th>
         <th style="width:22%">
-          <p-button label="Quitar orden" (onClick)="clearOrders()" [text]="true" class="w-12"/>
+          <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
         </th>
       </tr>
       <tr>
         <!--BUSCAR POR CONCEPTO-->
         <th>
-          <p-columnFilter type="text" field="concept" (input)="onSearch($event)" placeholder="Buscar por concepto"
-                          [showMenu]="false"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="concept"
+                          placeholder="Buscar por concepto"
+                          type="text"/>
         </th>
         <!--BUSCAR POR CANTIDAD-->
         <th>
-          <p-columnFilter type="text" field="amount" (input)="onSearch($event)" placeholder="Buscar por cantidad"
-                          [showMenu]="false"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="amount" placeholder="Buscar por cantidad"
+                          type="text"/>
         </th>
         <!--BUSCAR POR CUENTA ORIGEN-->
         <th>
-          <p-columnFilter type="text" field="ibanAccountOrigin" (input)="onSearch($event)"
-                          placeholder="Buscar por cuenta origen" [showMenu]="false"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="ibanAccountOrigin"
+                          placeholder="Buscar por cuenta origen" type="text"/>
         </th>
         <!--BUSCAR POR CUENTA DESTINO-->
         <th>
-          <p-columnFilter type="text" field="ibanAccountDestination" (input)="onSearch($event)"
-                          placeholder="Buscar por cuenta destino" [showMenu]="false"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="ibanAccountDestination"
+                          placeholder="Buscar por cuenta destino" type="text"/>
         </th>
         <!--BUSCAR POR FECHA-->
         <th>
-          <p-columnFilter type="date" field="date" (input)="onSearch($event)" placeholder="Buscar por fecha"
-                          [showMenu]="false"/>
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="date" placeholder="Buscar por fecha"
+                          type="date"/>
         </th>
         <!--CLEAR-->
         <th>
-          <p-button label="Limpiar filtros" (onClick)="clearFilters()" [text]="true" class="w-12"/>
+          <p-button (onClick)="clearFilters()" text class="w-12" label="Limpiar filtros"/>
         </th>
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body" let-transaction>
+    <ng-template let-transaction pTemplate="body">
       <tr>
         <td>
           {{ transaction.concept }}
         </td>
         <td>
-          <p-tag [value]="transaction.amount.toString() + '€'" [severity]="getAmountColor(transaction.amount)"></p-tag>
+          <p-tag [severity]="getAmountColor(transaction.amount)" [value]="transaction.amount.toString() + '€'"></p-tag>
         </td>
         <td>
           {{ transaction.ibanAccountOrigin }}
@@ -89,9 +91,11 @@
                 <p>Fecha: {{ transaction.date | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
               </ng-template>
             </p-overlayPanel>
-            <p-button (click)="op.toggle($event)" icon="pi pi-info-circle" severity="info" pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+            <p-button (click)="op.toggle($event)" [autoHide]="true" [showDelay]="500" icon="pi pi-info-circle"
+                      pTooltip="Información" severity="info" tooltipPosition="bottom"/>
             <div class="card flex justify-content-center">
-              <p-button (click)="deleteTransaction(transaction.id)" icon="pi pi-trash" severity="danger" pTooltip="Borrar" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
+              <p-button (click)="deleteTransaction(transaction.id)" [autoHide]="true" [showDelay]="500"
+                        icon="pi pi-trash" pTooltip="Borrar" severity="danger" tooltipPosition="bottom"/>
             </div>
           </div>
         </td>
@@ -106,7 +110,7 @@
   </p-table>
   <p-toast></p-toast>
   <p-confirmDialog #cd>
-    <ng-template pTemplate="headless" let-message>
+    <ng-template let-message pTemplate="headless">
       <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
         <div
           class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
@@ -115,9 +119,8 @@
         <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
         <p class="mb-0 text-left">{{ message.message }}</p>
         <div class="flex align-items-center justify-content-center gap-2 mt-4">
-          <button pButton label="Eliminar" (click)="cd.accept()" class="w-8rem p-button-danger"></button>
-          <button pButton label="Cancelar" (click)="cd.reject()"
-                  class="p-button-danger p-button-outlined"></button>
+          <p-button (click)="cd.accept()" label="Eliminar" styleClass="p-button-danger"/>
+          <p-button (click)="cd.reject()" label="Cancelar" styleClass="p-button-secondary"/>
         </div>
       </div>
     </ng-template>

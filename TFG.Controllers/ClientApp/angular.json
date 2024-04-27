@@ -7,7 +7,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
-          "strict": true
+          "strict": false
         }
       },
       "root": "",
@@ -30,10 +30,20 @@
               "src/assets"
             ],
             "styles": [
+              "src/styles.css",
               "node_modules/primeflex/primeflex.css",
-              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              "node_modules/primeicons/primeicons.css",
               "node_modules/primeng/resources/primeng.min.css",
-              "src/styles.css"
+              {
+                "input": "node_modules/primeng/resources/themes/aura-dark-blue/theme.css",
+                "bundleName": "aura-dark-blue",
+                "inject": false
+              },
+              {
+                "input": "node_modules/primeng/resources/themes/aura-light-blue/theme.css",
+                "bundleName": "aura-light-blue",
+                "inject": false
+              }
             ],
             "scripts": []
           },
@@ -43,7 +53,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "1mb",
-                  "maximumError": "2mb"
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",

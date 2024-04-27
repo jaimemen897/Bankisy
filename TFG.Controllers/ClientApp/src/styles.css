@@ -1,8 +1,8 @@
-@import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
 @layer reset, primeng;
+
 @layer reset {
   button,
   input {
@@ -20,13 +20,14 @@ body {
 }
 
 .p-dropdown {
-  border-radius: 1.5rem !important;
-  padding: 0.3rem !important;
-  background-color: var(--gray-200) !important;
-  border-color: var(--surface-0) !important;
+  padding: 0.4rem !important;
+  /*background-color: var(--gray-200) !important;*/
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 
-.p-paginator .p-dropdown .p-dropdown-label{
+.p-paginator .p-dropdown .p-dropdown-label {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,3 +45,17 @@ body {
 .p-button:active, .p-button:focus {
   box-shadow: none;
 }
+
+.p-inputtext {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.p-multiselect {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+

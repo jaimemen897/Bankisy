@@ -1,18 +1,9 @@
-import {
-  trigger,
-  transition,
-  style,
-  query,
-  group,
-  animateChild,
-  animate,
-  keyframes,
-} from '@angular/animations';
+import {animate, animateChild, group, query, style, transition, trigger,} from '@angular/animations';
 
 export const slideInAnimation =
   trigger('routeAnimations', [
     transition('* <=> *', [
-      style({ position: 'relative' }),
+      style({position: 'relative'}),
       query(':enter, :leave', [
         style({
           position: 'absolute',
@@ -20,19 +11,19 @@ export const slideInAnimation =
           right: 0,
           width: '100%'
         })
-      ], { optional: true }),
+      ], {optional: true}),
       query(':enter', [
-        style({ right: '-100%' })
-      ], { optional: true }),
-      query(':leave', animateChild(), { optional: true }),
+        style({right: '-100%'})
+      ], {optional: true}),
+      query(':leave', animateChild(), {optional: true}),
       group([
         query(':leave', [
-          animate('300ms ease-out', style({ left: '100%' }))
-        ], { optional: true }),
+          animate('300ms ease-out', style({left: '100%'}))
+        ], {optional: true}),
         query(':enter', [
-          animate('300ms ease-out', style({ right: '100%' }))
-        ], { optional: true })
+          animate('300ms ease-out', style({right: '100%'}))
+        ], {optional: true})
       ]),
-      query(':enter', animateChild(), { optional: true }),
+      query(':enter', animateChild(), {optional: true}),
     ]),
   ]);

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import {MessageService} from "primeng/api";
 
@@ -8,6 +8,7 @@ import {MessageService} from "primeng/api";
 export class SocketService {
   constructor(private messageService: MessageService) {
   }
+
   private hubConnection: signalR.HubConnection;
 
   public startConnection = () => {
@@ -23,7 +24,7 @@ export class SocketService {
 
   public transferNotification = () => {
     this.hubConnection.on('ReceiveMessage', (user, message) => {
-      this.messageService.add({severity:'info', summary: user, detail: message, life: 2000, closable: false});
+      this.messageService.add({severity: 'info', summary: user, detail: message, life: 2000, closable: false});
     });
   }
 }

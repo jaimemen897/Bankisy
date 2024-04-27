@@ -11,7 +11,6 @@ import {Pagination} from "./users.service";
 import {Card} from "../models/Card";
 import {CardCreate} from "../models/CardCreate";
 import {UserCreate} from "../models/UserCreate";
-import {Token} from "@angular/compiler";
 import {BizumCreate} from "../models/BizumCreate";
 import {Bizum} from "../models/Bizum";
 
@@ -226,6 +225,13 @@ export class IndexService {
           severity: 'error',
           summary: 'Error',
           detail: 'Cuenta de destino no encontrada o no acepta Bizum'
+        });
+      }
+      if (error.error.title === 'You are not the owner of the account') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No eres el propietario de la cuenta'
         });
       }
     } else if (error.status === 404) {

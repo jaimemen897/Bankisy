@@ -148,14 +148,14 @@ public class IndexController(IndexService indexService) : ControllerBase
         await indexService.DeleteAvatar();
         return Ok();
     }
-    
+
     [HttpPost("bankaccount/{iban}/active-bizum")]
     public async Task<ActionResult> ActiveBizum(string iban)
     {
         await indexService.ActiveBizum(iban);
         return Ok();
     }
-    
+
     [HttpPost("transaction/bizum")]
     public async Task<ActionResult<BizumResponseDto>> CreateBizum(BizumCreateDto transaction)
     {

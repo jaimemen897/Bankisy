@@ -1,5 +1,3 @@
-using TFG.Context.Models;
-
 namespace TFG.Context.DTOs.bankAccount;
 
 public class BankAccountUpdateDto

@@ -21,7 +21,8 @@ export class DepositComponent {
   amount: number = 10;
   sessionID: string;
 
-  constructor(private checkoutService: CheckoutService) { }
+  constructor(private checkoutService: CheckoutService) {
+  }
 
   async createCheckoutSession() {
     this.checkoutService.createCheckoutSession(this.amount).subscribe(response => {
@@ -33,7 +34,7 @@ export class DepositComponent {
   async redirectToCheckout() {
     const stripe = await loadStripe('pk_test_51P7eS8D74icxIHcUPVwMabVBGZqDBTx8YBhItr2Ht61LQuBLsaBnSCls9AfxtdmAb0Ju8uweakHj8K9v7dTeCwWP00cTmOWBgn');
     if (stripe !== null) {
-      const { error } = await stripe.redirectToCheckout({
+      const {error} = await stripe.redirectToCheckout({
         sessionId: this.sessionID
       });
 

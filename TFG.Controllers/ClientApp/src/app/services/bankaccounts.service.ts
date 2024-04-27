@@ -32,6 +32,7 @@ export class BankAccountService {
     if (isDeleted !== undefined && isDeleted !== null) {
       url += `&isDeleted=${!isDeleted}`;
     }
+    console.log(url);
     return this.http.get<Pagination<BankAccount>>(url).pipe(
       map(response => ({
         currentPage: response.currentPage,
@@ -66,7 +67,7 @@ export class BankAccountService {
   }
 
   //TRANSACTIONS FOR BANK ACCOUNT
-  getTransactionsByIban(iban: string): Observable<Transaction[]>{
+  getTransactionsByIban(iban: string): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
   }
 

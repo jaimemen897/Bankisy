@@ -24,7 +24,7 @@ import {PaginatorModule} from "primeng/paginator";
   templateUrl: './bizum-create.component.html',
   styleUrl: './bizum-create.component.css'
 })
-export class BizumCreateComponent implements OnInit{
+export class BizumCreateComponent implements OnInit {
   constructor(private messageService: MessageService, private indexService: IndexService) {
   }
 

@@ -16,8 +16,9 @@ public class Pagination<T>(IEnumerable<T> items, int count, int pageNumber, int 
         string orderBy, bool descending)
     {
         var count = await source.CountAsync();
-        var items = await source.OrderBy(orderBy + (descending ? " descending" : "")).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-        
+        var items = await source.OrderBy(orderBy + (descending ? " descending" : "")).Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize).ToListAsync();
+
         return new Pagination<T>(items, count, pageNumber, pageSize);
     }
 }
