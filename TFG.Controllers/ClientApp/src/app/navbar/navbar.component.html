@@ -15,7 +15,7 @@
   </ng-template>
 
   <ng-template pTemplate="end">
-    <p-inputSwitch [(ngModel)]="themeSelection" (onChange)="changeTheme($event.checked)" class="m-1"/>
+    <p-inputSwitch [(ngModel)]="themeSelection" (onChange)="changeTheme($event.checked)" class="moon-switch"/>
     <p-button *ngIf="!isLogged()" [routerLink]="['/login']" icon="pi pi-sign-in" label="Iniciar sesión" class="m-1"/>
     <p-button (click)="logout()" *ngIf="isLogged()" icon="pi pi-sign-out" label="Cerrar sesión" class="m-1"/>
     <p-button *ngIf="isLogged()" [routerLink]="['/profile']" icon="pi pi-user" label="Perfil" class="m-1"/>

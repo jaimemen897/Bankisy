@@ -76,3 +76,14 @@ body {
 .p-slider-range {
   border-radius: 4rem;
 }
+
+.moon-switch .p-inputswitch-slider:before {
+  background-image: url('assets/moon.png');
+  background-size: 100%;
+  width: 20px;
+  height: 20px;
+}
+
+.moon-switch.p-inputswitch-checked .p-inputswitch-slider:before {
+  background-image: url('assets/sun.png');
+}

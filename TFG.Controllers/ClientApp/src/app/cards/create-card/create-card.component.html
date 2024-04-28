@@ -17,16 +17,11 @@
                     emptyMessage="No se han encontrado tipos de cuenta"/>
 
         <div class="card flex justify-content-center">
-          <p-inputOtp formControlName="pin" [length]="4">
-            <ng-template pTemplate="input" let-token let-events="events">
-              <input pInputText class="custom-otp-input" (input)="events.input($event)" type="text" [attr.value]="token"
-                     [maxLength]="1"/>
-            </ng-template>
-          </p-inputOtp>
+          <p-inputOtp formControlName="pin" [length]="4" [integerOnly]="true"></p-inputOtp>
         </div>
       }
       <p-button (click)="saveChanges()" [label]="label" rounded styleClass="w-full mt-6"></p-button>
-      <p-button (click)="cancel()" rounded label="Cancelar" severity="danger" styleClass="w-full"></p-button>
+      <p-button (click)="cancel()" rounded label="Cancelar" severity="secondary" styleClass="w-full"></p-button>
     </form>
   </div>
 </div>

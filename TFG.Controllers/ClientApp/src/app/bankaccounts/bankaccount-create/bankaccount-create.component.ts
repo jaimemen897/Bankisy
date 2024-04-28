@@ -108,7 +108,8 @@ export class BankaccountCreateComponent implements OnInit {
         severity: 'error',
         summary: 'Error',
         closable: false,
-        detail: 'Por favor, rellene todos los campos'
+        detail: 'Por favor, rellene todos los campos',
+        life: 2000
       });
       return;
     }

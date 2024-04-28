@@ -321,7 +321,6 @@ export class IndexComponent implements OnInit {
 
   goToCreateBizum() {
     this.refresh();
-    console.log(this.bizumCreateComponent)
     this.bizumCreateComponent.loadUser();
     this.displayDialogBizum = true;
   }
