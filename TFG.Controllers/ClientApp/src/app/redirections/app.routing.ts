@@ -27,7 +27,7 @@ export const routes: Routes = [
   {path: 'profile', component: ProfileComponent, data: {animation: 'ProfilePage'}},
   {path: 'transactions/create', component: CreateTransactionComponent, data: {animation: 'TransactionsPage'}},
   {path: 'bizum', component: BizumCreateComponent, data: {animation: 'TransactionsPage'}},
-  {path: 'bankaccounts/create', component: BankaccountCreateComponent, data: {animation: 'BankAccountsPage'}},
+  {path: 'bankaccounts/create', component: BankaccountCreateComponent, data: {animation: 'BankAccountsPage', newUser: Boolean}},
   {path: 'deposit', component: DepositComponent, data: {animation: 'DepositPage'}}
 ];
 

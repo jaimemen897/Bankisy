@@ -34,7 +34,7 @@
       <!--INGRESOS-->
       <div class="col-12 md:col-6 xl:col-4">
         <div
-          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-blue-400">
+          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-green-500">
           <i class="pi pi-angle-up text-4xl mb-4 text-secondary font-bold"></i>
           <span class="text-900 text-2xl mb-4 font-medium text-secondary font-bold">INGRESOS</span>
           <span class="text-900 text-2xl font-bold text-secondary">+ {{ totalIncomes }}€</span>
@@ -44,7 +44,7 @@
       <!--SALDO-->
       <div class="col-12 md:col-6 xl:col-4">
         <div
-          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-primary">
+          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-blue-400">
           <i class="pi pi-wallet text-4xl mb-4 text-secondary font-bold"></i>
           <span class="text-900 text-2xl mb-4 font-medium text-secondary font-bold">SALDO EN LAS CUENTAS</span>
           <span class="text-900 text-2xl font-bold text-secondary">{{ totalBalance }}€</span>
@@ -54,7 +54,7 @@
       <!--GASTOS-->
       <div class="col-12 md:col-6 xl:col-4">
         <div
-          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-yellow-400">
+          class="h-11rem flex flex-column align-items-center justify-content-center border-round-2xl p-3 shadow-5 bg-red-500">
           <i class="pi pi-angle-down text-4xl mb-4 text-secondary font-bold"></i>
           <span class="text-900 text-2xl mb-4 font-medium text-secondary font-bold">GASTOS</span>
           <span class="text-900 text-2xl font-bold text-secondary">- {{ totalExpenses }}€</span>
@@ -98,14 +98,14 @@
                             pTooltip="Información" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
                   <p-button (click)="transactionPanel.toggle($event)" icon="pi pi-money-bill" severity="success"
                             pTooltip="Transacciones" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
-                  <p-button (click)="activeBizum(account.iban)" icon="pi pi-mobile" severity="help"
+                  <p-button (click)="confirmActiveBizum(account.iban)" icon="pi pi-mobile" severity="help"
                             pTooltip="Activar Bizum" [showDelay]="500" tooltipPosition="bottom" [autoHide]="true"/>
                 </div>
               </td>
             </tr>
 
             <!--PANELES DESPLEGABLES-->
-            <p-overlayPanel #infoPanel>
+            <p-overlayPanel #infoPanel appendTo="body">
               <ng-template pTemplate="content">
                 <h4 class="text-left">IBAN: {{ account.iban }}</h4>
                 <p class="text-left">Tipo de cuenta: {{ getAccountName(account.accountType) }}</p>
@@ -119,29 +119,28 @@
               <ng-template pTemplate="content">
                 <h4 class="text-left">Transacciones de la cuenta</h4>
                 <p-scrollPanel [style]="{height: '250px', width: '400px'}" styleClass="custombar1">
-
                   <div class="flex flex-column gap-2">
-                    <div class="flex inline-flex gap-2 bg-blue-100 p-2 w-full justify-content-between">
+                    <div class="flex inline-flex gap-2 bg-blue-300 p-2 w-full justify-content-between border-round-2xl">
                       <!--negrita-->
-                      <p class="flex-1 font-bold"> Concepto</p>
-                      <p class="flex-1 font-bold"> Fecha</p>
-                      <p class="flex-1 font-bold"> Importe</p>
+                      <p class="flex-1 font-bold text-black-alpha-70"> Concepto</p>
+                      <p class="flex-1 font-bold text-black-alpha-70"> Fecha</p>
+                      <p class="flex-1 font-bold text-black-alpha-70"> Importe</p>
                     </div>
 
                     @for (transaction of transactionsByBankAccount; track transactionsByBankAccount) {
                       @if (transaction.ibanAccountOrigin == account.iban) {
                         <div
-                          class="flex inline-flex gap-2 bg-red-100 p-2 w-full justify-content-between align-items-center">
-                          <p class="flex-1"> {{ transaction.concept }}</p>
-                          <p class="flex-1"> {{ transaction.date | date: 'dd/MM' }}</p>
-                          <p class="flex-1"> -{{ transaction.amount }}€</p>
+                          class="flex inline-flex gap-2 bg-red-300 p-2 w-full justify-content-between align-items-center border-round-2xl">
+                          <p class="flex-1 text-black-alpha-70"> {{ transaction.concept }}</p>
+                          <p class="flex-1 text-black-alpha-70"> {{ transaction.date | date: 'dd/MM' }}</p>
+                          <p class="flex-1 text-black-alpha-70"> -{{ transaction.amount }}€</p>
                         </div>
                       } @else if (transaction.ibanAccountDestination == account.iban) {
                         <div
-                          class="flex inline-flex gap-2 bg-green-100 p-2 w-full justify-content-between align-items-center">
-                          <p class="flex-1"> {{ transaction.concept }}</p>
-                          <p class="flex-1"> {{ transaction.date | date: 'dd/MM' }}</p>
-                          <p class="flex-1"> {{ transaction.amount }}€</p>
+                          class="flex inline-flex gap-2 bg-green-300 p-2 w-full justify-content-between align-items-center border-round-2xl">
+                          <p class="flex-1 text-black-alpha-70"> {{ transaction.concept }}</p>
+                          <p class="flex-1 text-black-alpha-70"> {{ transaction.date | date: 'dd/MM' }}</p>
+                          <p class="flex-1 text-black-alpha-70"> {{ transaction.amount }}€</p>
                         </div>
                       }
                     }
@@ -150,9 +149,25 @@
               </ng-template>
             </p-overlayPanel>
 
+
           </ng-template>
         </p-table>
       </p-panel>
+      <p-confirmDialog #activeBizum>
+        <ng-template pTemplate="headless" let-message>
+          <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
+              <i class="pi pi-mobile text-4xl"></i>
+            </div>
+            <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
+            <p class="mb-0">{{ message.message }}</p>
+            <div class="flex align-items-center gap-2 mt-4">
+              <p-button label="Activar" (click)="activeBizum.accept()"/>
+              <p-button label="Cancelar" (click)="activeBizum.reject()" severity="secondary"/>
+            </div>
+          </div>
+        </ng-template>
+      </p-confirmDialog>
 
       <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()" class="m-2"></p-button>
       <p-dialog header="Crear cuenta bancaria" [(visible)]="displayDialogBankAccount" [modal]="true"

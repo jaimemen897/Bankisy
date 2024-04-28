@@ -17,15 +17,15 @@
                 <h2>{{ card.cardNumber }}</h2>
                 <p>{{ card.user.name }}</p>
                 <div class="gap-2 w-full flex justify-content-center">
-                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-eye"/>
+                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-eye" styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"></p-button>
 
                   @if (card.isBlocked) {
-                    <p-button (click)="unblockCard(card)" icon="pi pi-lock-open"/>
+                    <p-button (click)="unblockCard(card)" icon="pi pi-lock-open" styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"/>
                   } @else {
-                    <p-button (click)="blockCard(card)" icon="pi pi-lock"/>
+                    <p-button (click)="blockCard(card)" icon="pi pi-lock" styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"/>
                   }
 
-                  <p-button (click)="showOptions($event, card)" icon="pi pi-cog"></p-button>
+                  <p-button (click)="showOptions($event, card)" icon="pi pi-cog" styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"></p-button>
                   <p-menu #optionMenu [model]="optionItems" [popup]="true"></p-menu>
                 </div>
               </div>
@@ -56,7 +56,7 @@
             <div class="card-body w-full">
               <p>¿Deseas solicitar una nueva tarjeta de crédito?</p>
               <p>¡Haz clic en el botón de abajo!</p>
-              <p-button label="Solicitar" icon="pi pi-credit-card"></p-button>
+              <p-button label="Solicitar" icon="pi pi-credit-card" styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"></p-button>
             </div>
           </div>
         </div>

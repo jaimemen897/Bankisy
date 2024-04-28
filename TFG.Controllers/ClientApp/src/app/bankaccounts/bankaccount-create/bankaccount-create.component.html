@@ -2,16 +2,15 @@
   <div class="flex flex-column gap-3">
     <form [formGroup]="formGroup" class="flex flex-column gap-3">
       @if (!isNewUser) {
-        <p-multiSelect [options]="users" formControlName="selectedUsers" optionLabel="name"
-                       placeholder="Seleccione el usuario"
-                       display="chip" [showClear]="true" styleClass="w-20rem"
+        <p-multiSelect [options]="users" formControlName="selectedUsers" optionLabel="name" display="chip"
+                       placeholder="Seleccione el usuario" showClear styleClass="w-20rem"
                        emptyMessage="No se encontraron usuarios"/>
       }
       <p-dropdown [options]="accountsTypes" [showClear]="true" emptyMessage="No se han encontrado tipos de cuenta"
                   formControlName="selectedAccountType" placeholder="Elegir tipo de cuenta"
                   styleClass="w-20rem"/>
       <p-button (click)="saveChanges()" [label]="label" rounded styleClass="w-full mt-4"></p-button>
-      <p-button (click)="cancel()" rounded label="Cancelar" severity="danger" styleClass="w-full"></p-button>
+      <p-button (click)="cancel()" rounded label="Cancelar" severity="secondary" styleClass="w-full"></p-button>
     </form>
   </div>
 </div>

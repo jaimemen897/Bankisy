@@ -1,11 +1,13 @@
+<p-toast></p-toast>
 <div class="card w-full flex justify-content-center align-items-center flex-column">
   <div class="flex flex-column gap-2">
     <h1>Ingresar dinero</h1>
 
     <div class="flex gap-4 justify-content-between align-items-center mb-2">
       <label for="amount">Cantidad a ingresar</label>
-      <input [(ngModel)]="amount" id="amount" pInputText type="number">
+      <input [(ngModel)]="amount" id="amount" pInputText type="number" [min]="0" [max]="10000" class="w-5"/>
     </div>
+    <p-slider [(ngModel)]="amount" styleClass="w-full mb-3 p-1" max="10000" animate="true"></p-slider>
 
     <p-button (click)="createCheckoutSession()" label="Ir a la página de pago" styleClass="w-full"></p-button>
   </div>

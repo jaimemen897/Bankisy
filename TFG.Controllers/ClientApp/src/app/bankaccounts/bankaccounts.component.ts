@@ -113,9 +113,7 @@ export class BankaccountsComponent {
 
   //TIPO CUENTA
   onSearchFilter(event: any) {
-    console.log(event.value[0])
-    let accountTypeTranslated = Object.keys(AccountType).find(key => AccountType[key as keyof typeof AccountType] === event.value[0]) as keyof typeof AccountType;
-    console.log(accountTypeTranslated)
+    let accountTypeTranslated = Object.keys(AccountType).find(key => AccountType[key as keyof typeof AccountType] === event.value) as keyof typeof AccountType;
     this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, accountTypeTranslated).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;

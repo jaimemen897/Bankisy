@@ -9,7 +9,7 @@
       <div class="inline-flex gap-3">
         <div>
             <span class="p-input-filled">
-              <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="name" id="name" pInputText placeholder="Nombre"
+              <input class="p-3 border-round-3xl border-0" formControlName="name" id="name" pInputText placeholder="Nombre"
                      type="text">
             </span>
           @if (formGroup.controls['name'].invalid && formGroup.controls['name'].touched) {
@@ -23,7 +23,7 @@
         </div>
         <div>
             <span class="p-input-filled">
-              <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="email" id="email" pInputText placeholder="Email"
+              <input class="p-3 border-round-3xl border-0" formControlName="email" id="email" pInputText placeholder="Email"
                      type="text">
             </span>
           @if (formGroup.controls['email'].invalid && formGroup.controls['email'].touched) {
@@ -37,7 +37,7 @@
 
       <div class="inline-flex gap-3">
         <div><span class="p-input-filled">
-            <input class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="username" id="username" pInputText placeholder="Username"
+            <input class="p-3 border-round-3xl border-0" formControlName="username" id="username" pInputText placeholder="Username"
                    type="text">
           </span>
           @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
@@ -50,7 +50,7 @@
           }</div>
 
         <div><span class="p-input-filled">
-            <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="dni" id="dni" pInputText placeholder="DNI"
+            <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0" formControlName="dni" id="dni" pInputText placeholder="DNI"
                    type="text">
           </span>
           @if (formGroup.controls['dni'].invalid && formGroup.controls['dni'].touched) {
@@ -68,7 +68,7 @@
       <div class="inline-flex gap-3">
         <div>
             <span class="p-input-filled">
-          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="phone" id="phone" pInputText
+          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0" formControlName="phone" id="phone" pInputText
                  placeholder="Teléfono" type="text">
         </span>
           @if (formGroup.controls['phone'].invalid && formGroup.controls['phone'].touched) {
@@ -94,7 +94,7 @@
       <div class="inline-flex gap-3">
         <div>
             <span class="p-input-filled">
-          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="password" id="password" pInputText pPassword
+          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0" formControlName="password" id="password" pInputText pPassword
                  placeholder="Contraseña" type="password">
         </span>
           @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
@@ -109,7 +109,7 @@
 
         <div>
             <span class="p-input-filled">
-          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-gray-200" formControlName="confirmpassword" id="confirmpassword" pInputText
+          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0" formControlName="confirmpassword" id="confirmpassword" pInputText
                  pPassword
                  placeholder="Confirmar contraseña" type="password">
         </span>
