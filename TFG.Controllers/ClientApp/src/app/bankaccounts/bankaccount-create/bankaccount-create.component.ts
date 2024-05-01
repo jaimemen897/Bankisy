@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MessageService} from "primeng/api";
 import {BankAccountService} from "../../services/bankaccounts.service";
 import {BankAccountCreate} from "../../models/BankAccountCreate";
@@ -10,6 +10,7 @@ import {ButtonModule} from "primeng/button";
 import {User} from "../../models/User";
 import {IndexService} from "../../services/index.service";
 import {AccountType} from "../../models/AccountType";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-bankaccount-create',
@@ -24,9 +25,9 @@ import {AccountType} from "../../models/AccountType";
   templateUrl: './bankaccount-create.component.html',
   styleUrl: './bankaccount-create.component.css'
 })
-export class BankaccountCreateComponent {
+export class BankaccountCreateComponent implements OnInit {
 
-  constructor(private bankAccountService: BankAccountService, private usersService: UserService, private messageService: MessageService, private indexService: IndexService) {
+  constructor(private bankAccountService: BankAccountService, private usersService: UserService, private messageService: MessageService, private indexService: IndexService, private route: ActivatedRoute) {
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -45,6 +46,17 @@ export class BankaccountCreateComponent {
 
   @Output() onSave: EventEmitter<any> = new EventEmitter();
   @Output() onCancel: EventEmitter<any> = new EventEmitter();
+
+  ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.isNewUser = data.newUser;
+      this.updateSelectedUsersValidators();
+
+      if (this.isNewUser) {
+        this.loadUser(this.route.snapshot.params.userId);
+      }
+    });
+  }
 
   //CHANGE SELECTED USERS VALIDATORS DEPENDING ON THE MODE
   updateSelectedUsersValidators() {
@@ -96,7 +108,8 @@ export class BankaccountCreateComponent {
         severity: 'error',
         summary: 'Error',
         closable: false,
-        detail: 'Por favor, rellene todos los campos'
+        detail: 'Por favor, rellene todos los campos',
+        life: 2000
       });
       return;
     }
@@ -152,4 +165,6 @@ export class BankaccountCreateComponent {
     this.formGroup.reset();
     this.onCancel.emit();
   }
+
+
 }

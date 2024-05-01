@@ -11,7 +11,7 @@ import {BankAccount} from "../../models/BankAccount";
 import {InputTextModule} from "primeng/inputtext";
 import {StyleClassModule} from "primeng/styleclass";
 import {TransactionCreate} from "../../models/TransactionCreate";
-import {NgIf} from "@angular/common";
+import {NgIf, NgStyle} from "@angular/common";
 
 @Component({
   selector: 'app-create-transaction',
@@ -24,7 +24,8 @@ import {NgIf} from "@angular/common";
     ReactiveFormsModule,
     InputTextModule,
     StyleClassModule,
-    NgIf
+    NgIf,
+    NgStyle
   ],
   templateUrl: './create-transaction.component.html',
   styleUrl: './create-transaction.component.css'
@@ -66,7 +67,7 @@ export class CreateTransactionComponent implements OnInit {
 
   createTransaction() {
     if (!this.formGroup.valid) {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos'});
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos', life: 2000, closable: false});
       return;
     }
 

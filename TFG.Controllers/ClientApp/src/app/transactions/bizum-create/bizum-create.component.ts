@@ -55,7 +55,7 @@ export class BizumCreateComponent implements OnInit {
 
   createBizum() {
     if (!this.formGroup.valid) {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos'});
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos', life: 2000, closable: false});
       return;
     }
 

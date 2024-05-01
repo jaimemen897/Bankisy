@@ -14,8 +14,8 @@
         <form [formGroup]="formGroup" class="mt-4" id="loginForm">
           <div class="flex flex-column">
             <span class="p-input-filled my-2">
-              <input (keyup.enter)="sendLogin()" class="p-3 border-round-3xl border-0 bg-secondary" formControlName="username" id="username" pInputText
-                     placeholder="Username" type="text">
+              <input (keyup.enter)="sendLogin()" class="p-3 border-round-3xl border-0" formControlName="username"
+                     id="username" pInputText placeholder="Username" type="text">
             </span>
             @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
               <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -26,8 +26,8 @@
                 Máximo 50 caracteres</p>
             }
             <span class="p-input-filled my-2">
-              <input (keyup.enter)="sendLogin()" class="p-3 border-round-3xl border-0 bg-secondary" formControlName="password" id="password" pInputText
-                     placeholder="Password" type="password">
+              <input (keyup.enter)="sendLogin()" class="p-3 border-round-3xl border-0" formControlName="password"
+                     id="password" pInputText placeholder="Password" type="password">
             </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">

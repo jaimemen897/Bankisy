@@ -8,37 +8,36 @@
            [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}">
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="IBAN" style="width:22%">IBAN
+        <th pSortableColumn="IBAN" style="width:20%">IBAN
           <p-sortIcon field="IBAN"/>
         </th>
-        <th pSortableColumn="accountType" style="width:22%">Tipo de cuenta
+        <th pSortableColumn="accountType" style="width:15%">Tipo de cuenta
           <p-sortIcon field="accountType"/>
         </th>
-        <th style="width:22%">Usuario</th>
-        <th pSortableColumn="balance" style="width:22%">Saldo
+        <th style="width:20%">Usuario</th>
+        <th pSortableColumn="balance" style="width:15%">Saldo
           <p-sortIcon field="balance"/>
         </th>
-        <th pSortableColumn="isDeleted" style="width:22%">Estado</th>
-        <th style="width:22%">
+        <th pSortableColumn="isDeleted" style="width:10%">Estado</th>
+        <th style="width:20%">
           <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
+        </th>
       </tr>
       <tr>
         <!--BUSCAR POR IBAN-->
         <th>
-          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="iban" placeholder="Buscar por IBAN"
-                          type="text"/>
+          <p-columnFilter [showMenu]="false" (input)="onSearch($event)"  placeholder="Buscar por IBAN"/>
         </th>
         <!--BUSCAR POR ACCOUNT TYPE-->
         <th>
           <p-columnFilter [showMenu]="false" field="accountType" matchMode="in">
             <ng-template let-value pTemplate="filter">
-              <p-multiSelect (onChange)="onSearchFilter($event)" [ngModel]="value" [options]="accountsTypes"
-                             [showHeader]="false" [style]="{'max-width': '15rem', 'width': '15rem'}" display="chip"
-                             placeholder="Tipo de cuenta" [maxSelectedLabels]="1" [selectionLimit]="1" [focusOnHover]="true">
+              <p-dropdown [options]="accountsTypes" (onChange)="onSearchFilter($event)" placeholder="Tipo de cuenta"
+                          [showClear]="true" class="text-color-secondary">
                 <ng-template let-option pTemplate="item">
-                  <p-tag [severity]="getSeverity(option)" [value]="option"></p-tag>
+                  <p-tag [value]="option" [severity]="getSeverity(option)"></p-tag>
                 </ng-template>
-              </p-multiSelect>
+              </p-dropdown>
             </ng-template>
           </p-columnFilter>
         </th>
@@ -112,32 +111,25 @@
             </p-overlayPanel>
             <p-overlayPanel #transactionPanel>
               <ng-template pTemplate="content">
-                <p-scroller [itemSize]="5" [items]="transactions" [style]="{'width': '200px', 'height': 'auto'}"
-                            scrollHeight="15rem" styleClass="border-1 surface-border">
+                <p-scroller [items]="transactions" [style]="{'width': '250px', 'height': '130px'}"
+                            scrollHeight="15rem">
                   <ng-template let-item let-options="options" pTemplate="item">
-                    <div [ngClass]="{'bg-gray-100': options.index % 2 === 0}"
-                         class="flex inline-flex align-items-center p-2">
-                      <div class="flex inline-flex w-full border-gray-50 border-1 p-2">
-                        <span>{{ item.concept }} - {{ item.date | date: 'dd/MM' }} - {{ item.amount }}€</span>
-                      </div>
-                    </div>
+                    <p>{{ item.concept }} - {{ item.date | date: 'dd/MM' }} - {{ item.amount }}€</p>
                   </ng-template>
                 </p-scroller>
               </ng-template>
             </p-overlayPanel>
 
-            <p-button (click)="infoPanel.toggle($event)" [autoHide]="true" [showDelay]="500"
-                      icon="pi pi-info-circle"
-                      pTooltip="Información" severity="secondary" tooltipPosition="bottom"/>
+            <p-button (click)="infoPanel.toggle($event)" [autoHide]="true" [showDelay]="500" icon="pi pi-info-circle"
+                      pTooltip="Información" tooltipPosition="bottom" severity="info"/>
             <p-button (click)="goToEditBankAccount(account.iban)" [autoHide]="true" [showDelay]="500"
                       icon="pi pi-pencil" pTooltip="Editar" severity="secondary" tooltipPosition="bottom"/>
             <p-button (click)="getTransactionsByIban(account.iban, $event)"
-                      [autoHide]="true"
-                      [showDelay]="500" icon="pi pi-money-bill" pTooltip="Transacciones" severity="secondary"
-                      tooltipPosition="bottom"/>
+                      [autoHide]="true" [showDelay]="500" icon="pi pi-money-bill" pTooltip="Transacciones"
+                      severity="success" tooltipPosition="bottom"/>
             <p-button (click)="deleteBankAccount(account.iban)" *ngIf="!account.isDeleted" [autoHide]="true"
-                      [showDelay]="500"
-                      icon="pi pi-trash" pTooltip="Borrar" severity="secondary" tooltipPosition="bottom"/>
+                      [showDelay]="500" icon="pi pi-trash" pTooltip="Borrar" severity="danger"
+                      tooltipPosition="bottom"/>
             <p-button (click)="activateBankAccount(account.iban)" *ngIf="account.isDeleted" [autoHide]="true"
                       [showDelay]="500"
                       icon="pi pi-undo" pTooltip="Recuperar" severity="secondary" tooltipPosition="bottom"/>
@@ -148,7 +140,11 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5">No se han encontrado cuentas bancarias</td>
+        <td colspan="6">
+          <div class="flex justify-content-center align-items-center p-6">
+            <p>No se han encontrado cuentas bancarias</p>
+          </div>
+        </td>
       </tr>
     </ng-template>
   </p-table>

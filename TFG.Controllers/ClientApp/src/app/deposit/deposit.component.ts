@@ -4,6 +4,8 @@ import {FormsModule} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {CheckoutService} from "../services/checkout.service";
 import {loadStripe} from "@stripe/stripe-js";
+import {SliderModule} from "primeng/slider";
+import {ToastModule} from "primeng/toast";
 
 @Component({
   selector: 'app-deposit',
@@ -11,13 +13,14 @@ import {loadStripe} from "@stripe/stripe-js";
   imports: [
     InputTextModule,
     FormsModule,
-    ButtonModule
+    ButtonModule,
+    SliderModule,
+    ToastModule
   ],
   templateUrl: './deposit.component.html',
   styleUrl: './deposit.component.css'
 })
 export class DepositComponent {
-  accountId: string;
   amount: number = 10;
   sessionID: string;
 

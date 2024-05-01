@@ -90,11 +90,8 @@ export class IndexService {
     return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
   }
 
-  getCardByCardNumber(cardNumber: string): Observable<Card> {
-    return this.http.get<Card>(`${this.apiUrl}/card/${cardNumber}`);
-  }
-
   createCard(CardCreate: CardCreate): Observable<Card> {
+    console.log(CardCreate)
     return this.http.post<Card>(`${this.apiUrl}/card`, CardCreate).pipe(
       catchError(error => this.handleError(error))
     );
@@ -140,10 +137,6 @@ export class IndexService {
     return this.http.get<Card[]>(`${this.apiUrl}/cards/user`);
   }
 
-  getCardsByIban(iban: string): Observable<Card[]> {
-    return this.http.get<Card[]>(`${this.apiUrl}/cards/bankaccount/${iban}`);
-  }
-
   //PROFILE
   updateProfile(user: UserCreate): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/profile`, user).pipe(
@@ -171,75 +164,151 @@ export class IndexService {
 
   private handleError(error: any) {
     if (error.status === 400) {
-      if (error.error.title === 'Users not found') {
+      if (error.error.title === 'User not found') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, detail: 'Usuario no encontrado'
+        });
+      }
+      if (error.error.title === 'Bank account not found') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, detail: 'Cuenta bancaria no encontrada'
+        });
+      }
+      if (error.error.title === 'Bank account does not belong to the user') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, detail: 'La cuenta bancaria no pertenece al usuario'
+        });
+      }
+      if (error.error.title === 'Bank account already has a card') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, detail: 'La cuenta bancaria ya tiene una tarjeta'
+        });
+      }
+      if (error.error.title === 'Invalid card type. Valid values are: Debit, Visa, Credit, Prepaid, Virtual, Mastercard, AmericanExpress') {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
+          closable: false,
+          detail: 'Tipo de tarjeta inválido. Los valores válidos son: Débito, Visa, Crédito, Prepago, Virtual, Mastercard, AmericanExpress'
+        });
+      }
+      if (error.error.title === 'Card is already blocked') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, detail: 'La tarjeta ya está bloqueada'
+        });
+      }
+      if (error.error.title === 'Card is not blocked') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, detail: 'La tarjeta no está bloqueada'
+        });
+      }
+      if (error.error.title === 'Card is not expired') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, detail: 'La tarjeta no está caducada'
+        });
+      }
+      if (error.error.title === 'Users not found') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'Uno o varios de los usuarios no existen'
         });
       }
       if (error.error.title === 'Invalid account type. Valid values are: Saving, Current, FixedTerm, Payroll, Student') {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'Tipo de cuenta inválido. Los valores válidos son: Ahorro, Corriente, PlazoFijo, Nómina, Estudiante'
+        });
+      }
+      if (error.error.title === 'You are not the owner of the card') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, life: 2000,
+          detail: 'No eres el propietario de la tarjeta'
         });
       }
       if (error.error.title === 'Insufficient funds in the origin account') {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'Fondos insuficientes en la cuenta de origen'
         });
       }
       if (error.error.title === 'Origin and destination accounts cannot be the same') {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'Las cuentas de origen y destino no pueden ser iguales'
         });
       }
       if (error.error.title === 'Transaction amount must be greater than zero') {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'La cantidad de la transacción debe ser mayor que cero'
         });
       }
       if (error.error.title === 'Account origin not found or not accepting Bizum') {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'Cuenta de origen no encontrada o no acepta Bizum'
         });
       }
       if (error.error.title === 'User destination not found') {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'Usuario de destino no encontrado'
         });
       }
       if (error.error.title === 'Account destination not found or not accepting Bizum') {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'Cuenta de destino no encontrada o no acepta Bizum'
         });
       }
       if (error.error.title === 'You are not the owner of the account') {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
+          summary: 'Error', closable: false, life: 2000,
           detail: 'No eres el propietario de la cuenta'
+        });
+      }
+      if (error.error.title === 'Card is not expired') {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error', closable: false, life: 2000,
+          detail: 'La tarjeta no está caducada'
         });
       }
     } else if (error.status === 404) {
       if (error.error.title === 'Account origin not found') {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de origen no encontrada'});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          closable: false,
+          life: 2000,
+          detail: 'Cuenta de origen no encontrada'
+        });
       }
       if (error.error.title === 'Account destination not found') {
-        this.messageService.add({severity: 'error', summary: 'Error', detail: 'Cuenta de destino no encontrada'});
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          closable: false,
+          life: 2000,
+          detail: 'Cuenta de destino no encontrada'
+        });
       }
     }
     return throwError(() => error);

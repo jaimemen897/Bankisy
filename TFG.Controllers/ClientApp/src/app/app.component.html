@@ -1,5 +1,4 @@
 <app-navbar *ngIf="!isInLoginOrRegister()"></app-navbar>
-<div [@routeAnimations]="prepareRoute(outlet)" class="container">
-  <p-inputSwitch [(ngModel)]="themeSelection" (onChange)="changeTheme($event.checked)"></p-inputSwitch>
+<div [@routeAnimations]="prepareRoute(outlet)">
   <router-outlet #outlet="outlet"></router-outlet>
 </div>

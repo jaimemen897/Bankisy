@@ -16,6 +16,15 @@ import {ScrollPanelModule} from "primeng/scrollpanel";
 import {TableModule} from "primeng/table";
 import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {DialogModule} from "primeng/dialog";
+import {InputOtpModule} from "primeng/inputotp";
+import {InputTextModule} from "primeng/inputtext";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {CardCreate} from "../models/CardCreate";
+import {DropdownModule} from "primeng/dropdown";
+import {BankAccount} from "../models/BankAccount";
+import {CreateCardComponent} from "../cards/create-card/create-card.component";
+import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.component";
 
 @Component({
   selector: 'app-card-panel',
@@ -34,7 +43,14 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
     TableModule,
     OverlayPanelModule,
     DatePipe,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    DialogModule,
+    InputOtpModule,
+    InputTextModule,
+    ReactiveFormsModule,
+    FormsModule,
+    DropdownModule,
+    CreateCardComponent
   ],
   templateUrl: './card-panel.component.html',
   styleUrl: './card-panel.component.css'
@@ -45,9 +61,15 @@ export class CardPanelComponent implements OnInit {
   }
 
   @ViewChild('optionMenu') optionMenu: any;
+  @ViewChild(CreateCardComponent) createCardComponent!: CreateCardComponent;
   cards!: Card[]
   userId!: number
   optionItems!: any[];
+
+  updatePinDialogVisible: boolean = false;
+  cardToUpdate!: Card;
+  pinToUpdate!: string;
+  showNewCardDialog: boolean = false;
 
   ngOnInit() {
     this.indexService.getCardsByUserId().subscribe(cards => {
@@ -56,11 +78,11 @@ export class CardPanelComponent implements OnInit {
   }
 
   showPin(card: Card) {
-    this.messageService.add({severity: 'info', summary: 'PIN', detail: card.pin});
+    this.messageService.add({severity: 'info', summary: 'PIN', detail: card.pin, closable: false, life: 2000,});
   }
 
   showCvv(card: Card) {
-    this.messageService.add({severity: 'info', summary: 'CVV', detail: card.cvv});
+    this.messageService.add({severity: 'info', summary: 'CVV', detail: card.cvv, closable: false, life: 2000,});
   }
 
   blockCard(card: Card) {
@@ -68,7 +90,8 @@ export class CardPanelComponent implements OnInit {
       this.messageService.add({
         severity: 'info',
         summary: 'Tarjeta bloqueada',
-        detail: 'Tarjeta bloqueada correctamente'
+        detail: 'Tarjeta bloqueada correctamente',
+        closable: false, life: 2000,
       });
       this.refresh();
     });
@@ -79,9 +102,47 @@ export class CardPanelComponent implements OnInit {
       this.messageService.add({
         severity: 'info',
         summary: 'Tarjeta desbloqueada',
-        detail: 'Tarjeta desbloqueada correctamente'
+        detail: 'Tarjeta desbloqueada correctamente',
+        closable: false, life: 2000,
       });
       this.refresh();
+    });
+  }
+
+  renovateCard(card: Card) {
+    this.indexService.renovateCard(card.cardNumber).subscribe(() => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Tarjeta renovada',
+        detail: 'Tarjeta renovada correctamente',
+        closable: false, life: 2000,
+      });
+      this.refresh();
+    });
+  }
+
+  showUpdatePinDialog(card: Card) {
+    this.cardToUpdate = card;
+    this.updatePinDialogVisible = true;
+  }
+
+  updatePin() {
+    let cardUpdate: CardCreate = {
+      pin: this.pinToUpdate,
+      cardType: this.cardToUpdate.cardType,
+      userId: this.cardToUpdate.user.id,
+      bankAccountIban: this.cardToUpdate.bankAccount.iban
+    };
+    this.indexService.updateCard(this.cardToUpdate.cardNumber, cardUpdate).subscribe(() => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'PIN actualizado',
+        detail: 'PIN actualizado correctamente',
+        closable: false, life: 2000,
+      });
+      this.updatePinDialogVisible = false;
+      this.refresh();
+      this.pinToUpdate = '';
     });
   }
 
@@ -103,6 +164,20 @@ export class CardPanelComponent implements OnInit {
             icon: 'pi pi-eye',
             command: () => {
               this.showCvv(card);
+            }
+          },
+          {
+            label: 'Renovar tarjeta',
+            icon: 'pi pi-refresh',
+            command: () => {
+              this.renovateCard(card);
+            }
+          },
+          {
+            label: 'Cambiar PIN',
+            icon: 'pi pi-key',
+            command: () => {
+              this.showUpdatePinDialog(card)
             }
           },
           {
@@ -158,6 +233,25 @@ export class CardPanelComponent implements OnInit {
       default:
         return {backgroundColor: "#414141", color: "#ffffff"}; //Negro
     }
+  }
+
+  showNewCardDialogMethod() {
+    this.indexService.getUserByToken().subscribe(user => {
+      this.createCardComponent.loadUser(user)
+      this.showNewCardDialog = true
+    })
+  }
+
+  createCard() {
+    this.showNewCardDialog = false
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Tarjeta solicitada',
+      detail: 'La tarjeta se ha solicitado correctamente',
+      life: 2000,
+      closable: false
+    });
+    this.refresh()
   }
 
   protected readonly Card = Card;

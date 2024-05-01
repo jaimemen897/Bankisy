@@ -17,15 +17,19 @@
                 <h2>{{ card.cardNumber }}</h2>
                 <p>{{ card.user.name }}</p>
                 <div class="gap-2 w-full flex justify-content-center">
-                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-eye"/>
+                  <p-button (click)="infoPanel.toggle($event)" icon="pi pi-eye"
+                            styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"></p-button>
 
                   @if (card.isBlocked) {
-                    <p-button (click)="unblockCard(card)" icon="pi pi-lock-open"/>
+                    <p-button (click)="unblockCard(card)" icon="pi pi-lock-open"
+                              styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"/>
                   } @else {
-                    <p-button (click)="blockCard(card)" icon="pi pi-lock"/>
+                    <p-button (click)="blockCard(card)" icon="pi pi-lock"
+                              styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"/>
                   }
 
-                  <p-button (click)="showOptions($event, card)" icon="pi pi-cog"></p-button>
+                  <p-button (click)="showOptions($event, card)" icon="pi pi-cog"
+                            styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"></p-button>
                   <p-menu #optionMenu [model]="optionItems" [popup]="true"></p-menu>
                 </div>
               </div>
@@ -45,6 +49,13 @@
           </div>
         </div>
       }
+      <p-dialog header="Actualizar el pin" [(visible)]="updatePinDialogVisible" [style]="{width: '20vw'}">
+        <div class="card flex justify-content-center align-items-center flex-column gap-3">
+          <p-inputOtp [(ngModel)]="pinToUpdate" [integerOnly]="true"></p-inputOtp>
+          <p-button label="Actualizar" (click)="updatePin()"
+                    styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"></p-button>
+        </div>
+      </p-dialog>
       <!--solicitar una tarjeta-->
       <div class="col-6 flex justify-content-center flex-column align-items-center">
         <div class="p-5 border-round-3xl shadow-2 w-30rem h-18rem" [ngStyle]="getBackgroundColor()">
@@ -56,11 +67,15 @@
             <div class="card-body w-full">
               <p>¿Deseas solicitar una nueva tarjeta de crédito?</p>
               <p>¡Haz clic en el botón de abajo!</p>
-              <p-button label="Solicitar" icon="pi pi-credit-card"></p-button>
+              <p-button label="Solicitar" icon="pi pi-credit-card" (click)="showNewCardDialogMethod()"
+                        styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"></p-button>
             </div>
           </div>
         </div>
       </div>
+      <p-dialog header="Solicitar una tarjeta" [(visible)]="showNewCardDialog" [style]="{width: '30vw', height: '30vw'}">
+        <app-create-card (onSave)="createCard()" (onCancel)="showNewCardDialog = false"></app-create-card>
+      </p-dialog>
     } @else {
       <div class="card flex justify-content-center w-full h-screen">
         <p-progressSpinner styleClass="w-6rem h-6rem" strokeWidth="8" fill="var(--surface-ground)"></p-progressSpinner>

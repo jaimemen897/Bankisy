@@ -1,7 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MenubarModule} from "primeng/menubar";
 import {ButtonModule} from "primeng/button";
-import {NgIf} from "@angular/common";
+import {DOCUMENT, NgIf} from "@angular/common";
 import {DropdownModule} from "primeng/dropdown";
 import {ToastModule} from "primeng/toast";
 import {ConfirmPopup, ConfirmPopupModule} from "primeng/confirmpopup";
@@ -10,6 +10,8 @@ import {IndexService} from "../services/index.service";
 import {User} from "../models/User";
 import {MenuModule} from "primeng/menu";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {InputSwitchModule} from "primeng/inputswitch";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-navbar',
@@ -22,19 +24,28 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
     ToastModule,
     ConfirmPopupModule,
     MenuModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    InputSwitchModule,
+    FormsModule
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit {
 
-  constructor(private confirmationService: ConfirmationService, private indexService: IndexService, private messageService: MessageService) {
+  constructor(@Inject(DOCUMENT) private document: Document, private indexService: IndexService) {
+    let theme = window.localStorage.getItem('theme');
+    if (theme) {
+      this.themeSelection = theme == 'dark';
+      this.changeTheme(this.themeSelection);
+      this.document.documentElement.classList.add(theme + '-theme');
+    }
   }
 
   user!: User;
   items: MenuItem[];
   visibleSidebar: boolean = false;
+  themeSelection: boolean = false;
 
   ngOnInit() {
     this.indexService.getUserByToken().subscribe(
@@ -83,5 +94,14 @@ export class NavbarComponent implements OnInit {
 
   reject() {
     this.confirmPopup.reject();
+  }
+
+  changeTheme(state: boolean) {
+    let theme = state ? 'dark' : 'light';
+    window.localStorage.setItem('theme', theme);
+    let themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
+    this.document.documentElement.classList.remove('dark-theme', 'light-theme');
+    this.document.documentElement.classList.add(theme + '-theme');
+    themeLink.href = 'aura-' + theme + '-blue.css';
   }
 }

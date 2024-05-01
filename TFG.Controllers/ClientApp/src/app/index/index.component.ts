@@ -17,7 +17,7 @@ import {DialogModule} from "primeng/dialog";
 import {CreateTransactionComponent} from "../transactions/create/create-transaction.component";
 import {CurrencyPipe, DatePipe, NgClass} from "@angular/common";
 import {OverlayPanelModule} from "primeng/overlaypanel";
-import {MenuItem, MessageService} from "primeng/api";
+import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {AccountType} from "../models/AccountType";
 import {SocketService} from "../services/socket.service";
@@ -25,6 +25,7 @@ import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.co
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {InplaceModule} from "primeng/inplace";
 import {InputTextModule} from "primeng/inputtext";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
   selector: 'app-index',
@@ -50,14 +51,15 @@ import {InputTextModule} from "primeng/inputtext";
     BizumCreateComponent,
     ProgressSpinnerModule,
     InplaceModule,
-    InputTextModule
+    InputTextModule,
+    ConfirmDialogModule
   ],
   templateUrl: './index.component.html',
   styleUrl: './index.component.css'
 })
 export class IndexComponent implements OnInit {
 
-  constructor(private indexService: IndexService, private messageService: MessageService, private socketService: SocketService) {
+  constructor(private indexService: IndexService, private messageService: MessageService, private confirmationService: ConfirmationService) {
   }
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
@@ -319,7 +321,6 @@ export class IndexComponent implements OnInit {
 
   goToCreateBizum() {
     this.refresh();
-    console.log(this.bizumCreateComponent)
     this.bizumCreateComponent.loadUser();
     this.displayDialogBizum = true;
   }
@@ -385,5 +386,16 @@ export class IndexComponent implements OnInit {
     this.displayDialogBizum = false;
     this.displayDialogBankAccountNewUser = false;
     this.displayCreateBankAccount = false;
+  }
+
+  confirmActiveBizum(iban: string) {
+    this.confirmationService.confirm({
+      header: '¿Activar bizums?',
+      message: '¿Desea activar los bizums en esta cuenta?',
+      accept: () => {
+        this.messageService.add({ severity: 'help', summary: 'Bizums activados', detail: 'Se han activado los bizums en esta cuenta', closable: false, life: 2000 });
+        this.activeBizum(iban);
+      },
+    });
   }
 }
