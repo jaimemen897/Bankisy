@@ -2,7 +2,7 @@
   <div class="flex flex-column gap-3">
     <form [formGroup]="formGroup" class="flex flex-column gap-3 p-1">
       <div class="flex flex-column gap-1">
-        <input class="p-3 border-round-3xl border-0" formControlName="phoneUserDestination" pInputText placeholder="Teléfono destinatario"
+        <input class="p-3 border-round-3xl border-0 w-20rem" formControlName="phoneUserDestination" pInputText placeholder="Teléfono destinatario"
                type="text">
         @if (formGroup.controls['phoneUserDestination'].invalid && formGroup.controls['phoneUserDestination'].touched) {
           <p *ngIf="formGroup.controls['phoneUserDestination'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -12,7 +12,7 @@
         }
       </div>
       <div class="flex flex-column gap-1">
-        <input class="p-3 border-round-3xl border-0 mb-0" formControlName="amount" pInputText placeholder="Cantidad"
+        <input class="p-3 border-round-3xl border-0 mb-0 w-20rem" formControlName="amount" pInputText placeholder="Cantidad"
                type="number">
         @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
           <p *ngIf="formGroup.controls['amount'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -27,7 +27,7 @@
       </div>
 
       <div class="flex flex-column gap-1">
-        <input class="p-3 border-round-3xl border-0" formControlName="concept" pInputText placeholder="Concepto"
+        <input class="p-3 border-round-3xl border-0 w-20rem" formControlName="concept" pInputText placeholder="Concepto"
                type="text">
         @if (formGroup.controls['concept'].invalid && formGroup.controls['concept'].touched) {
           <p *ngIf="formGroup.controls['concept'].errors?.required" class="text-red-500 text-xs m-0 ml-3">

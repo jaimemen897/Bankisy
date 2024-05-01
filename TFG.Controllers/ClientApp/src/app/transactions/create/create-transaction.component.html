@@ -5,7 +5,7 @@
                   formControlName="ibanAccountOrigin" optionLabel="iban" placeholder="Cuenta origen"
                   styleClass="w-20rem"/>
       <div class="flex flex-column gap-1">
-        <input class="p-3 border-round-3xl border-0" formControlName="ibanAccountDestination" pInputText
+        <input class="p-3 border-round-3xl border-0 w-20rem" formControlName="ibanAccountDestination" pInputText
                placeholder="Cuenta destino" type="text">
         @if (formGroup.controls['ibanAccountDestination'].invalid && formGroup.controls['ibanAccountDestination'].touched) {
           <p *ngIf="formGroup.controls['ibanAccountDestination'].errors?.required"
@@ -16,7 +16,7 @@
         }
       </div>
       <div class="flex flex-column gap-1">
-        <input class="p-3 border-round-3xl border-0 mb-0" formControlName="amount" pInputText placeholder="Cantidad"
+        <input class="p-3 border-round-3xl border-0 mb-0 w-20rem" formControlName="amount" pInputText placeholder="Cantidad"
                type="number">
         @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
           <p *ngIf="formGroup.controls['amount'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -31,7 +31,7 @@
       </div>
 
       <div class="flex flex-column gap-1">
-        <input class="p-3 border-round-3xl border-0" formControlName="concept" pInputText placeholder="Concepto"
+        <input class="p-3 border-round-3xl border-0 w-20rem" formControlName="concept" pInputText placeholder="Concepto"
                type="text">
         @if (formGroup.controls['concept'].invalid && formGroup.controls['concept'].touched) {
           <p *ngIf="formGroup.controls['concept'].errors?.required" class="text-red-500 text-xs m-0 ml-3">

@@ -77,13 +77,10 @@ body {
   border-radius: 4rem;
 }
 
-.moon-switch .p-inputswitch-slider:before {
-  background-image: url('assets/moon.png');
-  background-size: 100%;
-  width: 20px;
-  height: 20px;
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider{
+  background-color: var(--bg-custom-color);
 }
 
-.moon-switch.p-inputswitch-checked .p-inputswitch-slider:before {
-  background-image: url('assets/sun.png');
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before{
+  background-color: white;
 }
