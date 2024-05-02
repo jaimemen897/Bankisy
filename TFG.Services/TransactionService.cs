@@ -13,9 +13,8 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class TransactionService(BankContext bankContext, IMemoryCache cache)
+public class TransactionService(BankContext bankContext, IMemoryCache cache, IHubContext<MyHub> hubContext)
 {
-    private readonly IHubContext<MyHub> _hubContext;
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
@@ -64,8 +63,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
                       throw new HttpException(404, "Account origin not found");
 
         var accountDestination =
-            await bankContext.BankAccounts.FindAsync(transactionCreateDto.IbanAccountDestination) ??
-            throw new HttpException(404, "Account destination not found");
+            await bankContext.BankAccounts.Include(b => b.Users)
+                .FirstOrDefaultAsync(b => b.Iban == transactionCreateDto.IbanAccountDestination) ?? throw new HttpException(404, "Account destination not found");
 
         ValidateTransaction(account, accountDestination, transactionCreateDto);
 
@@ -123,10 +122,27 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache)
 
         await bankContext.SaveChangesAsync();
 
-        var recipientUsername = accountDestination.Users.FirstOrDefault()?.Username ?? "";
+        var recipientUser = accountDestination.Users.FirstOrDefault();
+        if (recipientUser != null)
+        {
+            var recipientUsername = recipientUser.Username;
+            var recipientUserId = recipientUser.Id.ToString();
 
-        await _hubContext.Clients.User(recipientUsername).SendAsync("ReceiveMessage", "Transferencia recibida",
+            if (MyHub._userConnections.TryGetValue(recipientUsername, out var connectionId))
+            {
+                await hubContext.Clients.Client(connectionId).SendAsync("SendMessage", recipientUsername,
+                    $"Se ha recibido una transferencia de {transaction.Amount}€");
+            }
+        }
+        
+        /*await hubContext.Clients.Client(MyHub._userConnections[recipientUsername]).SendAsync("SendMessage", recipientUsername,
             $"Se ha recibido una transferencia de {transaction.Amount}€");
+
+        await hubContext.Clients.User(recipientUsername).SendAsync("SendMessage", recipientUsername,
+            $"Se ha recibido una transferencia de {transaction.Amount}€");
+        
+        await hubContext.Clients.All.SendAsync("SendMessage", recipientUsername,
+            $"Se ha realizado una transferencia de {transaction.Amount}€ a {recipientUsername}");*/
 
         return _mapper.Map<TransactionResponseDto>(transaction);
     }

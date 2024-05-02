@@ -1,11 +1,16 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {InputTextModule} from "primeng/inputtext";
-import {FormsModule} from "@angular/forms";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {CheckoutService} from "../services/checkout.service";
 import {loadStripe} from "@stripe/stripe-js";
 import {SliderModule} from "primeng/slider";
 import {ToastModule} from "primeng/toast";
+import {BankAccount} from "../models/BankAccount";
+import {DropdownModule} from "primeng/dropdown";
+import {IndexService} from "../services/index.service";
+import {MessageService} from "primeng/api";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-deposit',
@@ -15,23 +20,51 @@ import {ToastModule} from "primeng/toast";
     FormsModule,
     ButtonModule,
     SliderModule,
-    ToastModule
+    ToastModule,
+    DropdownModule,
+    ReactiveFormsModule,
+    NgIf
   ],
   templateUrl: './deposit.component.html',
   styleUrl: './deposit.component.css'
 })
-export class DepositComponent {
-  amount: number = 10;
+export class DepositComponent implements OnInit {
   sessionID: string;
+  bankAccounts: BankAccount[] = [];
 
-  constructor(private checkoutService: CheckoutService) {
+  constructor(private checkoutService: CheckoutService, private indexService: IndexService, private messageService: MessageService) {
+  }
+
+  formGroup: FormGroup = new FormGroup({
+    amount: new FormControl(0, [Validators.required, Validators.min(0.01), Validators.max(10000)]),
+    selectedBankAccount: new FormControl(undefined, [Validators.required]),
+    slider: new FormControl(0)
+  });
+
+  ngOnInit() {
+    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+      this.bankAccounts = bankAccounts;
+    });
   }
 
   async createCheckoutSession() {
-    this.checkoutService.createCheckoutSession(this.amount).subscribe(response => {
-      this.sessionID = response.id;
-      this.redirectToCheckout();
-    });
+    if (this.formGroup.invalid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Rellena todos los campos correctamente.',
+        closable: false,
+        life: 2000
+      });
+    } else {
+      let amount = this.formGroup.controls.amount.value;
+      let selectedBankAccountIban = this.formGroup.controls.selectedBankAccount.value.iban;
+
+      this.checkoutService.createCheckoutSession(amount, selectedBankAccountIban).subscribe(response => {
+        this.sessionID = response.id;
+        this.redirectToCheckout();
+      });
+    }
   }
 
   async redirectToCheckout() {
@@ -47,5 +80,13 @@ export class DepositComponent {
     } else {
       console.error('Stripe failed to initialize.');
     }
+  }
+
+  setAmmountOnInput(event: any) {
+    this.formGroup.controls.amount.setValue(event.value);
+  }
+
+  setAmmountOnSlider(event: any) {
+    this.formGroup.controls.slider.setValue(event.target.value);
   }
 }

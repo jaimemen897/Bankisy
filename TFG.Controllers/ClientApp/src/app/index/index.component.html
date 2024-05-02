@@ -156,7 +156,8 @@
       <p-confirmDialog #activeBizum>
         <ng-template pTemplate="headless" let-message>
           <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
-            <div class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
+            <div
+              class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
               <i class="pi pi-mobile text-4xl"></i>
             </div>
             <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
@@ -170,8 +171,8 @@
       </p-confirmDialog>
 
       <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()" class="m-2"></p-button>
-      <p-dialog header="Crear cuenta bancaria" [(visible)]="displayDialogBankAccount" [modal]="true"
-                [resizable]="false" [contentStyle]="{height: '16rem'}" [closable]="false">
+      <p-dialog [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false" [showHeader]="false"
+                [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}" [closable]="false">
         <app-bankaccount-create (onSave)="createBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
       </p-dialog>
 
@@ -237,27 +238,24 @@
             <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"
                       (click)="displayDialogTransaction = true"></p-button>
           </ng-template>
-          <ng-template pTemplate="paginatorright">
-            <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
-          </ng-template>
+          <ng-template pTemplate="paginatorright"></ng-template>
         </p-table>
       </p-panel>
       <p-button label="Realizar transferencia" (click)="goToCreateTransaction()" class="m-2"></p-button>
 
-      <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogTransaction" [modal]="true"
-                [resizable]="false" [contentStyle]="{height: '31rem'}" [closable]="false">
+      <p-dialog [(visible)]="displayDialogTransaction" [modal]="true" [showHeader]="false" [closable]="false"
+                [draggable]="false"
+                [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
         <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
       </p-dialog>
 
-      <p-button label="Bizum" (click)="goToCreateBizum()" class="m-2"></p-button>
+      <!--BIZUMS-->
+      <p-button label="Enviar Bizum" (click)="goToCreateBizum()" class="m-2"></p-button>
 
-      <p-dialog header="Realizar un bizum" [(visible)]="displayDialogBizum" [modal]="true" [resizable]="false"
-                [contentStyle]="{height: '25rem'}" [closable]="false">
+      <p-dialog [(visible)]="displayDialogBizum" [modal]="true" [resizable]="false" [closable]="false"
+                [draggable]="false" [showHeader]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
         <app-bizum-create (onSave)="createBizum()" (onCancel)="closeDialog()"></app-bizum-create>
       </p-dialog>
-
-      <!--VER TARJETAS-->
-      <p-button label="Ver tarjetas" routerLink="/card-panel" class="m-2"></p-button>
 
     } @else {
       <div class="card flex justify-content-center w-full h-screen">

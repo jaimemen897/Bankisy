@@ -124,7 +124,6 @@ export class CardComponent {
 
   onSearchIsDeleted(event: any) {
     this.isDeleted = event.checked;
-    console.log(event.checked);
     this.lazyLoad({first: 1, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder});
   }
 

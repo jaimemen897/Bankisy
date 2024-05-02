@@ -1,10 +1,10 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table (onLazyLoad)="lazyLoad($event)" [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']" [lazy]="true" [paginator]="true"
-           [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows"
-           [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [totalRecords]="totalRecords"
-           [value]="cards">
+  <p-table (onLazyLoad)="lazyLoad($event)" [lazy]="true" [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]"
+           [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']"
+           [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [rows]="rows"
+           [totalRecords]="totalRecords" [value]="cards">
     <ng-template pTemplate="header">
 
       <tr>
@@ -39,7 +39,8 @@
                           matchMode="in">
             <ng-template let-value pTemplate="filter">
               <p-dropdown (onChange)="onSearchFilter($event)" [options]="cardsType"
-                          [showClear]="true" [style]="{'max-width': '10rem', 'width': '10rem'}" class="text-color-secondary"
+                          [showClear]="true" [style]="{'max-width': '10rem', 'width': '10rem'}"
+                          class="text-color-secondary"
                           placeholder="Tipo">
                 <ng-template let-option pTemplate="item">
                   <p-tag [severity]="getSeverity(option)" [value]="option"></p-tag>
@@ -69,7 +70,8 @@
         </th>
         <!--BUSCAR POR CUENTA BANCARIA-->
         <th>
-          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="bankAccount" placeholder="Buscar por cuenta"
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="bankAccount"
+                          placeholder="Buscar por cuenta"
                           type="text"/>
         </th>
         <!--BUSCAR POR ACTIVA-->
@@ -112,13 +114,15 @@
         </td>
         <!--ACTIVA-->
         <td>
-          <i [ngClass]="{ 'text-green-500 pi-check-circle': !card.isDeleted, 'text-red-500 pi-times-circle': card.isDeleted }"
-             class="pi"></i>
+          <i
+            [ngClass]="{ 'text-green-500 pi-check-circle': !card.isDeleted, 'text-red-500 pi-times-circle': card.isDeleted }"
+            class="pi"></i>
         </td>
         <!--BLOQUEADA-->
         <td>
-          <i [ngClass]="{ 'text-green-500 pi-check-circle': card.isBlocked, 'text-red-500 pi-times-circle': !card.isBlocked }"
-             class="pi"></i>
+          <i
+            [ngClass]="{ 'text-green-500 pi-check-circle': card.isBlocked, 'text-red-500 pi-times-circle': !card.isBlocked }"
+            class="pi"></i>
         </td>
         <!--ACCIONES-->
         <td>
@@ -134,8 +138,9 @@
                 <p class="text-left">Usuario: {{ card.user.name }}</p>
                 <p class="text-left">Cuenta bancaria: {{ card.bankAccount.iban }}</p>
                 <p class="text-left">Activa:
-                  <i [ngClass]="{ 'text-green-500 pi-check-circle': !card.isDeleted, 'text-red-500 pi-times-circle': card.isDeleted }"
-                     class="pi"></i>
+                  <i
+                    [ngClass]="{ 'text-green-500 pi-check-circle': !card.isDeleted, 'text-red-500 pi-times-circle': card.isDeleted }"
+                    class="pi"></i>
                 </p>
                 <p class="text-left">Bloqueada: <i
                   [ngClass]="{ 'text-green-500 pi-check-circle': card.isBlocked, 'text-red-500 pi-times-circle': !card.isBlocked }"
@@ -180,7 +185,8 @@
 
   <p-button (click)="goToCreateCard()" label="Crear tarjeta"></p-button>
 
-  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: '30rem'}" [header]="headerSaveUpdateCard"
+  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: '30rem'}"
+            [header]="headerSaveUpdateCard"
             [modal]="true" [resizable]="false">
     <app-create-card (onCancel)="closeDialog()" (onSave)="saveCard()"></app-create-card>
   </p-dialog>

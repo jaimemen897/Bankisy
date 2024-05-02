@@ -92,7 +92,6 @@ export class TransactionsComponent implements OnInit {
   }
 
   onSearchUser(event: any) {
-    console.log(event);
     this.transactionService.getTransactions(1, this.rows, this.sortField, this.sortOrder === -1, event.value).subscribe(data => {
       this.transactions = data.items;
       this.totalRecords = data.totalCount;
@@ -112,7 +111,6 @@ export class TransactionsComponent implements OnInit {
   }
 
   deleteTransaction(id: string) {
-    console.log(id);
     this.confirmationService.confirm({
       header: '¿Desea eliminar la transacción?',
       message: 'Confirme para continuar',

@@ -91,7 +91,6 @@ export class IndexService {
   }
 
   createCard(CardCreate: CardCreate): Observable<Card> {
-    console.log(CardCreate)
     return this.http.post<Card>(`${this.apiUrl}/card`, CardCreate).pipe(
       catchError(error => this.handleError(error))
     );
@@ -206,12 +205,6 @@ export class IndexService {
         this.messageService.add({
           severity: 'error',
           summary: 'Error', closable: false, detail: 'La tarjeta no está bloqueada'
-        });
-      }
-      if (error.error.title === 'Card is not expired') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La tarjeta no está caducada'
         });
       }
       if (error.error.title === 'Users not found') {

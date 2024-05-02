@@ -118,7 +118,7 @@ public class IndexService(
 
         foreach (var bankAccount in bankAccounts)
             transactions.AddRange(await bankContext.Transactions
-                .Where(t => bankAccount.Iban == t.IbanAccountOrigin)
+                .Where(t => bankAccount.Iban == t.IbanAccountOrigin && t.Date.Date.Month == DateTime.UtcNow.Month)
                 .ToListAsync());
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
@@ -136,7 +136,7 @@ public class IndexService(
 
         foreach (var bankAccount in bankAccounts)
             transactions.AddRange(await bankContext.Transactions
-                .Where(t => bankAccount.Iban == t.IbanAccountDestination)
+                .Where(t => bankAccount.Iban == t.IbanAccountDestination && t.Date.Date.Month == DateTime.UtcNow.Month)
                 .ToListAsync());
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
@@ -263,12 +263,16 @@ public class IndexService(
     }
 
     //PAYMENT INTENT
-    public async Task AddPaymentIntent(decimal ammount, Guid userId)
+    public async Task AddPaymentIntent(decimal ammount, Guid userId, string iban)
     {
-        var user = await sessionService.GetMyself();
-        if (userId != user.Id) throw new HttpException(403, "You are not the owner of the account");
+        var user = await usersService.GetUserAsync(userId);
 
-        var bankAccount = await bankAccountService.GetPrincipalAccount(userId);
+        var bankAccount = await bankAccountService.GetBankAccount(iban);
+        if (bankAccount.UsersId.All(id => id != user.Id))
+        {
+            throw new HttpException(403, "You are not the owner of the account");
+        }
+
         var incomeCreateDto = new IncomeCreateDto
         {
             Amount = ammount,

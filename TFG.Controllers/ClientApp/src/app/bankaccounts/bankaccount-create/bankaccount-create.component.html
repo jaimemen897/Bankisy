@@ -1,5 +1,6 @@
-<div class="card flex justify-content-center align-items-center m-2 overflow-visible">
-  <div class="flex flex-column gap-3">
+<div class="card flex justify-content-center align-items-center overflow-visible">
+  <div class="flex flex-column justify-content-center align-items-center gap-3">
+    <h1>Crear cuenta bancaria</h1>
     <form [formGroup]="formGroup" class="flex flex-column gap-3">
       @if (!isNewUser) {
         <p-multiSelect [options]="users" formControlName="selectedUsers" optionLabel="name" display="chip"
@@ -9,7 +10,7 @@
       <p-dropdown [options]="accountsTypes" [showClear]="true" emptyMessage="No se han encontrado tipos de cuenta"
                   formControlName="selectedAccountType" placeholder="Elegir tipo de cuenta"
                   styleClass="w-20rem"/>
-      <p-button (click)="saveChanges()" [label]="label" rounded styleClass="w-full mt-4"></p-button>
+      <p-button (click)="saveChanges()" [label]="label" rounded styleClass="w-full mt-7"></p-button>
       <p-button (click)="cancel()" rounded label="Cancelar" severity="secondary" styleClass="w-full"></p-button>
     </form>
   </div>

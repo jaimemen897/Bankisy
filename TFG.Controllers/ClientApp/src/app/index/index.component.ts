@@ -314,7 +314,6 @@ export class IndexComponent implements OnInit {
 
   goToCreateTransaction() {
     this.refresh();
-    console.log(this.transactionCreate)
     this.transactionCreate.loadUser();
     this.displayDialogTransaction = true;
   }
@@ -368,16 +367,7 @@ export class IndexComponent implements OnInit {
   }
 
   activeBizum(iban: string) {
-    this.indexService.activeBizum(iban).subscribe(data => {
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Bizum activado',
-        detail: 'Los bizums se han activado en esta cuenta',
-        life: 2000,
-        closable: false
-      });
-    });
-
+    this.indexService.activeBizum(iban).subscribe();
   }
 
   closeDialog() {
@@ -393,7 +383,13 @@ export class IndexComponent implements OnInit {
       header: '¿Activar bizums?',
       message: '¿Desea activar los bizums en esta cuenta?',
       accept: () => {
-        this.messageService.add({ severity: 'help', summary: 'Bizums activados', detail: 'Se han activado los bizums en esta cuenta', closable: false, life: 2000 });
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Bizums activados',
+          detail: 'Se han activado los bizums en esta cuenta',
+          closable: false,
+          life: 2000
+        });
         this.activeBizum(iban);
       },
     });

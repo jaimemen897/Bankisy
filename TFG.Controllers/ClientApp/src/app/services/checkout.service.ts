@@ -12,7 +12,7 @@ export class CheckoutService {
   constructor(private http: HttpClient) {
   }
 
-  createCheckoutSession(amount: number): Observable<{ id: string }> {
-    return this.http.post<{ id: string }>(`${this.apiUrl}`, {amount: amount});
+  createCheckoutSession(amount: number, iban: string): Observable<{ id: string }> {
+    return this.http.post<{ id: string }>(`${this.apiUrl}`, {amount: amount, iban: iban});
   }
 }

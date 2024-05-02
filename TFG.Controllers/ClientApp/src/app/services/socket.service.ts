@@ -13,7 +13,7 @@ export class SocketService {
 
   public startConnection = () => {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5196/myHub')
+      .withUrl('http://localhost:5196/myHub', { accessTokenFactory: () => this.getAccessToken() })
       .build();
 
     this.hubConnection
@@ -22,8 +22,12 @@ export class SocketService {
       .catch(err => console.log('Error while starting connection: ' + err));
   }
 
+  private getAccessToken = (): string => {
+    return localStorage.getItem('token') || '';
+  }
+
   public transferNotification = () => {
-    this.hubConnection.on('ReceiveMessage', (user, message) => {
+    this.hubConnection.on('SendMessage', (user, message) => {
       this.messageService.add({severity: 'info', summary: user, detail: message, life: 2000, closable: false});
     });
   }

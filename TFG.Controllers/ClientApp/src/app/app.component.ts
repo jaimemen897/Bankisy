@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Message, MessageService} from "primeng/api";
 import {fadeInAnimation} from "./route-animations";
 import {SocketService} from "./services/socket.service";
+import {DOCUMENT} from "@angular/common";
 
 
 @Component({
@@ -13,7 +14,15 @@ export class AppComponent implements OnInit {
   title = 'app';
   messages1: Message[] = [];
 
-  constructor(private messageService: MessageService, private socketService: SocketService) {
+  constructor(@Inject(DOCUMENT) private document: Document, private messageService: MessageService, private socketService: SocketService) {
+    let theme = window.localStorage.getItem('theme');
+    if (theme) {
+      this.changeTheme(theme == 'dark');
+      this.document.documentElement.classList.add(theme + '-theme');
+    } else {
+      this.changeTheme(false);
+      this.document.documentElement.classList.add('light-theme');
+    }
   }
 
   ngOnInit() {
@@ -30,5 +39,14 @@ export class AppComponent implements OnInit {
 
   isInLoginOrRegister() {
     return window.location.href.includes('login') || window.location.href.includes('register');
+  }
+
+  changeTheme(state: boolean) {
+    let theme = state ? 'dark' : 'light';
+    window.localStorage.setItem('theme', theme);
+    let themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
+    this.document.documentElement.classList.remove('dark-theme', 'light-theme');
+    this.document.documentElement.classList.add(theme + '-theme');
+    themeLink.href = 'aura-' + theme + '-blue.css';
   }
 }

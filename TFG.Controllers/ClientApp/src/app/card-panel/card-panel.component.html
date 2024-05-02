@@ -1,8 +1,9 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 
-<div class="flex justify-content-center">
-  <div class="m-8 grid w-10">
+<div class="flex flex-column justify-content-center align-items-center">
+  <h1 class="text-center">Mis tarjetas</h1>
+  <div class="m-5 grid w-10">
     @if (cards) {
       @for (card of cards; track cards) {
         <div class="sm:col-12 md:col-12 lg:col-12 xl:col-6">
@@ -73,7 +74,8 @@
           </div>
         </div>
       </div>
-      <p-dialog header="Solicitar una tarjeta" [(visible)]="showNewCardDialog" [style]="{width: '30vw', height: '30vw'}">
+      <p-dialog header="Solicitar una tarjeta" [(visible)]="showNewCardDialog"
+                [style]="{width: '30vw', height: '30vw'}">
         <app-create-card (onSave)="createCard()" (onCancel)="showNewCardDialog = false"></app-create-card>
       </p-dialog>
     } @else {

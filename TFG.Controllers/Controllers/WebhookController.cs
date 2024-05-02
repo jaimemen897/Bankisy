@@ -25,7 +25,8 @@ public class WebhookController(IndexService indexService) : Controller
                 var paymentIntent = (PaymentIntent)stripeEvent.Data.Object;
                 var ammount = paymentIntent.Amount / 100;
                 var userId = Guid.Parse(paymentIntent.Metadata["userId"]);
-                await indexService.AddPaymentIntent(ammount, userId);
+                var iban = paymentIntent.Metadata["iban"];
+                await indexService.AddPaymentIntent(ammount, userId, iban);
             }
 
             return Ok();

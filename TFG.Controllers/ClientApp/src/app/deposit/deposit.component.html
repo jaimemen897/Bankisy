@@ -1,15 +1,30 @@
 <p-toast></p-toast>
-<div class="card w-full flex justify-content-center align-items-center flex-column">
-  <div class="flex flex-column gap-2">
-    <h1>Ingresar dinero</h1>
+<div class="w-full flex justify-content-center align-items-center flex-column">
+  <form [formGroup]="formGroup" class="flex justify-content-center shadow-none">
+    <div class="flex flex-column justify-content-center align-content-center gap-4 w-20rem">
+      <h1>Ingresar dinero</h1>
 
-    <div class="flex gap-4 justify-content-between align-items-center mb-2">
-      <label for="amount">Cantidad a ingresar</label>
-      <input [(ngModel)]="amount" id="amount" pInputText type="number" [min]="0" [max]="10000" class="w-5"/>
+      <p-dropdown [options]="bankAccounts" formControlName="selectedBankAccount" [showClear]="true" emptyMessage="No hay cuentas disponibles"
+                  optionLabel="iban" placeholder="Cuenta" styleClass="w-20rem"/>
+      <div class="flex gap-4 justify-content-start align-items-center mb-2">
+        <label for="amount">Cantidad a ingresar</label>
+        <div class="flex flex-column gap-1 w-5">
+          <input formControlName="amount" id="amount" pInputText type="number" [min]="0" [max]="10000" (input)="setAmmountOnSlider($event)"
+                 placeholder="0,00€" class="w-full"/>
+          @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
+            <p *ngIf="formGroup.controls['amount'].errors?.required"
+               class="text-red-500 text-xs m-0 ml-3">Este campo es obligatorio</p>
+            <p *ngIf="formGroup.controls['amount'].errors?.min"
+               class="text-red-500 text-xs m-0 ml-3">La cantidad mínima es 0,01€</p>
+            <p *ngIf="formGroup.controls['amount'].errors?.max"
+               class="text-red-500 text-xs m-0 ml-3">La cantidad máxima es 10.000€</p>
+          }
+        </div>
+      </div>
+      <p-slider formControlName="slider" styleClass="w-full mb-3 p-1" max="10000" animate="true" (onChange)="setAmmountOnInput($event)"/>
+
+      <p-button (click)="createCheckoutSession()" label="Ir a la página de pago" rounded styleClass="w-full"/>
     </div>
-    <p-slider [(ngModel)]="amount" styleClass="w-full mb-3 p-1" max="10000" animate="true"></p-slider>
-
-    <p-button (click)="createCheckoutSession()" label="Ir a la página de pago" styleClass="w-full"></p-button>
-  </div>
+  </form>
 
 </div>

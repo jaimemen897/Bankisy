@@ -45,7 +45,8 @@ public class CheckoutApiController(IndexService indexService) : Controller
             {
                 Metadata = new Dictionary<string, string>
                 {
-                    { "userId", user.Id.ToString() }
+                    { "userId", user.Id.ToString() },
+                    { "iban", amountModel.Iban }
                 }
             }
         };
@@ -89,5 +90,6 @@ public class CheckoutApiController(IndexService indexService) : Controller
     public class AmountModel
     {
         public long Amount { get; set; }
+        public string Iban { get; set; }
     }
 }

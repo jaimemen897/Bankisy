@@ -237,16 +237,6 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         await ClearCache();
     }
 
-    internal async Task<BankAccountResponseDto> GetPrincipalAccount(Guid userId)
-    {
-        var bankAccount = await bankContext.BankAccounts.Include(ba => ba.Users)
-                              .FirstOrDefaultAsync(ba =>
-                                  ba.Users.Any(u => u.Id == userId) && ba.AcceptBizum && !ba.IsDeleted) ??
-                          throw new HttpException(404, "Bank account not found");
-
-        return _mapper.Map<BankAccountResponseDto>(bankAccount);
-    }
-
     private async Task ClearCache()
     {
         var ibans = await bankContext.BankAccounts.Select(ba => ba.Iban).ToListAsync();
