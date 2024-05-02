@@ -6,9 +6,31 @@
         <p-menu #menu [popup]="true" [model]="items"></p-menu>
         <p-button label="Acciones" (click)="menu.toggle($event)" icon="pi pi-th-large"/>
       }
-      <p-button label="Crear cuenta" icon="pi pi-plus-circle" [routerLink]="['/bankaccounts/create']"/>
-      <p-button label="Transferir" icon="pi pi-send" [routerLink]="['/transactions/create']"/>
-      <p-button label="Bizum" icon="pi pi-mobile" [routerLink]="['/bizum']"/>
+      <!--CREAR CUENTA-->
+      <p-button label="Crear cuenta" icon="pi pi-plus-circle" (click)="goToCreateBankAccount()"/>
+      <p-dialog [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false" [showHeader]="false"
+                [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}" [closable]="false">
+        <app-bankaccount-create (onSave)="createBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
+      </p-dialog>
+
+      <!--TRANSACCIONES-->
+      <p-button label="Transferir" icon="pi pi-send" (click)="goToCreateTransaction()"/>
+
+      <p-dialog [(visible)]="displayDialogTransaction" [modal]="true" [showHeader]="false" [closable]="false"
+                [draggable]="false"
+                [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
+        <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
+      </p-dialog>
+
+      <!--BIZUM-->
+      <p-button label="Bizum" icon="pi pi-mobile" (click)="goToCreateBizum()"/>
+
+      <p-dialog [(visible)]="displayDialogBizum" [modal]="true" [resizable]="false" [closable]="false"
+                [draggable]="false" [showHeader]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
+        <app-bizum-create (onSave)="createBizum()" (onCancel)="closeDialog()"></app-bizum-create>
+      </p-dialog>
+
+
       <p-button label="Tarjetas" icon="pi pi-credit-card" [routerLink]="['/card-panel']"/>
       <p-button label="Ingresar" icon="pi pi-money-bill" [routerLink]="['/deposit']"/>
     }
