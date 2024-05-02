@@ -27,8 +27,9 @@ export class SocketService {
   }
 
   public transferNotification = () => {
-    this.hubConnection.on('SendMessage', (user, message) => {
-      this.messageService.add({severity: 'info', summary: user, detail: message, life: 2000, closable: false});
+    this.hubConnection.on('TransferReceived', (user, message) => {
+
+      this.messageService.add({severity: 'info', summary: 'Transferencia recibida', detail: message, life: 2000, closable: false});
     });
   }
 }

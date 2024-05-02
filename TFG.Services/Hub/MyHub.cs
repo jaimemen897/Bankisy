@@ -7,23 +7,24 @@ namespace TFG.Services.Hub;
 [Authorize]
 public class MyHub : Microsoft.AspNetCore.SignalR.Hub
 {
-    public static ConcurrentDictionary<string, string> _userConnections = new ConcurrentDictionary<string, string>();
+    public static ConcurrentDictionary<string, string> _userConnections = new();
     
     public override async Task OnConnectedAsync()
     {
-        var username = Context.User.Identity.Name;
+        /*httpContextAccessor.HttpContext!*/
+        var userId = Context.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
         var connectionId = Context.ConnectionId;
 
-        _userConnections.TryAdd(username, connectionId);
+        _userConnections.TryAdd(userId, connectionId);
 
         await base.OnConnectedAsync();
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
-        var username = Context.User.Identity.Name;
+        var userId = Context.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 
-        _userConnections.TryRemove(username, out _);
+        _userConnections.TryRemove(userId, out _);
 
         await base.OnDisconnectedAsync(exception);
     }
@@ -32,7 +33,7 @@ public class MyHub : Microsoft.AspNetCore.SignalR.Hub
     {
         if (_userConnections.TryGetValue(user, out var connectionId))
         {
-            await Clients.Client(connectionId).SendAsync("SendMessage", user, message);
+            await Clients.Client(connectionId).SendAsync("TransferReceived", user, message);
         }
     }
 }

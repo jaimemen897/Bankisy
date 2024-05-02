@@ -125,24 +125,12 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         var recipientUser = accountDestination.Users.FirstOrDefault();
         if (recipientUser != null)
         {
-            var recipientUsername = recipientUser.Username;
-            var recipientUserId = recipientUser.Id.ToString();
-
-            if (MyHub._userConnections.TryGetValue(recipientUsername, out var connectionId))
+            if (MyHub._userConnections.TryGetValue(recipientUser.Id.ToString(), out var connectionId))
             {
-                await hubContext.Clients.Client(connectionId).SendAsync("SendMessage", recipientUsername,
+                await hubContext.Clients.Client(connectionId).SendAsync("TransferReceived", recipientUser.Id,
                     $"Se ha recibido una transferencia de {transaction.Amount}€");
             }
         }
-        
-        /*await hubContext.Clients.Client(MyHub._userConnections[recipientUsername]).SendAsync("SendMessage", recipientUsername,
-            $"Se ha recibido una transferencia de {transaction.Amount}€");
-
-        await hubContext.Clients.User(recipientUsername).SendAsync("SendMessage", recipientUsername,
-            $"Se ha recibido una transferencia de {transaction.Amount}€");
-        
-        await hubContext.Clients.All.SendAsync("SendMessage", recipientUsername,
-            $"Se ha realizado una transferencia de {transaction.Amount}€ a {recipientUsername}");*/
 
         return _mapper.Map<TransactionResponseDto>(transaction);
     }

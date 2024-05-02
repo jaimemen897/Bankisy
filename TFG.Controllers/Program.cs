@@ -70,13 +70,26 @@ builder.Services.AddAuthentication(options =>
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
                                                             throw new InvalidOperationException()))
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/myHub"))
+            {
+                context.Token = accessToken;                
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("User",
         policy => policy.RequireAssertion(context => context.User.IsInRole("User") || context.User.IsInRole("Admin")))
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
 
-builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+
 
 
 var app = builder.Build();

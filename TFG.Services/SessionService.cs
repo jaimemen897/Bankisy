@@ -35,9 +35,9 @@ public class SessionService(UsersService usersService, IHttpContextAccessor http
     {
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-        var email = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)?.Value ??
+        var id = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value ??
                     throw new HttpException(401, "Invalid token");
-        return await usersService.GetUserByEmail(email) ?? throw new HttpException(404, "User not found");
+        return await usersService.GetUserAsync(Guid.Parse(id)) ?? throw new HttpException(404, "User not found");
     }
 
     public async Task<UserResponseDto> GetMyself()
@@ -51,13 +51,13 @@ public class SessionService(UsersService usersService, IHttpContextAccessor http
     {
         var claims = new List<Claim>
         {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Role, user.Role.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
-                                                                  throw new HttpException(500,
-                                                                      "JWT_SECRET not found")));
+                                                                  throw new HttpException(500, "JWT_SECRET not found")));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
