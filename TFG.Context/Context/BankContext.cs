@@ -5,7 +5,7 @@ namespace TFG.Context.Context;
 
 public class BankContext(DbContextOptions<BankContext> options) : DbContext(options)
 {
-    public DbSet<User> Users { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 
     public DbSet<BankAccount> BankAccounts { get; set; }
 
