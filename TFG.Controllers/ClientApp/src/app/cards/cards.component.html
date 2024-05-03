@@ -3,26 +3,26 @@
 <div class="card">
   <p-table (onLazyLoad)="lazyLoad($event)" [lazy]="true" [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]"
            [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']"
-           [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [rows]="rows"
+           [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [rows]="rows"
            [totalRecords]="totalRecords" [value]="cards">
     <ng-template pTemplate="header">
 
       <tr>
-        <th pSortableColumn="cardNumber">Número de tarjeta
+        <th pSortableColumn="cardNumber" style="width:15%">Número de tarjeta
           <p-sortIcon field="cardNumber"/>
         </th>
-        <th pSortableColumn="cardType">Tipo de tarjeta
+        <th pSortableColumn="cardType" style="width:10%">Tipo de tarjeta
           <p-sortIcon field="cardType"/>
         </th>
-        <th>Propietario</th>
-        <th pSortableColumn="bankAccount">Cuenta bancaria
+        <th style="width:20%">Propietario</th>
+        <th pSortableColumn="bankAccount" style="width:20%">Cuenta bancaria
           <p-sortIcon field="bankAccount"/>
         </th>
-        <th>Estado</th>
-        <th>
+        <th style="width:7%">Estado</th>
+        <th style="width:7%">
           <i class="pi pi-lock"></i>
         </th>
-        <th>
+        <th style="width:21%">
           <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
         </th>
       </tr>
@@ -183,11 +183,12 @@
     </ng-template>
   </p-table>
 
-  <p-button (click)="goToCreateCard()" label="Crear tarjeta"></p-button>
+  <div class="flex justify-content-center align-items-center w-full p-3">
+    <p-button (click)="goToCreateCard()" label="Crear tarjeta" styleClass="" rounded></p-button>
+  </div>
 
-  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: '30rem'}"
-            [header]="headerSaveUpdateCard"
-            [modal]="true" [resizable]="false">
+  <p-dialog [(visible)]="displayDialog" [closable]="false" [draggable]="false" [contentStyle]="{height: 'auto'}"
+            [header]="headerSaveUpdateCard" [modal]="true" [resizable]="false">
     <app-create-card (onCancel)="closeDialog()" (onSave)="saveCard()"></app-create-card>
   </p-dialog>
 

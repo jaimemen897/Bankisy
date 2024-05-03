@@ -149,13 +149,12 @@
     </ng-template>
   </p-table>
 
-  <div class="flex justify-content-center align-items-center w-full p-6">
-    <p-button (click)="goToCreateBankAccount()" label="Crear cuenta bancaria"></p-button>
+  <div class="flex justify-content-center align-items-center w-full p-3">
+    <p-button (click)="goToCreateBankAccount()" label="Crear cuenta bancaria" rounded></p-button>
   </div>
 
-  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: '21rem'}"
-            [header]="headerSaveUpdateBankAccount"
-            [modal]="true" [resizable]="false">
+  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: 'auto'}"
+            [header]="headerSaveUpdateBankAccount" [draggable]="false" [modal]="true" [resizable]="false">
     <app-bankaccount-create (onCancel)="closeDialog()" (onSave)="saveBankAccount()"></app-bankaccount-create>
   </p-dialog>
 

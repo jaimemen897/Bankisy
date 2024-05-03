@@ -15,7 +15,7 @@
           <div class="flex flex-column">
             <span class="p-input-filled my-2">
               <input (keyup.enter)="sendLogin()" class="p-3 border-round-3xl border-0" formControlName="username"
-                     id="username" pInputText placeholder="Username" type="text">
+                     id="username" pInputText placeholder="Nombre de usuario" type="text">
             </span>
             @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
               <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -27,7 +27,7 @@
             }
             <span class="p-input-filled my-2">
               <input (keyup.enter)="sendLogin()" class="p-3 border-round-3xl border-0" formControlName="password"
-                     id="password" pInputText placeholder="Password" type="password">
+                     id="password" pInputText placeholder="Contraseña" type="password">
             </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -44,7 +44,7 @@
           <div class="flex align-items-center justify-content-center w-full gap-1">
             <p-button (click)="sendLogin()" label="Iniciar sesión" rounded></p-button>
           </div>
-          <div class="flex align-items-center justify-content-center">
+          <div class="flex align-items-center justify-content-center mt-2">
             <p-button text label="Registrarse" rounded routerLink="/register" severity="secondary"/>
           </div>
         </div>

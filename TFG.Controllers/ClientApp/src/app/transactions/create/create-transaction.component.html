@@ -1,6 +1,5 @@
 <div class="card flex justify-content-center align-items-center m-2 overflow-hidden">
   <div class="flex flex-column justify-content-center align-items-center gap-3">
-    <h1>Realizar una transferencia</h1>
     <form [formGroup]="formGroup" class="flex flex-column gap-3 p-1">
       <p-dropdown [options]="bankAccounts" [showClear]="true" emptyMessage="No hay cuentas disponibles"
                   formControlName="ibanAccountOrigin" optionLabel="iban" placeholder="Cuenta origen"
