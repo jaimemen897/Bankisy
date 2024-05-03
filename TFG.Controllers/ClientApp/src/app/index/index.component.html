@@ -70,9 +70,15 @@
           </div>
         </ng-template>
         <ng-template pTemplate="icons">
-          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="refresh()">
+          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="goToCreateBankAccount()"
+                    icon="pi pi-plus-circle" pTooltip="Crear una cuenta" [showDelay]="500" tooltipPosition="bottom"/>
+          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="refresh()" pTooltip="Recargar" [showDelay]="500" tooltipPosition="bottom">
             <span class="pi pi-refresh" [ngClass]="{'rotate-icon': updating}"></span>
           </p-button>
+        </ng-template>
+        <ng-template pTemplate="headericons" let-collapsed="$implicit">
+          <p-button styleClass="p-panel-header-icon p-link mr-2" [icon]="collapsed ? 'pi pi-eye' : 'pi pi-eye-slash'"
+                    [pTooltip]="collapsed ? 'Mostrar' : 'Ocultar'" [showDelay]="500" tooltipPosition="bottom"/>
         </ng-template>
         <p-table [value]="bankAccounts" [tableStyle]="{ 'min-width': '50rem' }">
           <ng-template pTemplate="header">
@@ -170,15 +176,14 @@
         </ng-template>
       </p-confirmDialog>
 
-      <p-button label="Crear cuenta bancaria" (click)="goToCreateBankAccount()" class="m-2"></p-button>
-      <p-dialog [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false" [showHeader]="false"
+      <p-dialog header="Crear cuenta de banco" [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false"
                 [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}" [closable]="false">
         <app-bankaccount-create (onSave)="createBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
       </p-dialog>
 
 
       <!--TRANSACCIONES-->
-      <p-panel [toggleable]="true" class="w-full">
+      <p-panel [toggleable]="true" class="w-full mt-4">
         <ng-template pTemplate="header">
           <div class="flex align-items-center gap-2">
             <p-avatar size="large" shape="square" image="assets/transaction.png"/>
@@ -187,10 +192,19 @@
         </ng-template>
         <ng-template pTemplate="icons">
           <p-menu #transactionDate [model]="transactionsDate" [popup]="true"></p-menu>
-          <p-button type="button" (click)="transactionDate.toggle($event)" icon="pi pi-bars" label="Filtrar"/>
-          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="refresh()">
+          <p-button styleClass="p-panel-header-icon p-link mr-2" type="button" (click)="transactionDate.toggle($event)"
+                    icon="pi pi-bars" pTooltip="Filtrar por fecha" [showDelay]="500" tooltipPosition="bottom"/>
+          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="goToCreateTransaction()"
+                    icon="pi pi-plus-circle" pTooltip="Realizar transacción" [showDelay]="500"
+                    tooltipPosition="bottom"/>
+          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="refresh()" pTooltip="Recargar"
+                    [showDelay]="500" tooltipPosition="bottom">
             <span class="pi pi-refresh" [ngClass]="{'rotate-icon': updating}"></span>
           </p-button>
+        </ng-template>
+        <ng-template pTemplate="headericons" let-collapsed="$implicit">
+          <p-button styleClass="p-panel-header-icon p-link mr-2" [icon]="collapsed ? 'pi pi-eye' : 'pi pi-eye-slash'"
+                    [pTooltip]="collapsed ? 'Mostrar' : 'Ocultar'" [showDelay]="500" tooltipPosition="bottom"/>
         </ng-template>
         <p-table [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[5, 10, 20]" [value]="transactions"
                  [tableStyle]="{ 'min-width': '50rem' }" [lazy]="true" (onLazyLoad)="lazyLoad($event)"
@@ -233,28 +247,13 @@
               <td></td>
             </tr>
           </ng-template>
-          <!--TODO: BOTÓN PARA DESCARGAR FACTURAS-->
-          <ng-template pTemplate="paginatorleft">
-            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"
-                      (click)="displayDialogTransaction = true"></p-button>
-          </ng-template>
-          <ng-template pTemplate="paginatorright"></ng-template>
         </p-table>
       </p-panel>
-      <p-button label="Realizar transferencia" (click)="goToCreateTransaction()" class="m-2"></p-button>
 
-      <p-dialog [(visible)]="displayDialogTransaction" [modal]="true" [showHeader]="false" [closable]="false"
+      <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogTransaction" [modal]="true" [closable]="false"
                 [draggable]="false"
                 [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
         <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
-      </p-dialog>
-
-      <!--BIZUMS-->
-      <p-button label="Enviar Bizum" (click)="goToCreateBizum()" class="m-2"></p-button>
-
-      <p-dialog [(visible)]="displayDialogBizum" [modal]="true" [resizable]="false" [closable]="false"
-                [draggable]="false" [showHeader]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
-        <app-bizum-create (onSave)="createBizum()" (onCancel)="closeDialog()"></app-bizum-create>
       </p-dialog>
 
     } @else {

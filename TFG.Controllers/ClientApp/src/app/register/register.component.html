@@ -98,27 +98,30 @@
         </div>
 
         <div class="inline-flex p-3">
-          <div>
-            <span class="p-input-filled m-2">
-              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-secondary" type="password"
-                     formControlName="password" id="password" pInputText pPassword placeholder="Contraseña"/>
-            </span>
+          <div class="w-full ml-2">
+              <p-password (keyup.enter)="sendForm()" class="border-round-3xl border-0 bg-secondary w-full"
+                     formControlName="password" id="password" placeholder="Contraseña" toggleMask
+                          promptLabel="Introduce una contraseña"
+                          weakLabel="Débil"
+                          mediumLabel="Media"
+                          strongLabel="Fuerte"/>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
                 La contraseña es obligatoria</p>
               <p *ngIf="formGroup.controls['password'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
-                La contraseña debe tener al menos 3 caracteres</p>
+                Mínimo 3 caracteres</p>
               <p *ngIf="formGroup.controls['password'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
-                La contraseña debe tener como máximo 50 caracteres</p>
+                Máximo 50 caracteres</p>
             }
           </div>
 
-          <div>
-            <span class="p-input-filled m-2">
-              <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0 bg-secondary"
-                     formControlName="confirmpassword" id="confirmpassword" pInputText
-                     pPassword placeholder="Confirmar contraseña" type="password">
-            </span>
+          <div class="w-full ml-2">
+              <p-password (keyup.enter)="sendForm()" class="border-round-3xl border-0 bg-secondary w-full" toggleMask
+                     formControlName="confirmpassword" id="confirmpassword" placeholder="Confirmar contraseña"
+                          promptLabel="Confirma tu contraseña"
+                          weakLabel="Débil"
+                          mediumLabel="Media"
+                          strongLabel="Fuerte"/>
             @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
               <p class="text-red-500 text-xs m-0 ml-3">
                 Las contraseñas no coinciden

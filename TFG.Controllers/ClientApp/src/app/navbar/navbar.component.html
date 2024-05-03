@@ -8,7 +8,7 @@
       }
       <!--CREAR CUENTA-->
       <p-button label="Crear cuenta" icon="pi pi-plus-circle" (click)="goToCreateBankAccount()"/>
-      <p-dialog [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false" [showHeader]="false"
+      <p-dialog [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false" header="Crear una cuenta bancaria"
                 [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}" [closable]="false">
         <app-bankaccount-create (onSave)="createBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
       </p-dialog>
@@ -16,9 +16,8 @@
       <!--TRANSACCIONES-->
       <p-button label="Transferir" icon="pi pi-send" (click)="goToCreateTransaction()"/>
 
-      <p-dialog [(visible)]="displayDialogTransaction" [modal]="true" [showHeader]="false" [closable]="false"
-                [draggable]="false"
-                [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
+      <p-dialog [(visible)]="displayDialogTransaction" [modal]="true" [closable]="false"
+                [draggable]="false" header="Realizar una transferencia" [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
         <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
       </p-dialog>
 
@@ -26,7 +25,7 @@
       <p-button label="Bizum" icon="pi pi-mobile" (click)="goToCreateBizum()"/>
 
       <p-dialog [(visible)]="displayDialogBizum" [modal]="true" [resizable]="false" [closable]="false"
-                [draggable]="false" [showHeader]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
+                [draggable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}" header="Enviar un bizum">
         <app-bizum-create (onSave)="createBizum()" (onCancel)="closeDialog()"></app-bizum-create>
       </p-dialog>
 
