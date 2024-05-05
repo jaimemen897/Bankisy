@@ -8,7 +8,8 @@
       }
       <!--CREAR CUENTA-->
       <p-button label="Crear cuenta" icon="pi pi-plus-circle" (click)="goToCreateBankAccount()"/>
-      <p-dialog [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false" header="Crear una cuenta bancaria"
+      <p-dialog [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false"
+                header="Crear una cuenta bancaria"
                 [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}" [closable]="false">
         <app-bankaccount-create (onSave)="createBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
       </p-dialog>
@@ -17,7 +18,8 @@
       <p-button label="Transferir" icon="pi pi-send" (click)="goToCreateTransaction()"/>
 
       <p-dialog [(visible)]="displayDialogTransaction" [modal]="true" [closable]="false"
-                [draggable]="false" header="Realizar una transferencia" [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
+                [draggable]="false" header="Realizar una transferencia" [resizable]="false"
+                [contentStyle]="{height: 'auto', borderRadius: '16px'}">
         <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
       </p-dialog>
 
@@ -36,9 +38,9 @@
   </ng-template>
 
   <ng-template pTemplate="end">
-    <p-inputSwitch [(ngModel)]="themeSelection" (onChange)="changeTheme($event.checked)" class="moon-switch"/>
-    <p-button *ngIf="!isLogged()" [routerLink]="['/login']" icon="pi pi-sign-in" label="Iniciar sesión" class="m-1"/>
-    <p-button (click)="logout()" *ngIf="isLogged()" icon="pi pi-sign-out" label="Cerrar sesión" class="m-1"/>
-    <p-button *ngIf="isLogged()" [routerLink]="['/profile']" icon="pi pi-user" label="Perfil" class="m-1"/>
+    <p-inputSwitch (onChange)="changeTheme($event.checked)" [(ngModel)]="themeSelection" class="moon-switch"/>
+    <p-button *ngIf="!isLogged()" [routerLink]="['/login']" class="m-1" icon="pi pi-sign-in" label="Iniciar sesión"/>
+    <p-button (click)="logout()" *ngIf="isLogged()" class="m-1" icon="pi pi-sign-out" label="Cerrar sesión"/>
+    <p-button *ngIf="isLogged()" [routerLink]="['/profile']" class="m-1" icon="pi pi-user" label="Perfil"/>
   </ng-template>
 </p-menubar>

@@ -77,10 +77,10 @@ body {
   border-radius: 4rem;
 }
 
-.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider{
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
   background-color: var(--bg-custom-color);
 }
 
-.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before{
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
   background-color: white;
 }

@@ -10,7 +10,7 @@ import {ButtonModule} from "primeng/button";
 import {User} from "../../models/User";
 import {IndexService} from "../../services/index.service";
 import {AccountType} from "../../models/AccountType";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-bankaccount-create',

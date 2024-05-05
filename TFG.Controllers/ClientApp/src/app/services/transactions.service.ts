@@ -4,12 +4,13 @@ import {map, Observable} from 'rxjs';
 import {Pagination} from "./users.service";
 import {Transaction} from "../models/Transaction";
 import {TransactionCreate} from "../models/TransactionCreate";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionsService {
-  private apiUrl = 'http://localhost:5196/transactions';
+  private apiUrl = `${environment.apiUrl}/transactions`
 
   constructor(private http: HttpClient) {
   }

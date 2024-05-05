@@ -5,12 +5,13 @@ import {Pagination} from "./users.service";
 import {Card} from '../models/Card';
 import {CardCreate} from "../models/CardCreate";
 import {MessageService} from "primeng/api";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CardService {
-  private apiUrl = 'http://localhost:5196/card';
+  private apiUrl = `${environment.apiUrl}/cards`
 
   constructor(private http: HttpClient, private messageService: MessageService) {
   }

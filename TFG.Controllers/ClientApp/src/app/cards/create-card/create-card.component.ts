@@ -1,11 +1,11 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {MultiSelectModule} from "primeng/multiselect";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {BankAccountService} from "../../services/bankaccounts.service";
 import {UserService} from "../../services/users.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {IndexService} from "../../services/index.service";
 import {User} from "../../models/User";
@@ -121,7 +121,13 @@ export class CreateCardComponent {
 
   saveChanges() {
     if (!this.formGroup.valid) {
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos', life: 2000, closable: false});
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Por favor, rellene todos los campos',
+        life: 2000,
+        closable: false
+      });
       return;
     }
     //TRANSLATE CARD TYPE

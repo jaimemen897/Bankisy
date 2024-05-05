@@ -5,7 +5,7 @@ import {DatePipe, DOCUMENT, NgIf} from "@angular/common";
 import {DropdownModule} from "primeng/dropdown";
 import {ToastModule} from "primeng/toast";
 import {ConfirmPopup, ConfirmPopupModule} from "primeng/confirmpopup";
-import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
+import {MenuItem, MessageService} from "primeng/api";
 import {IndexService} from "../services/index.service";
 import {User} from "../models/User";
 import {MenuModule} from "primeng/menu";

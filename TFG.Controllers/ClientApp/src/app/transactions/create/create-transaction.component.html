@@ -16,7 +16,8 @@
         }
       </div>
       <div class="flex flex-column gap-1">
-        <input class="p-3 border-round-3xl border-0 mb-0 w-20rem" formControlName="amount" pInputText placeholder="Cantidad"
+        <input class="p-3 border-round-3xl border-0 mb-0 w-20rem" formControlName="amount" pInputText
+               placeholder="Cantidad"
                type="number">
         @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
           <p *ngIf="formGroup.controls['amount'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -42,8 +43,8 @@
             El concepto no puede tener más de 30 caracteres</p>
         }
       </div>
-      <p-button (click)="createTransaction()" rounded label="Confirmar" styleClass="w-full mt-5"></p-button>
-      <p-button (click)="cancel()" rounded label="Cancelar" severity="secondary" styleClass="w-full"></p-button>
+      <p-button (click)="createTransaction()" label="Confirmar" rounded styleClass="w-full mt-5"></p-button>
+      <p-button (click)="cancel()" label="Cancelar" rounded severity="secondary" styleClass="w-full"></p-button>
     </form>
   </div>
 </div>

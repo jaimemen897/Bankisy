@@ -64,7 +64,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         var accountDestination =
             await bankContext.BankAccounts.Include(b => b.Users)
-                .FirstOrDefaultAsync(b => b.Iban == transactionCreateDto.IbanAccountDestination) ?? throw new HttpException(404, "Account destination not found");
+                .FirstOrDefaultAsync(b => b.Iban == transactionCreateDto.IbanAccountDestination) ??
+            throw new HttpException(404, "Account destination not found");
 
         ValidateTransaction(account, accountDestination, transactionCreateDto);
 
@@ -124,13 +125,9 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         var recipientUser = accountDestination.Users.FirstOrDefault();
         if (recipientUser != null)
-        {
             if (MyHub._userConnections.TryGetValue(recipientUser.Id.ToString(), out var connectionId))
-            {
                 await hubContext.Clients.Client(connectionId).SendAsync("TransferReceived", recipientUser.Id,
                     $"Se ha recibido una transferencia de {transaction.Amount}€");
-            }
-        }
 
         return _mapper.Map<TransactionResponseDto>(transaction);
     }

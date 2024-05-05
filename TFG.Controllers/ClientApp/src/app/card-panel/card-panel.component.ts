@@ -22,9 +22,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CardCreate} from "../models/CardCreate";
 import {DropdownModule} from "primeng/dropdown";
-import {BankAccount} from "../models/BankAccount";
 import {CreateCardComponent} from "../cards/create-card/create-card.component";
-import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.component";
 
 @Component({
   selector: 'app-card-panel',

@@ -1,7 +1,5 @@
 using System.Text;
-using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Stripe;
@@ -13,7 +11,6 @@ using BankAccountService = TFG.Services.BankAccountService;
 using CardService = TFG.Services.CardService;
 
 var myAllowSpecificOrigins = "AllowAngularApp";
-Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddExceptionHandler<ExceptionHandler>();
@@ -64,11 +61,10 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
-        ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey =
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
-                                                            throw new InvalidOperationException()))
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"] ?? string.Empty))
     };
     options.Events = new JwtBearerEvents
     {
@@ -76,10 +72,7 @@ builder.Services.AddAuthentication(options =>
         {
             var accessToken = context.Request.Query["access_token"];
             var path = context.HttpContext.Request.Path;
-            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/myHub"))
-            {
-                context.Token = accessToken;                
-            }
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/myHub")) context.Token = accessToken;
             return Task.CompletedTask;
         }
     };
@@ -88,9 +81,6 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("User",
         policy => policy.RequireAssertion(context => context.User.IsInRole("User") || context.User.IsInRole("Admin")))
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
-
-
-
 
 var app = builder.Build();
 
@@ -103,7 +93,7 @@ if (!app.Environment.IsDevelopment())
 
 StripeConfiguration.ApiKey =
     "sk_test_51P7eS8D74icxIHcU4kn0dVmFuoZQhnf4gbAydb4NTzXzfI0oJTFjliD1H46CNyf2yrBuon0v3RwcHpJiUGkOZTYB00btmbH4Ic";
-/*app.UseHttpsRedirection();*/
+app.UseHttpsRedirection();
 app.UseExceptionHandler();
 app.UseCors(myAllowSpecificOrigins);
 app.UseWebSockets();

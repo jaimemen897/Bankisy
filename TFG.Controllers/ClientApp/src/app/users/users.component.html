@@ -5,18 +5,18 @@
   <div
     class="dataView-container w-12 sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 mx-auto border-1 surface-border border-round">
     <p-dataView (onLazyLoad)="lazyLoad($event)" [lazy]="true" [paginator]="true" [rowsPerPageOptions]="[8, 15, 25]"
-                [rows]="rows" [sortField]="sortField" [sortOrder]="sortOrder" layout="grid"
-                [totalRecords]="totalRecords" [value]="users" emptyMessage="No se han encontrado usuarios">
+                [rows]="rows" [sortField]="sortField" [sortOrder]="sortOrder" [totalRecords]="totalRecords"
+                [value]="users" emptyMessage="No se han encontrado usuarios" layout="grid">
 
       <ng-template pTemplate="header">
         <h1 class="text-3xl font-bold flex-grow-0 text-center">GESTIÓN DE USUARIOS</h1>
 
         <div class="flex justify-content-around flex-wrap">
           <div class="flex align-items-center justify-content-center h-4rem">
-            <p-button (click)="goToAddUser()" rounded icon="pi pi-plus" label="Crear usuario"/>
+            <p-button (click)="goToAddUser()" icon="pi pi-plus" label="Crear usuario" rounded/>
 
             <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: 'auto'}"
-                      [header]="headerSaveUpdateUser" [draggable]="false"
+                      [draggable]="false" [header]="headerSaveUpdateUser"
                       [modal]="true" [resizable]="false">
 
               <app-create-users (onCancel)="closeDialog()" (onSave)="saveBankAccount()"></app-create-users>
@@ -76,7 +76,7 @@
                   <!--SUBIR AVATAR-->
                   <p-overlayPanel #up>
                     <div class="flex justify-content-center">
-                      <p-fileUpload name="avatar" url="http://localhost:5196/users/{{ user.id }}/avatar"
+                      <p-fileUpload name="avatar" url="{{ urlToUpload }}/users/{{ user.id }}/avatar"
                                     accept="image/*" [multiple]="false"
                                     (onUpload)="onUpload()" chooseLabel="Elegir" uploadLabel="Enviar"
                                     cancelLabel="Cancelar"

@@ -5,12 +5,13 @@ import {Pagination} from "./users.service";
 import {BankAccount} from "../models/BankAccount";
 import {BankAccountCreate} from "../models/BankAccountCreate";
 import {Transaction} from "../models/Transaction";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class BankAccountService {
-  private apiUrl = 'http://localhost:5196/bankaccounts';
+  private apiUrl = `${environment.apiUrl}/bankaccounts`
 
   constructor(private http: HttpClient) {
   }

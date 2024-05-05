@@ -1,9 +1,9 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table (onLazyLoad)="lazyLoad($event)" [lazy]="true" [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]"
-           [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']"
-           [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [rows]="rows"
+  <p-table (onLazyLoad)="lazyLoad($event)" [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']" [lazy]="true" [paginator]="true"
+           [rowsPerPageOptions]="[10, 25, 50]"
+           [rows]="rows" [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}"
            [totalRecords]="totalRecords" [value]="cards">
     <ng-template pTemplate="header">
 
@@ -23,7 +23,7 @@
           <i class="pi pi-lock"></i>
         </th>
         <th style="width:21%">
-          <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
+          <p-button (onClick)="clearOrders()" class="w-12" label="Quitar orden" text/>
         </th>
       </tr>
 
@@ -84,7 +84,7 @@
         </th>
         <!--CLEAR-->
         <th>
-          <p-button (onClick)="clearFilters()" text class="w-12" label="Limpiar filtros"/>
+          <p-button (onClick)="clearFilters()" class="w-12" label="Limpiar filtros" text/>
         </th>
       </tr>
     </ng-template>
@@ -184,10 +184,10 @@
   </p-table>
 
   <div class="flex justify-content-center align-items-center w-full p-3">
-    <p-button (click)="goToCreateCard()" label="Crear tarjeta" styleClass="" rounded></p-button>
+    <p-button (click)="goToCreateCard()" label="Crear tarjeta" rounded styleClass=""></p-button>
   </div>
 
-  <p-dialog [(visible)]="displayDialog" [closable]="false" [draggable]="false" [contentStyle]="{height: 'auto'}"
+  <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: 'auto'}" [draggable]="false"
             [header]="headerSaveUpdateCard" [modal]="true" [resizable]="false">
     <app-create-card (onCancel)="closeDialog()" (onSave)="saveCard()"></app-create-card>
   </p-dialog>

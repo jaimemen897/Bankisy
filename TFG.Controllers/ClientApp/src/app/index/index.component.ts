@@ -20,7 +20,6 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {AccountType} from "../models/AccountType";
-import {SocketService} from "../services/socket.service";
 import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.component";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {InplaceModule} from "primeng/inplace";

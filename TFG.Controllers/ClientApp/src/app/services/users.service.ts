@@ -4,6 +4,7 @@ import {catchError, map, Observable, throwError} from 'rxjs';
 import {User} from '../models/User';
 import {UserCreate} from "../models/UserCreate";
 import {MessageService} from "primeng/api";
+import {environment} from "../../environments/environment";
 
 export interface Pagination<T> {
   currentPage: number;
@@ -18,7 +19,7 @@ export interface Pagination<T> {
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:5196/users';
+  private apiUrl = `${environment.apiUrl}/users`
 
   constructor(private http: HttpClient, private messageService: MessageService) {
   }

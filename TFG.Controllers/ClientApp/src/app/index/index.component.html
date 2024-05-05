@@ -72,7 +72,8 @@
         <ng-template pTemplate="icons">
           <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="goToCreateBankAccount()"
                     icon="pi pi-plus-circle" pTooltip="Crear una cuenta" [showDelay]="500" tooltipPosition="bottom"/>
-          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="refresh()" pTooltip="Recargar" [showDelay]="500" tooltipPosition="bottom">
+          <p-button styleClass="p-panel-header-icon p-link mr-2" (click)="refresh()" pTooltip="Recargar"
+                    [showDelay]="500" tooltipPosition="bottom">
             <span class="pi pi-refresh" [ngClass]="{'rotate-icon': updating}"></span>
           </p-button>
         </ng-template>
@@ -250,7 +251,8 @@
         </p-table>
       </p-panel>
 
-      <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogTransaction" [modal]="true" [closable]="false"
+      <p-dialog header="Realizar una transferencia" [(visible)]="displayDialogTransaction" [modal]="true"
+                [closable]="false"
                 [draggable]="false"
                 [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}">
         <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>

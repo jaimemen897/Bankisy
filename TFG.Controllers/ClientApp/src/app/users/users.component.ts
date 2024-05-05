@@ -20,6 +20,7 @@ import {FileUploadModule} from "primeng/fileupload";
 import {CreateUsersComponent} from "./create-users/create-users.component";
 import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/bankaccount-create.component";
 import {DialogModule} from "primeng/dialog";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-users',
@@ -52,6 +53,8 @@ import {DialogModule} from "primeng/dialog";
 export class UsersComponent {
   constructor(private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
   }
+
+  urlToUpload = `${environment.apiUrl}`
 
   @ViewChild(CreateUsersComponent) createUsersComponent!: CreateUsersComponent;
 
