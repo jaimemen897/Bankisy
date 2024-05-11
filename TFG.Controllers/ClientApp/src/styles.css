@@ -3,12 +3,6 @@
 
 @layer reset, primeng;
 
-@layer reset {
-  button,
-  input {
-  }
-}
-
 body {
   margin: 0;
   padding: 0;

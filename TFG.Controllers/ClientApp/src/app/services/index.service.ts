@@ -163,148 +163,42 @@ export class IndexService {
   }
 
   private handleError(error: any) {
-    if (error.status === 400) {
-      if (error.error.title === 'User not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'Usuario no encontrado'
-        });
-      }
-      if (error.error.title === 'Bank account not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'Cuenta bancaria no encontrada'
-        });
-      }
-      if (error.error.title === 'Bank account does not belong to the user') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La cuenta bancaria no pertenece al usuario'
-        });
-      }
-      if (error.error.title === 'Bank account already has a card') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La cuenta bancaria ya tiene una tarjeta'
-        });
-      }
-      if (error.error.title === 'Invalid card type. Valid values are: Debit, Visa, Credit, Prepaid, Virtual, Mastercard, AmericanExpress') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          closable: false,
-          detail: 'Tipo de tarjeta inválido. Los valores válidos son: Débito, Visa, Crédito, Prepago, Virtual, Mastercard, AmericanExpress'
-        });
-      }
-      if (error.error.title === 'Card is already blocked') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La tarjeta ya está bloqueada'
-        });
-      }
-      if (error.error.title === 'Card is not blocked') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La tarjeta no está bloqueada'
-        });
-      }
-      if (error.error.title === 'Users not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'Uno o varios de los usuarios no existen'
-        });
-      }
-      if (error.error.title === 'Invalid account type. Valid values are: Saving, Current, FixedTerm, Payroll, Student') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'Tipo de cuenta inválido. Los valores válidos son: Ahorro, Corriente, PlazoFijo, Nómina, Estudiante'
-        });
-      }
-      if (error.error.title === 'You are not the owner of the card') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'No eres el propietario de la tarjeta'
-        });
-      }
-      if (error.error.title === 'Insufficient funds in the origin account') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'Fondos insuficientes en la cuenta de origen'
-        });
-      }
-      if (error.error.title === 'Origin and destination accounts cannot be the same') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'Las cuentas de origen y destino no pueden ser iguales'
-        });
-      }
-      if (error.error.title === 'Transaction amount must be greater than zero') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'La cantidad de la transacción debe ser mayor que cero'
-        });
-      }
-      if (error.error.title === 'Account origin not found or not accepting Bizum') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'Cuenta de origen no encontrada o no acepta Bizum'
-        });
-      }
-      if (error.error.title === 'User destination not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'Usuario de destino no encontrado'
-        });
-      }
-      if (error.error.title === 'Account destination not found or not accepting Bizum') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'Cuenta de destino no encontrada o no acepta Bizum'
-        });
-      }
-      if (error.error.title === 'You are not the owner of the account') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'No eres el propietario de la cuenta'
-        });
-      }
-      if (error.error.title === 'Card is not expired') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, life: 2000,
-          detail: 'La tarjeta no está caducada'
-        });
-      }
-    } else if (error.status === 404) {
-      if (error.error.title === 'Account origin not found') {
+    const errorMessages: { [key: string]: string } = {
+      'User not found': 'Usuario no encontrado',
+      'Bank account not found': 'Cuenta bancaria no encontrada',
+      'Bank account does not belong to the user': 'La cuenta bancaria no pertenece al usuario',
+      'Bank account already has a card': 'La cuenta bancaria ya tiene una tarjeta',
+      'Invalid card type. Valid values are: Debit, Visa, Credit, Prepaid, Virtual, Mastercard, AmericanExpress': 'Tipo de tarjeta inválido. Los valores válidos son: Débito, Visa, Crédito, Prepago, Virtual, Mastercard, AmericanExpress',
+      'Card is already blocked': 'La tarjeta ya está bloqueada',
+      'Card is not blocked': 'La tarjeta no está bloqueada',
+      'Users not found': 'Uno o varios de los usuarios no existen',
+      'Invalid account type. Valid values are: Saving, Current, FixedTerm, Payroll, Student': 'Tipo de cuenta inválido. Los valores válidos son: Ahorro, Corriente, PlazoFijo, Nómina, Estudiante',
+      'You are not the owner of the card': 'No eres el propietario de la tarjeta',
+      'Insufficient funds in the origin account': 'Fondos insuficientes en la cuenta de origen',
+      'Origin and destination accounts cannot be the same': 'Las cuentas de origen y destino no pueden ser iguales',
+      'Transaction amount must be greater than zero': 'La cantidad de la transacción debe ser mayor que cero',
+      'Account origin not found or not accepting Bizum': 'Cuenta de origen no encontrada o no acepta Bizum',
+      'User destination not found': 'Usuario de destino no encontrado',
+      'Account destination not found or not accepting Bizum': 'Cuenta de destino no encontrada o no acepta Bizum',
+      'You are not the owner of the account': 'No eres el propietario de la cuenta',
+      'Card is not expired': 'La tarjeta no está caducada',
+      'Account origin not found': 'Cuenta de origen no encontrada',
+      'Account destination not found': 'Cuenta de destino no encontrada'
+    };
+
+    if (error.status === 400 || error.status === 404) {
+      const message = errorMessages[error.error.title];
+      if (message) {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           closable: false,
           life: 2000,
-          detail: 'Cuenta de origen no encontrada'
-        });
-      }
-      if (error.error.title === 'Account destination not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          closable: false,
-          life: 2000,
-          detail: 'Cuenta de destino no encontrada'
+          detail: message
         });
       }
     }
+
     return throwError(() => error);
   }
 }

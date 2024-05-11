@@ -94,75 +94,31 @@ export class CardService {
   }
 
   private handleError(error: any) {
-    if (error.status === 400) {
-      if (error.error.title === 'User not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'Usuario no encontrado'
-        });
-      }
-      if (error.error.title === 'Bank account not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'Cuenta bancaria no encontrada'
-        });
-      }
-      if (error.error.title === 'Bank account does not belong to the user') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La cuenta bancaria no pertenece al usuario'
-        });
-      }
-      if (error.error.title === 'Bank account already has a card') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La cuenta bancaria ya tiene una tarjeta'
-        });
-      }
-      if (error.error.title === 'Invalid card type. Valid values are: Debit, Visa, Credit, Prepaid, Virtual, Mastercard, AmericanExpress') {
+    const errorMessages: { [key: string]: string } = {
+      'User not found': 'Usuario no encontrado',
+      'Bank account not found': 'Cuenta bancaria no encontrada',
+      'Bank account does not belong to the user': 'La cuenta bancaria no pertenece al usuario',
+      'Bank account already has a card': 'La cuenta bancaria ya tiene una tarjeta',
+      'Invalid card type. Valid values are: Debit, Visa, Credit, Prepaid, Virtual, Mastercard, AmericanExpress': 'Tipo de tarjeta inválido. Los valores válidos son: Débito, Visa, Crédito, Prepago, Virtual, Mastercard, AmericanExpress',
+      'Card is already blocked': 'La tarjeta ya está bloqueada',
+      'Card is not blocked': 'La tarjeta no está bloqueada',
+      'Card is not expired': 'La tarjeta no está caducada',
+      'Account origin not found': 'Cuenta de origen no encontrada',
+      'Account destination not found': 'Cuenta de destino no encontrada'
+    };
+
+    if (error.status === 400 || error.status === 404) {
+      const message = errorMessages[error.error.title];
+      if (message) {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           closable: false,
-          detail: 'Tipo de tarjeta inválido. Los valores válidos son: Débito, Visa, Crédito, Prepago, Virtual, Mastercard, AmericanExpress'
-        });
-      }
-      if (error.error.title === 'Card is already blocked') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La tarjeta ya está bloqueada'
-        });
-      }
-      if (error.error.title === 'Card is not blocked') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La tarjeta no está bloqueada'
-        });
-      }
-      if (error.error.title === 'Card is not expired') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'La tarjeta no está caducada'
-        });
-      }
-    } else if (error.status === 404) {
-      if (error.error.title === 'Account origin not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          closable: false,
-          detail: 'Cuenta de origen no encontrada'
-        });
-      }
-      if (error.error.title === 'Account destination not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          closable: false,
-          detail: 'Cuenta de destino no encontrada'
+          detail: message
         });
       }
     }
+
     return throwError(() => error);
   }
 }

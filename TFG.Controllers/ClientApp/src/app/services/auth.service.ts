@@ -28,46 +28,45 @@ export class AuthService {
   }
 
   private handleError(error: any) {
+    const errorMessages: { [key: string]: string } = {
+      'Username already exists': 'El nombre de usuario ya existe',
+      'Email already exists': 'El email ya existe',
+      'DNI already exists': 'El DNI ya existe',
+      'Invalid gender. Valid values are: Male, Female, Other, PreferNotToSay': 'Género inválido. Los valores válidos son: Masculino, Femenino, Otro, Prefiero no decirlo',
+      'User not found': 'Usuario no encontrado',
+      'User or password incorrect': 'Usuario o contraseña incorrectos',
+      'Server error': 'Error en el servidor'
+    };
+
     if (error.status === 400) {
-      if (error.error.title === 'Username already exists') {
+      const message = errorMessages[error.error.title];
+      if (message) {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           closable: false,
-          detail: 'El nombre de usuario ya existe'
-        });
-      }
-      if (error.error.title === 'Email already exists') {
-        this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'El email ya existe'});
-      }
-      if (error.error.title === 'DNI already exists') {
-        this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'El DNI ya existe'});
-      }
-      if (error.error.title === 'Invalid gender. Valid values are: Male, Female, Other, PreferNotToSay') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Género inválido. Los valores válidos son: Masculino, Femenino, Otro, Prefiero no decirlo'
-        });
-      }
-      if (error.error.title === 'User not found') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          closable: false,
-          detail: 'Usuario no encontrado'
+          detail: message,
+          life: 2000
         });
       } else {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           closable: false,
-          detail: 'Usuario o contraseña incorrectos'
+          detail: errorMessages['User or password incorrect'],
+          life: 2000
         });
       }
     } else {
-      this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'Error en el servidor'});
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        closable: false,
+        detail: errorMessages['Server error'],
+        life: 2000
+      });
     }
+
     return throwError(() => error);
   }
 

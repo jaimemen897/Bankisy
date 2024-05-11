@@ -31,7 +31,7 @@ export class BizumCreateComponent implements OnInit {
   formGroup: FormGroup = new FormGroup({
     concept: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(35)]),
     phoneUserDestination: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{9}$')]),
-    amount: new FormControl('', [Validators.required, Validators.min(0.50), Validators.max(500), Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')])
+    amount: new FormControl('', [Validators.required, Validators.min(0.50), Validators.max(500), Validators.pattern('^[0-9]+(.[0-9]{1,2})?$')])
   });
 
   user!: User;

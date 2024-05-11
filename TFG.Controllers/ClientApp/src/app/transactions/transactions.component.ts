@@ -39,7 +39,7 @@ import {SocketService} from "../services/socket.service";
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.css'
 })
-export class TransactionsComponent implements OnInit {
+export class TransactionsComponent {
   constructor(private transactionService: TransactionsService, private router: Router, private confirmationService: ConfirmationService, private messageService: MessageService, private socketService: SocketService) {
   }
 
@@ -52,19 +52,7 @@ export class TransactionsComponent implements OnInit {
   sortOrder!: number;
   search: string;
 
-  users: String[] = [];
-
-  ngOnInit() {
-    /*this.socketService.listenForTransactions().subscribe((transaction: any) => {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Nueva transacción',
-        detail: 'Se ha realizado una nueva transacción',
-        life: 2000,
-        closable: false
-      });
-    });*/
-  }
+  users: string[] = [];
 
   lazyLoad(event: any) {
     let pageNumber = Math.floor(event.first / event.rows) + 1;

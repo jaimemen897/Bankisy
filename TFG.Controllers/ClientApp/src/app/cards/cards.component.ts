@@ -64,7 +64,7 @@ export class CardComponent {
   isBlocked!: boolean;
 
   cardsType: string[] = [CardType.Debit, CardType.Visa, CardType.Prepaid, CardType.Virtual, CardType.Credit, CardType.Mastercard, CardType.AmericanExpress];
-  status: String[] = ['Active', 'Inactive'];
+  status: string[] = ['Active', 'Inactive'];
   users: string[] = [];
   transactions: Transaction[] = [];
   headerSaveUpdateCard: string = 'Crear tarjeta';
@@ -75,11 +75,11 @@ export class CardComponent {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    if (event.filters && event.filters.isDeleted) {
+    if (event.filters?.isDeleted) {
       this.isDeleted = event.filters.isDeleted.value;
     }
 
-    if (event.filters && event.filters.isBlocked) {
+    if (event.filters?.isBlocked) {
       this.isBlocked = event.filters.isBlocked.value;
     }
 
@@ -232,7 +232,7 @@ export class CardComponent {
       return 'danger';
     } else if (cardType === 'AmericanExpress' || cardType === 'American Express') {
       return 'contrast';
-    } else if (cardType === 'MasterCard' || cardType === 'MasterCard') {
+    } else if (cardType === 'MasterCard') {
       return 'secondary';
     } else {
       return 'contrast';

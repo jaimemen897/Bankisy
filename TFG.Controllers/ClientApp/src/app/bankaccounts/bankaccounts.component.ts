@@ -68,8 +68,8 @@ export class BankaccountsComponent {
   isDeleted!: boolean;
 
   accountsTypes: string[] = [AccountType.Saving, AccountType.Current, AccountType.FixedTerm, AccountType.Payroll, AccountType.Student];
-  users: String[] = [];
-  status: String[] = ['Active', 'Inactive'];
+  users: string[] = [];
+  status: string[] = ['Active', 'Inactive'];
   transactions: Transaction[] = [];
   headerSaveUpdateBankAccount: string = 'Crear cuenta de banco';
 
@@ -79,7 +79,7 @@ export class BankaccountsComponent {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    if (event.filters && event.filters.isDeleted) {
+    if (event.filters?.isDeleted) {
       this.isDeleted = event.filters.isDeleted.value;
     }
 

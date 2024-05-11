@@ -26,7 +26,7 @@ export class SocketService {
   }
 
   private getAccessToken = (): string => {
-    return localStorage.getItem('token') || '';
+    return localStorage?.getItem('token') ?? '';
   }
 
   public transferNotification = () => {

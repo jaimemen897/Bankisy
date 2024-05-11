@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {Card} from "../models/Card";
 import {MessageService} from "primeng/api";
 import {CardModule} from "primeng/card";
@@ -53,9 +53,10 @@ import {CreateCardComponent} from "../cards/create-card/create-card.component";
   templateUrl: './card-panel.component.html',
   styleUrl: './card-panel.component.css'
 })
-export class CardPanelComponent implements OnInit {
+export class CardPanelComponent {
 
   constructor(private messageService: MessageService, private indexService: IndexService) {
+    this.refresh();
   }
 
   @ViewChild('optionMenu') optionMenu: any;
@@ -68,12 +69,6 @@ export class CardPanelComponent implements OnInit {
   cardToUpdate!: Card;
   pinToUpdate!: string;
   showNewCardDialog: boolean = false;
-
-  ngOnInit() {
-    this.indexService.getCardsByUserId().subscribe(cards => {
-      this.cards = cards;
-    });
-  }
 
   showPin(card: Card) {
     this.messageService.add({severity: 'info', summary: 'PIN', detail: card.pin, closable: false, life: 2000,});

@@ -1,16 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Stripe;
+using TFG.Controllers.DataAccessor;
 using TFG.Services;
 
 namespace TFG.Controllers.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WebhookController(IndexService indexService) : Controller
+public class WebhookController(IOptionsSnapshot<StripeSettings> stripeSettings, IndexService indexService) : Controller
 {
-    private const string EndpointSecret = "whsec_c8ea8f06c1f738abf20901f88e119db5d264856e45901ed14be89f10347ddcd1";
+    private readonly string _endpointSecret = stripeSettings.Value.EndpointSecret;
 
-    //stripe listen --forward-to localhost:5196/webhook
+    //stripe listen --forward-to https://localhost:5196/webhook
     [HttpPost]
     public async Task<IActionResult> Index()
     {
@@ -18,7 +20,7 @@ public class WebhookController(IndexService indexService) : Controller
         try
         {
             var stripeEvent = EventUtility.ConstructEvent(json,
-                Request.Headers["Stripe-Signature"], EndpointSecret);
+                Request.Headers["Stripe-Signature"], _endpointSecret);
 
             if (stripeEvent.Type == Events.PaymentIntentSucceeded)
             {
@@ -33,7 +35,8 @@ public class WebhookController(IndexService indexService) : Controller
         }
         catch (StripeException e)
         {
-            return BadRequest();
+            Console.WriteLine(e);
+            return BadRequest(new { error = e.Message });
         }
     }
 }

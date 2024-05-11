@@ -85,51 +85,37 @@ export class UserService {
   }
 
   private handleError(error: any) {
-    if (error.status === 400) {
-      if (error.error.title === 'Invalid orderBy parameter') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error', closable: false, detail: 'Parámetro de ordenación inválido'
-        });
-      }
-      if (error.error.title === 'Username already exists') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          closable: false,
-          detail: 'El nombre de usuario ya existe'
-        });
-      }
-      if (error.error.title === 'Email already exists') {
-        this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'El email ya existe'});
-      }
-      if (error.error.title === 'DNI already exists') {
-        this.messageService.add({severity: 'error', summary: 'Error', closable: false, detail: 'El DNI ya existe'});
-      }
-      if (error.error.title === 'Invalid gender. Valid values are: Male, Female, Other, PreferNotToSay') {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Género inválido. Los valores válidos son: Masculino, Femenino, Otro, Prefiero no decirlo'
-        });
-      }
-    } else if (error.status === 404) {
-      if (error.error.title === 'User not found') {
+    const errorMessages: { [key: string]: string } = {
+      'Invalid orderBy parameter': 'Parámetro de ordenación inválido',
+      'Username already exists': 'El nombre de usuario ya existe',
+      'Email already exists': 'El email ya existe',
+      'DNI already exists': 'El DNI ya existe',
+      'Invalid gender. Valid values are: Male, Female, Other, PreferNotToSay': 'Género inválido. Los valores válidos son: Masculino, Femenino, Otro, Prefiero no decirlo',
+      'User not found': 'Usuario no encontrado',
+      'User or password incorrect': 'Usuario o contraseña incorrectos'
+    };
+
+    if (error.status === 400 || error.status === 404) {
+      const message = errorMessages[error.error.title];
+      if (message) {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           closable: false,
-          detail: 'Usuario no encontrado'
+          detail: message,
+          life: 2000
         });
       } else {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           closable: false,
-          detail: 'Usuario o contraseña incorrectos'
+          detail: errorMessages['User or password incorrect'],
+          life: 2000
         });
       }
     }
+
     return throwError(() => error);
   }
 }

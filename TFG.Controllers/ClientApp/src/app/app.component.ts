@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
   }
 
   prepareRoute(outlet: any) {
-    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+    return outlet?.activatedRouteData?.['animation'];
   }
 
   isInLoginOrRegister() {

@@ -5,8 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Stripe;
 using TFG.Context.Context;
+using TFG.Controllers.DataAccessor;
 using TFG.Controllers.ExceptionsHandler;
-using TFG.Controllers.SecurityRequirementsOperationFilter;
 using TFG.Services;
 using TFG.Services.Hub;
 using BankAccountService = TFG.Services.BankAccountService;
@@ -57,6 +57,7 @@ builder.Services.AddScoped<IndexService>();
 builder.Services.AddScoped<CardService>();
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 builder.Services.AddDbContext<BankContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionURL")));
 builder.Services.AddProblemDetails();

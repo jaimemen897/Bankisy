@@ -38,7 +38,7 @@ export class CreateTransactionComponent implements OnInit {
     concept: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(35)]),
     ibanAccountOrigin: new FormControl('', [Validators.required]),
     ibanAccountDestination: new FormControl('', [Validators.required, Validators.pattern('ES[0-9]{22}')]),
-    amount: new FormControl('', [Validators.required, Validators.min(0.01), Validators.max(200000), Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$')])
+    amount: new FormControl('', [Validators.required, Validators.min(0.01), Validators.max(200000), Validators.pattern('^[0-9]+(.[0-9]{1,2})?$')])
   });
 
   user!: User;
@@ -48,12 +48,7 @@ export class CreateTransactionComponent implements OnInit {
   @Output() onCancel: EventEmitter<any> = new EventEmitter();
 
   ngOnInit() {
-    this.indexService.getUserByToken().subscribe(user => {
-      this.user = user;
-      this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
-        this.bankAccounts = bankAccounts;
-      });
-    });
+    this.loadUser();
   }
 
   loadUser() {

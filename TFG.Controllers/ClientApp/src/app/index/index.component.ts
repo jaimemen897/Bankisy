@@ -246,8 +246,7 @@ export class IndexComponent implements OnInit {
     this.transactionsByBankAccount = [];
     this.indexService.getTransactionsByIban(iban).subscribe(data => {
       this.transactionsByBankAccount = data;
-      if (this.transactionsByBankAccount.length !== 0) {
-      } else {
+      if (this.transactionsByBankAccount.length === 0) {
         this.messageService.add({
           severity: 'info',
           summary: 'Sin transacciones',

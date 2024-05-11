@@ -11,19 +11,17 @@ export class ErrorHttpInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(request).pipe(catchError(err => {
-      if (err instanceof HttpErrorResponse && err.status === 401) {
-        this.router.navigate(['login']);
-      }
-      if (err instanceof HttpErrorResponse && err.status === 403) {
+    const errorActions: { [key: number]: () => void } = {
+      401: () => this.router.navigate(['login']),
+      403: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
           detail: 'No tienes permisos para acceder a esta página'
         });
         this.location.back();
-      }
-      if (err instanceof HttpErrorResponse && err.status === 500) {
+      },
+      500: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -32,6 +30,15 @@ export class ErrorHttpInterceptor implements HttpInterceptor {
           life: 1000
         });
         this.router.navigate(['/']);
+      }
+    };
+
+    return next.handle(request).pipe(catchError(err => {
+      if (err instanceof HttpErrorResponse) {
+        const action = errorActions[err.status];
+        if (action) {
+          action();
+        }
       }
       return throwError(err);
     }));
