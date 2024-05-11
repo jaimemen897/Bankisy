@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Stripe;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
@@ -16,7 +17,34 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddSignalR();
 builder.Services.AddProblemDetails();
+builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new() {Title = "Bank API", Version = "v1"});
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
@@ -84,11 +112,11 @@ builder.Services.AddAuthorizationBuilder()
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseHsts();
     app.UseSwagger();
-    app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
+    app.UseSwaggerUI();
 }
 
 StripeConfiguration.ApiKey =
