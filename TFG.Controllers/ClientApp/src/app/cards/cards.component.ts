@@ -220,23 +220,22 @@ export class CardComponent {
 
   //COLORS
   getSeverity(cardType: string) {
-    /*"success" | "info" | "warning" | "danger"*/
     if (cardType === 'Debit' || cardType === 'Débito') {
       return 'success';
     } else if (cardType === 'Visa') {
-      return 'info';
-    } else if (cardType === 'Credit' || cardType === 'Crédito') {
-      return 'warning';
-    } else if (cardType === 'Prepaid' || cardType === 'Prepago') {
-      return 'danger';
-    } else if (cardType === 'Virtual') {
-      return 'primary';
-    } else if (cardType === 'AmericanExpress' || cardType === 'American Express') {
       return 'secondary';
+    } else if (cardType === 'Credit' || cardType === 'Crédito') {
+      return 'info';
+    } else if (cardType === 'Prepaid' || cardType === 'Prepago') {
+      return 'warning';
+    } else if (cardType === 'Virtual') {
+      return 'danger';
+    } else if (cardType === 'AmericanExpress' || cardType === 'American Express') {
+      return 'contrast';
     } else if (cardType === 'MasterCard' || cardType === 'MasterCard') {
-      return 'dark';
+      return 'secondary';
     } else {
-      return 'light';
+      return 'contrast';
     }
   }
 

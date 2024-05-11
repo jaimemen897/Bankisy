@@ -11,7 +11,7 @@ import {environment} from "../../environments/environment";
   providedIn: 'root'
 })
 export class CardService {
-  private apiUrl = `${environment.apiUrl}/cards`
+  private apiUrl = `${environment.apiUrl}/card`
 
   constructor(private http: HttpClient, private messageService: MessageService) {
   }

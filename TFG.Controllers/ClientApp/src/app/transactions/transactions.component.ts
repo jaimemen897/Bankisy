@@ -192,9 +192,8 @@ export class TransactionsComponent implements OnInit {
   }
 
   getAmountColor(amount: number) {
-    /*10, 200, 500, 1000 >*/
     if (amount < 10) {
-      return 'error';
+      return 'danger';
     } else if (amount < 200) {
       return 'warning';
     } else if (amount < 500) {
@@ -202,7 +201,7 @@ export class TransactionsComponent implements OnInit {
     } else if (amount < 1000) {
       return 'success';
     } else {
-      return 'primary';
+      return 'contrast';
     }
   }
 }

@@ -299,26 +299,22 @@ export class IndexComponent implements OnInit {
 
   //CREATE
   goToCreateBankAccount() {
-    this.refresh();
     this.bankAccountCreate.loadUser(this.user);
     this.displayDialogBankAccount = true;
   }
 
   goToCreateBankAccountNewUser() {
-    this.refresh();
     this.bankAccountCreate.loadUser(this.user);
     this.displayDialogBankAccountNewUser = true;
     this.displayCreateBankAccount = true;
   }
 
   goToCreateTransaction() {
-    this.refresh();
     this.transactionCreate.loadUser();
     this.displayDialogTransaction = true;
   }
 
   goToCreateBizum() {
-    this.refresh();
     this.bizumCreateComponent.loadUser();
     this.displayDialogBizum = true;
   }
@@ -375,6 +371,7 @@ export class IndexComponent implements OnInit {
     this.displayDialogBizum = false;
     this.displayDialogBankAccountNewUser = false;
     this.displayCreateBankAccount = false;
+    this.refresh();
   }
 
   confirmActiveBizum(iban: string) {

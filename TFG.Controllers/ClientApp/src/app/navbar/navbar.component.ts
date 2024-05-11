@@ -73,6 +73,7 @@ export class NavbarComponent implements OnInit {
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
   @ViewChild(BankaccountCreateComponent) bankAccountCreate!: BankaccountCreateComponent
   @ViewChild(BizumCreateComponent) bizumCreateComponent!: BizumCreateComponent
+  @ViewChild('logoutMes') confirmPopup!: ConfirmPopup;
 
   ngOnInit() {
     this.indexService.getUserByToken().subscribe(
@@ -104,8 +105,6 @@ export class NavbarComponent implements OnInit {
     ];
   }
 
-  @ViewChild('logoutMes') confirmPopup!: ConfirmPopup;
-
   logout() {
     localStorage.removeItem('token');
     location.reload();
@@ -125,6 +124,7 @@ export class NavbarComponent implements OnInit {
 
   changeTheme(state: boolean) {
     let theme = state ? 'dark' : 'light';
+    this.themeSelection = state;
     window.localStorage.setItem('theme', theme);
     let themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
     this.document.documentElement.classList.remove('dark-theme', 'light-theme');

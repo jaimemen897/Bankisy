@@ -98,11 +98,9 @@
 
       <div class="inline-flex gap-3">
         <div>
-            <span class="p-input-filled">
-          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0" formControlName="password"
-                 id="password" pInputText pPassword
-                 placeholder="Contraseña" type="password">
-        </span>
+          <p-password (keyup.enter)="sendForm()" class="border-round-3xl border-0 bg-secondary w-full"
+                      formControlName="password" id="password" mediumLabel="Media" placeholder="Contraseña"
+                      promptLabel="Introduce una contraseña" strongLabel="Fuerte" toggleMask weakLabel="Débil"/>
           @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
             <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
               La contraseña es obligatoria</p>
@@ -114,12 +112,10 @@
         </div>
 
         <div>
-            <span class="p-input-filled">
-          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0" formControlName="confirmpassword"
-                 id="confirmpassword" pInputText
-                 pPassword
-                 placeholder="Confirmar contraseña" type="password">
-        </span>
+          <p-password (keyup.enter)="sendForm()" class="border-round-3xl border-0 bg-secondary w-full"
+                      formControlName="confirmpassword" id="confirmpassword" mediumLabel="Media"
+                      placeholder="Confirmar contraseña" promptLabel="Confirma tu contraseña" strongLabel="Fuerte" toggleMask
+                      weakLabel="Débil"/>
           @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
             <p class="text-red-500 text-xs m-0 ml-3">
               Las contraseñas no coinciden
@@ -142,7 +138,8 @@
     <p-overlayPanel #up>
       <div class="flex justify-content-center">
         <p-fileUpload (onUpload)="onUpload()" [multiple]="false" [url]="apiUrl" accept="image/*"
-                      cancelLabel="Cancelar" chooseLabel="Elegir" invalidFileTypeMessageDetail="Solo se permiten imágenes"
+                      cancelLabel="Cancelar" chooseLabel="Elegir"
+                      invalidFileTypeMessageDetail="Solo se permiten imágenes"
                       method="put"
                       name="avatar" uploadLabel="Enviar">
           <ng-template pTemplate="content">

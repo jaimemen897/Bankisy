@@ -97,10 +97,9 @@
         <div class="inline-flex gap-3">
           <div>
             <span class="p-input-filled">
-              <input class="p-3 border-round-3xl border-0 bg-secondary" formControlName="password" id="password"
-                     pInputText pPassword
-                     placeholder="Contraseña"
-                     type="password">
+              <p-password class="border-round-3xl border-0 bg-secondary w-full"
+                          formControlName="password" id="password" mediumLabel="Media" placeholder="Contraseña"
+                          promptLabel="Introduce una contraseña" strongLabel="Fuerte" toggleMask weakLabel="Débil"/>
             </span>
             @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
               <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
@@ -114,10 +113,10 @@
 
           <div>
             <span class="p-input-filled">
-              <input class="p-3 border-round-3xl border-0 bg-secondary" formControlName="confirmpassword"
-                     id="confirmpassword" pInputText pPassword
-                     placeholder="Confirmar contraseña"
-                     type="password">
+              <p-password class="border-round-3xl border-0 bg-secondary w-full"
+                          formControlName="confirmpassword" id="confirmpassword" mediumLabel="Media"
+                          placeholder="Confirmar contraseña" promptLabel="Confirma tu contraseña" strongLabel="Fuerte"
+                          toggleMask weakLabel="Débil"/>
             </span>
             @if (formGroup.errors?.passwordMismatch && formGroup.controls['confirmpassword'].touched) {
               <p class="text-red-500 text-xs m-0 ml-3">
