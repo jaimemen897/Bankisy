@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using Stripe;
 using TFG.Context.Context;
 using TFG.Controllers.ExceptionsHandler;
+using TFG.Controllers.SecurityRequirementsOperationFilter;
 using TFG.Services;
 using TFG.Services.Hub;
 using BankAccountService = TFG.Services.BankAccountService;
@@ -22,13 +23,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new() {Title = "Bank API", Version = "v1"});
+    options.SwaggerDoc("v1", new() { Title = "Bankisy API", Version = "v1" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Description = "Enter 'Bearer ' followed by a valid token.",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT"
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -55,22 +58,14 @@ builder.Services.AddScoped<CardService>();
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<BankContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnectionString"));
-});
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionURL")));
 builder.Services.AddProblemDetails();
-/*builder.Services.AddCors(options =>
-{
-    options.AddPolicy(myAllowSpecificOrigins,
-        origins => { origins.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
-});*/
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(myAllowSpecificOrigins,
-        builder =>
+        build =>
         {
-            builder.WithOrigins("https://localhost:44464")
+            build.WithOrigins("https://localhost:44464")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
