@@ -11,7 +11,7 @@
     "TFG.Controllers": {
       "commandName": "Project",
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:5196",
+      "applicationUrl": "https://localhost:5196",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

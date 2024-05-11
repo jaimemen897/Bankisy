@@ -3,13 +3,14 @@ import {HttpClient} from '@angular/common/http';
 import {catchError, Observable, throwError} from 'rxjs';
 import {MessageService} from "primeng/api";
 import {UserCreate} from "../models/UserCreate";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private loginUrl = 'http://localhost:5196/session/login';
-  private registerUrl = 'http://localhost:5196/session/signup';
+  private loginUrl = `${environment.apiUrl}/session/login`
+  private registerUrl = `${environment.apiUrl}/session/signup`
 
   constructor(private http: HttpClient, private messageService: MessageService) {
   }

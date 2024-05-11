@@ -1,11 +1,14 @@
 import {Injectable} from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import {MessageService} from "primeng/api";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
+  private apiUrl = `${environment.apiUrl}/myHub`
+
   constructor(private messageService: MessageService) {
   }
 
@@ -13,7 +16,7 @@ export class SocketService {
 
   public startConnection = () => {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5196/myHub', { accessTokenFactory: () => this.getAccessToken() })
+      .withUrl(this.apiUrl, {accessTokenFactory: () => this.getAccessToken()})
       .build();
 
     this.hubConnection
@@ -29,7 +32,13 @@ export class SocketService {
   public transferNotification = () => {
     this.hubConnection.on('TransferReceived', (user, message) => {
 
-      this.messageService.add({severity: 'info', summary: 'Transferencia recibida', detail: message, life: 2000, closable: false});
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Transferencia recibida',
+        detail: message,
+        life: 2000,
+        closable: false
+      });
     });
   }
 }

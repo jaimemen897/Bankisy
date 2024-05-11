@@ -247,7 +247,7 @@ public class IndexService(
         var user = await sessionService.GetMyself();
         var userUpdated = await usersService.UpdateUser(user.Id, userUpdateDto);
         var userMapped = _mapper.Map<User>(userUpdated);
-        return SessionService.GetToken(userMapped);
+        return sessionService.GetToken(userMapped);
     }
 
     public async Task<UserResponseDto> UploadAvatar(IFormFile file, string host)
@@ -269,9 +269,7 @@ public class IndexService(
 
         var bankAccount = await bankAccountService.GetBankAccount(iban);
         if (bankAccount.UsersId.All(id => id != user.Id))
-        {
             throw new HttpException(403, "You are not the owner of the account");
-        }
 
         var incomeCreateDto = new IncomeCreateDto
         {

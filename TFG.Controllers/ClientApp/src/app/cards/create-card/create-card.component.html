@@ -7,7 +7,8 @@
                     emptyMessage="No se han encontrado usuarios" (onChange)="loadBankAccounts()"/>
       }
 
-      <p-dropdown [options]="bankAccounts" [showClear]="true" emptyMessage="Sin cuentas bancarias" formControlName="selectedBankAccount"
+      <p-dropdown [options]="bankAccounts" [showClear]="true" emptyMessage="Sin cuentas bancarias"
+                  formControlName="selectedBankAccount"
                   optionLabel="iban" placeholder="Elegir cuenta de destino"
                   styleClass="w-20rem"/>
 
@@ -21,7 +22,7 @@
         </div>
       }
       <p-button (click)="saveChanges()" [label]="label" rounded styleClass="w-full mt-6"></p-button>
-      <p-button (click)="cancel()" rounded label="Cancelar" severity="secondary" styleClass="w-full"></p-button>
+      <p-button (click)="cancel()" label="Cancelar" rounded severity="secondary" styleClass="w-full"></p-button>
     </form>
   </div>
 </div>

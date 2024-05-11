@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using TFG.Context.DTOs.users;
@@ -12,7 +13,10 @@ using TFG.Services.mappers;
 
 namespace TFG.Services;
 
-public class SessionService(UsersService usersService, IHttpContextAccessor httpContextAccessor)
+public class SessionService(
+    UsersService usersService,
+    IHttpContextAccessor httpContextAccessor,
+    IConfiguration configuration)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
@@ -36,18 +40,18 @@ public class SessionService(UsersService usersService, IHttpContextAccessor http
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
         var id = jsonToken?.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value ??
-                    throw new HttpException(401, "Invalid token");
+                 throw new HttpException(401, "Invalid token");
         return await usersService.GetUserAsync(Guid.Parse(id)) ?? throw new HttpException(404, "User not found");
     }
 
     public async Task<UserResponseDto> GetMyself()
     {
-        var token = httpContextAccessor.HttpContext!.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ")
+        var token = httpContextAccessor.HttpContext!.Request.Headers.Authorization.FirstOrDefault()?.Split(" ")
             .Last() ?? throw new HttpException(401, "Token not found");
         return await GetUserByToken(token);
     }
 
-    public static string GetToken(User user)
+    public string GetToken(User user)
     {
         var claims = new List<Claim>
         {
@@ -56,13 +60,12 @@ public class SessionService(UsersService usersService, IHttpContextAccessor http
             new(ClaimTypes.Role, user.Role.ToString())
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET") ??
-                                                                  throw new HttpException(500, "JWT_SECRET not found")));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:secret"] ?? string.Empty));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            Environment.GetEnvironmentVariable("JWT_ISSUER"),
-            Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+            configuration["Jwt:Issuer"],
+            configuration["Jwt:Audience"],
             claims,
             expires: DateTime.Now.AddDays(4),
             signingCredentials: credentials);

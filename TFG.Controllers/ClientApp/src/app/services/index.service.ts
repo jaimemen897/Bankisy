@@ -13,19 +13,20 @@ import {CardCreate} from "../models/CardCreate";
 import {UserCreate} from "../models/UserCreate";
 import {BizumCreate} from "../models/BizumCreate";
 import {Bizum} from "../models/Bizum";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class IndexService {
-  private apiUrl = 'http://localhost:5196/index';
+  private apiUrl = `${environment.apiUrl}/index`
 
   constructor(private http: HttpClient, private messageService: MessageService) {
   }
 
   getUserByToken(): Observable<User> {
     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + localStorage.getItem('token'));
-    return this.http.get<User>('http://localhost:5196/session/me', {headers});
+    return this.http.get<User>(`${environment.apiUrl}/session/me`, {headers});
   }
 
   getTotalBalanceByUserId(): Observable<number> {

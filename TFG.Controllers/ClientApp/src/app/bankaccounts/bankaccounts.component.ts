@@ -236,15 +236,15 @@ export class BankaccountsComponent {
     if (accountType === 'Saving' || accountType === 'Ahorros') {
       return 'success';
     } else if (accountType === 'Current' || accountType === 'Corriente') {
-      return 'info';
-    } else if (accountType === 'FixedTerm' || accountType === 'Plazo fijo') {
-      return 'warning';
-    } else if (accountType === 'Payroll' || accountType === 'Nómina') {
-      return 'danger';
-    } else if (accountType === 'Student' || accountType === 'Estudiante') {
-      return 'primary';
-    } else {
       return 'secondary';
+    } else if (accountType === 'FixedTerm' || accountType === 'Plazo fijo') {
+      return 'info';
+    } else if (accountType === 'Payroll' || accountType === 'Nómina') {
+      return 'warning';
+    } else if (accountType === 'Student' || accountType === 'Estudiante') {
+      return 'danger';
+    } else {
+      return 'contrast';
     }
   }
 

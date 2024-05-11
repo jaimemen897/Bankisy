@@ -18,6 +18,7 @@ import {OverlayPanelModule} from "primeng/overlaypanel";
 import {TooltipModule} from "primeng/tooltip";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {passwordMatchValidator} from "../register/passwordMatchValidator";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-profile',
@@ -45,6 +46,8 @@ import {passwordMatchValidator} from "../register/passwordMatchValidator";
 export class ProfileComponent implements OnInit {
   constructor(private indexService: IndexService, private messageService: MessageService, private location: Location, private router: Router) {
   }
+
+  apiUrl = `${environment.apiUrl}/index/avatar`
 
   genders: string[] = [Gender.Male, Gender.Female, Gender.Other, Gender.PreferNotToSay];
   avatar!: string;
@@ -101,7 +104,13 @@ export class ProfileComponent implements OnInit {
       );
     } else {
       this.formGroup.markAllAsTouched();
-      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Por favor, rellene todos los campos', life: 2000, closable: false});
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Por favor, rellene todos los campos',
+        life: 2000,
+        closable: false
+      });
     }
   }
 

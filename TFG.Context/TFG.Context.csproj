@@ -26,10 +26,12 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Moq.EntityFrameworkCore" Version="8.0.1.2"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2"/>
         <PackageReference Include="SocketIOClient" Version="3.1.1"/>
         <PackageReference Include="Stripe.net" Version="44.3.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0"/>
         <PackageReference Include="System.Linq.Dynamic.Core" Version="1.3.10"/>
     </ItemGroup>

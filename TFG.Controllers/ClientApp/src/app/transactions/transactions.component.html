@@ -3,9 +3,9 @@
 <div class="card">
   <p-table (onLazyLoad)="lazyLoad($event)"
            [globalFilterFields]="['concept', 'amount', 'ibanAccountOrigin', 'ibanAccountDestination']" [lazy]="true"
-           [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows" [showFirstLastIcon]="false" [value]="transactions"
-           [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '75rem' }" [totalRecords]="totalRecords"
-           [paginator]="true">
+           [paginator]="true" [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows" [showCurrentPageReport]="false"
+           [showFirstLastIcon]="false" [tableStyle]="{ 'min-width': '75rem' }" [totalRecords]="totalRecords"
+           [value]="transactions">
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="concept" style="width:22%">Concepto
@@ -24,7 +24,7 @@
           <p-sortIcon field="date"/>
         </th>
         <th style="width:22%">
-          <p-button (onClick)="clearOrders()" text class="w-12" label="Quitar orden"/>
+          <p-button (onClick)="clearOrders()" class="w-12" label="Quitar orden" text/>
         </th>
       </tr>
       <tr>
@@ -56,7 +56,7 @@
         </th>
         <!--CLEAR-->
         <th>
-          <p-button (onClick)="clearFilters()" text class="w-12" label="Limpiar filtros"/>
+          <p-button (onClick)="clearFilters()" class="w-12" label="Limpiar filtros" text/>
         </th>
       </tr>
     </ng-template>
