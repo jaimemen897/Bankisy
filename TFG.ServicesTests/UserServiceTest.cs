@@ -1,65 +1,103 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
+using Moq.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.Models;
 using TFG.Services;
+using TFG.Services.Exceptions;
 
 namespace TFG.ServicesTests;
 
 [TestFixture]
 public class UserServiceTest
 {
+    private Mock<IMemoryCache> _cacheMock;
+    private UsersService? _usersService;
+    private Mock<BankContext> _mockContext;
+
     [SetUp]
     public void SetUp()
     {
-        var optionsBuilder = new DbContextOptionsBuilder<BankContext>();
-        optionsBuilder.UseInMemoryDatabase("BankTest");
-
-        _bankContext = new BankContext(optionsBuilder.Options);
+        var options = new DbContextOptionsBuilder<BankContext>().UseInMemoryDatabase("TestDatabase").Options;
         _cacheMock = new Mock<IMemoryCache>();
         _cacheMock.Setup(x => x.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
-        _usersService = new UsersService(_bankContext, _cacheMock.Object);
+        _mockContext = new Mock<BankContext>(options);
     }
 
-    [TearDown]
-    public void TearDown()
+    //GET ALL USERS
+    [Test]
+    public async Task GetUsers_ReturnsExpectedUsers()
     {
-        _bankContext.Dispose();
+        // Arrange
+        var users = new List<User>
+        {
+            new() { Id = Guid.NewGuid(), Name = "Test User 1", Email = "test1@test.com", Phone = "123456789" },
+            new() { Id = Guid.NewGuid(), Name = "Test User 2", Email = "test2@test.com", Phone = "987654321" }
+        };
+        _mockContext.Setup(x => x.Users).ReturnsDbSet(users);
+        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
+
+        // Act
+        var result = await _usersService.GetUsers(1, 2, "Name", false, "Test User");
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Items, Has.Count.EqualTo(2));
+            Assert.That(result.Items[0].Name, Is.EqualTo("Test User 1"));
+            Assert.That(result.Items[1].Name, Is.EqualTo("Test User 2"));
+        });
     }
 
-    private BankContext _bankContext;
-    private Mock<IMemoryCache> _cacheMock;
-    private UsersService _usersService;
 
+    //GET USER BY ID
     [Test]
     public async Task GetUserAsync_ReturnsExpectedUser()
     {
         // Arrange
-        var expectedUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test User"
-        };
+        var expectedUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
 
         var mockSet = new Mock<DbSet<User>>();
         mockSet.Setup(x => x.FindAsync(expectedUser.Id)).ReturnsAsync(expectedUser);
 
-        var options = new DbContextOptionsBuilder<BankContext>()
-            .UseInMemoryDatabase("TestDatabase")
-            .Options;
+        _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
 
-        var mockContext = new BankContext(options);
-        mockContext.Users = mockSet.Object;
-
-        _usersService = new UsersService(mockContext, _cacheMock.Object);
+        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
 
         // Act
         var result = await _usersService.GetUserAsync(expectedUser.Id);
 
         // Assert
-        Assert.That(result.Id, Is.EqualTo(expectedUser.Id));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.EqualTo(expectedUser.Id));
+            Assert.That(result.Name, Is.EqualTo(expectedUser.Name));
+        });
     }
+
+    [Test]
+    public void GetUserAsync_ReturnsNull()
+    {
+        // Arrange
+        var mockSet = new Mock<DbSet<User>>();
+        mockSet.Setup(x => x.FindAsync(It.IsAny<Guid>())).ReturnsAsync((User)null);
+
+        _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
+        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
+
+        // Act
+        var exception = Assert.ThrowsAsync<HttpException>(() => _usersService.GetUserAsync(Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception.Code, Is.EqualTo(404));
+            Assert.That(exception.Message, Is.EqualTo("User not found"));
+        });
+    }
+
+
     /*var expectedUser = new User
         {
             Id = Guid.NewGuid(),

@@ -51,9 +51,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
     public async Task<UserResponseDto> GetUserAsync(Guid id)
     {
         var cacheKey = $"GetUser-{id}";
-        if (cache.TryGetValue(cacheKey, out UserResponseDto? user))
-            if (user != null)
-                return user;
+        if (cache.TryGetValue(cacheKey, out UserResponseDto? user) && user != null) return user;
 
         var userEntity = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
         user = _mapper.Map<UserResponseDto>(userEntity);
@@ -61,13 +59,6 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
         cache.Set(cacheKey, user, cacheEntryOptions);
 
         return user ?? throw new HttpException(404, "User not found");
-    }
-
-    public async Task<UserResponseDto> GetUserByEmail(string email)
-    {
-        var userEntity = await bankContext.Users.FirstOrDefaultAsync(u => u.Email == email) ??
-                         throw new HttpException(404, "User not found");
-        return _mapper.Map<UserResponseDto>(userEntity);
     }
 
     public async Task<UserResponseDto[]> GetAllUsers()
