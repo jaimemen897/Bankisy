@@ -16,6 +16,7 @@ namespace TFG.Services;
 public class BankAccountService(BankContext bankContext, IMemoryCache cache, CardService cardService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+    private readonly List<string> _bankAccountIban = [];
 
     public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy,
         bool descending, string? search = null, string? filter = null, bool? isDeleted = false)
@@ -51,35 +52,19 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
 
     public async Task<BankAccountResponseDto> GetBankAccount(string iban)
     {
-        /*var cacheKey = $"GetBankAccount-{iban}";
-        if (cache.TryGetValue(cacheKey, out BankAccountResponseDto? bankAccount))
+        var cacheKey = $"GetBankAccount-{iban}";
+        if (cache.TryGetValue(cacheKey, out BankAccountResponseDto? bankAccountCache))
         {
-            if (bankAccount != null) return bankAccount;
-        }*/
+            if (bankAccountCache != null) return bankAccountCache;
+        }
 
         var bankAccountEntity =
             await bankContext.BankAccounts.Include(ba => ba.Users).FirstOrDefaultAsync(ba => ba.Iban == iban) ??
             throw new HttpException(404, "BankAccount not found");
 
         var bankAccount = _mapper.Map<BankAccountResponseDto>(bankAccountEntity);
-        /*var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, bankAccount, cacheEntryOptions);*/
-
+        AddToCache(bankAccount);
         return bankAccount ?? throw new HttpException(404, "BankAccount not found");
-    }
-
-    private static void IsValid(BankAccountCreateDto bankAccountCreateDto)
-    {
-        if (!Enum.TryParse(typeof(AccountType), bankAccountCreateDto.AccountType, out _))
-            throw new HttpException(400,
-                "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
-    }
-
-    private static void IsValid(BankAccountUpdateDto bankAccountUpdateDto)
-    {
-        if (!Enum.TryParse(typeof(AccountType), bankAccountUpdateDto.AccountType, out _))
-            throw new HttpException(400,
-                "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
     }
 
     public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
@@ -145,10 +130,9 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
 
         bankContext.BankAccounts.Add(bankAccount);
         await bankContext.SaveChangesAsync();
-
         var bankAccountResponseDto = _mapper.Map<BankAccountResponseDto>(bankAccount);
-
-        await ClearCache();
+        
+        ClearCache();
 
         return bankAccountResponseDto;
     }
@@ -189,7 +173,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
 
         await bankContext.SaveChangesAsync();
 
-        await ClearCache();
+        ClearCache();
 
         return _mapper.Map<BankAccountResponseDto>(bankAccountToUpdate);
     }
@@ -211,7 +195,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         
         await bankContext.SaveChangesAsync();
 
-        await ClearCache();
+        ClearCache();
     }
 
     public async Task ActivateBankAccount(string iban)
@@ -222,7 +206,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         bankAccount.IsDeleted = false;
         await bankContext.SaveChangesAsync();
 
-        await ClearCache();
+        ClearCache();
     }
 
     public async Task ActiveBizum(string iban, Guid userId)
@@ -243,13 +227,33 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         bankAccounts.ForEach(ba => ba.AcceptBizum = false);
         bankAccount.AcceptBizum = true;
         await bankContext.SaveChangesAsync();
-        await ClearCache();
+        ClearCache();
     }
 
-    private async Task ClearCache()
+    private static void IsValid(BankAccountCreateDto bankAccountCreateDto)
     {
-        var ibans = await bankContext.BankAccounts.Select(ba => ba.Iban).ToListAsync();
-        /*cache.Remove("GetBankAccounts-1-10-Id-false");*/
-        foreach (var iban in ibans) cache.Remove("GetBankAccount-" + iban);
+        if (!Enum.TryParse(typeof(AccountType), bankAccountCreateDto.AccountType, out _))
+            throw new HttpException(400,
+                "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
+    }
+
+    private static void IsValid(BankAccountUpdateDto bankAccountUpdateDto)
+    {
+        if (!Enum.TryParse(typeof(AccountType), bankAccountUpdateDto.AccountType, out _))
+            throw new HttpException(400,
+                "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
+    }
+    
+    private void AddToCache(BankAccountResponseDto bankAccount)
+    {
+        var cacheKey = $"GetBankAccount-{bankAccount.Iban}";
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        _bankAccountIban.Add(bankAccount.Iban);
+        cache.Set(cacheKey, bankAccount, cacheEntryOptions);
+    }
+
+    private void ClearCache()
+    {
+        foreach (var cacheKey in _bankAccountIban.Select(iban => $"GetBankAccount-{iban}")) cache.Remove(cacheKey);
     }
 }

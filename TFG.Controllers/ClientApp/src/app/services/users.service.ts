@@ -87,9 +87,7 @@ export class UserService {
   private handleError(error: any) {
     const errorMessages: { [key: string]: string } = {
       'Invalid orderBy parameter': 'Parámetro de ordenación inválido',
-      'Username already exists': 'El nombre de usuario ya existe',
-      'Email already exists': 'El email ya existe',
-      'DNI already exists': 'El DNI ya existe',
+      'Username, Email or DNI already exists': 'Nombre de usuario, email o DNI ya existen',
       'Invalid gender. Valid values are: Male, Female, Other, PreferNotToSay': 'Género inválido. Los valores válidos son: Masculino, Femenino, Otro, Prefiero no decirlo',
       'User not found': 'Usuario no encontrado',
       'User or password incorrect': 'Usuario o contraseña incorrectos'

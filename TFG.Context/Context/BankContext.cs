@@ -7,11 +7,11 @@ public class BankContext(DbContextOptions<BankContext> options) : DbContext(opti
 {
     public virtual DbSet<User> Users { get; set; }
 
-    public DbSet<BankAccount> BankAccounts { get; set; }
+    public virtual DbSet<BankAccount> BankAccounts { get; set; }
 
-    public DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<Transaction> Transactions { get; set; }
 
-    public DbSet<Card> Cards { get; set; }
+    public virtual DbSet<Card> Cards { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -16,6 +16,7 @@ namespace TFG.Services;
 public class TransactionService(BankContext bankContext, IMemoryCache cache, IHubContext<MyHub> hubContext)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+    private readonly List<int> _transactionIds = [];
 
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
         bool descending, string? search = null)
@@ -51,8 +52,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         var transactionEntity = await bankContext.Transactions.FindAsync(id) ??
                                 throw new HttpException(404, "Transaction not found");
         transaction = _mapper.Map<TransactionResponseDto>(transactionEntity);
-        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
-        cache.Set(cacheKey, transaction, cacheEntryOptions);
+        AddTransactionToCache(transactionEntity);
 
         return transaction ?? throw new HttpException(404, "Transaction not found");
     }
@@ -71,7 +71,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         var transactionDto = await CreateTransactionPay(account, accountDestination, transactionCreateDto);
 
-        await ClearCache();
+        ClearCache();
 
         return transactionDto;
     }
@@ -105,7 +105,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         await CreateTransactionPay(account, accountDestination, transactionCreate);
 
-        await ClearCache();
+        ClearCache();
 
         return _mapper.Map<BizumResponseDto>(bizumCreateDto);
     }
@@ -132,13 +132,13 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
 
-    private static void ValidateBizum(User user, User userDestination, BankAccount accountorigin,
+    private static void ValidateBizum(User user, User userDestination, BankAccount accountOrigin,
         BizumCreateDto bizumCreateDto)
     {
         if (user.Id == userDestination.Id)
             throw new HttpException(400, "Origin and destination users cannot be the same");
 
-        if (accountorigin.Balance < bizumCreateDto.Amount)
+        if (accountOrigin.Balance < bizumCreateDto.Amount)
             throw new HttpException(400, "Insufficient funds in the origin account");
 
         if (bizumCreateDto.Amount <= 0) throw new HttpException(400, "Transaction amount must be greater than zero");
@@ -165,7 +165,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         bankContext.Transactions.Remove(transaction);
         await bankContext.SaveChangesAsync();
 
-        await ClearCache();
+        ClearCache();
     }
 
     public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto)
@@ -188,10 +188,16 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         bankContext.Transactions.Add(transaction);
         await bankContext.SaveChangesAsync();
     }
-
-    private async Task ClearCache()
+    
+    private void AddTransactionToCache(Transaction transaction)
     {
-        var ids = await bankContext.Transactions.Select(t => t.Id).ToListAsync();
-        foreach (var id in ids) cache.Remove("GetTransaction-" + id);
+        var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+        _transactionIds.Add(transaction.Id);
+        cache.Set("GetTransaction-" + transaction.Id, _mapper.Map<TransactionResponseDto>(transaction), cacheEntryOptions);
+    }
+
+    private void ClearCache()
+    {
+        foreach (var cacheKey in _transactionIds.Select(id => "GetTransaction-" + id)) cache.Remove(cacheKey);
     }
 }
