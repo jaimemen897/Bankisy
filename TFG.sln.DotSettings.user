@@ -1,9 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=14174de7_002Dfc85_002D41cd_002Da1a2_002Da6d2cf73cc29/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CreateUser_UsernameAlreadyExists" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::45B6B4D3-5BF7-4370-84F9-A77AF3C58162::net8.0::TFG.ServicesTests.Users.UserServiceTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Project Location="C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.ServicesTests" Presentation="&amp;lt;TFG.ServicesTests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	

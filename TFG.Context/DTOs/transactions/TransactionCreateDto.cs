@@ -13,7 +13,11 @@ public class TransactionCreateDto
     [Range(0.01, double.MaxValue, ErrorMessage = "The amount must be greater than 0")]
     public decimal Amount { get; set; }
 
-    [Required] public string IbanAccountOrigin { get; set; }
+    [Required]
+    [StringLength(24, ErrorMessage = "The Iban account origin must be 24 characters long", MinimumLength = 24)]
+    public string IbanAccountOrigin { get; set; }
 
-    [Required] public string IbanAccountDestination { get; set; }
+    [Required]
+    [StringLength(24, ErrorMessage = "The Iban account destination must be 24 characters long", MinimumLength = 24)]
+    public string IbanAccountDestination { get; set; }
 }
