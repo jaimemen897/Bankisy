@@ -14,7 +14,9 @@ namespace TFG.ServicesTests;
 public class UserServiceTest
 {
     private Mock<IMemoryCache> _cacheMock;
-    private UsersService? _usersService;
+    private UsersService _usersService;
+    private BankAccountService _bankAccountService;
+    private CardService _cardService;
     private Mock<BankContext> _mockContext;
 
     [SetUp]
@@ -24,6 +26,9 @@ public class UserServiceTest
         _cacheMock = new Mock<IMemoryCache>();
         _cacheMock.Setup(x => x.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         _mockContext = new Mock<BankContext>(options);
+        _cardService = new CardService(_mockContext.Object);
+        _bankAccountService = new BankAccountService(_mockContext.Object, _cacheMock.Object, _cardService);
+        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object, _bankAccountService);
     }
 
     //GET ALL USERS
@@ -37,7 +42,6 @@ public class UserServiceTest
             new() { Id = Guid.NewGuid(), Name = "Test User 2", Email = "test2@test.com", Phone = "987654321" }
         };
         _mockContext.Setup(x => x.Users).ReturnsDbSet(users);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
 
         // Act
         var result = await _usersService.GetUsers(1, 2, "Name", false, "Test User");
@@ -61,7 +65,6 @@ public class UserServiceTest
             new() { Id = Guid.NewGuid(), Name = "Test User 2", Email = "test2@test.com", Phone = "987654321" }
         };
         _mockContext.Setup(x => x.Users).ReturnsDbSet(users);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
         
         // Act
         var result = await _usersService.GetUsers(1, 2, "Name", false, "Test User 1");
@@ -84,7 +87,6 @@ public class UserServiceTest
             new() { Id = Guid.NewGuid(), Name = "Test User 2", Email = "test2@test.com", Phone = "987654321" }
         };
         _mockContext.Setup(x => x.Users).ReturnsDbSet(users);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
         
         // Act
         var result = await _usersService.GetUsers(1, 2, "Name", false, "test1@test.com");
@@ -107,7 +109,6 @@ public class UserServiceTest
             new() { Id = Guid.NewGuid(), Name = "Test User 2", Email = "test2@test.com", Phone = "987654321" }
         };
         _mockContext.Setup(x => x.Users).ReturnsDbSet(users);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
         
         // Act
         var result = await _usersService.GetUsers(1, 2, "Phone", false, "123456789");
@@ -131,7 +132,6 @@ public class UserServiceTest
         };
         
         _mockContext.Setup(x => x.Users).ReturnsDbSet(users);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
         
         // Act
         var exception = Assert.ThrowsAsync<HttpException>(() => _usersService.GetUsers(1, 2, "Invalid", false, "Test User"));
@@ -149,7 +149,6 @@ public class UserServiceTest
     {
         // Arrange
         _mockContext.Setup(x => x.Users).ReturnsDbSet([]);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
         
         // Act
         var result = _usersService.GetUsers(1, 2, "Name", false, "Test User");
@@ -168,7 +167,6 @@ public class UserServiceTest
             new() { Id = Guid.NewGuid(), Name = "Test User 2", Email = "test2@test.com", Phone = "987654321" }
         };
         _mockContext.Setup(x => x.Users).ReturnsDbSet(users);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
 
         // Act
         var result = await _usersService.GetAllUsers();
@@ -194,8 +192,6 @@ public class UserServiceTest
 
         _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
 
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
-
         // Act
         var result = await _usersService.GetUserAsync(expectedUser.Id);
 
@@ -215,7 +211,6 @@ public class UserServiceTest
         mockSet.Setup(x => x.FindAsync(It.IsAny<Guid>())).ReturnsAsync((User)null);
 
         _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
 
         // Act
         var exception = Assert.ThrowsAsync<HttpException>(() => _usersService.GetUserAsync(Guid.NewGuid()));
@@ -247,8 +242,6 @@ public class UserServiceTest
         
         _mockContext.Setup(x => x.Users).ReturnsDbSet([]);
         _mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
-        
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object);
         
         // Act
         var result = await _usersService.CreateUser(user);
