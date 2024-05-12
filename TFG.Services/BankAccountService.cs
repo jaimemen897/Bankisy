@@ -13,7 +13,7 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class BankAccountService(BankContext bankContext, IMemoryCache cache)
+public class BankAccountService(BankContext bankContext, IMemoryCache cache, CardService cardService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
@@ -199,7 +199,16 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache)
         var bankAccount = await bankContext.BankAccounts.FindAsync(iban);
         if (bankAccount == null) throw new HttpException(404, "Bank account not found");
 
-        bankAccount.IsDeleted = true;
+        var cards = await bankContext.Cards.Where(c => c.BankAccount.Iban == iban).ToListAsync();
+        if (cards.Count > 0)
+        {
+            foreach (var card in cards) await cardService.DeleteCard(card.CardNumber);
+            bankAccount.IsDeleted = true;
+        } else
+        {
+            bankContext.BankAccounts.Remove(bankAccount);
+        }
+        
         await bankContext.SaveChangesAsync();
 
         await ClearCache();

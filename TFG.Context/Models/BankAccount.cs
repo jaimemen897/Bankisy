@@ -6,19 +6,25 @@ namespace TFG.Context.Models;
 [Table("bank_accounts")]
 public class BankAccount
 {
+    [Key]
     [Column("iban")]
     [Required]
-    [StringLength(34)]
-    [Key]
+    [StringLength(34, ErrorMessage = "IBAN must be 34 characters")]
     public string Iban { get; set; }
 
-    [Column("balance")] public decimal Balance { get; set; } = 0;
+    [Column("balance")]
+    [Range(0, double.MaxValue, ErrorMessage = "Balance must be a positive number")]
+    public decimal Balance { get; set; } = 0;
 
-    [Column("account_type")] public AccountType AccountType { get; set; }
+    [Column("account_type")]
+    [Required(ErrorMessage = "Account type is required")]
+    public AccountType AccountType { get; set; }
 
-    [Column("is_deleted")] public bool IsDeleted { get; set; }
+    [Column("is_deleted")]
+    public bool IsDeleted { get; set; }
 
-    [Column("accept_bizum")] public bool AcceptBizum { get; set; }
+    [Column("accept_bizum")]
+    public bool AcceptBizum { get; set; }
 
     public List<User> Users { get; set; } = [];
 

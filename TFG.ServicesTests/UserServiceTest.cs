@@ -268,6 +268,23 @@ public class UserServiceTest
         _mockContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    [Test]
+    public void CreateUser_InvalidUser()
+    {
+        // Arrange
+        var user = new UserCreateDto
+        {
+            Name = "Test User",
+            Email = "test@test.com",
+            Username = "test",
+            Dni = "54522318J",
+            Gender = "Male",
+            Password = "password",
+            Avatar = "avatar.png",
+            Phone = "123456789",
+        };
+    }
+
 
     /*var expectedUser = new User
         {

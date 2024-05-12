@@ -116,8 +116,7 @@ public class CardService(BankContext bankContext)
 
     public async Task DeleteCard(string cardNumber)
     {
-        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ??
-                   throw new HttpException(404, "Card not found");
+        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ?? throw new HttpException(404, "Card not found");
         card.IsDeleted = true;
         await bankContext.SaveChangesAsync();
     }

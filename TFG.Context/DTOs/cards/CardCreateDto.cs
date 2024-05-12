@@ -1,14 +1,19 @@
 using System.ComponentModel.DataAnnotations;
+using TFG.Context.Validations;
 
 namespace TFG.Context.DTOs.cards;
 
-public class CardCreateDto
+public class CardCreateDto : CardValidations
 {
-    [Required] [StringLength(4)] public string Pin { get; set; }
+    [Required]
+    public override string Pin { get; set; }
 
-    [Required] public string CardType { get; set; }
+    [Required]
+    public override string CardType { get; set; }
 
-    [Required] public Guid UserId { get; set; }
+    [Required]
+    public override Guid? UserId { get; set; }
 
-    [Required] public string BankAccountIban { get; set; }
+    [Required]
+    public override string BankAccountIban { get; set; }
 }

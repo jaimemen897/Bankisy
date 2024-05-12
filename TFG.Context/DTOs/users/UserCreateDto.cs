@@ -1,34 +1,21 @@
 using System.ComponentModel.DataAnnotations;
+using TFG.Context.Validations;
 
 namespace TFG.Context.DTOs.users;
 
-public class UserCreateDto
+public class UserCreateDto : UserValidations
 {
-    [Required]
-    [StringLength(50, MinimumLength = 3)]
-    public string Name { get; set; }
+    [Required] public override string Name { get; set; }
 
-    [Required]
-    [DataType(DataType.EmailAddress)]
-    public string Email { get; set; }
+    [Required] public override string Email { get; set; }
 
-    [Required]
-    [StringLength(50, MinimumLength = 3)]
-    public string Username { get; set; }
+    [Required] public override string Username { get; set; }
 
-    [Required]
-    [StringLength(9, MinimumLength = 9)]
-    public string Dni { get; set; }
+    [Required] public override string Dni { get; set; }
 
-    [Required] public string Gender { get; set; }
+    [Required] public override string Gender { get; set; }
 
-    [Required]
-    [StringLength(50, MinimumLength = 3)]
-    public string Password { get; set; }
+    [Required] public override string Password { get; set; }
 
-    public string? Avatar { get; set; }
-
-    [Required]
-    [StringLength(9, MinimumLength = 9)]
-    public string Phone { get; set; }
+    [Required] public override string Phone { get; set; }
 }

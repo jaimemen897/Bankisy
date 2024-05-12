@@ -61,6 +61,7 @@ export class BankaccountsComponent {
   totalRecords: number = 0;
   displayDialog: boolean = false;
 
+  pageNumber!: number;
   sortField!: string;
   sortOrder!: number;
   search: string;
@@ -75,15 +76,16 @@ export class BankaccountsComponent {
 
   //DATA, ORDERS AND FILTERS
   lazyLoad(event: any) {
-    let pageNumber = Math.floor(event.first / event.rows) + 1;
-    let sortField = event.sortField;
-    let sortOrder = event.sortOrder;
+    this.pageNumber = Math.floor(event.first / event.rows) + 1;
+    this.sortField = event.sortField;
+    this.sortOrder = event.sortOrder;
+    this.rows = event.rows;
 
     if (event.filters?.isDeleted) {
       this.isDeleted = event.filters.isDeleted.value;
     }
 
-    this.bankAccountService.getBankAccounts(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter, this.isDeleted).subscribe(data => {
+    this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter, this.isDeleted).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalRecords;
       for (let bankAccount of this.bankAccounts) {
@@ -95,7 +97,7 @@ export class BankaccountsComponent {
 
   //IBAN, SALDO, ESTADO
   onSearch(event: any) {
-    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, event.target.value, this.filter).subscribe(data => {
+    this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, event.target.value, this.filter).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
       this.search = event.target.value;
@@ -104,7 +106,7 @@ export class BankaccountsComponent {
 
   //USUARIOS
   onSearchUser(event: any) {
-    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, event.value).subscribe(data => {
+    this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, event.value).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
       this.filter = event.value;
@@ -114,7 +116,7 @@ export class BankaccountsComponent {
   //TIPO CUENTA
   onSearchFilter(event: any) {
     let accountTypeTranslated = Object.keys(AccountType).find(key => AccountType[key as keyof typeof AccountType] === event.value) as keyof typeof AccountType;
-    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, accountTypeTranslated).subscribe(data => {
+    this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search, accountTypeTranslated).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
       this.filter = event.value;
@@ -134,7 +136,7 @@ export class BankaccountsComponent {
   }
 
   clearOrders() {
-    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+    this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
     });
@@ -147,7 +149,7 @@ export class BankaccountsComponent {
     this.search = '';
     this.filter = '';
 
-    this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+    this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
       this.bankAccounts = data.items;
       this.totalRecords = data.totalCount;
     });
@@ -179,19 +181,10 @@ export class BankaccountsComponent {
           closable: false
         });
         this.bankAccountService.deleteBankAccount(iban).subscribe(() => {
-          this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+          this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
             this.bankAccounts = data.items;
             this.totalRecords = data.totalCount;
           });
-        });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Cancelar',
-          detail: 'No se ha eliminado',
-          life: 2000,
-          closable: false
         });
       }
     });
@@ -199,7 +192,7 @@ export class BankaccountsComponent {
 
   activateBankAccount(iban: string) {
     this.bankAccountService.activateBankAccount(iban).subscribe(() => {
-      this.bankAccountService.getBankAccounts(1, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
         this.bankAccounts = data.items;
         this.totalRecords = data.totalCount;
       });
@@ -266,7 +259,10 @@ export class BankaccountsComponent {
 
   saveBankAccount() {
     this.displayDialog = false;
-    this.lazyLoad({first: 1, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
+    this.bankAccountService.getBankAccounts(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.bankAccounts = data.items;
+      this.totalRecords = data.totalCount;
+    });
   }
 
   closeDialog() {

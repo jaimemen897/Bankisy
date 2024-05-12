@@ -12,7 +12,7 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class UsersService(BankContext bankContext, IMemoryCache cache)
+public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccountService bankAccountService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
 
@@ -102,10 +102,17 @@ public class UsersService(BankContext bankContext, IMemoryCache cache)
             if (File.Exists(avatar)) File.Delete(avatar);
         }
 
-
         var bankAccounts = await bankContext.BankAccounts.Where(ba => ba.Users.Contains(user)).ToListAsync();
-        bankAccounts.ForEach(ba => ba.IsDeleted = true);
-        user.IsDeleted = true;
+        if (bankAccounts.Count >= 0)
+        {
+            foreach (var bankAccount in bankAccounts) await bankAccountService.DeleteBankAccount(bankAccount.Iban);
+            user.IsDeleted = true;
+        } else
+        {
+            bankContext.Users.Remove(user);
+        }
+        
+        
         await bankContext.SaveChangesAsync();
 
         await ClearCache();

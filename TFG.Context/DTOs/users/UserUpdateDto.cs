@@ -1,13 +1,7 @@
+using TFG.Context.Validations;
+
 namespace TFG.Context.DTOs.users;
 
-public class UserUpdateDto
+public class UserUpdateDto : UserValidations
 {
-    public string? Name { get; set; }
-    public string? Email { get; set; }
-    public string? Username { get; set; }
-    public string? Dni { get; set; }
-    public string? Gender { get; set; }
-    public string? Password { get; set; }
-    public string? Avatar { get; set; }
-    public string? Phone { get; set; }
 }

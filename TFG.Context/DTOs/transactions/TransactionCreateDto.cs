@@ -5,7 +5,8 @@ namespace TFG.Context.DTOs.transactions;
 public class TransactionCreateDto
 {
     [Required]
-    [StringLength(100, MinimumLength = 3, ErrorMessage = "The concept must be between 3 and 100 characters")]
+    [MaxLength(255, ErrorMessage = "The concept must be less than 255 characters")]
+    [MinLength(1, ErrorMessage = "The concept must be at least 1 character")]
     public string Concept { get; set; }
 
     [Required]

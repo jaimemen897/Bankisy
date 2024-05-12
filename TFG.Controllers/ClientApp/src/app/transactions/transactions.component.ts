@@ -47,6 +47,7 @@ export class TransactionsComponent {
   rows: number = 10;
   totalRecords: number = 0;
 
+  pageNumber!: number;
   sortOptions!: SelectItem[];
   sortField!: string;
   sortOrder!: number;
@@ -55,12 +56,12 @@ export class TransactionsComponent {
   users: string[] = [];
 
   lazyLoad(event: any) {
-    let pageNumber = Math.floor(event.first / event.rows) + 1;
-    let sortField = event.sortField;
-    let sortOrder = event.sortOrder;
+    this.pageNumber = Math.floor(event.first / event.rows) + 1;
+    this.sortField = event.sortField;
+    this.sortOrder = event.sortOrder;
+    this.rows = event.rows;
 
-
-    this.transactionService.getTransactions(pageNumber, event.rows, sortField, sortOrder === -1, this.search).subscribe(data => {
+    this.transactionService.getTransactions(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search).subscribe(data => {
       this.transactions = data.items;
       this.totalRecords = data.totalRecords;
     });
@@ -104,26 +105,17 @@ export class TransactionsComponent {
       message: 'Confirme para continuar',
       accept: () => {
         this.messageService.add({
-          severity: 'info',
+          severity: 'success',
           summary: 'Eliminada',
           detail: 'La transacción ha sido eliminada',
           life: 2000,
           closable: false
         });
         this.transactionService.deleteTransaction(id).subscribe(() => {
-          this.transactionService.getTransactions(1, this.rows).subscribe((data) => {
+          this.transactionService.getTransactions(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search).subscribe(data => {
             this.transactions = data.items;
-            this.totalRecords = data.totalCount;
+            this.totalRecords = data.totalRecords;
           });
-        });
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Cancelar',
-          detail: 'No se ha eliminado',
-          life: 2000,
-          closable: false
         });
       }
     });
@@ -173,9 +165,9 @@ export class TransactionsComponent {
   clearFilters() {
     this.search = '';
 
-    this.transactionService.getTransactions(1, this.rows, this.sortField, this.sortOrder === -1, this.search).subscribe(data => {
+    this.transactionService.getTransactions(this.pageNumber, this.rows, this.sortField, this.sortOrder === -1, this.search).subscribe(data => {
       this.transactions = data.items;
-      this.totalRecords = data.totalCount;
+      this.totalRecords = data.totalRecords;
     });
   }
 

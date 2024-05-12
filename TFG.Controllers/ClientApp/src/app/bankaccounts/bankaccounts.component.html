@@ -100,7 +100,7 @@
         </td>
         <td>
           <div class="flex gap-2">
-            <p-overlayPanel #infoPanel>
+            <p-overlayPanel #infoPanel appendTo="body">
               <ng-template pTemplate="content">
                 <h4 class="text-left">IBAN: {{ account.iban }}</h4>
                 <p class="text-left">Tipo de cuenta: {{ getAccountName(account.accountType) }}</p>
@@ -109,11 +109,11 @@
                 <p class="text-left">Estado: {{ account.isDeleted ? 'Inactiva' : 'Activa' }}</p>
               </ng-template>
             </p-overlayPanel>
-            <p-overlayPanel #transactionPanel>
+            <p-overlayPanel #transactionPanel appendTo="body">
               <ng-template pTemplate="content">
-                <p-scroller [items]="transactions" [style]="{'width': '250px', 'height': '130px'}"
+                <p-scroller [items]="transactions" [style]="{'width': '300px', 'height': '130px'}"
                             scrollHeight="15rem">
-                  <ng-template let-item let-options="options" pTemplate="item">
+                  <ng-template let-item pTemplate="item">
                     <p>{{ item.concept }} - {{ item.date | date: 'dd/MM' }} - {{ item.amount }}€</p>
                   </ng-template>
                 </p-scroller>
@@ -169,8 +169,8 @@
         <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
         <p class="mb-0 text-left">{{ message.message }}</p>
         <div class="flex align-items-center justify-content-center gap-2 mt-4">
-          <p-button (click)="cd.accept()" label="Eliminar" styleClass="bg-red-500"/>
-          <p-button (click)="cd.reject()" label="Cancelar" styleClass="bg-gray-500"/>
+          <p-button (click)="cd.accept()" label="Eliminar" severity="danger"/>
+          <p-button (click)="cd.reject()" label="Cancelar" severity="secondary"/>
         </div>
       </div>
     </ng-template>
