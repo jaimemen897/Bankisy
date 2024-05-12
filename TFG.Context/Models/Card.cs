@@ -13,7 +13,6 @@ public class Card
     public string CardNumber { get; set; }
 
     [Column("pin")]
-    [StringLength(4, ErrorMessage = "PIN must be 4 characters")]
     [Required(ErrorMessage = "PIN is required")]
     public string Pin { get; set; }
 
@@ -26,7 +25,6 @@ public class Card
     public DateTime ExpirationDate { get; set; }
 
     [Column("cvv")]
-    [StringLength(3, ErrorMessage = "CVV must be 3 characters")]
     [Required(ErrorMessage = "CVV is required")]
     public string Cvv { get; set; }
 
