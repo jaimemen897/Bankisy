@@ -8,7 +8,7 @@ using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
-using TFG.Services.mappers;
+using TFG.Services.Mappers;
 using TFG.Services.Pagination;
 
 namespace TFG.Services;
@@ -131,7 +131,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         bankContext.BankAccounts.Add(bankAccount);
         await bankContext.SaveChangesAsync();
         var bankAccountResponseDto = _mapper.Map<BankAccountResponseDto>(bankAccount);
-        
+
         ClearCache();
 
         return bankAccountResponseDto;
@@ -188,11 +188,12 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         {
             foreach (var card in cards) await cardService.DeleteCard(card.CardNumber);
             bankAccount.IsDeleted = true;
-        } else
+        }
+        else
         {
             bankContext.BankAccounts.Remove(bankAccount);
         }
-        
+
         await bankContext.SaveChangesAsync();
 
         ClearCache();
@@ -243,7 +244,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
             throw new HttpException(400,
                 "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
     }
-    
+
     private void AddToCache(BankAccountResponseDto bankAccount)
     {
         var cacheKey = $"GetBankAccount-{bankAccount.Iban}";

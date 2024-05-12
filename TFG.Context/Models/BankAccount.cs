@@ -20,11 +20,9 @@ public class BankAccount
     [Required(ErrorMessage = "Account type is required")]
     public AccountType AccountType { get; set; }
 
-    [Column("is_deleted")]
-    public bool IsDeleted { get; set; }
+    [Column("is_deleted")] public bool IsDeleted { get; set; }
 
-    [Column("accept_bizum")]
-    public bool AcceptBizum { get; set; }
+    [Column("accept_bizum")] public bool AcceptBizum { get; set; }
 
     public List<User> Users { get; set; } = [];
 

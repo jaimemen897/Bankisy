@@ -71,7 +71,7 @@ public class TransactionValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("The IbanAccountOrigin field is required."));
         });
     }
-    
+
     [Test]
     public void IbanAccountOrigin_TooShort_ThrowsException()
     {
@@ -83,7 +83,7 @@ public class TransactionValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("The Iban account origin must be 24 characters long"));
         });
     }
-    
+
     [Test]
     public void IbanAccountOrigin_TooLong_ThrowsException()
     {
@@ -107,7 +107,7 @@ public class TransactionValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("The Iban account origin must be 24 characters long"));
         });
     }
-    
+
     [Test]
     public void IbanAccountDestination_TooShort_ThrowsException()
     {
@@ -119,7 +119,7 @@ public class TransactionValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("The Iban account origin must be 24 characters long"));
         });
     }
-    
+
     [Test]
     public void IbanAccountDestination_TooLong_ThrowsException()
     {

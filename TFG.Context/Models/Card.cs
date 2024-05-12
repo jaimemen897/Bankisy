@@ -30,11 +30,9 @@ public class Card
     [Required(ErrorMessage = "CVV is required")]
     public string Cvv { get; set; }
 
-    [Column("is_deleted")]
-    public bool IsDeleted { get; set; }
+    [Column("is_deleted")] public bool IsDeleted { get; set; }
 
-    [Column("is_blocked")]
-    public bool IsBlocked { get; set; }
+    [Column("is_blocked")] public bool IsBlocked { get; set; }
 
     [Column("user_id")]
     [Required(ErrorMessage = "User ID is required")]

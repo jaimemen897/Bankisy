@@ -7,7 +7,7 @@ using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Security;
 
-namespace TFG.Services.mappers;
+namespace TFG.Services.Mappers;
 
 public abstract class MapperConfig
 {

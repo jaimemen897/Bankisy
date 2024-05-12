@@ -7,7 +7,7 @@ using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
-using TFG.Services.mappers;
+using TFG.Services.Mappers;
 using TFG.Services.Pagination;
 
 namespace TFG.Services;
@@ -75,7 +75,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
         await IsValid(user, userToUpdate);
 
         await bankContext.SaveChangesAsync();
-        
+
         if (!_userIds.Contains(id)) _userIds.Add(id);
 
         ClearCache();
@@ -98,11 +98,12 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
         {
             foreach (var bankAccount in bankAccounts) await bankAccountService.DeleteBankAccount(bankAccount.Iban);
             user.IsDeleted = true;
-        } else
+        }
+        else
         {
             bankContext.Users.Remove(user);
         }
-        
+
         await bankContext.SaveChangesAsync();
 
         ClearCache();
@@ -185,7 +186,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
                 "Invalid gender. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(Gender))));
 
         var userExists = await bankContext.Users.AnyAsync(u =>
-            (userUpdateDto.Username != null && user.Username != userUpdateDto.Username && u.Username == userUpdateDto.Username) ||
+            (userUpdateDto.Username != null && user.Username != userUpdateDto.Username &&
+             u.Username == userUpdateDto.Username) ||
             (userUpdateDto.Dni != null && user.Dni != userUpdateDto.Dni && u.Dni == userUpdateDto.Dni) ||
             (userUpdateDto.Email != null && user.Email != userUpdateDto.Email && u.Email == userUpdateDto.Email));
 
@@ -206,7 +208,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
 
         return user;
     }
-    
+
     private void AddUserToCache(User user)
     {
         var cacheKey = $"GetUser-{user.Id}";

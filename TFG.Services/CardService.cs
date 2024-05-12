@@ -5,7 +5,7 @@ using TFG.Context.DTOs.cards;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
-using TFG.Services.mappers;
+using TFG.Services.Mappers;
 using TFG.Services.Pagination;
 
 namespace TFG.Services;
@@ -116,7 +116,8 @@ public class CardService(BankContext bankContext)
 
     public async Task DeleteCard(string cardNumber)
     {
-        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ?? throw new HttpException(404, "Card not found");
+        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ??
+                   throw new HttpException(404, "Card not found");
         card.IsDeleted = true;
         await bankContext.SaveChangesAsync();
     }

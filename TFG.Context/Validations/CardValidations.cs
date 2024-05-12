@@ -4,8 +4,7 @@ namespace TFG.Context.Validations;
 
 public class CardValidations
 {
-    [StringLength(4)]
-    public virtual string? Pin { get; set; }
+    [StringLength(4)] public virtual string? Pin { get; set; }
 
     public virtual string? CardType { get; set; }
 

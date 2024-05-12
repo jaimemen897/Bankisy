@@ -35,9 +35,7 @@ public class User
     public string Dni { get; set; }
 
     //integer
-    [Column("gender")]
-    [Range(0, 3)]
-    public Gender Gender { get; set; }
+    [Column("gender")] [Range(0, 3)] public Gender Gender { get; set; }
 
     [Column("password")]
     [DataType(DataType.Password)]
@@ -54,12 +52,9 @@ public class User
     [StringLength(9, ErrorMessage = "Phone must be 9 characters")]
     public string Phone { get; set; }
 
-    [Column("role")]
-    [Range(0, 1)]
-    public Roles Role { get; set; }
+    [Column("role")] [Range(0, 1)] public Roles Role { get; set; }
 
-    [Column("is_deleted")] 
-    public bool IsDeleted { get; set; }
+    [Column("is_deleted")] public bool IsDeleted { get; set; }
 
     [Column("created_at")]
     [DataType(DataType.DateTime)]

@@ -22,7 +22,7 @@ public class BankAccountValidationsTest
         _context = new ValidationContext(_bankAccount, null, null);
         _results = [];
     }
-    
+
     [Test]
     public void AccountType_Null_ThrowsException()
     {

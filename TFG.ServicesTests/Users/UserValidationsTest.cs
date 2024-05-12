@@ -27,7 +27,7 @@ public class UserValidationsTest
         _context = new ValidationContext(_user, null, null);
         _results = [];
     }
-    
+
     [Test]
     public void Name_Null_ThrowsException()
     {
@@ -51,7 +51,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("Name must be less than 100 characters"));
         });
     }
-    
+
     [Test]
     public void Name_TooShort_ThrowsException()
     {
@@ -63,7 +63,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("Name must be more than 3 characters"));
         });
     }
-    
+
     [Test]
     public void Email_Null_ThrowsException()
     {
@@ -87,7 +87,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("Email must be less than 100 characters"));
         });
     }
-    
+
     [Test]
     public void Email_TooShort_ThrowsException()
     {
@@ -111,7 +111,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("Email is not valid"));
         });
     }
-    
+
     [Test]
     public void Username_Null_ThrowsException()
     {
@@ -135,7 +135,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("Username must be less than 100 characters"));
         });
     }
-    
+
     [Test]
     public void Username_TooShort_ThrowsException()
     {
@@ -147,7 +147,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("Username must be more than 3 characters"));
         });
     }
-    
+
     [Test]
     public void Dni_Null_ThrowsException()
     {
@@ -159,7 +159,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("The Dni field is required."));
         });
     }
-    
+
     [Test]
     public void Dni_WrongLength_ThrowsException()
     {
@@ -171,7 +171,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("DNI must be 9 characters"));
         });
     }
-    
+
     [Test]
     public void Password_Null_ThrowsException()
     {
@@ -207,7 +207,7 @@ public class UserValidationsTest
             Assert.That(_results[0].ErrorMessage, Is.EqualTo("Avatar must be less than 100 characters"));
         });
     }
-    
+
     [Test]
     public void Phone_Null_ThrowsException()
     {
