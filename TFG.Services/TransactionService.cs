@@ -28,9 +28,10 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
                 .Any(p => string.Equals(p.Name, orderBy, StringComparison.CurrentCultureIgnoreCase)))
             throw new HttpException(400, "Invalid orderBy parameter");
 
-        var transactionsQuery = bankContext.Transactions.AsQueryable();
+        var transactionsQuery = bankContext.Transactions.Where(t => t.Id != 0);
+
         if (!string.IsNullOrWhiteSpace(search))
-            transactionsQuery = transactionsQuery.Where(t => t.IbanAccountOrigin.Contains(search) ||
+            transactionsQuery = transactionsQuery.Where(t => (t.IbanAccountOrigin != null && t.IbanAccountOrigin.Contains(search)) ||
                                                              t.IbanAccountDestination.Contains(search) ||
                                                              t.Concept.Contains(search) ||
                                                              t.Date.ToString().Contains(search) ||

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
+using Moq.EntityFrameworkCore;
 using TFG.Context.Context;
 using TFG.Context.Models;
 using TFG.Services;
@@ -36,20 +37,22 @@ public class TransactionServiceTest
         // Arrange
         var transactions = new List<Transaction>
         {
-            new Transaction { Id = 1, Amount = 100, Concept = "Test Transaction 1" },
-            new Transaction { Id = 2, Amount = 200, Concept = "Test Transaction 2" }
+            new()
+            {
+                Id = 1, Amount = 100, Concept = "Test Transaction 1", IbanAccountOrigin = "ES123456789",
+                Date = DateTime.Now, IbanAccountDestination = "ES987654321"
+            },
+            new()
+            {
+                Id = 2, Amount = 200, Concept = "Test Transaction 2", IbanAccountDestination = "ES987654321",
+                Date = DateTime.Now, IbanAccountOrigin = "ES123456789"
+            }
         };
 
-        var mockSet = new Mock<DbSet<Transaction>>();
-        mockSet.As<IQueryable<Transaction>>().Setup(m => m.Provider).Returns(transactions.AsQueryable().Provider);
-        mockSet.As<IQueryable<Transaction>>().Setup(m => m.Expression).Returns(transactions.AsQueryable().Expression);
-        mockSet.As<IQueryable<Transaction>>().Setup(m => m.ElementType).Returns(transactions.AsQueryable().ElementType);
-        mockSet.As<IQueryable<Transaction>>().Setup(m => m.GetEnumerator()).Returns(transactions.GetEnumerator());
-
-        _mockContext.Setup(x => x.Transactions).Returns(mockSet.Object);
+        _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
 
         // Act
-        var result = await _transactionService.GetTransactions(1, 2, "Id", false);
+        var result = await _transactionService.GetTransactions(1, 2, "Id", false, "Test");
 
         // Assert
         Assert.Multiple(() =>
@@ -59,7 +62,7 @@ public class TransactionServiceTest
             Assert.That(result.Items[1].Id, Is.EqualTo(2));
         });
     }
-    
+
     //GET TRANSACTION BY ID
     [Test]
     public async Task GetTransaction_ReturnsExpectedTransaction()
@@ -81,7 +84,7 @@ public class TransactionServiceTest
             Assert.That(result.Concept, Is.EqualTo("Test Transaction 1"));
         });
     }
-    
+
     //get transaction by id not found
     [Test]
     public void GetTransaction_ThrowsHttpExceptionWhenTransactionNotFound()
@@ -93,7 +96,7 @@ public class TransactionServiceTest
 
         // Act
         var ex = Assert.ThrowsAsync<HttpException>(() => _transactionService.GetTransaction(1));
-        
+
         // Assert
         Assert.Multiple(() =>
         {

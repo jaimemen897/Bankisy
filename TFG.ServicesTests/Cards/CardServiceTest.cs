@@ -40,6 +40,6 @@ public class CardServiceTest
         var result = await _cardService.GetCardByCardNumber(cardNumber);
 
         // Assert
-        Assert.AreEqual(cardNumber, result.CardNumber);
+        Assert.That(result.CardNumber, Is.EqualTo(cardNumber));
     }
 }
