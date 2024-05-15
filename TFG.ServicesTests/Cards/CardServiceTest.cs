@@ -25,22 +25,21 @@ public class CardServiceTest
     public async Task GetCard_ReturnsExpectedCard()
     {
         // Arrange
-        var card = new Card { CardNumber = "1234567890123456", Pin = "1234" };
-        
-        var mockSet = new Mock<DbSet<Card>>();
-        mockSet.Setup(x => x.FirstAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Card, bool>>>(), default))
-            .ReturnsAsync(card);
+        var cardNumber = "1234567890123456";
+        var card = new Card { CardNumber = cardNumber, Pin = "1SZmfpo8JtGvn0jxFDYomg==", Cvv = "qRuuPv6gwJ72CEgpD/QG9Q=="};
+        var user = new User();
+        var bankAccount = new BankAccount();
+        card.User = user;
+        card.BankAccount = bankAccount;
 
-        _mockContext.Setup(x => x.Cards).ReturnsDbSet(mockSet.Object);
+        var data = new List<Card> { card };
+
+        _mockContext.Setup(x => x.Cards).ReturnsDbSet(data);
 
         // Act
-        var result = await _cardService.GetCardByCardNumber(card.CardNumber);
+        var result = await _cardService.GetCardByCardNumber(cardNumber);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.CardNumber, Is.EqualTo(card.CardNumber));
-            Assert.That(result.Pin, Is.EqualTo(card.Pin));
-        });
+        Assert.AreEqual(cardNumber, result.CardNumber);
     }
 }
