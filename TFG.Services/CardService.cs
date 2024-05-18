@@ -48,7 +48,7 @@ public class CardService(BankContext bankContext)
     public async Task<CardResponseDto> GetCardByCardNumber(string cardNumber)
     {
         var card = await bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount)
-            .FirstAsync(c => c.CardNumber == cardNumber) ?? throw new HttpException(404, "Card not found");
+            .FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ?? throw new HttpException(404, "Card not found");
         return _mapper.Map<CardResponseDto>(card);
     }
 
@@ -112,12 +112,13 @@ public class CardService(BankContext bankContext)
         IsValid(cardUpdateDto);
         _mapper.Map(cardUpdateDto, card);
         await bankContext.SaveChangesAsync();
-        return _mapper.Map<CardResponseDto>(card);
+        var si = _mapper.Map<CardResponseDto>(card);
+        return si;
     }
 
     public async Task DeleteCard(string cardNumber)
     {
-        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ??
+        var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
         card.IsDeleted = true;
         await bankContext.SaveChangesAsync();
@@ -125,7 +126,7 @@ public class CardService(BankContext bankContext)
 
     public async Task ActivateCard(string cardNumber)
     {
-        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ??
+        var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
         card.IsDeleted = false;
         await bankContext.SaveChangesAsync();
@@ -133,7 +134,7 @@ public class CardService(BankContext bankContext)
 
     public async Task BlockCard(string cardNumber)
     {
-        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ??
+        var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
         if (card.IsBlocked) throw new HttpException(400, "Card is already blocked");
 
@@ -143,7 +144,7 @@ public class CardService(BankContext bankContext)
 
     public async Task UnblockCard(string cardNumber)
     {
-        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ??
+        var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
         if (!card.IsBlocked) throw new HttpException(400, "Card is not blocked");
 
@@ -153,7 +154,7 @@ public class CardService(BankContext bankContext)
 
     public async Task<CardResponseDto> RenovateCard(string cardNumber)
     {
-        var card = await bankContext.Cards.FirstAsync(c => c.CardNumber == cardNumber) ??
+        var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
         if (card.ExpirationDate > DateTime.Now.AddMonths(3).ToUniversalTime())
             throw new HttpException(400, "Card is not expired");
