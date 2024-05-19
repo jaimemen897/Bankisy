@@ -15,7 +15,6 @@ import {User} from "./models/User";
 export class AppComponent implements OnInit, OnDestroy {
   title = 'app';
   messages1: Message[] = [];
-  user: User | null = null;
   userSubscription: any;
 
   constructor(@Inject(DOCUMENT) private document: Document, private messageService: MessageService, private socketService: SocketService, private userService: UserService) {
@@ -27,14 +26,10 @@ export class AppComponent implements OnInit, OnDestroy {
       this.changeTheme(false);
       this.document.documentElement.classList.add('light-theme');
     }
-    this.userService.setUser();
   }
 
   ngOnInit() {
-    this.userSubscription = this.userService.user$.subscribe(user => {
-      this.user = user;
-    });
-
+    this.userService.setUser();
     this.messageService.messageObserver.subscribe(message => {
       this.messages1 = this.messages1.concat(message);
     });

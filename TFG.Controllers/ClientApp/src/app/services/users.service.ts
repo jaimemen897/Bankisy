@@ -101,7 +101,7 @@ export class UserService {
   }
 
   getUser() {
-    return this.userSubject.getValue();
+    return this.user$;
   }
 
   private handleError(error: any) {

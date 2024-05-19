@@ -27,7 +27,9 @@ import {UserService} from "../../services/users.service";
 })
 export class BizumCreateComponent {
   constructor(private messageService: MessageService, private transactionService: TransactionsService, private userService: UserService) {
-    this.user = this.userService.getUser();
+    this.userService.getUser().subscribe(user => {
+      this.user = user;
+    });
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -43,7 +45,9 @@ export class BizumCreateComponent {
   @Output() onUserLoaded: EventEmitter<any> = new EventEmitter();
 
   loadUser() {
-    this.user = this.userService.getUser();
+    this.userService.getUser().subscribe(user => {
+      this.user = user;
+    });
     this.onUserLoaded.emit(this.user);
   }
 

@@ -48,7 +48,9 @@ import {User} from "../models/User";
 export class ProfileComponent implements OnInit {
   constructor(private messageService: MessageService, private location: Location,
               private router: Router, private userService: UserService) {
-    this.user = this.userService.getUser();
+    this.userService.getUser().subscribe(user => {
+      this.user = user;
+    });
   }
 
   apiUrl = `${environment.apiUrl}/index/avatar`
@@ -137,7 +139,9 @@ export class ProfileComponent implements OnInit {
       closable: false
     });
     this.userService.setUser()
-    this.user = this.userService.getUser()
+    this.userService.getUser().subscribe(user => {
+      this.user = user;
+    });
     this.avatar = this.user.avatar
   }
 
@@ -151,7 +155,9 @@ export class ProfileComponent implements OnInit {
         closable: false
       });
       this.userService.setUser()
-      this.user = this.userService.getUser()
+      this.userService.getUser().subscribe(user => {
+        this.user = user;
+      });
       this.avatar = this.user.avatar
     });
   }

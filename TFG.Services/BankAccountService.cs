@@ -155,10 +155,23 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
     }
 
     //DELETE
-    public async Task DeleteBankAccount(string iban)
+    public async Task DeleteBankAccount(string iban, Guid? userId = null)
     {
         var bankAccount = await bankContext.BankAccounts.FindAsync(iban);
+        
         if (bankAccount == null) throw new HttpException(404, "Bank account not found");
+        
+        if (userId != null)
+        {
+            var user = await bankContext.Users.FindAsync(userId);
+            if (user == null) throw new HttpException(404, "User not found");
+            if (bankAccount.Users.All(u => u.Id != userId)) throw new HttpException(404, "User not found in bank account");
+        }
+
+        if (bankAccount.Balance != 0)
+        {
+            throw new HttpException(400, "You can't delete a bank account with balance");
+        }
 
         var cards = await bankContext.Cards.Where(c => c.BankAccount.Iban == iban).ToListAsync();
         if (cards.Count > 0)

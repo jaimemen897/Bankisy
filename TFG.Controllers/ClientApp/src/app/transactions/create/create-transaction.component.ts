@@ -54,7 +54,9 @@ export class CreateTransactionComponent implements OnInit {
   }
 
   loadUser() {
-    this.user = this.userService.getUser();
+    this.userService.getUser().subscribe(user => {
+      this.user = user;
+    });
     this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
     });

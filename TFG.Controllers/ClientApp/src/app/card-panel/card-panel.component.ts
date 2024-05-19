@@ -59,7 +59,9 @@ export class CardPanelComponent {
 
   constructor(private messageService: MessageService, private cardService: CardService, private userService: UserService) {
     this.refresh();
-    this.user = this.userService.getUser();
+    this.userService.getUser().subscribe(user => {
+      this.user = user;
+    });
   }
 
   @ViewChild('optionMenu') optionMenu: any;

@@ -87,7 +87,6 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         await bankAccountService.DeleteBankAccount(iban);
         return NoContent();
     }
-
     
     //ACTIVE
     [Authorize(Policy = "Admin")]
