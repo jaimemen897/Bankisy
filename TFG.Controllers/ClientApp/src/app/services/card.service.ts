@@ -53,6 +53,10 @@ export class CardService {
     return this.http.get<Card>(url);
   }
 
+  getMyCards(): Observable<Card[]> {
+    return this.http.get<Card[]>(this.apiUrl + '/my-cards');
+  }
+
   addCard(card: CardCreate): Observable<Card> {
     return this.http.post<Card>(this.apiUrl, card).pipe(
       catchError(error => this.handleError(error))

@@ -14,39 +14,6 @@ namespace TFG.Controllers.Controllers;
 [Route("[controller]")]
 public class IndexController(IndexService indexService) : ControllerBase
 {
-    [HttpGet("bankaccounts")]
-    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId()
-    {
-        return await indexService.GetBankAccountsByUserId();
-    }
-
-    [HttpGet("totalbalance")]
-    public async Task<decimal> GetTotalBalanceByUserId()
-    {
-        return await indexService.GetTotalBalanceByUserId();
-    }
-
-    [HttpGet("transactions")]
-    public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactionsByUserId(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false,
-        [FromQuery] string? search = null, [FromQuery] string? filter = null)
-    {
-        return await indexService.GetTransactionsByUserId(pageNumber, pageSize, orderBy, descending, search, filter);
-    }
-
-    [HttpGet("expenses")]
-    public async Task<List<TransactionResponseDto>> GetExpensesByUserId()
-    {
-        return await indexService.GetExpensesByUserId();
-    }
-
-    [HttpGet("incomes")]
-    public async Task<List<TransactionResponseDto>> GetIncomesByUserId()
-    {
-        return await indexService.GetIncomesByUserId();
-    }
-
     [HttpPost("bankaccount")]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {
@@ -115,12 +82,6 @@ public class IndexController(IndexService indexService) : ControllerBase
     {
         await indexService.ActivateCard(cardNumber);
         return Ok();
-    }
-
-    [HttpGet("cards/user")]
-    public async Task<List<CardResponseDto>> GetCardsByUserId()
-    {
-        return await indexService.GetCardsByUserId();
     }
 
     [HttpGet("cards/bankaccount/{iban}")]

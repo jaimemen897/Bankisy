@@ -25,6 +25,8 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {InplaceModule} from "primeng/inplace";
 import {InputTextModule} from "primeng/inputtext";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {BankAccountService} from "../services/bankaccounts.service";
+import {TransactionsService} from "../services/transactions.service";
 
 @Component({
   selector: 'app-index',
@@ -58,7 +60,8 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 })
 export class IndexComponent implements OnInit {
 
-  constructor(private indexService: IndexService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+  constructor(private indexService: IndexService, private messageService: MessageService, private confirmationService: ConfirmationService,
+              private bankAccountService: BankAccountService, private transactionService: TransactionsService) {
   }
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
@@ -178,7 +181,7 @@ export class IndexComponent implements OnInit {
     let sortField = event.sortField;
     let sortOrder = event.sortOrder;
 
-    this.indexService.getTransactionsByUserId(pageNumber, event.rows, sortField, sortOrder === -1, this.search, this.filter).subscribe(data => {
+    this.transactionService.getTransactionsByMyself(pageNumber, event.rows, sortField, sortOrder, this.search, this.filter).subscribe(data => {
       this.transactions = data.items;
       this.totalRecords = data.totalRecords;
     });
@@ -186,27 +189,27 @@ export class IndexComponent implements OnInit {
 
   //GET DATA
   getBalanceByUserId() {
-    this.indexService.getTotalBalanceByUserId().subscribe(balance => {
+    this.bankAccountService.getTotalBalanceByMySelf().subscribe(balance => {
       this.totalBalance = balance;
     });
   }
 
   getIncomesByUserId() {
-    this.indexService.getIncomesByUserId().subscribe(incomes => {
+    this.transactionService.getMyIncomes().subscribe(incomes => {
       this.incomes = incomes;
       this.totalIncomes = incomes.reduce((acc, income) => acc + income.amount, 0);
     });
   }
 
   getExpensesByUserId() {
-    this.indexService.getExpensesByUserId().subscribe(expenses => {
+    this.transactionService.getMyExpenses().subscribe(expenses => {
       this.expenses = expenses;
       this.totalExpenses = expenses.reduce((acc, expense) => acc + expense.amount, 0);
     });
   }
 
   getBankAccountsByUserId() {
-    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+    this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
       if (this.bankAccounts.length === 0) {
         this.displayDialogBankAccountNewUser = true;
@@ -263,7 +266,7 @@ export class IndexComponent implements OnInit {
     this.updating = true;
     this.ngOnInit()
     this.lazyLoad({first: 0, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
-    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+    this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
     });
     setTimeout(() => {
@@ -319,7 +322,7 @@ export class IndexComponent implements OnInit {
   }
 
   createBankAccount() {
-    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+    this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
     });
     this.displayDialogBankAccount = false;

@@ -23,6 +23,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CardCreate} from "../models/CardCreate";
 import {DropdownModule} from "primeng/dropdown";
 import {CreateCardComponent} from "../cards/create-card/create-card.component";
+import {CardService} from "../services/card.service";
 
 @Component({
   selector: 'app-card-panel',
@@ -55,7 +56,7 @@ import {CreateCardComponent} from "../cards/create-card/create-card.component";
 })
 export class CardPanelComponent {
 
-  constructor(private messageService: MessageService, private indexService: IndexService) {
+  constructor(private messageService: MessageService, private indexService: IndexService, private cardService: CardService) {
     this.refresh();
   }
 
@@ -195,7 +196,7 @@ export class CardPanelComponent {
   }
 
   refresh() {
-    this.indexService.getCardsByUserId().subscribe(cards => {
+    this.cardService.getMyCards().subscribe(cards => {
       this.cards = cards;
     });
   }

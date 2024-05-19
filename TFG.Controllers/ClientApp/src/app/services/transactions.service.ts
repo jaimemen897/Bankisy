@@ -15,7 +15,7 @@ export class TransactionsService {
   constructor(private http: HttpClient) {
   }
 
-  getTransactions(pageNumber: number, pageSize: number, orderBy: string = 'Id', descending?: boolean, user?: any, search?: string): Observable<Pagination<Transaction>> {
+  getTransactions(pageNumber: number, pageSize: number, orderBy: string = 'Id', descending?: boolean, user?: any, search?: string, filter?: string): Observable<Pagination<Transaction>> {
     let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&orderBy=${orderBy}`;
     if (descending) {
       url += `&descending=${descending}`;
@@ -26,8 +26,10 @@ export class TransactionsService {
     if (search) {
       url += `&search=${search}`;
     }
+    if (filter) {
+      url += `&filter=${filter}`;
+    }
 
-    console.log()
     return this.http.get<Pagination<Transaction>>(url).pipe(
       map(response => ({
         currentPage: response.currentPage,
@@ -38,6 +40,38 @@ export class TransactionsService {
         items: response.items
       }))
     );
+  }
+
+  getTransactionsByMyself(pageNumber: number, pageSize: number, orderBy: string = 'Id', descending?: boolean, search?: string, filter?: string): Observable<Pagination<Transaction>> {
+    let url = `${this.apiUrl}/myself?pageNumber=${pageNumber}&pageSize=${pageSize}&orderBy=${orderBy}`;
+    if (descending) {
+      url += `&descending=${descending}`;
+    }
+    if (search) {
+      url += `&search=${search}`;
+    }
+    if (filter) {
+      url += `&filter=${filter}`;
+    }
+
+    return this.http.get<Pagination<Transaction>>(url).pipe(
+      map(response => ({
+        currentPage: response.currentPage,
+        totalPages: response.totalPages,
+        pageSize: response.pageSize,
+        totalCount: response.totalCount,
+        totalRecords: response.totalRecords,
+        items: response.items
+      }))
+    );
+  }
+
+  getMyIncomes(){
+    return this.http.get<Transaction[]>(`${this.apiUrl}/myself/incomes`);
+  }
+
+  getMyExpenses(){
+    return this.http.get<Transaction[]>(`${this.apiUrl}/myself/expenses`);
   }
 
   addTransaction(Transaction: TransactionCreate): Observable<Transaction> {

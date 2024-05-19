@@ -12,6 +12,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {StyleClassModule} from "primeng/styleclass";
 import {TransactionCreate} from "../../models/TransactionCreate";
 import {NgIf, NgStyle} from "@angular/common";
+import {BankAccountService} from "../../services/bankaccounts.service";
 
 @Component({
   selector: 'app-create-transaction',
@@ -31,7 +32,7 @@ import {NgIf, NgStyle} from "@angular/common";
   styleUrl: './create-transaction.component.css'
 })
 export class CreateTransactionComponent implements OnInit {
-  constructor(private messageService: MessageService, private indexService: IndexService) {
+  constructor(private messageService: MessageService, private indexService: IndexService, private bankAccountService: BankAccountService) {
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -54,7 +55,7 @@ export class CreateTransactionComponent implements OnInit {
   loadUser() {
     this.indexService.getUserByToken().subscribe(user => {
       this.user = user;
-      this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+      this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
         this.bankAccounts = bankAccounts;
       });
     });

@@ -11,6 +11,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {IndexService} from "../services/index.service";
 import {MessageService} from "primeng/api";
 import {NgIf} from "@angular/common";
+import {BankAccountService} from "../services/bankaccounts.service";
 
 @Component({
   selector: 'app-deposit',
@@ -32,7 +33,7 @@ export class DepositComponent implements OnInit {
   sessionID: string;
   bankAccounts: BankAccount[] = [];
 
-  constructor(private checkoutService: CheckoutService, private indexService: IndexService, private messageService: MessageService) {
+  constructor(private checkoutService: CheckoutService, private messageService: MessageService, private bankAccountService: BankAccountService) {
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -42,7 +43,7 @@ export class DepositComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+    this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
     });
   }

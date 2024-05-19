@@ -73,7 +73,7 @@ export class CreateCardComponent {
     this.isNewUser = true;
     this.updateSelectedUserValidators();
     this.formGroup.controls.selectedUser.setValue([userId]);
-    this.indexService.getBankAccountsByUserId().subscribe(bankAccounts => {
+    this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
     });
   }

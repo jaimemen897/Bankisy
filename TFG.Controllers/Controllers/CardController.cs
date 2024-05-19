@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.cards;
 using TFG.Services;
+using TFG.Services.Exceptions;
 using TFG.Services.Pagination;
 
 namespace TFG.Controllers.Controllers;
@@ -25,6 +27,13 @@ public class CardController(CardService cardService) : ControllerBase
     public async Task<ActionResult<CardResponseDto>> GetCardByCardNumber(string cardNumber)
     {
         return await cardService.GetCardByCardNumber(cardNumber);
+    }
+    
+    [Authorize(Policy = "User")]
+    [HttpGet("my-cards")]
+    public async Task<ActionResult<List<CardResponseDto>>> GetMyCards()
+    {
+        return await cardService.GetCardsByUserId(GetUserId());
     }
 
     [HttpPost]
@@ -72,4 +81,10 @@ public class CardController(CardService cardService) : ControllerBase
         await cardService.ActivateCard(cardNumber);
         return Ok();
     }
+    
+    private Guid GetUserId()
+    {
+        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
+    }
+
 }

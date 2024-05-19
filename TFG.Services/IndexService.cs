@@ -28,11 +28,6 @@ public class IndexService(
     }
 
     //BANK ACCOUNTS
-    public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId()
-    {
-        return await bankAccountService.GetBankAccountsByUserId(user.Id);
-    }
-
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {
         return await bankAccountService.CreateBankAccount(bankAccount);
@@ -43,29 +38,7 @@ public class IndexService(
         await bankAccountService.ActiveBizum(iban, user.Id);
     }
 
-    public async Task<decimal> GetTotalBalanceByUserId()
-    {
-        return await bankAccountService.GetTotalBalanceByUserId(user.Id);
-    }
-
     //TRANSACTIONS
-    public async Task<Pagination<TransactionResponseDto>> GetTransactionsByUserId(int pageNumber, int pageSize,
-        string orderBy, bool descending, string? search = null, string? filter = null)
-    {
-        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, user, search,
-            filter);
-    }
-
-    public async Task<List<TransactionResponseDto>> GetExpensesByUserId()
-    {
-        return await transactionService.GetExpensesByUserId(user.Id);
-    }
-
-    public async Task<List<TransactionResponseDto>> GetIncomesByUserId()
-    {
-        return await transactionService.GetIncomesByUserId(user.Id);
-    }
-
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
         var bankAccount = await bankAccountService.GetBankAccount(transaction.IbanAccountOrigin);
@@ -141,11 +114,6 @@ public class IndexService(
     {
         await ValidateCardWithUser(cardNumber);
         await cardService.ActivateCard(cardNumber);
-    }
-
-    public async Task<List<CardResponseDto>> GetCardsByUserId()
-    {
-        return await cardService.GetCardsByUserId(user.Id);
     }
 
     public async Task<List<CardResponseDto>> GetCardsByIban(string iban)

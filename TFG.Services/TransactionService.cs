@@ -22,7 +22,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
     //GET
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
-        bool descending, UserResponseDto? user = null, string? search = null, string? filter = null)
+        bool descending, Guid? userId = null, string? search = null, string? filter = null)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -41,10 +41,10 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
                 t.Date.ToString().Contains(search) ||
                 t.Amount.ToString().Contains(search));
 
-        if (user != null)
+        if (userId != null)
         {
             var bankAccountIbans = await bankContext.BankAccounts
-                .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
+                .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == userId))
                 .Select(account => account.Iban)
                 .ToListAsync();
 

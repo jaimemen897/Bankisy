@@ -19,7 +19,8 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
     private readonly List<string> _bankAccountIban = [];
 
     //GET
-    public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy, bool descending, string? search = null, string? filter = null, bool? isDeleted = false)
+    public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy,
+        bool descending, string? search = null, string? filter = null, bool? isDeleted = false)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -76,13 +77,11 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
 
         return bankAccounts.Select(bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount)).ToList();
     }
-    
+
     public async Task<decimal> GetTotalBalanceByUserId(Guid userId)
     {
-        var bankAccounts = await bankContext.BankAccounts
-            .Include(ba => ba.Users)
-            .Where(ba => ba.Users.Any(u => u.Id == userId) && !ba.IsDeleted)
-            .ToListAsync();
+        var bankAccounts = await bankContext.BankAccounts.Include(ba => ba.Users)
+            .Where(ba => ba.Users.Any(u => u.Id == userId) && !ba.IsDeleted).ToListAsync();
 
         return bankAccounts.Sum(ba => ba.Balance);
     }

@@ -29,52 +29,6 @@ export class IndexService {
     return this.http.get<User>(`${environment.apiUrl}/session/me`, {headers});
   }
 
-  getTotalBalanceByUserId(): Observable<number> {
-    const url = `${this.apiUrl}/totalbalance`;
-    return this.http.get<number>(url);
-  }
-
-  getTransactionsByUserId(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string): Observable<Pagination<Transaction>> {
-    let url = `${this.apiUrl}/transactions?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-    if (orderBy) {
-      url += `&orderBy=${orderBy}`;
-    }
-    if (descending) {
-      url += `&descending=${descending}`;
-    }
-    if (search) {
-      url += `&search=${search}`;
-    }
-    if (filter) {
-      url += `&filter=${filter}`;
-    }
-    return this.http.get<Pagination<Transaction>>(url).pipe(
-      map(response => ({
-        currentPage: response.currentPage,
-        totalPages: response.totalPages,
-        pageSize: response.pageSize,
-        totalCount: response.totalCount,
-        totalRecords: response.totalRecords,
-        items: response.items
-      }))
-    );
-  }
-
-  getExpensesByUserId(): Observable<Transaction[]> {
-    const url = `${this.apiUrl}/expenses`;
-    return this.http.get<Transaction[]>(url);
-  }
-
-  getIncomesByUserId(): Observable<Transaction[]> {
-    const url = `${this.apiUrl}/incomes`;
-    return this.http.get<Transaction[]>(url);
-  }
-
-  getBankAccountsByUserId(): Observable<BankAccount[]> {
-    const url = `${this.apiUrl}/bankaccounts`;
-    return this.http.get<BankAccount[]>(url);
-  }
-
   addBankAccount(BankAccount: BankAccountCreate): Observable<BankAccount> {
     return this.http.post<BankAccount>(this.apiUrl + '/bankaccount', BankAccount).pipe(
       catchError(error => this.handleError(error))
@@ -131,10 +85,6 @@ export class IndexService {
     return this.http.post(`${this.apiUrl}/card/${cardNumber}/activate`, {}).pipe(
       catchError(error => this.handleError(error))
     );
-  }
-
-  getCardsByUserId(): Observable<Card[]> {
-    return this.http.get<Card[]>(`${this.apiUrl}/cards/user`);
   }
 
   //PROFILE
