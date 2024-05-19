@@ -18,7 +18,7 @@ export class TransactionsService {
   getTransactions(pageNumber: number, pageSize: number, orderBy: string = 'Id', descending?: boolean, user?: any, search?: string, filter?: string): Observable<Pagination<Transaction>> {
     let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&orderBy=${orderBy}`;
     if (descending) {
-      url += `&descending=${descending}`;
+      url += `&descending=${descending ? 'true' : 'false'}`;
     }
     if (user) {
       url += `&user=${JSON.stringify(user)}`;
@@ -45,7 +45,7 @@ export class TransactionsService {
   getTransactionsByMyself(pageNumber: number, pageSize: number, orderBy: string = 'Id', descending?: boolean, search?: string, filter?: string): Observable<Pagination<Transaction>> {
     let url = `${this.apiUrl}/myself?pageNumber=${pageNumber}&pageSize=${pageSize}&orderBy=${orderBy}`;
     if (descending) {
-      url += `&descending=${descending}`;
+      url += `&descending=${descending ? 'true' : 'false'}`;
     }
     if (search) {
       url += `&search=${search}`;

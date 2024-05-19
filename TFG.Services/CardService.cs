@@ -8,7 +8,6 @@ using TFG.Services.Extensions;
 using TFG.Services.Mappers;
 using TFG.Services.Pagination;
 
-
 namespace TFG.Services;
 
 public class CardService(BankContext bankContext)
@@ -73,15 +72,18 @@ public class CardService(BankContext bankContext)
         return cards ?? throw new HttpException(404, "Cards not found");
     }
 
-    public async Task<CardResponseDto> CreateCard(CardCreateDto cardCreateDto)
+    public async Task<CardResponseDto> CreateCard(CardCreateDto cardCreateDto, Guid? userId = null)
     {
         var user = await bankContext.Users.FindAsync(cardCreateDto.UserId) ??
                    throw new HttpException(404, "User not found");
+        
+        if (userId != null && userId != user.Id) throw new HttpException(403, "You are not the owner of the card");
+
         var bankAccount = await bankContext.BankAccounts.Include(ba => ba.Users).FirstOrDefaultAsync(ba =>
             ba.Iban == cardCreateDto.BankAccountIban) ?? throw new HttpException(404, "Bank account not found");
 
         if (!bankAccount.Users.Contains(user)) throw new HttpException(400, "Bank account does not belong to the user");
-
+        
         if (await bankContext.Cards.AnyAsync(c => c.BankAccountIban == cardCreateDto.BankAccountIban && !c.IsDeleted))
             throw new HttpException(400, "Bank account already has a card");
 
@@ -92,10 +94,12 @@ public class CardService(BankContext bankContext)
         return _mapper.Map<CardResponseDto>(card);
     }
 
-    public async Task<CardResponseDto> UpdateCard(string cardNumber, CardUpdateDto cardUpdateDto)
+    public async Task<CardResponseDto> UpdateCard(string cardNumber, CardUpdateDto cardUpdateDto, Guid? userId = null)
     {
         var card = await bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount)
             .FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ?? throw new HttpException(404, "Card not found");
+        
+        if (userId != null && userId != card.UserId) throw new HttpException(403, "You are not the owner of the card");
 
         if (cardUpdateDto.UserId != null)
             _ = await bankContext.Users.FindAsync(cardUpdateDto.UserId) ??
@@ -116,46 +120,61 @@ public class CardService(BankContext bankContext)
         return si;
     }
 
-    public async Task DeleteCard(string cardNumber)
+    public async Task DeleteCard(string cardNumber, Guid? userId = null)
     {
         var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
+        
+        if (userId != null && userId != card.UserId) throw new HttpException(403, "You are not the owner of the card");
+        
         card.IsDeleted = true;
         await bankContext.SaveChangesAsync();
     }
 
-    public async Task ActivateCard(string cardNumber)
+    public async Task ActivateCard(string cardNumber, Guid? userId = null)
     {
         var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
+        
+        if (userId != null && userId != card.UserId) throw new HttpException(403, "You are not the owner of the card");
+        
         card.IsDeleted = false;
         await bankContext.SaveChangesAsync();
     }
 
-    public async Task BlockCard(string cardNumber)
+    public async Task BlockCard(string cardNumber, Guid? userId = null)
     {
         var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
+        
+        if (userId != null && userId != card.UserId) throw new HttpException(403, "You are not the owner of the card");
+        
         if (card.IsBlocked) throw new HttpException(400, "Card is already blocked");
 
         card.IsBlocked = true;
         await bankContext.SaveChangesAsync();
     }
 
-    public async Task UnblockCard(string cardNumber)
+    public async Task UnblockCard(string cardNumber, Guid? userId = null)
     {
         var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
+        
+        if (userId != null && userId != card.UserId) throw new HttpException(403, "You are not the owner of the card");
+        
         if (!card.IsBlocked) throw new HttpException(400, "Card is not blocked");
 
         card.IsBlocked = false;
         await bankContext.SaveChangesAsync();
     }
 
-    public async Task<CardResponseDto> RenovateCard(string cardNumber)
+    public async Task<CardResponseDto> RenovateCard(string cardNumber, Guid? userId = null)
     {
         var card = await bankContext.Cards.FirstOrDefaultAsync(c => c.CardNumber == cardNumber) ??
                    throw new HttpException(404, "Card not found");
+        
+        if (userId != null && userId != card.UserId) throw new HttpException(403, "You are not the owner of the card");
+        
         if (card.ExpirationDate > DateTime.Now.AddMonths(3).ToUniversalTime())
             throw new HttpException(400, "Card is not expired");
 

@@ -80,7 +80,7 @@ export class CardPanelComponent {
   }
 
   blockCard(card: Card) {
-    this.indexService.blockCard(card.cardNumber).subscribe(() => {
+    this.cardService.blockMyCard(card.cardNumber).subscribe(() => {
       this.messageService.add({
         severity: 'info',
         summary: 'Tarjeta bloqueada',
@@ -92,7 +92,7 @@ export class CardPanelComponent {
   }
 
   unblockCard(card: Card) {
-    this.indexService.unblockCard(card.cardNumber).subscribe(() => {
+    this.cardService.unblockMyCard(card.cardNumber).subscribe(() => {
       this.messageService.add({
         severity: 'info',
         summary: 'Tarjeta desbloqueada',
@@ -104,7 +104,7 @@ export class CardPanelComponent {
   }
 
   renovateCard(card: Card) {
-    this.indexService.renovateCard(card.cardNumber).subscribe(() => {
+    this.cardService.renovateMyCard(card.cardNumber).subscribe(() => {
       this.messageService.add({
         severity: 'info',
         summary: 'Tarjeta renovada',
@@ -127,7 +127,7 @@ export class CardPanelComponent {
       userId: this.cardToUpdate.user.id,
       bankAccountIban: this.cardToUpdate.bankAccount.iban
     };
-    this.indexService.updateCard(this.cardToUpdate.cardNumber, cardUpdate).subscribe(() => {
+    this.cardService.updateCardForMySelf(cardUpdate, this.cardToUpdate.cardNumber).subscribe(() => {
       this.messageService.add({
         severity: 'info',
         summary: 'PIN actualizado',

@@ -57,8 +57,14 @@ export class CardService {
     return this.http.get<Card[]>(this.apiUrl + '/my-cards');
   }
 
-  addCard(card: CardCreate): Observable<Card> {
+  createCard(card: CardCreate): Observable<Card> {
     return this.http.post<Card>(this.apiUrl, card).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  createCardForMySelf(card: CardCreate): Observable<Card> {
+    return this.http.post<Card>(this.apiUrl + '/my-card', card).pipe(
       catchError(error => this.handleError(error))
     );
   }
@@ -69,12 +75,29 @@ export class CardService {
     );
   }
 
+  updateCardForMySelf(card: CardCreate, cardNumber: string): Observable<Card> {
+    return this.http.put<Card>(this.apiUrl + '/my-card/' + cardNumber, card).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   deleteCard(cardNumber: string): Observable<Card> {
     return this.http.delete<Card>(this.apiUrl + '/' + cardNumber);
   }
 
+  //TODO: no usage
+  deleteMyCard(cardNumber: string): Observable<Card> {
+    return this.http.delete<Card>(this.apiUrl + '/my-card/' + cardNumber);
+  }
+
   renovateCard(cardNumber: string): Observable<Card> {
     return this.http.post<Card>(this.apiUrl + '/' + cardNumber + '/renovate', null).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  renovateMyCard(cardNumber: string): Observable<Card> {
+    return this.http.post<Card>(this.apiUrl + '/my-card/' + cardNumber + '/renovate', null).pipe(
       catchError(error => this.handleError(error))
     );
   }
@@ -85,14 +108,33 @@ export class CardService {
     );
   }
 
+  blockMyCard(cardNumber: string): Observable<Card> {
+    return this.http.post<Card>(this.apiUrl + '/my-card/' + cardNumber + '/block', null).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   unblockCard(cardNumber: string): Observable<Card> {
     return this.http.post<Card>(this.apiUrl + '/' + cardNumber + '/unblock', null).pipe(
       catchError(error => this.handleError(error))
     );
   }
 
+  unblockMyCard(cardNumber: string): Observable<Card> {
+    return this.http.post<Card>(this.apiUrl + '/my-card/' + cardNumber + '/unblock', null).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   activateCard(cardNumber: string): Observable<Card> {
     return this.http.post<Card>(this.apiUrl + '/' + cardNumber + '/activate', null).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  //TODO: no usage
+  activateMyCard(cardNumber: string): Observable<Card> {
+    return this.http.post<Card>(this.apiUrl + '/my-card/' + cardNumber + '/activate', null).pipe(
       catchError(error => this.handleError(error))
     );
   }

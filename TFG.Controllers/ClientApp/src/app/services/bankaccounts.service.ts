@@ -66,6 +66,10 @@ export class BankAccountService {
     return this.http.post<BankAccount>(this.apiUrl, BankAccount);
   }
 
+  addBankAccountMySelf(BankAccount: BankAccountCreate): Observable<BankAccount> {
+    return this.http.post<BankAccount>(`${this.apiUrl}/my-self`, BankAccount);
+  }
+
   updateBankAccount(BankAccount: BankAccountCreate, iban: string): Observable<BankAccount> {
     return this.http.put<BankAccount>(this.apiUrl + '/' + iban, BankAccount);
   }
@@ -81,5 +85,9 @@ export class BankAccountService {
 
   activateBankAccount(iban: string): Observable<BankAccount> {
     return this.http.put<BankAccount>(`${this.apiUrl}/${iban}/active`, {});
+  }
+
+  activeBizumMySelf(iban: string): Observable<BankAccount> {
+    return this.http.put<BankAccount>(`${this.apiUrl}/my-self/${iban}/active-bizum`, {});
   }
 }

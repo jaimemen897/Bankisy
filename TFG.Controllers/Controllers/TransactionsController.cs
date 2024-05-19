@@ -10,11 +10,12 @@ using TFG.Services.Pagination;
 namespace TFG.Controllers.Controllers;
 
 [ApiController]
-[Authorize(Policy = "Admin")]
+[Authorize]
 [Route("[controller]")]
 public class TransactionsController(TransactionService transactionService) : ControllerBase
 {
     //GET
+    [Authorize(Policy = "Admin")]
     [HttpGet]
     public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactions([FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false,
@@ -46,12 +47,14 @@ public class TransactionsController(TransactionService transactionService) : Con
         return await transactionService.GetExpensesByUserId(GetUserId());
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpGet("{id}")]
     public async Task<ActionResult<TransactionResponseDto>> GetTransaction(int id)
     {
         return await transactionService.GetTransaction(id);
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpGet("{bankAccountIban}/transactions")]
     public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
     {
@@ -59,12 +62,14 @@ public class TransactionsController(TransactionService transactionService) : Con
     }
 
     //CREATE
+    [Authorize(Policy = "Admin")]
     [HttpPost]
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
         return await transactionService.CreateTransaction(transaction);
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPost("bizum/{userId}")]
     public async Task<ActionResult<BizumResponseDto>> CreateBizum(BizumCreateDto transaction, Guid userId)
     {
@@ -72,6 +77,7 @@ public class TransactionsController(TransactionService transactionService) : Con
     }
 
     //DELETE
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
     public async Task DeleteTransaction(int id)
     {

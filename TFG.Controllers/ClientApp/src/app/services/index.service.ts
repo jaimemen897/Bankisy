@@ -29,12 +29,6 @@ export class IndexService {
     return this.http.get<User>(`${environment.apiUrl}/session/me`, {headers});
   }
 
-  addBankAccount(BankAccount: BankAccountCreate): Observable<BankAccount> {
-    return this.http.post<BankAccount>(this.apiUrl + '/bankaccount', BankAccount).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
   addTransaction(Transaction: TransactionCreate): Observable<Transaction> {
     return this.http.post<Transaction>(this.apiUrl + '/transaction', Transaction).pipe(
       catchError(error => this.handleError(error))
@@ -43,48 +37,6 @@ export class IndexService {
 
   getTransactionsByIban(iban: string): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
-  }
-
-  createCard(CardCreate: CardCreate): Observable<Card> {
-    return this.http.post<Card>(`${this.apiUrl}/card`, CardCreate).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  updateCard(cardNumber: string, cardUpdateDto: CardCreate): Observable<Card> {
-    return this.http.put<Card>(`${this.apiUrl}/card/${cardNumber}`, cardUpdateDto).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  deleteCard(cardNumber: string): Observable<{}> {
-    return this.http.delete(`${this.apiUrl}/card/${cardNumber}`).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  renovateCard(cardNumber: string): Observable<Card> {
-    return this.http.post<Card>(`${this.apiUrl}/card/${cardNumber}/renovate`, {}).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  blockCard(cardNumber: string): Observable<{}> {
-    return this.http.post(`${this.apiUrl}/card/${cardNumber}/block`, {}).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  unblockCard(cardNumber: string): Observable<{}> {
-    return this.http.post(`${this.apiUrl}/card/${cardNumber}/unblock`, {}).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  activateCard(cardNumber: string): Observable<{}> {
-    return this.http.post(`${this.apiUrl}/card/${cardNumber}/activate`, {}).pipe(
-      catchError(error => this.handleError(error))
-    );
   }
 
   //PROFILE
@@ -96,12 +48,6 @@ export class IndexService {
 
   deleteAvatar(): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/avatar`).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  activeBizum(iban: string): Observable<{}> {
-    return this.http.post(`${this.apiUrl}/bankaccount/${iban}/active-bizum`, {}).pipe(
       catchError(error => this.handleError(error))
     );
   }

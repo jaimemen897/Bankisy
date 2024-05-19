@@ -364,7 +364,7 @@ export class IndexComponent implements OnInit {
   }
 
   activeBizum(iban: string) {
-    this.indexService.activeBizum(iban).subscribe();
+    this.bankAccountService.activeBizumMySelf(iban).subscribe();
   }
 
   closeDialog() {

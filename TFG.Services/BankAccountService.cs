@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.transactions;
+using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
@@ -87,9 +88,11 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
     }
 
     //CREATE
-    public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto)
+    public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto, Guid? userId = null)
     {
-        IsValid(bankAccountCreateDto);
+        var userEntity = await bankContext.Users.FindAsync(userId);
+        IsValid(bankAccountCreateDto, userEntity);
+        
         var users = await bankContext.Users.Where(u => bankAccountCreateDto.UsersId.Contains(u.Id)).ToListAsync();
         bankAccountCreateDto.UsersId = bankAccountCreateDto.UsersId.Distinct().ToList();
         if (users.Count != bankAccountCreateDto.UsersId.Count) throw new HttpException(404, "Users not found");
@@ -209,11 +212,16 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
     }
 
     //VALIDATE
-    private static void IsValid(BankAccountCreateDto bankAccountCreateDto)
+    private static void IsValid(BankAccountCreateDto bankAccountCreateDto, User? user = null)
     {
         if (!Enum.TryParse(typeof(AccountType), bankAccountCreateDto.AccountType, out _))
             throw new HttpException(400,
                 "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
+
+        if (user == null) return;
+        if (bankAccountCreateDto.UsersId.All(id => id != user.Id))
+            throw new HttpException(403, "You can't create a bank account for another user");
+
     }
 
     private static void IsValid(BankAccountUpdateDto bankAccountUpdateDto)

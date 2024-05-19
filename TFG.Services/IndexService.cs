@@ -27,17 +27,6 @@ public class IndexService(
         return sessionService.GetMyself().Result;
     }
 
-    //BANK ACCOUNTS
-    public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
-    {
-        return await bankAccountService.CreateBankAccount(bankAccount);
-    }
-
-    public async Task ActiveBizum(string iban)
-    {
-        await bankAccountService.ActiveBizum(iban, user.Id);
-    }
-
     //TRANSACTIONS
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
@@ -63,59 +52,6 @@ public class IndexService(
     }
 
     //CARDS
-    public async Task<ActionResult<CardResponseDto>> GetCardByCardNumber(string cardNumber)
-    {
-        var card = await cardService.GetCardByCardNumber(cardNumber);
-        if (card.User.Id != user.Id) throw new HttpException(403, "You are not the owner of the card");
-
-        return await cardService.GetCardByCardNumber(cardNumber);
-    }
-
-    public async Task<ActionResult<CardResponseDto>> CreateCard(CardCreateDto cardCreateDto)
-    {
-        if (cardCreateDto.UserId != user.Id) throw new HttpException(403, "You are not the owner of the card");
-
-        return await cardService.CreateCard(cardCreateDto);
-    }
-
-    public async Task<ActionResult<CardResponseDto>> UpdateCard(string cardNumber, CardUpdateDto cardUpdateDto)
-    {
-        await ValidateCardWithUser(cardNumber);
-
-        return await cardService.UpdateCard(cardNumber, cardUpdateDto);
-    }
-
-    public async Task DeleteCard(string cardNumber)
-    {
-        await ValidateCardWithUser(cardNumber);
-
-        await cardService.DeleteCard(cardNumber);
-    }
-
-    public async Task<ActionResult<CardResponseDto>> RenovateCard(string cardNumber)
-    {
-        await ValidateCardWithUser(cardNumber);
-        return await cardService.RenovateCard(cardNumber);
-    }
-
-    public async Task BlockCard(string cardNumber)
-    {
-        await ValidateCardWithUser(cardNumber);
-        await cardService.BlockCard(cardNumber);
-    }
-
-    public async Task UnblockCard(string cardNumber)
-    {
-        await ValidateCardWithUser(cardNumber);
-        await cardService.UnblockCard(cardNumber);
-    }
-
-    public async Task ActivateCard(string cardNumber)
-    {
-        await ValidateCardWithUser(cardNumber);
-        await cardService.ActivateCard(cardNumber);
-    }
-
     public async Task<List<CardResponseDto>> GetCardsByIban(string iban)
     {
         var bankAccount = await bankAccountService.GetBankAccount(iban);

@@ -161,7 +161,7 @@ export class CreateCardComponent {
       card.bankAccountIban = this.formGroup.controls.selectedBankAccount.value.iban;
       card.pin = this.formGroup.controls.pin.value;
 
-      this.indexService.createCard(card).subscribe(() => {
+      this.cardService.createCardForMySelf(card).subscribe(() => {
         this.resetForm();
         this.onSave.emit();
       });
@@ -174,7 +174,7 @@ export class CreateCardComponent {
       card.bankAccountIban = this.formGroup.value.selectedBankAccount.iban;
       card.pin = this.formGroup.value.pin;
 
-      this.cardService.addCard(card).subscribe(() => {
+      this.cardService.createCard(card).subscribe(() => {
         this.messageService.add({severity: 'success', summary: 'Tarjeta creada', detail: 'Tarjeta creada'});
         this.resetForm();
         this.router.navigate(['/cards']);

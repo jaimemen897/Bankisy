@@ -137,7 +137,7 @@ export class BankaccountCreateComponent implements OnInit {
       bankAccount.accountType = accountTypeTranslated;
       bankAccount.usersId = this.formGroup.controls.selectedUsers.value.map((user: { id: any; }) => user.id);
 
-      this.indexService.addBankAccount(bankAccount).subscribe(() => {
+      this.bankAccountService.addBankAccountMySelf(bankAccount).subscribe(() => {
         this.formGroup.reset();
         this.onSave.emit();
       });

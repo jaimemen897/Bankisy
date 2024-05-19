@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.bankAccount;
-using TFG.Context.DTOs.transactions;
 using TFG.Services;
 using TFG.Services.Exceptions;
 using TFG.Services.Pagination;
@@ -10,11 +9,12 @@ using TFG.Services.Pagination;
 namespace TFG.Controllers.Controllers;
 
 [ApiController]
-[Authorize(Policy = "Admin")]
+[Authorize]
 [Route("[controller]")]
 public class BankAccountsController(BankAccountService bankAccountService) : ControllerBase
 {
     //GET
+    [Authorize(Policy = "Admin")]
     [HttpGet]
     public async Task<ActionResult<Pagination<BankAccountResponseDto>>> GetBankAccounts([FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Iban", [FromQuery] bool descending = false,
@@ -24,12 +24,14 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
             isDeleted);
     }
     
+    [Authorize(Policy = "Admin")]
     [HttpGet("{iban}")]
     public async Task<ActionResult<BankAccountResponseDto>> GetBankAccount(string iban)
     {
         return await bankAccountService.GetBankAccount(iban);
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<List<BankAccountResponseDto>>> GetBankAccountsByUserId(Guid userId)
     {
@@ -50,14 +52,25 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetTotalBalanceByUserId(GetUserId());
     }
 
+    
     //CREATE
+    [Authorize(Policy = "Admin")]
     [HttpPost]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {
         return await bankAccountService.CreateBankAccount(bankAccount);
     }
-
+    
+    [Authorize(Policy = "User")]
+    [HttpPost("my-self")]
+    public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccountForMySelf(BankAccountCreateDto bankAccount)
+    {
+        return await bankAccountService.CreateBankAccount(bankAccount, GetUserId());
+    }
+    
+    
     //UPDATE
+    [Authorize(Policy = "Admin")]
     [HttpPut("{iban}")]
     public async Task<ActionResult<BankAccountResponseDto>> UpdateBankAccount(string iban,
         [FromBody] BankAccountUpdateDto bankAccount)
@@ -65,7 +78,9 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.UpdateBankAccount(iban, bankAccount);
     }
 
+    
     //DELETE
+    [Authorize(Policy = "Admin")]
     [HttpDelete("{iban}")]
     public async Task<ActionResult> DeleteBankAccount(string iban)
     {
@@ -73,7 +88,9 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return NoContent();
     }
 
+    
     //ACTIVE
+    [Authorize(Policy = "Admin")]
     [HttpPut("{iban}/active")]
     public async Task<ActionResult> ActiveBankAccount(string iban)
     {
@@ -81,10 +98,19 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return Ok();
     }
 
+    [Authorize(Policy = "Admin")]
     [HttpPost("{iban}/active-bizum/{userId}")]
     public async Task<ActionResult> ActiveBizum(string iban, Guid userId)
     {
         await bankAccountService.ActiveBizum(iban, userId);
+        return Ok();
+    }
+    
+    [Authorize(Policy = "User")]
+    [HttpPut("my-self/{iban}/active-bizum")]
+    public async Task<ActionResult> ActiveBizumForMySelf(string iban)
+    {
+        await bankAccountService.ActiveBizum(iban, GetUserId());
         return Ok();
     }
     

@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -54,7 +53,7 @@ public class TransactionServiceTest
         _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
 
         // Act
-        var result = await _transactionService.GetTransactions(1, 2, "Id", false, "Test");
+        var result = await _transactionService.GetTransactions(1, 2, "Id", false, null, null, null);
 
         // Assert
         Assert.Multiple(() =>
