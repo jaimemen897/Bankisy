@@ -10,7 +10,7 @@ using TFG.Services.Exceptions;
 namespace TFG.ServicesTests.BankAccounts;
 
 [TestFixture]
-public class UserServiceTest
+public class BankAccountServiceTest
 {
     private BankAccountService _bankAccountService;
     private Mock<BankContext> _mockContext;

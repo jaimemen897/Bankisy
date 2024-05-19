@@ -15,17 +15,19 @@ export class TransactionsService {
   constructor(private http: HttpClient) {
   }
 
-  getTransactions(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string): Observable<Pagination<Transaction>> {
-    let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-    if (orderBy) {
-      url += `&orderBy=${orderBy}`;
-    }
+  getTransactions(pageNumber: number, pageSize: number, orderBy: string = 'Id', descending?: boolean, user?: any, search?: string): Observable<Pagination<Transaction>> {
+    let url = `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}&orderBy=${orderBy}`;
     if (descending) {
       url += `&descending=${descending}`;
+    }
+    if (user) {
+      url += `&user=${JSON.stringify(user)}`;
     }
     if (search) {
       url += `&search=${search}`;
     }
+
+    console.log()
     return this.http.get<Pagination<Transaction>>(url).pipe(
       map(response => ({
         currentPage: response.currentPage,
@@ -36,11 +38,6 @@ export class TransactionsService {
         items: response.items
       }))
     );
-  }
-
-  getTransaction(id: string): Observable<Transaction> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Transaction>(url);
   }
 
   addTransaction(Transaction: TransactionCreate): Observable<Transaction> {

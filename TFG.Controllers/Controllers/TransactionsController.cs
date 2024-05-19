@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.transactions;
+using TFG.Context.DTOs.users;
 using TFG.Services;
 using TFG.Services.Pagination;
 
@@ -14,15 +15,21 @@ public class TransactionsController(TransactionService transactionService) : Con
     [HttpGet]
     public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetTransactions([FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false,
-        [FromQuery] string? search = null)
+        [FromQuery] string? search = null, [FromQuery] string? filter = null)
     {
-        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, search);
+        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, null, search, filter);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<TransactionResponseDto>> GetTransaction(int id)
     {
         return await transactionService.GetTransaction(id);
+    }
+
+    [HttpGet("{bankAccountIban}/transactions")]
+    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
+    {
+        return await transactionService.GetTransactionsForAccount(bankAccountIban);
     }
 
     [HttpPost]

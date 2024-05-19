@@ -1,22 +1,18 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TFG.Context.Context;
 using TFG.Context.DTOs.bankAccount;
 using TFG.Context.DTOs.cards;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
-using TFG.Services.Extensions;
 using TFG.Services.Mappers;
 using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
 public class IndexService(
-    BankContext bankContext,
     BankAccountService bankAccountService,
     TransactionService transactionService,
     CardService cardService,
@@ -35,12 +31,7 @@ public class IndexService(
     {
         var user = await sessionService.GetMyself();
 
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.Users).ToListAsync();
-        var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
-            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
-
-        return bankAccounts ?? throw new HttpException(404, "BankAccounts not found");
+        return await bankAccountService.GetBankAccountsByUserId(user.Id);
     }
 
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
@@ -54,92 +45,31 @@ public class IndexService(
         await bankAccountService.ActiveBizum(iban, user.Id);
     }
 
-    //BALANCE
     public async Task<decimal> GetTotalBalanceByUserId()
     {
         var user = await sessionService.GetMyself();
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.Users).ToListAsync();
-        var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
-            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
-        return bankAccounts.Sum(ba => ba.Balance);
+        return await bankAccountService.GetTotalBalanceByUserId(user.Id);
     }
 
     //TRANSACTIONS
-    public async Task<Pagination<TransactionResponseDto>> GetTransactionsByUserId(int pageNumber,
-        int pageSize, string orderBy, bool descending, string? search = null, string? filter = null)
+    public async Task<Pagination<TransactionResponseDto>> GetTransactionsByUserId(int pageNumber, int pageSize,
+        string orderBy, bool descending, string? search = null, string? filter = null)
     {
         var user = await sessionService.GetMyself();
-
-        pageNumber = pageNumber > 0 ? pageNumber : 1;
-        pageSize = pageSize > 0 ? pageSize : 10;
-
-        if (!typeof(TransactionResponseDto).GetProperties()
-                .Any(p => string.Equals(p.Name, orderBy, StringComparison.CurrentCultureIgnoreCase)))
-            throw new HttpException(400, "Invalid orderBy parameter");
-
-        var bankAccountIbans = await bankContext.BankAccounts
-            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
-            .Select(account => account.Iban)
-            .ToListAsync();
-
-        var transactionQuery = bankContext.Transactions
-            .Where(t => bankAccountIbans.Contains(t.IbanAccountOrigin) ||
-                        bankAccountIbans.Contains(t.IbanAccountDestination));
-
-        if (!string.IsNullOrEmpty(search))
-            transactionQuery = transactionQuery.Where(t => t.IbanAccountOrigin.ToLower().Contains(search.ToLower()) ||
-                                                           t.IbanAccountDestination.ToLower()
-                                                               .Contains(search.ToLower()));
-
-        if (!string.IsNullOrEmpty(filter))
-        {
-            var date = DateTime.Parse(filter);
-            date = date.ToUniversalTime();
-            transactionQuery = transactionQuery.Where(t => t.Date.Date >= date.Date);
-        }
-
-        var paginatedTransactions = await transactionQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
-            transaction => _mapper.Map<TransactionResponseDto>(transaction));
-
-        return paginatedTransactions;
+        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, user, search,
+            filter);
     }
 
     public async Task<List<TransactionResponseDto>> GetExpensesByUserId()
     {
         var user = await sessionService.GetMyself();
-
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.Users).ToListAsync();
-        var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
-            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
-
-        var transactions = new List<Transaction>();
-
-        foreach (var bankAccount in bankAccounts)
-            transactions.AddRange(await bankContext.Transactions
-                .Where(t => bankAccount.Iban == t.IbanAccountOrigin && t.Date.Date.Month == DateTime.UtcNow.Month)
-                .ToListAsync());
-
-        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+        return await transactionService.GetExpensesByUserId(user.Id);
     }
 
     public async Task<List<TransactionResponseDto>> GetIncomesByUserId()
     {
         var user = await sessionService.GetMyself();
-        var bankAccountList = await bankContext.BankAccounts.Include(ba => ba.Users).ToListAsync();
-        var bankAccounts = bankAccountList
-            .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
-            .Select(account => _mapper.Map<BankAccountResponseDto>(account)).ToList();
-
-        var transactions = new List<Transaction>();
-
-        foreach (var bankAccount in bankAccounts)
-            transactions.AddRange(await bankContext.Transactions
-                .Where(t => bankAccount.Iban == t.IbanAccountDestination && t.Date.Date.Month == DateTime.UtcNow.Month)
-                .ToListAsync());
-
-        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+        return await transactionService.GetIncomesByUserId(user.Id);
     }
 
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
@@ -160,7 +90,7 @@ public class IndexService(
         if (bankAccount.UsersId.All(id => id != user.Id))
             throw new HttpException(403, "You are not the owner of the account");
 
-        return await bankAccountService.GetTransactionsForAccount(iban);
+        return await transactionService.GetTransactionsForAccount(iban);
     }
 
     public async Task<BizumResponseDto> CreateBizum(BizumCreateDto bizumCreateDto)
@@ -256,10 +186,10 @@ public class IndexService(
         return await usersService.UploadAvatar(user.Id, file, host);
     }
 
-    public async Task<UserResponseDto> DeleteAvatar()
+    public async Task DeleteAvatar()
     {
         var user = await sessionService.GetMyself();
-        return await usersService.DeleteAvatar(user.Id);
+        await usersService.DeleteAvatar(user.Id);
     }
 
     //PAYMENT INTENT

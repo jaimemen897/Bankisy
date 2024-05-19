@@ -92,6 +92,7 @@ public class CardServiceTest
         // Assert
         Assert.That(result.Result.Items, Has.Count.EqualTo(0));
     }
+    
 
     //GET BY CARD NUMBER
     [Test]

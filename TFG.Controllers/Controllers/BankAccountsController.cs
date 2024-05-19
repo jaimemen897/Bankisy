@@ -27,23 +27,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetBankAccount(iban);
     }
 
-    [HttpGet("{bankAccountIban}/transactions")]
-    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
-    {
-        return await bankAccountService.GetTransactionsForAccount(bankAccountIban);
-    }
-
-    [HttpGet("{bankAccountIban}/expenses")]
-    public async Task<List<TransactionResponseDto>> GetExpensesForAccount(string bankAccountIban)
-    {
-        return await bankAccountService.GetExpensesForAccount(bankAccountIban);
-    }
-
-    [HttpGet("{bankAccountIban}/incomes")]
-    public async Task<List<TransactionResponseDto>> GetIncomesForAccount(string bankAccountIban)
-    {
-        return await bankAccountService.GetIncomesForAccount(bankAccountIban);
-    }
+    
 
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<List<BankAccountResponseDto>>> GetBankAccountsByUserId(Guid userId)

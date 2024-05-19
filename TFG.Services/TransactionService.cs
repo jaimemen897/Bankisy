@@ -1,9 +1,11 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using TFG.Context.Context;
 using TFG.Context.DTOs.transactions;
+using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
@@ -18,8 +20,9 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
     private readonly List<int> _transactionIds = [];
 
+    //GET
     public async Task<Pagination<TransactionResponseDto>> GetTransactions(int pageNumber, int pageSize, string orderBy,
-        bool descending, string? search = null)
+        bool descending, UserResponseDto? user = null, string? search = null, string? filter = null)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -31,11 +34,31 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         var transactionsQuery = bankContext.Transactions.Where(t => t.Id != 0);
 
         if (!string.IsNullOrWhiteSpace(search))
-            transactionsQuery = transactionsQuery.Where(t => (t.IbanAccountOrigin != null && t.IbanAccountOrigin.Contains(search)) ||
-                                                             t.IbanAccountDestination.Contains(search) ||
-                                                             t.Concept.Contains(search) ||
-                                                             t.Date.ToString().Contains(search) ||
-                                                             t.Amount.ToString().Contains(search));
+            transactionsQuery = transactionsQuery.Where(t =>
+                (t.IbanAccountOrigin != null && t.IbanAccountOrigin.Contains(search)) ||
+                t.IbanAccountDestination.Contains(search) ||
+                t.Concept.Contains(search) ||
+                t.Date.ToString().Contains(search) ||
+                t.Amount.ToString().Contains(search));
+
+        if (user != null)
+        {
+            var bankAccountIbans = await bankContext.BankAccounts
+                .Where(account => !account.IsDeleted && account.Users.Any(u => u.Id == user.Id))
+                .Select(account => account.Iban)
+                .ToListAsync();
+
+            transactionsQuery = transactionsQuery
+                .Where(t => bankAccountIbans.Contains(t.IbanAccountOrigin) ||
+                            bankAccountIbans.Contains(t.IbanAccountDestination));
+        }
+
+        if (!string.IsNullOrEmpty(filter))
+        {
+            var date = DateTime.Parse(filter);
+            date = date.ToUniversalTime();
+            transactionsQuery = transactionsQuery.Where(t => t.Date.Date >= date.Date);
+        }
 
         var paginatedTransactions = await transactionsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
             transaction => _mapper.Map<TransactionResponseDto>(transaction));
@@ -58,6 +81,50 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         return transaction ?? throw new HttpException(404, "Transaction not found");
     }
 
+    private async Task<List<TransactionResponseDto>> GetTransactions(Expression<Func<Transaction, bool>> filter)
+    {
+        var transactions = await bankContext.Transactions
+            .Where(filter)
+            .ToListAsync();
+
+        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
+    }
+
+    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
+    {
+        var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountIban) ??
+                          throw new HttpException(404, "Bank account not found");
+
+        return await GetTransactions(t =>
+            t.IbanAccountOrigin == bankAccount.Iban || t.IbanAccountDestination == bankAccount.Iban);
+    }
+
+    public async Task<List<TransactionResponseDto>> GetExpensesByUserId(Guid userId)
+    {
+        var bankAccounts = await bankContext.BankAccounts
+            .Where(b => b.Users.Any(u => u.Id == userId))
+            .Select(b => b.Iban)
+            .ToListAsync();
+
+        var firstDayOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1).ToUniversalTime();
+
+        return await GetTransactions(t =>
+            bankAccounts.Contains(t.IbanAccountOrigin ?? "") && t.Date >= firstDayOfMonth);
+    }
+
+    public async Task<List<TransactionResponseDto>> GetIncomesByUserId(Guid userId)
+    {
+        var bankAccounts = await bankContext.BankAccounts
+            .Where(b => b.Users.Any(u => u.Id == userId))
+            .Select(b => b.Iban)
+            .ToListAsync();
+
+        var firstDayOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1).ToUniversalTime();
+
+        return await GetTransactions(t => bankAccounts.Contains(t.IbanAccountDestination) && t.Date >= firstDayOfMonth);
+    }
+
+    //CREATE
     public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto)
     {
         var account = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IbanAccountOrigin) ??
@@ -133,6 +200,28 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
 
+    public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto)
+    {
+        var account = await bankContext.BankAccounts.FindAsync(incomeCreateDto.IbanAccountDestination) ??
+                      throw new HttpException(404, "Account origin not found");
+
+        var transaction = new Transaction
+        {
+            Amount = incomeCreateDto.Amount,
+            Concept = "Ingreso por Stripe",
+            Date = DateTime.UtcNow,
+            IbanAccountOrigin = null,
+            IbanAccountDestination = account.Iban
+        };
+
+        account.TransactionsDestination.Add(transaction);
+        account.Balance += transaction.Amount;
+
+        bankContext.Transactions.Add(transaction);
+        await bankContext.SaveChangesAsync();
+    }
+
+    //VALIDATE
     private static void ValidateBizum(User user, User userDestination, BankAccount accountOrigin,
         BizumCreateDto bizumCreateDto)
     {
@@ -158,6 +247,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
             throw new HttpException(400, "Transaction amount must be greater than zero");
     }
 
+    //DELETE
     public async Task DeleteTransaction(int id)
     {
         var transaction = await bankContext.Transactions.FindAsync(id);
@@ -169,27 +259,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         ClearCache();
     }
 
-    public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto)
-    {
-        var account = await bankContext.BankAccounts.FindAsync(incomeCreateDto.IbanAccountDestination) ??
-                      throw new HttpException(404, "Account origin not found");
-
-        var transaction = new Transaction
-        {
-            Amount = incomeCreateDto.Amount,
-            Concept = "Ingreso por Stripe",
-            Date = DateTime.UtcNow,
-            IbanAccountOrigin = null,
-            IbanAccountDestination = account.Iban
-        };
-
-        account.TransactionsDestination.Add(transaction);
-        account.Balance += transaction.Amount;
-
-        bankContext.Transactions.Add(transaction);
-        await bankContext.SaveChangesAsync();
-    }
-
+    //CACHE
     private void AddTransactionToCache(Transaction transaction)
     {
         var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5));

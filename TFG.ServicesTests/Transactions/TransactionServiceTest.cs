@@ -1,9 +1,11 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using Moq.EntityFrameworkCore;
 using TFG.Context.Context;
+using TFG.Context.DTOs.transactions;
 using TFG.Context.Models;
 using TFG.Services;
 using TFG.Services.Exceptions;
@@ -62,6 +64,7 @@ public class TransactionServiceTest
             Assert.That(result.Items[1].Id, Is.EqualTo(2));
         });
     }
+    
 
     //GET TRANSACTION BY ID
     [Test]
@@ -84,8 +87,7 @@ public class TransactionServiceTest
             Assert.That(result.Concept, Is.EqualTo("Test Transaction 1"));
         });
     }
-
-    //get transaction by id not found
+    
     [Test]
     public void GetTransaction_ThrowsHttpExceptionWhenTransactionNotFound()
     {
@@ -104,4 +106,111 @@ public class TransactionServiceTest
             Assert.That(ex.Code, Is.EqualTo(404));
         });
     }
+    
+    
+    //CREATE TRANSACTION
+    [Test]
+    public async Task CreateTransaction_ReturnsExpectedTransaction()
+    {
+        // Arrange
+        var transactionCreateDto = new TransactionCreateDto 
+        { 
+            IbanAccountOrigin = "ES1234567891234567891234", 
+            IbanAccountDestination = "ES9876543219876543219876", 
+            Amount = 100 
+        };
+        
+        var accountOrigin = new BankAccount { Iban = "ES1234567891234567891234" };
+        var accountDestination = new BankAccount { Iban = "ES9876543219876543219876" };
+        
+        var userId = Guid.NewGuid();
+        var user = new User { Id = userId };
+    
+        var mockSetUsers = new Mock<DbSet<User>>();
+        mockSetUsers.Setup(x => x.FindAsync(userId)).ReturnsAsync(user);
+        
+        var mockSetAccounts = new Mock<DbSet<BankAccount>>();
+        mockSetAccounts.Setup(x => x.FindAsync("ES1234567891234567891234")).ReturnsAsync(accountOrigin);
+        mockSetAccounts.Setup(x => x.FindAsync("ES9876543219876543219876")).ReturnsAsync(accountDestination);
+        
+        _mockContext.Setup(x => x.Users).Returns(mockSetUsers.Object);
+        _mockContext.Setup(x => x.BankAccounts).Returns(mockSetAccounts.Object);
+        
+        // Act
+        var result = await _transactionService.CreateTransaction(transactionCreateDto);
+    
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Amount, Is.EqualTo(100));
+            Assert.That(result.IbanAccountOrigin, Is.EqualTo("ES1234567891234567891234"));
+            Assert.That(result.IbanAccountDestination, Is.EqualTo("ES9876543219876543219876"));
+        });
+    }
+    
+    [Test]
+    public void CreateTransaction_ThrowsHttpExceptionWhenAccountOriginNotFound()
+    {
+        // Arrange
+        var transactionCreateDto = new TransactionCreateDto 
+        { 
+            IbanAccountOrigin = "ES1234567891234567891234", 
+            IbanAccountDestination = "ES9876543219876543219876", 
+            Amount = 100 
+        };
+
+        var accountDestination = new BankAccount { Iban = "ES9876543219876543219876" };
+        
+        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(new List<BankAccount> { accountDestination });
+        
+        // Act
+        var ex = Assert.ThrowsAsync<HttpException>(() => _transactionService.CreateTransaction(transactionCreateDto));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("Account origin not found"));
+            Assert.That(ex.Code, Is.EqualTo(404));
+        });
+    }
+    
+    
+    //DELETE TRANSACTION
+    [Test]
+    public async Task DeleteTransaction_ReturnsExpectedTransaction()
+    {
+        // Arrange
+        var transaction = new Transaction { Id = 1, Amount = 100, Concept = "Test Transaction 1" };
+        var mockSet = new Mock<DbSet<Transaction>>();
+        mockSet.Setup(x => x.FindAsync(1)).ReturnsAsync(transaction);
+        _mockContext.Setup(x => x.Transactions).Returns(mockSet.Object);
+
+        // Act
+        await _transactionService.DeleteTransaction(1);
+
+        // Assert
+        mockSet.Verify(x => x.Remove(transaction), Times.Once);
+        _mockContext.Verify(x => x.SaveChangesAsync(default), Times.Once);
+        
+    }
+    
+    [Test]
+    public void DeleteTransaction_ThrowsHttpExceptionWhenTransactionNotFound()
+    {
+        // Arrange
+        var mockSet = new Mock<DbSet<Transaction>>();
+        mockSet.Setup(x => x.FindAsync(1)).ReturnsAsync((Transaction)null);
+        _mockContext.Setup(x => x.Transactions).Returns(mockSet.Object);
+
+        // Act
+        var ex = Assert.ThrowsAsync<HttpException>(() => _transactionService.DeleteTransaction(1));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("Transaction not found"));
+            Assert.That(ex.Code, Is.EqualTo(404));
+        });
+    }
+
 }

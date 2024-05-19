@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
@@ -180,6 +181,7 @@ public class UserServiceTest
             Assert.That(result[1].Name, Is.EqualTo("Test User 2"));
         });
     }
+    
 
     //GET USER BY ID
     [Test]
@@ -223,6 +225,7 @@ public class UserServiceTest
             Assert.That(exception.Message, Is.EqualTo("User not found"));
         });
     }
+    
 
     //CREATE USER
     [Test]
@@ -299,93 +302,112 @@ public class UserServiceTest
             Assert.That(exception.Message, Is.EqualTo("Username, Email or DNI already exists"));
         });
     }
+    
 
     //UPDATE USER
     /*[Test]
-    public async Task UpdateUser_ReturnsExpectedUser()
+    public async Task UpdateUser_ReturnsUpdatedUser()
     {
         // Arrange
-        var oldUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Name = "Test User",
-            Email = "test@test.com",
-            Username = "test",
-            Dni = "54522318J",
-            Gender = Gender.Male,
-            Password = "password",
-            Avatar = "avatar.png",
-            Phone = "123456789",
-        };
-
-        var user = new UserUpdateDto()
-        {
-            Name = "Name updated",
-            Email = "test@test.com2",
-            Username = "username updated",
-            Dni = "54522317J",
-            Gender = "Male",
-            Password = "password",
-            Avatar = "avatar.png",
-            Phone = "123456789",
-        };
-
-        var expectedUser = new UserResponseDto()
-        {
-            Name = "Name updated",
-            Email = "test@test.com2",
-            Username = "username updated",
-            Dni = "54522317J",
-            Gender = "Male",
-            Avatar = "avatar.png",
-            Phone = "123456789",
-        };
-
-        var users = new List<User>
-        {
-            new User { Id = Guid.NewGuid(), Name = "Test User", Email = "test@test.com", Username = "test", Dni = "54522318J", Gender = Gender.Male, Password = "password", Avatar = "avatar.png", Phone = "123456789" }
-        }.AsQueryable();
+        var userId = Guid.NewGuid();
+        var user = new User { Id = userId, Username = "oldUsername", Email = "oldEmail@test.com", Dni = "oldDni" };
+        var userUpdateDto = new UserUpdateDto { Username = "newUsername", Email = "newEmail@test.com", Dni = "newDni" };
 
         var mockSet = new Mock<DbSet<User>>();
-        mockSet.Setup(x => x.FindAsync(oldUser.Id)).ReturnsAsync(users.First());
-        mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(users.Provider);
-        mockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(users.Expression);
-        mockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(users.ElementType);
-        mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(users.GetEnumerator());
-
+        mockSet.Setup(x => x.FindAsync(userId)).ReturnsAsync(user);
+        
+        
         _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
+        _mockContext.Setup(x => x.Users.AnyAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
         // Act
-        var result = await _usersService.UpdateUser(oldUser.Id, user);
+        var result = await _usersService.UpdateUser(userId, userUpdateDto);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result.Name, Is.EqualTo(expectedUser.Name));
-            Assert.That(result.Email, Is.EqualTo(expectedUser.Email));
-            Assert.That(result.Username, Is.EqualTo(expectedUser.Username));
-            Assert.That(result.Dni, Is.EqualTo(expectedUser.Dni));
-            Assert.That(result.Gender, Is.EqualTo(expectedUser.Gender));
-            Assert.That(result.Avatar, Is.EqualTo(expectedUser.Avatar));
-            Assert.That(result.Phone, Is.EqualTo(expectedUser.Phone));
+            Assert.That(result.Username, Is.EqualTo(userUpdateDto.Username));
+            Assert.That(result.Email, Is.EqualTo(userUpdateDto.Email));
+            Assert.That(result.Dni, Is.EqualTo(userUpdateDto.Dni));
         });
     }*/
+    
+    
+    //DELETE USER
+    [Test]
+    public async Task DeleteUser_ReturnsDeletedUser()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var user = new User { Id = userId, Name = "Test User" };
 
+        var mockSet = new Mock<DbSet<User>>();
+        mockSet.Setup(x => x.FindAsync(userId)).ReturnsAsync(user);
 
-    /*var expectedUser = new User
+        _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
+        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(new List<BankAccount>());
+        _mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+
+        // Act
+        await _usersService.DeleteUser(userId);
+
+        // Assert
+        _mockContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Test]
+    public void DeleteUser_UserNotFound()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var mockSet = new Mock<DbSet<User>>();
+        mockSet.Setup(x => x.FindAsync(userId)).ReturnsAsync((User)null);
+
+        _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
+
+        // Act
+        var exception = Assert.ThrowsAsync<HttpException>(() => _usersService.DeleteUser(userId));
+
+        // Assert
+        Assert.Multiple(() =>
         {
-            Id = Guid.NewGuid(),
-            Name = "Test User",
-            Email = "test@test.com",
-            Username = "test",
-            Dni = "54522318J",
-            Gender = Gender.Male,
-            Password = "password",
-            Avatar = "avatar.png",
-            Phone = "123456789",
-            Role = Roles.User,
-            IsDeleted = false,
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
-        };*/
+            Assert.That(exception.Code, Is.EqualTo(404));
+            Assert.That(exception.Message, Is.EqualTo("User not found"));
+        });
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

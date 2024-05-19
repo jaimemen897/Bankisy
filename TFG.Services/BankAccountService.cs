@@ -18,8 +18,8 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
     private readonly List<string> _bankAccountIban = [];
 
-    public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy,
-        bool descending, string? search = null, string? filter = null, bool? isDeleted = false)
+    //GET
+    public async Task<Pagination<BankAccountResponseDto>> GetBankAccounts(int pageNumber, int pageSize, string orderBy, bool descending, string? search = null, string? filter = null, bool? isDeleted = false)
     {
         pageNumber = pageNumber > 0 ? pageNumber : 1;
         pageSize = pageSize > 0 ? pageSize : 10;
@@ -67,42 +67,6 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         return bankAccount ?? throw new HttpException(404, "BankAccount not found");
     }
 
-    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
-    {
-        var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountIban) ??
-                          throw new HttpException(404, "Bank account not found");
-
-        var transactions = await bankContext.Transactions
-            .Where(t => t.IbanAccountOrigin == bankAccount.Iban || t.IbanAccountDestination == bankAccount.Iban)
-            .ToListAsync();
-
-        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
-    }
-
-    public async Task<List<TransactionResponseDto>> GetExpensesForAccount(string bankAccountIban)
-    {
-        var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountIban) ??
-                          throw new HttpException(404, "Bank account not found");
-
-        var transactions = await bankContext.Transactions
-            .Where(t => t.IbanAccountOrigin == bankAccount.Iban)
-            .ToListAsync();
-
-        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
-    }
-
-    public async Task<List<TransactionResponseDto>> GetIncomesForAccount(string bankAccountIban)
-    {
-        var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountIban) ??
-                          throw new HttpException(404, "Bank account not found");
-
-        var transactions = await bankContext.Transactions
-            .Where(t => t.IbanAccountDestination == bankAccount.Iban)
-            .ToListAsync();
-
-        return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
-    }
-
     public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId(Guid userId)
     {
         var bankAccounts = await bankContext.BankAccounts
@@ -112,7 +76,18 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
 
         return bankAccounts.Select(bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount)).ToList();
     }
+    
+    public async Task<decimal> GetTotalBalanceByUserId(Guid userId)
+    {
+        var bankAccounts = await bankContext.BankAccounts
+            .Include(ba => ba.Users)
+            .Where(ba => ba.Users.Any(u => u.Id == userId) && !ba.IsDeleted)
+            .ToListAsync();
 
+        return bankAccounts.Sum(ba => ba.Balance);
+    }
+
+    //CREATE
     public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto)
     {
         IsValid(bankAccountCreateDto);
@@ -137,6 +112,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         return bankAccountResponseDto;
     }
 
+    //UPDATE
     public async Task<BankAccountResponseDto> UpdateBankAccount(string iban, BankAccountUpdateDto bankAccount)
     {
         var bankAccountToUpdate =
@@ -178,6 +154,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         return _mapper.Map<BankAccountResponseDto>(bankAccountToUpdate);
     }
 
+    //DELETE
     public async Task DeleteBankAccount(string iban)
     {
         var bankAccount = await bankContext.BankAccounts.FindAsync(iban);
@@ -199,6 +176,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         ClearCache();
     }
 
+    //ACTIVATE
     public async Task ActivateBankAccount(string iban)
     {
         var bankAccount = await bankContext.BankAccounts.FindAsync(iban);
@@ -231,6 +209,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         ClearCache();
     }
 
+    //VALIDATE
     private static void IsValid(BankAccountCreateDto bankAccountCreateDto)
     {
         if (!Enum.TryParse(typeof(AccountType), bankAccountCreateDto.AccountType, out _))
@@ -245,6 +224,7 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
                 "Invalid account type. Valid values are: " + string.Join(", ", Enum.GetNames(typeof(AccountType))));
     }
 
+    //CACHE
     private void AddToCache(BankAccountResponseDto bankAccount)
     {
         var cacheKey = $"GetBankAccount-{bankAccount.Iban}";
