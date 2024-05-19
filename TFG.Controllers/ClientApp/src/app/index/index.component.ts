@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IndexService} from "../services/index.service";
+
 import {User} from "../models/User";
 import {ButtonModule} from "primeng/button";
 import {TooltipModule} from "primeng/tooltip";
@@ -27,6 +27,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {BankAccountService} from "../services/bankaccounts.service";
 import {TransactionsService} from "../services/transactions.service";
+import {UserService} from "../services/users.service";
 
 @Component({
   selector: 'app-index',
@@ -60,8 +61,9 @@ import {TransactionsService} from "../services/transactions.service";
 })
 export class IndexComponent implements OnInit {
 
-  constructor(private indexService: IndexService, private messageService: MessageService, private confirmationService: ConfirmationService,
-              private bankAccountService: BankAccountService, private transactionService: TransactionsService) {
+  constructor(private messageService: MessageService, private confirmationService: ConfirmationService,
+              private bankAccountService: BankAccountService, private transactionService: TransactionsService, private userService: UserService) {
+
   }
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
@@ -98,13 +100,11 @@ export class IndexComponent implements OnInit {
 
   //LOAD
   ngOnInit(): void {
-    this.indexService.getUserByToken().subscribe(user => {
-      this.user = user;
-      this.getBalanceByUserId();
-      this.getIncomesByUserId();
-      this.getExpensesByUserId();
-      this.getBankAccountsByUserId();
-    });
+    this.user = this.userService.getUser();
+    this.getBalanceByUserId();
+    this.getIncomesByUserId();
+    this.getExpensesByUserId();
+    this.getBankAccountsByUserId();
 
     this.items = [
       {

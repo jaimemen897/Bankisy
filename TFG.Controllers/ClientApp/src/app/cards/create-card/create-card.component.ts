@@ -7,7 +7,7 @@ import {BankAccountService} from "../../services/bankaccounts.service";
 import {UserService} from "../../services/users.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
-import {IndexService} from "../../services/index.service";
+
 import {User} from "../../models/User";
 import {BankAccount} from "../../models/BankAccount";
 import {CardType} from "../../models/CardType";
@@ -34,7 +34,7 @@ import {InputTextModule} from "primeng/inputtext";
 })
 export class CreateCardComponent {
   constructor(private bankAccountService: BankAccountService, private usersService: UserService, private router: Router,
-              private messageService: MessageService, private indexService: IndexService, private cardService: CardService) {
+              private messageService: MessageService, private cardService: CardService) {
   }
 
   formGroup: FormGroup = new FormGroup({

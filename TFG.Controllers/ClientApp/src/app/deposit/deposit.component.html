@@ -10,7 +10,8 @@
       <div class="flex gap-4 justify-content-start align-items-center mb-2">
         <label for="amount">Cantidad a ingresar</label>
         <div class="flex flex-column gap-1 w-5">
-          <input (input)="setAmmountOnSlider($event)" [max]="10000" [min]="0" class="w-full" formControlName="amount" id="amount"
+          <input (input)="setAmmountOnSlider($event)" [max]="10000" [min]="0" class="w-full" formControlName="amount"
+                 id="amount"
                  pInputText
                  placeholder="0,00€" type="number"/>
           @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {

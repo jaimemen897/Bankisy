@@ -17,6 +17,7 @@ import {ErrorHttpInterceptor} from "./interceptors/error-http.interceptor";
 import {NavbarComponent} from "./navbar/navbar.component";
 import {NgxStripeModule} from "ngx-stripe";
 import {InputSwitchModule} from "primeng/inputswitch";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {InputSwitchModule} from "primeng/inputswitch";
     MessagesModule,
     NavbarComponent,
     NgxStripeModule.forRoot('pk_test_51P7eS8D74icxIHcUPVwMabVBGZqDBTx8YBhItr2Ht61LQuBLsaBnSCls9AfxtdmAb0Ju8uweakHj8K9v7dTeCwWP00cTmOWBgn'),
-    InputSwitchModule
+    InputSwitchModule,
+    ProgressSpinnerModule
   ],
   providers: [MessageService,
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

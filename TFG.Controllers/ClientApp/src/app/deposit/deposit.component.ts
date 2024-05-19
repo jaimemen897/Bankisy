@@ -8,7 +8,6 @@ import {SliderModule} from "primeng/slider";
 import {ToastModule} from "primeng/toast";
 import {BankAccount} from "../models/BankAccount";
 import {DropdownModule} from "primeng/dropdown";
-import {IndexService} from "../services/index.service";
 import {MessageService} from "primeng/api";
 import {NgIf} from "@angular/common";
 import {BankAccountService} from "../services/bankaccounts.service";

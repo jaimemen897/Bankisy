@@ -4,7 +4,6 @@ import {MessageService} from "primeng/api";
 import {CardModule} from "primeng/card";
 import {RouterOutlet} from "@angular/router";
 import {ToastModule} from "primeng/toast";
-import {IndexService} from "../services/index.service";
 import {ButtonModule} from "primeng/button";
 import {BlockUIModule} from "primeng/blockui";
 import {RippleModule} from "primeng/ripple";
@@ -24,6 +23,8 @@ import {CardCreate} from "../models/CardCreate";
 import {DropdownModule} from "primeng/dropdown";
 import {CreateCardComponent} from "../cards/create-card/create-card.component";
 import {CardService} from "../services/card.service";
+import {UserService} from "../services/users.service";
+import {User} from "../models/User";
 
 @Component({
   selector: 'app-card-panel',
@@ -56,8 +57,9 @@ import {CardService} from "../services/card.service";
 })
 export class CardPanelComponent {
 
-  constructor(private messageService: MessageService, private indexService: IndexService, private cardService: CardService) {
+  constructor(private messageService: MessageService, private cardService: CardService, private userService: UserService) {
     this.refresh();
+    this.user = this.userService.getUser();
   }
 
   @ViewChild('optionMenu') optionMenu: any;
@@ -65,6 +67,7 @@ export class CardPanelComponent {
   cards!: Card[]
   userId!: number
   optionItems!: any[];
+  user!: User;
 
   updatePinDialogVisible: boolean = false;
   cardToUpdate!: Card;
@@ -230,10 +233,8 @@ export class CardPanelComponent {
   }
 
   showNewCardDialogMethod() {
-    this.indexService.getUserByToken().subscribe(user => {
-      this.createCardComponent.loadUser(user)
-      this.showNewCardDialog = true
-    })
+    this.createCardComponent.loadUser(this.user)
+    this.showNewCardDialog = true
   }
 
   createCard() {

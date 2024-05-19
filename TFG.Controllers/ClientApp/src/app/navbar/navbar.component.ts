@@ -6,7 +6,6 @@ import {DropdownModule} from "primeng/dropdown";
 import {ToastModule} from "primeng/toast";
 import {ConfirmPopup, ConfirmPopupModule} from "primeng/confirmpopup";
 import {MenuItem, MessageService} from "primeng/api";
-import {IndexService} from "../services/index.service";
 import {User} from "../models/User";
 import {MenuModule} from "primeng/menu";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
@@ -20,6 +19,7 @@ import {PanelModule} from "primeng/panel";
 import {TableModule} from "primeng/table";
 import {TagModule} from "primeng/tag";
 import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/bankaccount-create.component";
+import {UserService} from "../services/users.service";
 
 @Component({
   selector: 'app-navbar',
@@ -50,8 +50,9 @@ import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/ban
 })
 export class NavbarComponent implements OnInit {
 
-  constructor(@Inject(DOCUMENT) private document: Document, private indexService: IndexService, private messageService: MessageService) {
+  constructor(@Inject(DOCUMENT) private document: Document, private messageService: MessageService, private userService: UserService) {
     let theme = window.localStorage.getItem('theme');
+    this.user = userService.getUser();
     if (theme) {
       this.themeSelection = theme == 'dark';
       this.changeTheme(this.themeSelection);
@@ -76,10 +77,6 @@ export class NavbarComponent implements OnInit {
   @ViewChild('logoutMes') confirmPopup!: ConfirmPopup;
 
   ngOnInit() {
-    this.indexService.getUserByToken().subscribe(
-      data => {
-        this.user = data;
-      });
     this.items = [
       {
         label: 'Usuarios',

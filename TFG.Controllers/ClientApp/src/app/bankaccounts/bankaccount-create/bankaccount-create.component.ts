@@ -8,7 +8,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ButtonModule} from "primeng/button";
 import {User} from "../../models/User";
-import {IndexService} from "../../services/index.service";
+
 import {AccountType} from "../../models/AccountType";
 import {ActivatedRoute} from "@angular/router";
 
@@ -27,7 +27,7 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class BankaccountCreateComponent implements OnInit {
 
-  constructor(private bankAccountService: BankAccountService, private usersService: UserService, private messageService: MessageService, private indexService: IndexService, private route: ActivatedRoute) {
+  constructor(private bankAccountService: BankAccountService, private usersService: UserService, private messageService: MessageService, private route: ActivatedRoute) {
   }
 
   formGroup: FormGroup = new FormGroup({

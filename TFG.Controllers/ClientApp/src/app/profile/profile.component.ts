@@ -11,7 +11,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {PasswordModule} from "primeng/password";
 import {ToastModule} from "primeng/toast";
-import {IndexService} from "../services/index.service";
+
 import {Token} from "../login/login.component";
 import {FileUploadModule} from "primeng/fileupload";
 import {OverlayPanelModule} from "primeng/overlaypanel";
@@ -19,6 +19,8 @@ import {TooltipModule} from "primeng/tooltip";
 import {SplitButtonModule} from "primeng/splitbutton";
 import {passwordMatchValidator} from "../register/passwordMatchValidator";
 import {environment} from "../../environments/environment";
+import {UserService} from "../services/users.service";
+import {User} from "../models/User";
 
 @Component({
   selector: 'app-profile',
@@ -44,11 +46,13 @@ import {environment} from "../../environments/environment";
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
-  constructor(private indexService: IndexService, private messageService: MessageService, private location: Location, private router: Router) {
+  constructor(private messageService: MessageService, private location: Location,
+              private router: Router, private userService: UserService) {
+    this.user = this.userService.getUser();
   }
 
   apiUrl = `${environment.apiUrl}/index/avatar`
-
+  user: User;
   genders: string[] = [Gender.Male, Gender.Female, Gender.Other, Gender.PreferNotToSay];
   avatar!: string;
 
@@ -62,25 +66,22 @@ export class ProfileComponent implements OnInit {
     password: new FormControl('', [Validators.minLength(3), Validators.maxLength(50)]),
     confirmpassword: new FormControl('', [Validators.minLength(3), Validators.maxLength(50)])
   }, {validators: passwordMatchValidator});
-  items =
-    [
-      {
-        label: 'Borrar', icon: 'pi pi-fw pi-trash', command: () => {
-          this.defaultAvatar();
-        }
-      }];
+  items = [
+    {
+      label: 'Borrar', icon: 'pi pi-fw pi-trash', command: () => {
+        this.defaultAvatar();
+      }
+    }];
 
   ngOnInit(): void {
-    this.indexService.getUserByToken().subscribe(user => {
-      this.formGroup.controls.name.setValue(user.name);
-      this.formGroup.controls.email.setValue(user.email);
-      this.formGroup.controls.username.setValue(user.username);
-      this.formGroup.controls.dni.setValue(user.dni);
-      this.formGroup.controls.phone.setValue(user.phone);
-      let genderTranslated = Gender[user.gender as keyof typeof Gender];
-      this.formGroup.controls.gender.setValue(genderTranslated);
-      this.avatar = user.avatar;
-    });
+    this.formGroup.controls.name.setValue(this.user.name);
+    this.formGroup.controls.email.setValue(this.user.email);
+    this.formGroup.controls.username.setValue(this.user.username);
+    this.formGroup.controls.dni.setValue(this.user.dni);
+    this.formGroup.controls.phone.setValue(this.user.phone);
+    let genderTranslated = Gender[this.user.gender as keyof typeof Gender];
+    this.formGroup.controls.gender.setValue(genderTranslated);
+    this.avatar = this.user.avatar;
   }
 
   sendForm() {
@@ -96,7 +97,7 @@ export class ProfileComponent implements OnInit {
         password: this.formGroup.controls.password.value as string
       };
 
-      this.indexService.updateProfile(user).subscribe((data: Token) => {
+      this.userService.updateProfile(user).subscribe((data: Token) => {
           localStorage.setItem('token', data.token);
           this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Perfil actualizado correctamente'});
           this.router.navigate(['/']);
@@ -135,13 +136,13 @@ export class ProfileComponent implements OnInit {
       life: 2000,
       closable: false
     });
-    this.indexService.getUserByToken().subscribe(user => {
-      this.avatar = user.avatar;
-    });
+    this.userService.setUser()
+    this.user = this.userService.getUser()
+    this.avatar = this.user.avatar
   }
 
   defaultAvatar() {
-    this.indexService.deleteAvatar().subscribe(() => {
+    this.userService.deleteMyAvatar().subscribe(() => {
       this.messageService.add({
         severity: 'info',
         summary: 'Eliminado',
@@ -149,9 +150,9 @@ export class ProfileComponent implements OnInit {
         life: 2000,
         closable: false
       });
-      this.indexService.getUserByToken().subscribe(user => {
-        this.avatar = user.avatar;
-      });
+      this.userService.setUser()
+      this.user = this.userService.getUser()
+      this.avatar = this.user.avatar
     });
   }
 

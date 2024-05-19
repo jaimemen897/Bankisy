@@ -1,6 +1,5 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {MessageService} from "primeng/api";
-import {IndexService} from "../../services/index.service";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {User} from "../../models/User";
 import {BizumCreate} from "../../models/BizumCreate";
@@ -10,6 +9,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {NgIf} from "@angular/common";
 import {PaginatorModule} from "primeng/paginator";
 import {TransactionsService} from "../../services/transactions.service";
+import {UserService} from "../../services/users.service";
 
 @Component({
   selector: 'app-bizum-create',
@@ -25,8 +25,9 @@ import {TransactionsService} from "../../services/transactions.service";
   templateUrl: './bizum-create.component.html',
   styleUrl: './bizum-create.component.css'
 })
-export class BizumCreateComponent implements OnInit {
-  constructor(private messageService: MessageService, private indexService: IndexService, private transactionService: TransactionsService) {
+export class BizumCreateComponent {
+  constructor(private messageService: MessageService, private transactionService: TransactionsService, private userService: UserService) {
+    this.user = this.userService.getUser();
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -41,17 +42,9 @@ export class BizumCreateComponent implements OnInit {
   @Output() onCancel: EventEmitter<any> = new EventEmitter();
   @Output() onUserLoaded: EventEmitter<any> = new EventEmitter();
 
-  ngOnInit() {
-    this.indexService.getUserByToken().subscribe(user => {
-      this.user = user;
-    });
-  }
-
   loadUser() {
-    this.indexService.getUserByToken().subscribe(user => {
-      this.user = user;
-      this.onUserLoaded.emit(this.user);
-    });
+    this.user = this.userService.getUser();
+    this.onUserLoaded.emit(this.user);
   }
 
   createBizum() {

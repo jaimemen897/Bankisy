@@ -1,7 +1,8 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table (onLazyLoad)="lazyLoad($event)" [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']"
+  <p-table (onLazyLoad)="lazyLoad($event)"
+           [globalFilterFields]="['iban', 'accountType', 'users', 'balance', 'isDeleted']"
            [lazy]="true" [paginator]="true"
            [rowsPerPageOptions]="[10, 25, 50]" [rows]="rows" [showCurrentPageReport]="false" [showFirstLastIcon]="false"
            [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}" [totalRecords]="totalRecords"

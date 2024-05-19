@@ -6,7 +6,6 @@ import {PaginatorModule} from "primeng/paginator";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MessageService} from "primeng/api";
 import {User} from "../../models/User";
-import {IndexService} from "../../services/index.service";
 import {BankAccount} from "../../models/BankAccount";
 import {InputTextModule} from "primeng/inputtext";
 import {StyleClassModule} from "primeng/styleclass";
@@ -14,6 +13,7 @@ import {TransactionCreate} from "../../models/TransactionCreate";
 import {NgIf, NgStyle} from "@angular/common";
 import {BankAccountService} from "../../services/bankaccounts.service";
 import {TransactionsService} from "../../services/transactions.service";
+import {UserService} from "../../services/users.service";
 
 @Component({
   selector: 'app-create-transaction',
@@ -33,7 +33,7 @@ import {TransactionsService} from "../../services/transactions.service";
   styleUrl: './create-transaction.component.css'
 })
 export class CreateTransactionComponent implements OnInit {
-  constructor(private messageService: MessageService, private indexService: IndexService, private bankAccountService: BankAccountService, private transactionsService: TransactionsService) {
+  constructor(private messageService: MessageService, private userService: UserService, private bankAccountService: BankAccountService, private transactionsService: TransactionsService) {
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -54,11 +54,9 @@ export class CreateTransactionComponent implements OnInit {
   }
 
   loadUser() {
-    this.indexService.getUserByToken().subscribe(user => {
-      this.user = user;
-      this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
-        this.bankAccounts = bankAccounts;
-      });
+    this.user = this.userService.getUser();
+    this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
+      this.bankAccounts = bankAccounts;
     });
   }
 

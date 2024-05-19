@@ -9,10 +9,11 @@ using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
 using TFG.Services.Mappers;
 using TFG.Services.Pagination;
+using Microsoft.Extensions.Configuration;
 
 namespace TFG.Services;
 
-public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccountService bankAccountService)
+public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccountService bankAccountService, IConfiguration configuration)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
     private readonly List<Guid> _userIds = [];
@@ -81,6 +82,13 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
         ClearCache();
 
         return _mapper.Map<UserResponseDto>(userToUpdate);
+    }
+    
+    public async Task<string> UpdateProfile(Guid id, UserUpdateDto user)
+    {
+        var userUpdated = await UpdateUser(id, user);
+        var userMapped = _mapper.Map<User>(userUpdated);
+        return SessionService.GetToken(userMapped, configuration);
     }
 
     public async Task DeleteUser(Guid id)

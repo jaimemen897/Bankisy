@@ -1,7 +1,9 @@
 <router-outlet></router-outlet>
 <p-toast></p-toast>
 <div class="card">
-  <p-table (onLazyLoad)="lazyLoad($event)" [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']" [lazy]="true" [paginator]="true"
+  <p-table (onLazyLoad)="lazyLoad($event)"
+           [globalFilterFields]="['cardNumber', 'cardType', 'username', 'bankAccount', 'isDeleted', 'isBlocked']"
+           [lazy]="true" [paginator]="true"
            [rowsPerPageOptions]="[10, 25, 50]"
            [rows]="rows" [showCurrentPageReport]="false" [tableStyle]="{ 'min-width': '50rem', 'min-height': '23rem'}"
            [totalRecords]="totalRecords" [value]="cards">

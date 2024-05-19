@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {catchError, map, Observable, throwError} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BehaviorSubject, catchError, map, Observable, throwError} from 'rxjs';
 import {User} from '../models/User';
 import {UserCreate} from "../models/UserCreate";
 import {MessageService} from "primeng/api";
@@ -20,6 +20,9 @@ export interface Pagination<T> {
 })
 export class UserService {
   private apiUrl = `${environment.apiUrl}/users`
+
+  private userSubject = new BehaviorSubject<User>(new User());
+  user$ = this.userSubject.asObservable();
 
   constructor(private http: HttpClient, private messageService: MessageService) {
   }
@@ -72,8 +75,8 @@ export class UserService {
     );
   }
 
-  uploadAvatar(avatar: FormData, id: string): Observable<any> {
-    return this.http.put(this.apiUrl + '/' + id + '/avatar', avatar).pipe(
+  updateProfile(user: UserCreate): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/profile`, user).pipe(
       catchError(error => this.handleError(error))
     );
   }
@@ -82,6 +85,23 @@ export class UserService {
     return this.http.delete<User>(this.apiUrl + '/' + id).pipe(
       catchError(error => this.handleError(error))
     );
+  }
+
+  deleteMyAvatar(): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/avatar`).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  setUser() {
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + localStorage.getItem('token'));
+    this.http.get<User>(`${environment.apiUrl}/session/me`, {headers}).subscribe(user => {
+      this.userSubject.next(user);
+    });
+  }
+
+  getUser() {
+    return this.userSubject.getValue();
   }
 
   private handleError(error: any) {

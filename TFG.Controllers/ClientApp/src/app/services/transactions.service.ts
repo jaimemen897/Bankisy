@@ -69,14 +69,14 @@ export class TransactionsService {
   }
 
   getTransactionsByIban(iban: string): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
+    return this.http.get<Transaction[]>(`${this.apiUrl}/bankaccount/${iban}`);
   }
 
-  getMyIncomes(){
+  getMyIncomes() {
     return this.http.get<Transaction[]>(`${this.apiUrl}/myself/incomes`);
   }
 
-  getMyExpenses(){
+  getMyExpenses() {
     return this.http.get<Transaction[]>(`${this.apiUrl}/myself/expenses`);
   }
 

@@ -22,6 +22,12 @@ builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole(options =>
+{
+    options.LogToStandardErrorThreshold = LogLevel.Information;
+    
+});
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new() { Title = "Bankisy API", Version = "v1" });
@@ -60,7 +66,10 @@ builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 builder.Services.AddDbContext<BankContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionURL")));
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionURL"));
+    options.EnableSensitiveDataLogging();
+});
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
 {

@@ -25,14 +25,14 @@ public class SessionService(
         var user = await usersService.ValidateUserCredentials(userLogin.Username, userLogin.Password) ??
                    throw new HttpException(401, "Invalid credentials");
 
-        return GetToken(user);
+        return GetToken(user, configuration);
     }
 
     public async Task<string> Register(UserCreateDto userRegister)
     {
         var user = await usersService.CreateUser(userRegister) ?? throw new HttpException(400, "Error creating user");
         var userMapped = _mapper.Map<User>(user);
-        return GetToken(userMapped);
+        return GetToken(userMapped, configuration);
     }
 
     public async Task<UserResponseDto> GetUserByToken(string token)
@@ -51,7 +51,7 @@ public class SessionService(
         return await GetUserByToken(token);
     }
 
-    public string GetToken(User user)
+    public static string GetToken(User user, IConfiguration configuration)
     {
         var claims = new List<Claim>
         {

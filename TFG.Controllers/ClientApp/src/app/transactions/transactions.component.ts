@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ConfirmationService, MessageService, SelectItem} from "primeng/api";
 import {Router, RouterOutlet} from "@angular/router";
 import {ToastModule} from "primeng/toast";
