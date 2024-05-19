@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using TFG.Context.Context;
 using TFG.Context.DTOs.transactions;
-using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Extensions;
@@ -15,7 +14,7 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class TransactionService(BankContext bankContext, IMemoryCache cache, IHubContext<MyHub> hubContext)
+public class TransactionService(BankContext bankContext, IMemoryCache cache, IHubContext<MyHub> hubContext, BankAccountService bankAccountService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
     private readonly List<int> _transactionIds = [];
@@ -90,10 +89,12 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
 
-    public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
+    public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban, Guid? userId = null)
     {
-        var bankAccount = await bankContext.BankAccounts.FindAsync(bankAccountIban) ??
-                          throw new HttpException(404, "Bank account not found");
+        var bankAccount = await bankAccountService.GetBankAccount(iban);
+        
+        if (userId != null && bankAccount.UsersId.All(id => id != userId))
+            throw new HttpException(403, "You are not the owner of the account");
 
         return await GetTransactions(t =>
             t.IbanAccountOrigin == bankAccount.Iban || t.IbanAccountDestination == bankAccount.Iban);
@@ -125,7 +126,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     }
 
     //CREATE
-    public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto)
+    public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto, Guid userId)
     {
         var account = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IbanAccountOrigin) ??
                       throw new HttpException(404, "Account origin not found");
@@ -135,7 +136,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
                 .FirstOrDefaultAsync(b => b.Iban == transactionCreateDto.IbanAccountDestination) ??
             throw new HttpException(404, "Account destination not found");
 
-        ValidateTransaction(account, accountDestination, transactionCreateDto);
+        ValidateTransaction(account, accountDestination, transactionCreateDto, userId);
 
         var transactionDto = await CreateTransactionPay(account, accountDestination, transactionCreateDto);
 
@@ -235,7 +236,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     }
 
     private static void ValidateTransaction(BankAccount accountOrigin, BankAccount accountDestination,
-        TransactionCreateDto transactionCreateDto)
+        TransactionCreateDto transactionCreateDto, Guid? userId = null)
     {
         if (accountOrigin.Iban == accountDestination.Iban)
             throw new HttpException(400, "Origin and destination accounts cannot be the same");
@@ -245,6 +246,10 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         if (transactionCreateDto.Amount <= 0)
             throw new HttpException(400, "Transaction amount must be greater than zero");
+        
+        if (accountOrigin.Users.All(u => u.Id != userId))
+            throw new HttpException(403, "You are not the owner of the account");
+
     }
 
     //DELETE

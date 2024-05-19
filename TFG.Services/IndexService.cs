@@ -1,21 +1,16 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using TFG.Context.DTOs.bankAccount;
-using TFG.Context.DTOs.cards;
 using TFG.Context.DTOs.transactions;
 using TFG.Context.DTOs.users;
 using TFG.Context.Models;
 using TFG.Services.Exceptions;
 using TFG.Services.Mappers;
-using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
 public class IndexService(
     BankAccountService bankAccountService,
     TransactionService transactionService,
-    CardService cardService,
     SessionService sessionService,
     UsersService usersService)
 {
@@ -25,39 +20,6 @@ public class IndexService(
     public UserResponseDto GetMyself()
     {
         return sessionService.GetMyself().Result;
-    }
-
-    //TRANSACTIONS
-    public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
-    {
-        var bankAccount = await bankAccountService.GetBankAccount(transaction.IbanAccountOrigin);
-        if (bankAccount.UsersId.All(id => id != user.Id))
-            throw new HttpException(403, "You are not the owner of the account");
-
-        return await transactionService.CreateTransaction(transaction);
-    }
-
-    public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban)
-    {
-        var bankAccount = await bankAccountService.GetBankAccount(iban);
-        if (bankAccount.UsersId.All(id => id != user.Id))
-            throw new HttpException(403, "You are not the owner of the account");
-
-        return await transactionService.GetTransactionsForAccount(iban);
-    }
-
-    public async Task<BizumResponseDto> CreateBizum(BizumCreateDto bizumCreateDto)
-    {
-        return await transactionService.CreateBizum(bizumCreateDto, user.Id);
-    }
-
-    //CARDS
-    public async Task<List<CardResponseDto>> GetCardsByIban(string iban)
-    {
-        var bankAccount = await bankAccountService.GetBankAccount(iban);
-        if (bankAccount.UsersId.All(id => id != user.Id))
-            throw new HttpException(403, "You are not the owner of the account");
-        return await cardService.GetCardsByIban(iban);
     }
 
     //PROFILE
@@ -93,13 +55,5 @@ public class IndexService(
             IbanAccountDestination = bankAccount.Iban
         };
         await transactionService.AddPaymentIntent(incomeCreateDto);
-    }
-
-    //PRIVATE METHODS
-    private async Task ValidateCardWithUser(string cardNumber)
-    {
-        var card = await cardService.GetCardByCardNumber(cardNumber);
-
-        if (card.User.Id != user.Id) throw new HttpException(403, "You are not the owner of the card");
     }
 }

@@ -5,6 +5,8 @@ import {Pagination} from "./users.service";
 import {Transaction} from "../models/Transaction";
 import {TransactionCreate} from "../models/TransactionCreate";
 import {environment} from "../../environments/environment";
+import {BizumCreate} from "../models/BizumCreate";
+import {Bizum} from "../models/Bizum";
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +68,10 @@ export class TransactionsService {
     );
   }
 
+  getTransactionsByIban(iban: string): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
+  }
+
   getMyIncomes(){
     return this.http.get<Transaction[]>(`${this.apiUrl}/myself/incomes`);
   }
@@ -74,8 +80,12 @@ export class TransactionsService {
     return this.http.get<Transaction[]>(`${this.apiUrl}/myself/expenses`);
   }
 
-  addTransaction(Transaction: TransactionCreate): Observable<Transaction> {
+  createTransaction(Transaction: TransactionCreate): Observable<Transaction> {
     return this.http.post<Transaction>(this.apiUrl, Transaction);
+  }
+
+  createBizum(bizumCreate: BizumCreate): Observable<Bizum> {
+    return this.http.post<Bizum>(`${this.apiUrl}/bizum`, bizumCreate);
   }
 
   deleteTransaction(id: string): Observable<Transaction> {

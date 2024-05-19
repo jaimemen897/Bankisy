@@ -13,6 +13,7 @@ import {StyleClassModule} from "primeng/styleclass";
 import {TransactionCreate} from "../../models/TransactionCreate";
 import {NgIf, NgStyle} from "@angular/common";
 import {BankAccountService} from "../../services/bankaccounts.service";
+import {TransactionsService} from "../../services/transactions.service";
 
 @Component({
   selector: 'app-create-transaction',
@@ -32,7 +33,7 @@ import {BankAccountService} from "../../services/bankaccounts.service";
   styleUrl: './create-transaction.component.css'
 })
 export class CreateTransactionComponent implements OnInit {
-  constructor(private messageService: MessageService, private indexService: IndexService, private bankAccountService: BankAccountService) {
+  constructor(private messageService: MessageService, private indexService: IndexService, private bankAccountService: BankAccountService, private transactionsService: TransactionsService) {
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -79,7 +80,7 @@ export class CreateTransactionComponent implements OnInit {
     transaction.IbanAccountDestination = this.formGroup.controls.ibanAccountDestination.value;
     transaction.Amount = this.formGroup.controls.amount.value;
 
-    this.indexService.addTransaction(transaction).subscribe(() => {
+    this.transactionsService.createTransaction(transaction).subscribe(() => {
       this.formGroup.reset();
       this.onSave.emit();
     });

@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TFG.Context.DTOs.transactions;
-using TFG.Context.DTOs.users;
 using TFG.Services;
 using TFG.Services.Exceptions;
 using TFG.Services.Pagination;
@@ -58,22 +57,29 @@ public class TransactionsController(TransactionService transactionService) : Con
     [HttpGet("{bankAccountIban}/transactions")]
     public async Task<List<TransactionResponseDto>> GetTransactionsForAccount(string bankAccountIban)
     {
-        return await transactionService.GetTransactionsForAccount(bankAccountIban);
+        return await transactionService.GetTransactionsByIban(bankAccountIban);
+    }
+    
+    [Authorize(Policy = "User")]
+    [HttpGet("bankaccount/{iban}")]
+    public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban)
+    {
+        return await transactionService.GetTransactionsByIban(iban, GetUserId());
     }
 
     //CREATE
-    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "User")]
     [HttpPost]
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
-        return await transactionService.CreateTransaction(transaction);
+        return await transactionService.CreateTransaction(transaction, GetUserId());
     }
 
-    [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "User")]
     [HttpPost("bizum/{userId}")]
-    public async Task<ActionResult<BizumResponseDto>> CreateBizum(BizumCreateDto transaction, Guid userId)
+    public async Task<ActionResult<BizumResponseDto>> CreateBizum(BizumCreateDto transaction)
     {
-        return await transactionService.CreateBizum(transaction, userId);
+        return await transactionService.CreateBizum(transaction, GetUserId());
     }
 
     //DELETE

@@ -29,16 +29,6 @@ export class IndexService {
     return this.http.get<User>(`${environment.apiUrl}/session/me`, {headers});
   }
 
-  addTransaction(Transaction: TransactionCreate): Observable<Transaction> {
-    return this.http.post<Transaction>(this.apiUrl + '/transaction', Transaction).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  getTransactionsByIban(iban: string): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`);
-  }
-
   //PROFILE
   updateProfile(user: UserCreate): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/profile`, user).pipe(
@@ -48,12 +38,6 @@ export class IndexService {
 
   deleteAvatar(): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/avatar`).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  createBizum(bizumCreate: BizumCreate): Observable<Bizum> {
-    return this.http.post<Bizum>(`${this.apiUrl}/transaction/bizum`, bizumCreate).pipe(
       catchError(error => this.handleError(error))
     );
   }

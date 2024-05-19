@@ -9,6 +9,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
 import {NgIf} from "@angular/common";
 import {PaginatorModule} from "primeng/paginator";
+import {TransactionsService} from "../../services/transactions.service";
 
 @Component({
   selector: 'app-bizum-create',
@@ -25,7 +26,7 @@ import {PaginatorModule} from "primeng/paginator";
   styleUrl: './bizum-create.component.css'
 })
 export class BizumCreateComponent implements OnInit {
-  constructor(private messageService: MessageService, private indexService: IndexService) {
+  constructor(private messageService: MessageService, private indexService: IndexService, private transactionService: TransactionsService) {
   }
 
   formGroup: FormGroup = new FormGroup({
@@ -71,7 +72,7 @@ export class BizumCreateComponent implements OnInit {
     bizumCreate.phoneNumberUserDestination = this.formGroup.controls.phoneUserDestination.value;
     bizumCreate.amount = this.formGroup.controls.amount.value;
 
-    this.indexService.createBizum(bizumCreate).subscribe(() => {
+    this.transactionService.createBizum(bizumCreate).subscribe(() => {
       this.formGroup.reset();
       this.onSave.emit();
     });

@@ -62,16 +62,6 @@ public class CardService(BankContext bankContext)
         return cards ?? throw new HttpException(404, "Cards not found");
     }
 
-    public async Task<List<CardResponseDto>> GetCardsByIban(string iban)
-    {
-        var cardList = await bankContext.Cards.Include(c => c.User).Include(c => c.BankAccount).ToListAsync();
-        var cards = cardList
-            .Where(card => !card.IsDeleted && card.BankAccountIban == iban)
-            .Select(card => _mapper.Map<CardResponseDto>(card)).ToList();
-
-        return cards ?? throw new HttpException(404, "Cards not found");
-    }
-
     public async Task<CardResponseDto> CreateCard(CardCreateDto cardCreateDto, Guid? userId = null)
     {
         var user = await bankContext.Users.FindAsync(cardCreateDto.UserId) ??
