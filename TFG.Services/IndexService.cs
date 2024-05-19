@@ -20,6 +20,7 @@ public class IndexService(
     UsersService usersService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+    private readonly UserResponseDto user = sessionService.GetMyself().Result;
 
     public UserResponseDto GetMyself()
     {
@@ -29,8 +30,6 @@ public class IndexService(
     //BANK ACCOUNTS
     public async Task<List<BankAccountResponseDto>> GetBankAccountsByUserId()
     {
-        var user = await sessionService.GetMyself();
-
         return await bankAccountService.GetBankAccountsByUserId(user.Id);
     }
 
@@ -41,13 +40,11 @@ public class IndexService(
 
     public async Task ActiveBizum(string iban)
     {
-        var user = await sessionService.GetMyself();
         await bankAccountService.ActiveBizum(iban, user.Id);
     }
 
     public async Task<decimal> GetTotalBalanceByUserId()
     {
-        var user = await sessionService.GetMyself();
         return await bankAccountService.GetTotalBalanceByUserId(user.Id);
     }
 
@@ -55,27 +52,22 @@ public class IndexService(
     public async Task<Pagination<TransactionResponseDto>> GetTransactionsByUserId(int pageNumber, int pageSize,
         string orderBy, bool descending, string? search = null, string? filter = null)
     {
-        var user = await sessionService.GetMyself();
         return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, user, search,
             filter);
     }
 
     public async Task<List<TransactionResponseDto>> GetExpensesByUserId()
     {
-        var user = await sessionService.GetMyself();
         return await transactionService.GetExpensesByUserId(user.Id);
     }
 
     public async Task<List<TransactionResponseDto>> GetIncomesByUserId()
     {
-        var user = await sessionService.GetMyself();
         return await transactionService.GetIncomesByUserId(user.Id);
     }
 
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
-        var user = await sessionService.GetMyself();
-
         var bankAccount = await bankAccountService.GetBankAccount(transaction.IbanAccountOrigin);
         if (bankAccount.UsersId.All(id => id != user.Id))
             throw new HttpException(403, "You are not the owner of the account");
@@ -85,7 +77,6 @@ public class IndexService(
 
     public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban)
     {
-        var user = await sessionService.GetMyself();
         var bankAccount = await bankAccountService.GetBankAccount(iban);
         if (bankAccount.UsersId.All(id => id != user.Id))
             throw new HttpException(403, "You are not the owner of the account");
@@ -95,14 +86,12 @@ public class IndexService(
 
     public async Task<BizumResponseDto> CreateBizum(BizumCreateDto bizumCreateDto)
     {
-        var user = await sessionService.GetMyself();
         return await transactionService.CreateBizum(bizumCreateDto, user.Id);
     }
 
     //CARDS
     public async Task<ActionResult<CardResponseDto>> GetCardByCardNumber(string cardNumber)
     {
-        var user = await sessionService.GetMyself();
         var card = await cardService.GetCardByCardNumber(cardNumber);
         if (card.User.Id != user.Id) throw new HttpException(403, "You are not the owner of the card");
 
@@ -111,8 +100,6 @@ public class IndexService(
 
     public async Task<ActionResult<CardResponseDto>> CreateCard(CardCreateDto cardCreateDto)
     {
-        var user = await sessionService.GetMyself();
-
         if (cardCreateDto.UserId != user.Id) throw new HttpException(403, "You are not the owner of the card");
 
         return await cardService.CreateCard(cardCreateDto);
@@ -158,13 +145,11 @@ public class IndexService(
 
     public async Task<List<CardResponseDto>> GetCardsByUserId()
     {
-        var user = await sessionService.GetMyself();
         return await cardService.GetCardsByUserId(user.Id);
     }
 
     public async Task<List<CardResponseDto>> GetCardsByIban(string iban)
     {
-        var user = await sessionService.GetMyself();
         var bankAccount = await bankAccountService.GetBankAccount(iban);
         if (bankAccount.UsersId.All(id => id != user.Id))
             throw new HttpException(403, "You are not the owner of the account");
@@ -174,7 +159,6 @@ public class IndexService(
     //PROFILE
     public async Task<string> UpdateProfile(UserUpdateDto userUpdateDto)
     {
-        var user = await sessionService.GetMyself();
         var userUpdated = await usersService.UpdateUser(user.Id, userUpdateDto);
         var userMapped = _mapper.Map<User>(userUpdated);
         return sessionService.GetToken(userMapped);
@@ -182,23 +166,21 @@ public class IndexService(
 
     public async Task<UserResponseDto> UploadAvatar(IFormFile file, string host)
     {
-        var user = await sessionService.GetMyself();
         return await usersService.UploadAvatar(user.Id, file, host);
     }
 
     public async Task DeleteAvatar()
     {
-        var user = await sessionService.GetMyself();
         await usersService.DeleteAvatar(user.Id);
     }
 
     //PAYMENT INTENT
     public async Task AddPaymentIntent(decimal ammount, Guid userId, string iban)
     {
-        var user = await usersService.GetUserAsync(userId);
+        var userAsync = await usersService.GetUserAsync(userId);
 
         var bankAccount = await bankAccountService.GetBankAccount(iban);
-        if (bankAccount.UsersId.All(id => id != user.Id))
+        if (bankAccount.UsersId.All(id => id != userAsync.Id))
             throw new HttpException(403, "You are not the owner of the account");
 
         var incomeCreateDto = new IncomeCreateDto
@@ -212,7 +194,6 @@ public class IndexService(
     //PRIVATE METHODS
     private async Task ValidateCardWithUser(string cardNumber)
     {
-        var user = await sessionService.GetMyself();
         var card = await cardService.GetCardByCardNumber(cardNumber);
 
         if (card.User.Id != user.Id) throw new HttpException(403, "You are not the owner of the card");
