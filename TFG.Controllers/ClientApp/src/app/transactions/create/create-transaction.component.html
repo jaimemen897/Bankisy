@@ -8,11 +8,15 @@
         <input class="p-3 border-round-3xl border-0 w-20rem" formControlName="ibanAccountDestination" pInputText
                placeholder="Cuenta destino" type="text">
         @if (formGroup.controls['ibanAccountDestination'].invalid && formGroup.controls['ibanAccountDestination'].touched) {
-          <p *ngIf="formGroup.controls['ibanAccountDestination'].errors?.required"
-             class="text-red-500 text-xs m-0 ml-3">
-            La cuenta destino es obligatoria</p>
-          <p *ngIf="formGroup.controls['ibanAccountDestination'].errors?.pattern" class="text-red-500 text-xs m-0 ml-3">
-            El formato no es correcto</p>
+          @if (formGroup.controls['ibanAccountDestination'].errors?.required) {
+            <p
+              class="text-red-500 text-xs m-0 ml-3">
+              La cuenta destino es obligatoria</p>
+          }
+          @if (formGroup.controls['ibanAccountDestination'].errors?.pattern) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El formato no es correcto</p>
+          }
         }
       </div>
       <div class="flex flex-column gap-1">
@@ -20,14 +24,22 @@
                placeholder="Cantidad"
                type="number">
         @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
-          <p *ngIf="formGroup.controls['amount'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-            La cantidad es obligatoria</p>
-          <p *ngIf="formGroup.controls['amount'].errors?.min" class="text-red-500 text-xs m-0 ml-3">
-            El valor mínimo es 0,01€</p>
-          <p *ngIf="formGroup.controls['amount'].errors?.max" class="text-red-500 text-xs m-0 ml-3">
-            El valor máximo son 20.000€</p>
-          <p *ngIf="formGroup.controls['amount'].errors?.pattern" class="text-red-500 text-xs m-0 ml-3">
-            El formato no es correcto</p>
+          @if (formGroup.controls['amount'].errors?.required) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              La cantidad es obligatoria</p>
+          }
+          @if (formGroup.controls['amount'].errors?.min) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El valor mínimo es 0,01€</p>
+          }
+          @if (formGroup.controls['amount'].errors?.max) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El valor máximo son 20.000€</p>
+          }
+          @if (formGroup.controls['amount'].errors?.pattern) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El formato no es correcto</p>
+          }
         }
       </div>
 
@@ -35,12 +47,18 @@
         <input class="p-3 border-round-3xl border-0 w-20rem" formControlName="concept" pInputText placeholder="Concepto"
                type="text">
         @if (formGroup.controls['concept'].invalid && formGroup.controls['concept'].touched) {
-          <p *ngIf="formGroup.controls['concept'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-            El concepto es obligatorio</p>
-          <p *ngIf="formGroup.controls['concept'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
-            El concepto no puede tener menos de 3 caracteres</p>
-          <p *ngIf="formGroup.controls['concept'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
-            El concepto no puede tener más de 30 caracteres</p>
+          @if (formGroup.controls['concept'].errors?.required) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El concepto es obligatorio</p>
+          }
+          @if (formGroup.controls['concept'].errors?.minlength) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El concepto no puede tener menos de 3 caracteres</p>
+          }
+          @if (formGroup.controls['concept'].errors?.maxlength) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El concepto no puede tener más de 30 caracteres</p>
+          }
         }
       </div>
       <p-button (click)="createTransaction()" label="Confirmar" rounded styleClass="w-full mt-5"></p-button>

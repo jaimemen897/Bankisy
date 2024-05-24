@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MenubarModule} from "primeng/menubar";
 import {ButtonModule} from "primeng/button";
-import {DatePipe, DOCUMENT, NgIf} from "@angular/common";
+import {DatePipe, DOCUMENT} from "@angular/common";
 import {DropdownModule} from "primeng/dropdown";
 import {ToastModule} from "primeng/toast";
 import {ConfirmPopup, ConfirmPopupModule} from "primeng/confirmpopup";
@@ -27,7 +27,6 @@ import {UserService} from "../services/users.service";
   imports: [
     MenubarModule,
     ButtonModule,
-    NgIf,
     DropdownModule,
     ToastModule,
     ConfirmPopupModule,

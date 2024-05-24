@@ -4,7 +4,7 @@ import {MessageService} from "primeng/api";
 import {Gender} from "../models/Gender";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {UserCreate} from "../models/UserCreate";
-import {Location, NgIf, NgOptimizedImage} from '@angular/common';
+import {Location, NgOptimizedImage} from '@angular/common';
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {DropdownModule} from "primeng/dropdown";
@@ -31,7 +31,6 @@ import {User} from "../models/User";
     DropdownModule,
     FormsModule,
     InputTextModule,
-    NgIf,
     PasswordModule,
     ReactiveFormsModule,
     RouterOutlet,

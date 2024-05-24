@@ -8,7 +8,7 @@ import {MessageService, SharedModule} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {PasswordModule} from "primeng/password";
 import {RadioButtonModule} from "primeng/radiobutton";
-import {Location, NgIf} from '@angular/common';
+import {Location} from '@angular/common';
 import {Token} from "../login/login.component";
 import {AuthService} from "../services/auth.service";
 import {UserService} from "../services/users.service";
@@ -31,7 +31,6 @@ import {passwordMatchValidator} from "./passwordMatchValidator";
     ToastModule,
     PasswordModule,
     RadioButtonModule,
-    NgIf,
     DropdownModule
   ],
   templateUrl: './register.component.html',

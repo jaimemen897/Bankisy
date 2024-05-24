@@ -6,7 +6,7 @@ import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
 import {DropdownModule} from "primeng/dropdown";
 import {TagModule} from "primeng/tag";
-import {DatePipe, NgClass, NgIf, NgStyle} from "@angular/common";
+import {DatePipe, NgClass, NgStyle} from "@angular/common";
 import {InputTextModule} from "primeng/inputtext";
 import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
@@ -42,7 +42,6 @@ import {CascadeSelectModule} from "primeng/cascadeselect";
     DialogModule,
     BankaccountCreateComponent,
     DatePipe,
-    NgIf,
     NgStyle,
     StyleClassModule,
     CascadeSelectModule

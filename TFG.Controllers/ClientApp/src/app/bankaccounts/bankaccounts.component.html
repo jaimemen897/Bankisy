@@ -128,12 +128,16 @@
             <p-button (click)="getTransactionsByIban(account.iban, $event)"
                       [autoHide]="true" [showDelay]="500" icon="pi pi-money-bill" pTooltip="Transacciones"
                       severity="success" tooltipPosition="bottom"/>
-            <p-button (click)="deleteBankAccount(account.iban)" *ngIf="!account.isDeleted" [autoHide]="true"
-                      [showDelay]="500" icon="pi pi-trash" pTooltip="Borrar" severity="danger"
-                      tooltipPosition="bottom"/>
-            <p-button (click)="activateBankAccount(account.iban)" *ngIf="account.isDeleted" [autoHide]="true"
-                      [showDelay]="500"
-                      icon="pi pi-undo" pTooltip="Recuperar" severity="secondary" tooltipPosition="bottom"/>
+            @if (!account.isDeleted) {
+              <p-button (click)="deleteBankAccount(account.iban)" [autoHide]="true"
+                        [showDelay]="500" icon="pi pi-trash" pTooltip="Borrar" severity="danger"
+                        tooltipPosition="bottom"/>
+            }
+            @if (account.isDeleted) {
+              <p-button (click)="activateBankAccount(account.iban)" [autoHide]="true"
+                        [showDelay]="500"
+                        icon="pi pi-undo" pTooltip="Recuperar" severity="secondary" tooltipPosition="bottom"/>
+            }
           </div>
         </td>
       </tr>

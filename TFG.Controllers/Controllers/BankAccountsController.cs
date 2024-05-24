@@ -23,7 +23,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetBankAccounts(pageNumber, pageSize, orderBy, descending, search, filter,
             isDeleted);
     }
-    
+
     [Authorize(Policy = "Admin")]
     [HttpGet("{iban}")]
     public async Task<ActionResult<BankAccountResponseDto>> GetBankAccount(string iban)
@@ -37,14 +37,14 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     {
         return await bankAccountService.GetBankAccountsByUserId(userId);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpGet("my-self/user")]
     public async Task<ActionResult<List<BankAccountResponseDto>>> GetBankAccountsByMySelf()
     {
         return await bankAccountService.GetBankAccountsByUserId(GetUserId());
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpGet("my-self/totalbalance")]
     public async Task<ActionResult<decimal>> GetTotalBalanceByMySelf()
@@ -52,7 +52,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetTotalBalanceByUserId(GetUserId());
     }
 
-    
+
     //CREATE
     [Authorize(Policy = "Admin")]
     [HttpPost]
@@ -60,15 +60,15 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     {
         return await bankAccountService.CreateBankAccount(bankAccount);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPost("my-self")]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccountForMySelf(BankAccountCreateDto bankAccount)
     {
         return await bankAccountService.CreateBankAccount(bankAccount, GetUserId());
     }
-    
-    
+
+
     //UPDATE
     [Authorize(Policy = "Admin")]
     [HttpPut("{iban}")]
@@ -78,7 +78,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.UpdateBankAccount(iban, bankAccount);
     }
 
-    
+
     //DELETE
     [Authorize(Policy = "Admin")]
     [HttpDelete("{iban}")]
@@ -87,7 +87,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         await bankAccountService.DeleteBankAccount(iban);
         return NoContent();
     }
-    
+
     //ACTIVE
     [Authorize(Policy = "Admin")]
     [HttpPut("{iban}/active")]
@@ -104,7 +104,7 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         await bankAccountService.ActiveBizum(iban, userId);
         return Ok();
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPut("my-self/{iban}/active-bizum")]
     public async Task<ActionResult> ActiveBizumForMySelf(string iban)
@@ -112,9 +112,10 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         await bankAccountService.ActiveBizum(iban, GetUserId());
         return Ok();
     }
-    
+
     private Guid GetUserId()
     {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
+        return Guid.Parse(
+            User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
     }
 }

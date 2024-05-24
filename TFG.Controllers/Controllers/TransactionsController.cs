@@ -20,25 +20,28 @@ public class TransactionsController(TransactionService transactionService) : Con
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false,
         [FromQuery] string? search = null, [FromQuery] string? filter = null)
     {
-        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, null, search, filter);
+        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, null, search,
+            filter);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpGet("myself")]
-    public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetMyTransactions([FromQuery] int pageNumber = 1,
+    public async Task<ActionResult<Pagination<TransactionResponseDto>>> GetMyTransactions(
+        [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10, [FromQuery] string orderBy = "Id", [FromQuery] bool descending = false,
         [FromQuery] string? search = null, [FromQuery] string? filter = null)
     {
-        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, GetUserId(), search, filter);
+        return await transactionService.GetTransactions(pageNumber, pageSize, orderBy, descending, GetUserId(), search,
+            filter);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpGet("myself/incomes")]
     public async Task<List<TransactionResponseDto>> GetMyIncomes()
     {
         return await transactionService.GetIncomesByUserId(GetUserId());
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpGet("myself/expenses")]
     public async Task<List<TransactionResponseDto>> GetMyExpenses()
@@ -59,7 +62,7 @@ public class TransactionsController(TransactionService transactionService) : Con
     {
         return await transactionService.GetTransactionsByIban(bankAccountIban);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpGet("bankaccount/{iban}")]
     public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban)
@@ -89,10 +92,10 @@ public class TransactionsController(TransactionService transactionService) : Con
     {
         await transactionService.DeleteTransaction(id);
     }
-    
+
     private Guid GetUserId()
     {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
+        return Guid.Parse(
+            User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
     }
-
 }

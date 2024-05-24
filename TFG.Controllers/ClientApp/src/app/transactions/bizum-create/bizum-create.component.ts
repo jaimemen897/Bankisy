@@ -6,7 +6,7 @@ import {BizumCreate} from "../../models/BizumCreate";
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
-import {NgIf} from "@angular/common";
+
 import {PaginatorModule} from "primeng/paginator";
 import {TransactionsService} from "../../services/transactions.service";
 import {UserService} from "../../services/users.service";
@@ -18,7 +18,6 @@ import {UserService} from "../../services/users.service";
     ButtonModule,
     DropdownModule,
     InputTextModule,
-    NgIf,
     PaginatorModule,
     ReactiveFormsModule
   ],

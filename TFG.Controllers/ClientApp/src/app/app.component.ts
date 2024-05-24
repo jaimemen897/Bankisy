@@ -1,10 +1,9 @@
-import {Component, Inject, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {Message, MessageService} from "primeng/api";
 import {fadeInAnimation} from "./route-animations";
 import {SocketService} from "./services/socket.service";
 import {DOCUMENT} from "@angular/common";
 import {UserService} from "./services/users.service";
-import {User} from "./models/User";
 
 
 @Component({

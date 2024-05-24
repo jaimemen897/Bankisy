@@ -1,7 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
-import {NgClass, NgForOf, NgOptimizedImage} from "@angular/common";
+import {NgClass, NgOptimizedImage} from "@angular/common";
 import {RouterOutlet} from "@angular/router";
 import {TagModule} from "primeng/tag";
 import {RatingModule} from "primeng/rating";
@@ -35,7 +35,6 @@ import {environment} from "../../environments/environment";
     DataViewModule,
     FormsModule,
     NgClass,
-    NgForOf,
     SpeedDialModule,
     ToastModule,
     PaginatorModule,

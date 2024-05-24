@@ -1,4 +1,6 @@
-<app-navbar *ngIf="!isInLoginOrRegister()"></app-navbar>
+@if (!isInLoginOrRegister()) {
+  <app-navbar></app-navbar>
+}
 <div [@routeAnimations]="prepareRoute(outlet)">
   <router-outlet #outlet="outlet"></router-outlet>
 </div>

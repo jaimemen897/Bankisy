@@ -9,7 +9,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {MultiSelectModule} from "primeng/multiselect";
 import {PaginatorModule} from "primeng/paginator";
 import {InputTextModule} from "primeng/inputtext";
-import {NgIf} from "@angular/common";
+
 import {PasswordModule} from "primeng/password";
 import {passwordMatchValidator} from "../../register/passwordMatchValidator";
 
@@ -23,7 +23,6 @@ import {passwordMatchValidator} from "../../register/passwordMatchValidator";
     PaginatorModule,
     ReactiveFormsModule,
     InputTextModule,
-    NgIf,
     PasswordModule
   ],
   templateUrl: './create-users.component.html',

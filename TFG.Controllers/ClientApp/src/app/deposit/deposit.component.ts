@@ -9,7 +9,7 @@ import {ToastModule} from "primeng/toast";
 import {BankAccount} from "../models/BankAccount";
 import {DropdownModule} from "primeng/dropdown";
 import {MessageService} from "primeng/api";
-import {NgIf} from "@angular/common";
+
 import {BankAccountService} from "../services/bankaccounts.service";
 
 @Component({
@@ -22,8 +22,7 @@ import {BankAccountService} from "../services/bankaccounts.service";
     SliderModule,
     ToastModule,
     DropdownModule,
-    ReactiveFormsModule,
-    NgIf
+    ReactiveFormsModule
   ],
   templateUrl: './deposit.component.html',
   styleUrl: './deposit.component.css'

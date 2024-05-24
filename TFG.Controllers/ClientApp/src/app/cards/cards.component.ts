@@ -6,7 +6,7 @@ import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
 import {DropdownModule} from "primeng/dropdown";
 import {TagModule} from "primeng/tag";
-import {DatePipe, NgClass, NgIf} from "@angular/common";
+import {DatePipe, NgClass} from "@angular/common";
 import {InputTextModule} from "primeng/inputtext";
 import {TooltipModule} from "primeng/tooltip";
 import {ButtonModule} from "primeng/button";
@@ -39,7 +39,6 @@ import {CreateCardComponent} from "./create-card/create-card.component";
     ConfirmDialogModule,
     DialogModule,
     DatePipe,
-    NgIf,
     CreateCardComponent
   ],
   templateUrl: './cards.component.html',

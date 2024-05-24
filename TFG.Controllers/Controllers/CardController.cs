@@ -24,7 +24,7 @@ public class CardController(CardService cardService) : ControllerBase
         return await cardService.GetCards(pageNumber, pageSize, orderBy, descending, search, filter, isDeleted,
             isBlocked);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpGet("my-cards")]
     public async Task<ActionResult<List<CardResponseDto>>> GetMyCards()
@@ -46,7 +46,7 @@ public class CardController(CardService cardService) : ControllerBase
     {
         return await cardService.CreateCard(cardCreateDto);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPost("my-card")]
     public async Task<ActionResult<CardResponseDto>> CreateCardForMySelf(CardCreateDto cardCreateDto)
@@ -61,7 +61,7 @@ public class CardController(CardService cardService) : ControllerBase
     {
         return await cardService.UpdateCard(cardNumber, cardUpdateDto);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPut("my-card/{cardNumber}")]
     public async Task<ActionResult<CardResponseDto>> UpdateMyCard(string cardNumber, CardUpdateDto cardUpdateDto)
@@ -77,7 +77,7 @@ public class CardController(CardService cardService) : ControllerBase
         await cardService.DeleteCard(cardNumber);
         return Ok();
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpDelete("my-card/{cardNumber}")]
     public async Task<ActionResult> DeleteMyCard(string cardNumber)
@@ -93,7 +93,7 @@ public class CardController(CardService cardService) : ControllerBase
     {
         return await cardService.RenovateCard(cardNumber);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPost("my-card/{cardNumber}/renovate")]
     public async Task<ActionResult<CardResponseDto>> RenovateMyCard(string cardNumber)
@@ -108,7 +108,7 @@ public class CardController(CardService cardService) : ControllerBase
         await cardService.BlockCard(cardNumber);
         return Ok();
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPost("my-card/{cardNumber}/block")]
     public async Task<ActionResult> BlockMyCard(string cardNumber)
@@ -124,7 +124,7 @@ public class CardController(CardService cardService) : ControllerBase
         await cardService.UnblockCard(cardNumber);
         return Ok();
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPost("my-card/{cardNumber}/unblock")]
     public async Task<ActionResult> UnblockMyCard(string cardNumber)
@@ -140,7 +140,7 @@ public class CardController(CardService cardService) : ControllerBase
         await cardService.ActivateCard(cardNumber);
         return Ok();
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPost("my-card/{cardNumber}/activate")]
     public async Task<ActionResult> ActivateMyCard(string cardNumber)
@@ -148,10 +148,10 @@ public class CardController(CardService cardService) : ControllerBase
         await cardService.ActivateCard(cardNumber, GetUserId());
         return Ok();
     }
-    
+
     private Guid GetUserId()
     {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
+        return Guid.Parse(
+            User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
     }
-
 }

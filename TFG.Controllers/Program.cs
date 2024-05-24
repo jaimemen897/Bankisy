@@ -23,14 +23,10 @@ builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole(options =>
-{
-    options.LogToStandardErrorThreshold = LogLevel.Information;
-    
-});
+builder.Logging.AddConsole(options => { options.LogToStandardErrorThreshold = LogLevel.Information; });
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new() { Title = "Bankisy API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Bankisy API", Version = "v1" });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Enter 'Bearer ' followed by a valid token.",

@@ -15,12 +15,18 @@
                  pInputText
                  placeholder="0,00€" type="number"/>
           @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
-            <p *ngIf="formGroup.controls['amount'].errors?.required"
-               class="text-red-500 text-xs m-0 ml-3">Este campo es obligatorio</p>
-            <p *ngIf="formGroup.controls['amount'].errors?.min"
-               class="text-red-500 text-xs m-0 ml-3">La cantidad mínima es 0,01€</p>
-            <p *ngIf="formGroup.controls['amount'].errors?.max"
-               class="text-red-500 text-xs m-0 ml-3">La cantidad máxima es 10.000€</p>
+            @if (formGroup.controls['amount'].errors?.required) {
+              <p
+                class="text-red-500 text-xs m-0 ml-3">Este campo es obligatorio</p>
+            }
+            @if (formGroup.controls['amount'].errors?.min) {
+              <p
+                class="text-red-500 text-xs m-0 ml-3">La cantidad mínima es 0,01€</p>
+            }
+            @if (formGroup.controls['amount'].errors?.max) {
+              <p
+                class="text-red-500 text-xs m-0 ml-3">La cantidad máxima es 10.000€</p>
+            }
           }
         </div>
       </div>

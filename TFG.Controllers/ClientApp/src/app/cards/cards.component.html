@@ -159,18 +159,26 @@
             <p-button (click)="renovateCard(card.cardNumber)" [autoHide]="true" [showDelay]="500"
                       icon="pi pi-refresh"
                       pTooltip="Renovar" severity="secondary" tooltipPosition="bottom"/>
-            <p-button (click)="blockCard(card.cardNumber)" *ngIf="!card.isBlocked" [autoHide]="true"
-                      [showDelay]="500"
-                      icon="pi pi-ban" pTooltip="Bloquear" severity="help" tooltipPosition="bottom"/>
-            <p-button (click)="unblockCard(card.cardNumber)" *ngIf="card.isBlocked" [autoHide]="true"
-                      [showDelay]="500"
-                      icon="pi pi-unlock" pTooltip="Desbloquear" severity="success" tooltipPosition="bottom"/>
-            <p-button (click)="activateCard(card.cardNumber)" *ngIf="card.isDeleted" [autoHide]="true"
-                      [showDelay]="500"
-                      icon="pi pi-check" pTooltip="Activar" severity="success" tooltipPosition="bottom"/>
-            <p-button (click)="deleteCard(card.cardNumber)" *ngIf="!card.isDeleted" [autoHide]="true"
-                      [showDelay]="500"
-                      icon="pi pi-trash" pTooltip="Borrar" severity="danger" tooltipPosition="bottom"/>
+            @if (!card.isBlocked) {
+              <p-button (click)="blockCard(card.cardNumber)" [autoHide]="true"
+                        [showDelay]="500"
+                        icon="pi pi-ban" pTooltip="Bloquear" severity="help" tooltipPosition="bottom"/>
+            }
+            @if (card.isBlocked) {
+              <p-button (click)="unblockCard(card.cardNumber)" [autoHide]="true"
+                        [showDelay]="500"
+                        icon="pi pi-unlock" pTooltip="Desbloquear" severity="success" tooltipPosition="bottom"/>
+            }
+            @if (card.isDeleted) {
+              <p-button (click)="activateCard(card.cardNumber)" [autoHide]="true"
+                        [showDelay]="500"
+                        icon="pi pi-check" pTooltip="Activar" severity="success" tooltipPosition="bottom"/>
+            }
+            @if (!card.isDeleted) {
+              <p-button (click)="deleteCard(card.cardNumber)" [autoHide]="true"
+                        [showDelay]="500"
+                        icon="pi pi-trash" pTooltip="Borrar" severity="danger" tooltipPosition="bottom"/>
+            }
           </div>
         </td>
       </tr>

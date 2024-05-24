@@ -10,7 +10,7 @@ import {BankAccount} from "../../models/BankAccount";
 import {InputTextModule} from "primeng/inputtext";
 import {StyleClassModule} from "primeng/styleclass";
 import {TransactionCreate} from "../../models/TransactionCreate";
-import {NgIf, NgStyle} from "@angular/common";
+import {NgStyle} from "@angular/common";
 import {BankAccountService} from "../../services/bankaccounts.service";
 import {TransactionsService} from "../../services/transactions.service";
 import {UserService} from "../../services/users.service";
@@ -26,7 +26,6 @@ import {UserService} from "../../services/users.service";
     ReactiveFormsModule,
     InputTextModule,
     StyleClassModule,
-    NgIf,
     NgStyle
   ],
   templateUrl: './create-transaction.component.html',

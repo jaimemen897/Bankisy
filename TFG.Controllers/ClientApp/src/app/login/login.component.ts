@@ -6,7 +6,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {DividerModule} from "primeng/divider";
 import {ToastModule} from "primeng/toast";
 import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
-import {NgIf} from "@angular/common";
+
 import {MessageService} from "primeng/api";
 import {MessageModule} from "primeng/message";
 import {UserLogin} from "../models/UserLogin";
@@ -31,7 +31,6 @@ export class Token {
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
-    NgIf,
     MessageModule
   ],
   templateUrl: './login.component.html',

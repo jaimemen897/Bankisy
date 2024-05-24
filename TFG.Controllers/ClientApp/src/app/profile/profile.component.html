@@ -8,18 +8,24 @@
 
       <div class="inline-flex gap-3">
         <div>
-            <span class="p-input-filled">
-              <input class="p-3 border-round-3xl border-0" formControlName="name" id="name" pInputText
-                     placeholder="Nombre"
-                     type="text">
+          <span class="p-input-filled">
+            <input class="p-3 border-round-3xl border-0" formControlName="name" id="name" pInputText
+                   placeholder="Nombre"
+                   type="text">
             </span>
           @if (formGroup.controls['name'].invalid && formGroup.controls['name'].touched) {
-            <p *ngIf="formGroup.controls['name'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-              El nombre es obligatorio</p>
-            <p *ngIf="formGroup.controls['name'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
-              El nombre debe tener al menos 3 caracteres</p>
-            <p *ngIf="formGroup.controls['name'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
-              El nombre debe tener como máximo 50 caracteres</p>
+            @if (formGroup.controls['name'].errors?.required) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El nombre es obligatorio</p>
+            }
+            @if (formGroup.controls['name'].errors?.minlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El nombre debe tener al menos 3 caracteres</p>
+            }
+            @if (formGroup.controls['name'].errors?.maxlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El nombre debe tener como máximo 50 caracteres</p>
+            }
           }
         </div>
         <div>
@@ -27,62 +33,88 @@
               <input class="p-3 border-round-3xl border-0" formControlName="email" id="email" pInputText
                      placeholder="Email"
                      type="text">
-            </span>
+              </span>
           @if (formGroup.controls['email'].invalid && formGroup.controls['email'].touched) {
-            <p *ngIf="formGroup.controls['email'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-              El email es obligatorio</p>
-            <p *ngIf="formGroup.controls['email'].errors?.email" class="text-red-500 text-xs m-0 ml-3">
-              El email no es válido</p>
+            @if (formGroup.controls['email'].errors?.required) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El email es obligatorio</p>
+            }
+            @if (formGroup.controls['email'].errors?.email) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El email no es válido</p>
+            }
           }
         </div>
       </div>
 
       <div class="inline-flex gap-3">
         <div><span class="p-input-filled">
-            <input class="p-3 border-round-3xl border-0" formControlName="username" id="username" pInputText
-                   placeholder="Username"
-                   type="text">
-          </span>
+              <input class="p-3 border-round-3xl border-0" formControlName="username" id="username" pInputText
+                     placeholder="Username"
+                     type="text">
+              </span>
           @if (formGroup.controls['username'].invalid && formGroup.controls['username'].touched) {
-            <p *ngIf="formGroup.controls['username'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-              El username es obligatorio</p>
-            <p *ngIf="formGroup.controls['username'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
-              El username debe tener al menos 3 caracteres</p>
-            <p *ngIf="formGroup.controls['username'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
-              El username debe tener como máximo 50 caracteres</p>
+            @if (formGroup.controls['username'].errors?.required) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El username es obligatorio</p>
+            }
+            @if (formGroup.controls['username'].errors?.minlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El username debe tener al menos 3 caracteres</p>
+            }
+            @if (formGroup.controls['username'].errors?.maxlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El username debe tener como máximo 50 caracteres</p>
+            }
           }</div>
 
         <div><span class="p-input-filled">
-            <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0" formControlName="dni" id="dni"
-                   pInputText placeholder="DNI"
-                   type="text">
-          </span>
+                <input (input)="validateDNI($event)" class="p-3 border-round-3xl border-0" formControlName="dni"
+                       id="dni"
+                       pInputText placeholder="DNI"
+                       type="text">
+                </span>
           @if (formGroup.controls['dni'].invalid && formGroup.controls['dni'].touched) {
-            <p *ngIf="formGroup.controls['dni'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-              El DNI es obligatorio</p>
-            <p *ngIf="formGroup.controls['dni'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
-              El DNI debe tener 9 caracteres</p>
-            <p *ngIf="formGroup.controls['dni'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
-              El DNI debe tener 9 caracteres</p>
-            <p *ngIf="formGroup.controls['dni'].errors?.incorrect" class="text-red-500 text-xs m-0 ml-3">
-              El DNI no es correcto</p>
+            @if (formGroup.controls['dni'].errors?.required) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El DNI es obligatorio</p>
+            }
+            @if (formGroup.controls['dni'].errors?.minlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El DNI debe tener 9 caracteres</p>
+            }
+            @if (formGroup.controls['dni'].errors?.maxlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El DNI debe tener 9 caracteres</p>
+            }
+            @if (formGroup.controls['dni'].errors?.incorrect) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El DNI no es correcto</p>
+            }
           }</div>
       </div>
 
       <div class="inline-flex gap-3">
         <div>
-            <span class="p-input-filled">
-          <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0" formControlName="phone" id="phone"
-                 pInputText
-                 placeholder="Teléfono" type="text">
-        </span>
+                  <span class="p-input-filled">
+                    <input (keyup.enter)="sendForm()" class="p-3 border-round-3xl border-0" formControlName="phone"
+                           id="phone"
+                           pInputText
+                           placeholder="Teléfono" type="text">
+                    </span>
           @if (formGroup.controls['phone'].invalid && formGroup.controls['phone'].touched) {
-            <p *ngIf="formGroup.controls['phone'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-              El teléfono es obligatorio</p>
-            <p *ngIf="formGroup.controls['phone'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
-              El teléfono debe tener 9 caracteres</p>
-            <p *ngIf="formGroup.controls['phone'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
-              El teléfono debe tener 9 caracteres</p>
+            @if (formGroup.controls['phone'].errors?.required) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El teléfono es obligatorio</p>
+            }
+            @if (formGroup.controls['phone'].errors?.minlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El teléfono debe tener 9 caracteres</p>
+            }
+            @if (formGroup.controls['phone'].errors?.maxlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El teléfono debe tener 9 caracteres</p>
+            }
           }
         </div>
 
@@ -90,8 +122,10 @@
           <p-dropdown [options]="genders" formControlName="gender" placeholder="Selecciona un género"
                       styleClass="w-16rem"/>
           @if (formGroup.controls['gender'].invalid && formGroup.controls['gender'].touched) {
-            <p *ngIf="formGroup.controls['gender'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-              El género es obligatorio</p>
+            @if (formGroup.controls['gender'].errors?.required) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                El género es obligatorio</p>
+            }
           }
         </div>
       </div>
@@ -102,12 +136,18 @@
                       formControlName="password" id="password" mediumLabel="Media" placeholder="Contraseña"
                       promptLabel="Introduce una contraseña" strongLabel="Fuerte" toggleMask weakLabel="Débil"/>
           @if (formGroup.controls['password'].invalid && formGroup.controls['password'].touched) {
-            <p *ngIf="formGroup.controls['password'].errors?.required" class="text-red-500 text-xs m-0 ml-3">
-              La contraseña es obligatoria</p>
-            <p *ngIf="formGroup.controls['password'].errors?.minlength" class="text-red-500 text-xs m-0 ml-3">
-              La contraseña debe tener al menos 3 caracteres</p>
-            <p *ngIf="formGroup.controls['password'].errors?.maxlength" class="text-red-500 text-xs m-0 ml-3">
-              La contraseña debe tener como máximo 50 caracteres</p>
+            @if (formGroup.controls['password'].errors?.required) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                La contraseña es obligatoria</p>
+            }
+            @if (formGroup.controls['password'].errors?.minlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                La contraseña debe tener al menos 3 caracteres</p>
+            }
+            @if (formGroup.controls['password'].errors?.maxlength) {
+              <p class="text-red-500 text-xs m-0 ml-3">
+                La contraseña debe tener como máximo 50 caracteres</p>
+            }
           }
         </div>
 

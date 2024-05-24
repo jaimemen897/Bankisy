@@ -71,7 +71,7 @@ public class UsersController(UsersService usersService) : ControllerBase
     {
         return await usersService.DeleteAvatar(id);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpDelete("avatar")]
     public async Task<ActionResult> DeleteMyAvatar()
@@ -86,9 +86,10 @@ public class UsersController(UsersService usersService) : ControllerBase
     {
         await usersService.DeleteUser(id);
     }
-    
+
     private Guid GetUserId()
     {
-        return Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
+        return Guid.Parse(
+            User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new HttpException(401, "Unauthorized"));
     }
 }
