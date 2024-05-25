@@ -15,10 +15,10 @@ namespace TFG.ServicesTests.Users;
 public class UserServiceTest
 {
     private Mock<IMemoryCache> _cacheMock;
+    private Mock<BankContext> _mockContext;
     private UsersService _usersService;
     private BankAccountService _bankAccountService;
     private CardService _cardService;
-    private Mock<BankContext> _mockContext;
     private IConfiguration _configuration;
 
     [SetUp]
@@ -30,9 +30,8 @@ public class UserServiceTest
         _mockContext = new Mock<BankContext>(options);
         _cardService = new CardService(_mockContext.Object);
         
-        var configurationMock = new Mock<IConfiguration>();
+        Mock<IConfiguration> configurationMock = new Mock<IConfiguration>();
         _configuration = configurationMock.Object;
-
         
         _bankAccountService = new BankAccountService(_mockContext.Object, _cacheMock.Object, _cardService);
         _usersService = new UsersService(_mockContext.Object, _cacheMock.Object, _bankAccountService, _configuration);

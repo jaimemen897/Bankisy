@@ -199,9 +199,13 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
 
-    public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto)
+    public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto, Guid userId)
     {
-        var account = await bankContext.BankAccounts.FindAsync(incomeCreateDto.IbanAccountDestination) ??
+        var userAsync = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == userId) ??
+                        throw new HttpException(404, "User not found");
+        
+        var account = await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
+                          b.Users.Any(u => u.Id == userAsync.Id) && !b.IsDeleted) ??
                       throw new HttpException(404, "Account origin not found");
 
         var transaction = new Transaction

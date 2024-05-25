@@ -56,7 +56,6 @@ builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<SessionService>();
-builder.Services.AddScoped<IndexService>();
 builder.Services.AddScoped<CardService>();
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddHttpContextAccessor();

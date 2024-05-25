@@ -117,15 +117,15 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
         ClearCache();
     }
 
-    public async Task<UserResponseDto> UploadAvatar(Guid id, IFormFile file, string host)
+    public async Task<UserResponseDto> UploadAvatar(IFormFile file, string host, Guid id)
     {
-        var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        var user = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == id) ??
+                   throw new HttpException(404, "User not found");
         var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
         if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
 
         if (file.Length > 0)
         {
-            /*check if file is an image*/
             if (!file.ContentType.Contains("image"))
                 throw new HttpException(400, "Invalid file type. Only images are allowed");
 

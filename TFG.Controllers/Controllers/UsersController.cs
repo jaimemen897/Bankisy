@@ -62,7 +62,16 @@ public class UsersController(UsersService usersService) : ControllerBase
     public async Task<ActionResult<UserResponseDto>> UpdateUserAvatar(Guid id, [FromForm] IFormFile avatar)
     {
         var host = $"{Request.Scheme}://{Request.Host}";
-        return await usersService.UploadAvatar(id, avatar, host);
+        return await usersService.UploadAvatar(avatar, host, id);
+    }
+    
+    [Authorize(Policy = "User")]
+    [HttpPut("avatar")]
+    public async Task<ActionResult<UserResponseDto>> UpdateAvatar([FromForm] IFormFile avatar)
+    {
+        var host = $"{Request.Scheme}://{Request.Host}";
+        var userId = GetUserId();
+        return await usersService.UploadAvatar(avatar, host, userId);
     }
 
     [Authorize(Policy = "Admin")]

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Stripe;
+using TFG.Context.DTOs.transactions;
 using TFG.Controllers.DataAccessor;
 using TFG.Services;
 
@@ -8,7 +9,7 @@ namespace TFG.Controllers.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WebhookController(IOptionsSnapshot<StripeSettings> stripeSettings, IndexService indexService) : Controller
+public class WebhookController(IOptionsSnapshot<StripeSettings> stripeSettings, TransactionService transactionService) : Controller
 {
     private readonly string _endpointSecret = stripeSettings.Value.EndpointSecret;
 
@@ -29,7 +30,14 @@ public class WebhookController(IOptionsSnapshot<StripeSettings> stripeSettings, 
                 var ammount = paymentIntent.Amount / 100;
                 var userId = Guid.Parse(paymentIntent.Metadata["userId"]);
                 var iban = paymentIntent.Metadata["iban"];
-                await indexService.AddPaymentIntent(ammount, userId, iban);
+                
+                var incomeCreateDto = new IncomeCreateDto
+                {
+                    Amount = ammount,
+                    IbanAccountDestination = iban
+                };
+                
+                await transactionService.AddPaymentIntent(incomeCreateDto, userId);
             }
 
             return Ok();
