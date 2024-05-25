@@ -16,8 +16,8 @@ public class WebhookController(IOptionsSnapshot<StripeSettings> stripeSettings, 
     [HttpPost]
     public async Task<IActionResult> Index()
     {
+        Console.WriteLine(_endpointSecret);
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        Console.WriteLine(json);
         try
         {
             var stripeEvent = EventUtility.ConstructEvent(json,
