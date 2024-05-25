@@ -82,9 +82,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
     private async Task<List<TransactionResponseDto>> GetTransactions(Expression<Func<Transaction, bool>> filter)
     {
-        var transactions = await bankContext.Transactions
-            .Where(filter)
-            .ToListAsync();
+        var transactions = await bankContext.Transactions.Where(filter).ToListAsync();
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }

@@ -17,6 +17,7 @@ public class WebhookController(IOptionsSnapshot<StripeSettings> stripeSettings, 
     public async Task<IActionResult> Index()
     {
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+        Console.WriteLine(json);
         try
         {
             var stripeEvent = EventUtility.ConstructEvent(json,
@@ -33,7 +34,7 @@ public class WebhookController(IOptionsSnapshot<StripeSettings> stripeSettings, 
 
             return Ok();
         }
-        catch (StripeException e)
+        catch (Exception e)
         {
             Console.WriteLine(e);
             return BadRequest(new { error = e.Message });

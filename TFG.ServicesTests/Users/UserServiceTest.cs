@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.EntityFrameworkCore;
 using TFG.Context.Context;
@@ -18,6 +19,7 @@ public class UserServiceTest
     private BankAccountService _bankAccountService;
     private CardService _cardService;
     private Mock<BankContext> _mockContext;
+    private IConfiguration _configuration;
 
     [SetUp]
     public void SetUp()
@@ -27,8 +29,13 @@ public class UserServiceTest
         _cacheMock.Setup(x => x.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         _mockContext = new Mock<BankContext>(options);
         _cardService = new CardService(_mockContext.Object);
+        
+        var configurationMock = new Mock<IConfiguration>();
+        _configuration = configurationMock.Object;
+
+        
         _bankAccountService = new BankAccountService(_mockContext.Object, _cacheMock.Object, _cardService);
-        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object, _bankAccountService);
+        _usersService = new UsersService(_mockContext.Object, _cacheMock.Object, _bankAccountService, _configuration);
     }
 
     //GET ALL USERS
@@ -376,37 +383,3 @@ public class UserServiceTest
         });
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

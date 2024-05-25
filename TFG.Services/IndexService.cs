@@ -11,17 +11,10 @@ public class IndexService(
     SessionService sessionService,
     UsersService usersService)
 {
-    private readonly UserResponseDto user = sessionService.GetMyself().Result;
-
-    public UserResponseDto GetMyself()
-    {
-        return sessionService.GetMyself().Result;
-    }
-
     //PROFILE
-
     public async Task<UserResponseDto> UploadAvatar(IFormFile file, string host)
     {
+        var user = sessionService.GetMyself().Result;
         return await usersService.UploadAvatar(user.Id, file, host);
     }
 
@@ -31,6 +24,7 @@ public class IndexService(
         var userAsync = await usersService.GetUserAsync(userId);
 
         var bankAccount = await bankAccountService.GetBankAccount(iban);
+        
         if (bankAccount.UsersId.All(id => id != userAsync.Id))
             throw new HttpException(403, "You are not the owner of the account");
 
@@ -39,6 +33,7 @@ public class IndexService(
             Amount = ammount,
             IbanAccountDestination = bankAccount.Iban
         };
+        
         await transactionService.AddPaymentIntent(incomeCreateDto);
     }
 }

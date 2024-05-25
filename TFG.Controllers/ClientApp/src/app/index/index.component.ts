@@ -102,11 +102,12 @@ export class IndexComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getUser().subscribe(user => {
       this.user = user;
+      this.getBalanceByUserId();
+      this.getIncomesByUserId();
+      this.getExpensesByUserId();
+      this.getBankAccountsByUserId();
     });
-    this.getBalanceByUserId();
-    this.getIncomesByUserId();
-    this.getExpensesByUserId();
-    this.getBankAccountsByUserId();
+
 
     this.items = [
       {

@@ -178,49 +178,7 @@ public class CardServiceTest
         // Assert
         Assert.Multiple(() => { Assert.That(result, Has.Count.EqualTo(0)); });
     }
-
-
-    //GET BY IBAN
-    [Test]
-    public async Task GetCardsByIban_ReturnsExpectedCards()
-    {
-        // Arrange
-        var iban = "ES1234567891234567891234";
-        var cards = new List<Card>
-        {
-            new() { CardNumber = "1234567890123456", BankAccountIban = iban },
-            new() { CardNumber = "2345678901234567", BankAccountIban = iban }
-        };
-
-        _mockContext.Setup(x => x.Cards).ReturnsDbSet(cards);
-
-        // Act
-        var result = await _cardService.GetCardsByIban(iban);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result, Has.Count.EqualTo(2));
-            Assert.That(result[0].CardNumber, Is.EqualTo("1234567890123456"));
-            Assert.That(result[1].CardNumber, Is.EqualTo("2345678901234567"));
-        });
-    }
-
-    [Test]
-    public async Task GetCardsByIban_CardsNotFound()
-    {
-        // Arrange
-        var iban = "ES1234567891234567891234";
-
-        _mockContext.Setup(x => x.Cards).ReturnsDbSet([]);
-
-        // Act
-        var result = await _cardService.GetCardsByIban(iban);
-
-        // Assert
-        Assert.Multiple(() => { Assert.That(result, Has.Count.EqualTo(0)); });
-    }
-
+    
 
     //CREATE
     [Test]

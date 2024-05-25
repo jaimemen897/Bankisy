@@ -17,6 +17,8 @@ public class TransactionServiceTest
 {
     private Mock<BankContext> _mockContext;
     private Mock<IMemoryCache> _cacheMock;
+    private BankAccountService _bankAccountService;
+    private CardService _cardService;
     private TransactionService _transactionService;
     private Mock<IHubContext<MyHub>> _mockHubContext;
 
@@ -28,7 +30,9 @@ public class TransactionServiceTest
         _cacheMock.Setup(x => x.CreateEntry(It.IsAny<object>())).Returns(Mock.Of<ICacheEntry>());
         _mockContext = new Mock<BankContext>(options);
         _mockHubContext = new Mock<IHubContext<MyHub>>();
-        _transactionService = new TransactionService(_mockContext.Object, _cacheMock.Object, _mockHubContext.Object);
+        _cardService = new CardService(_mockContext.Object);
+        _bankAccountService = new BankAccountService(_mockContext.Object, _cacheMock.Object, _cardService);
+        _transactionService = new TransactionService(_mockContext.Object, _cacheMock.Object, _mockHubContext.Object, _bankAccountService);
     }
 
     //GET ALL TRANSACTIONS
@@ -107,6 +111,183 @@ public class TransactionServiceTest
     }
     
     
+    //GET TRANSACTIONS BY IBAN
+    [Test]
+    public async Task GetTransactionsByIban_ReturnsExpectedTransactions()
+    {
+        // Arrange
+        var user = new User { Name = "Test User" };
+        var bankAccounts = new List<BankAccount>
+        {
+            new() { Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user]
+            },
+            new() { Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Saving }
+        };
+        
+        var transactions = new List<Transaction>
+        {
+            new()
+            {
+                Id = 1, Amount = 100, Concept = "Test Transaction 1", IbanAccountOrigin = "ES123456789",
+                Date = DateTime.Now, IbanAccountDestination = bankAccounts[0].Iban
+            },
+            new()
+            {
+                Id = 2, Amount = 200, Concept = "Test Transaction 2", IbanAccountDestination = "ES987654321",
+                Date = DateTime.Now, IbanAccountOrigin = bankAccounts[1].Iban
+            }
+        };
+        
+        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
+        _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
+
+        // Act
+        var result = await _transactionService.GetTransactionsByIban(bankAccounts[0].Iban, user.Id);
+        
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo(1));
+        });
+    }
+    
+    [Test]
+    public void GetTransactionsByIban_ThrowsHttpExceptionWhenAccountNotFound()
+    {
+        // Arrange
+        var user = new User { Name = "Test User" };
+        var bankAccounts = new List<BankAccount>
+        {
+            new() { Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user]
+            },
+            new() { Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Saving }
+        };
+        
+        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
+
+        // Act
+        var ex = Assert.ThrowsAsync<HttpException>(() => _transactionService.GetTransactionsByIban("ES1234567890123456789013", user.Id));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("BankAccount not found"));
+            Assert.That(ex.Code, Is.EqualTo(404));
+        });
+    }
+    
+    [Test]
+    public void GetTransactionsByIban_ThrowsHttpExceptionWhenUserIsNotOwner()
+    {
+        // Arrange
+        var user = new User { Name = "Test User" };
+        var user2 = new User { Name = "Test User 2" };
+        var bankAccounts = new List<BankAccount>
+        {
+            new() { Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user]
+            },
+            new() { Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Saving }
+        };
+        
+        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
+
+        // Act
+        var ex = Assert.ThrowsAsync<HttpException>(() => _transactionService.GetTransactionsByIban("ES1234567890123456789012", Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("You are not the owner of the account"));
+            Assert.That(ex.Code, Is.EqualTo(403));
+        });
+    }
+    
+    
+    //GET EXPENSES BY USERID
+    [Test]
+    public async Task GetExpensesByUserId_ReturnsExpectedTransactions()
+    {
+        // Arrange
+        var user = new User { Id = Guid.NewGuid(), Name = "Test User" };
+        var bankAccounts = new List<BankAccount>
+        {
+            new() { Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user]
+            },
+            new() { Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Saving }
+        };
+        
+        var transactions = new List<Transaction>
+        {
+            new()
+            {
+                Id = 1, Amount = 100, Concept = "Test Transaction 1", IbanAccountOrigin = bankAccounts[0].Iban,
+                Date = DateTime.UtcNow, IbanAccountDestination = bankAccounts[0].Iban
+            },
+            new()
+            {
+                Id = 2, Amount = 200, Concept = "Test Transaction 2", IbanAccountDestination = bankAccounts[0].Iban,
+                Date = DateTime.UtcNow, IbanAccountOrigin = bankAccounts[1].Iban
+            }
+        };
+        
+        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
+        _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
+        
+        // Act
+        var result = await _transactionService.GetExpensesByUserId(user.Id);
+        
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo(1));
+        });
+    }
+    
+    
+    //GET INCOMES BY USERID
+    [Test]
+    public async Task GetIncomesByUserId_ReturnsExpectedTransactions()
+    {
+        // Arrange
+        var user = new User { Id = Guid.NewGuid(), Name = "Test User" };
+        var bankAccounts = new List<BankAccount>
+        {
+            new() { Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user]
+            },
+            new() { Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Saving }
+        };
+        
+        var transactions = new List<Transaction>
+        {
+            new()
+            {
+                Id = 1, Amount = 100, Concept = "Test Transaction 1", IbanAccountOrigin = bankAccounts[1].Iban,
+                Date = DateTime.UtcNow, IbanAccountDestination = bankAccounts[0].Iban
+            },
+            new()
+            {
+                Id = 2, Amount = 200, Concept = "Test Transaction 2", IbanAccountDestination = bankAccounts[1].Iban,
+                Date = DateTime.UtcNow, IbanAccountOrigin = bankAccounts[0].Iban
+            }
+        };
+        
+        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
+        _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
+        
+        // Act
+        var result = await _transactionService.GetIncomesByUserId(user.Id);
+        
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result[0].Id, Is.EqualTo(1));
+        });
+    }
+    
+    
     //CREATE TRANSACTION
     [Test]
     public async Task CreateTransaction_ReturnsExpectedTransaction()
@@ -136,7 +317,7 @@ public class TransactionServiceTest
         _mockContext.Setup(x => x.BankAccounts).Returns(mockSetAccounts.Object);
         
         // Act
-        var result = await _transactionService.CreateTransaction(transactionCreateDto);
+        var result = await _transactionService.CreateTransaction(transactionCreateDto, userId);
     
         // Assert
         Assert.Multiple(() =>
@@ -163,7 +344,7 @@ public class TransactionServiceTest
         _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(new List<BankAccount> { accountDestination });
         
         // Act
-        var ex = Assert.ThrowsAsync<HttpException>(() => _transactionService.CreateTransaction(transactionCreateDto));
+        var ex = Assert.ThrowsAsync<HttpException>(() => _transactionService.CreateTransaction(transactionCreateDto, Guid.NewGuid()));
 
         // Assert
         Assert.Multiple(() =>
