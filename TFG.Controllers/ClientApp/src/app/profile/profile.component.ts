@@ -140,10 +140,12 @@ export class ProfileComponent implements OnInit {
       closable: false
     });
     this.userService.setUser()
-    this.userService.getUser().subscribe(user => {
-      this.user = user;
-    });
-    this.avatar = this.user.avatar
+    setTimeout(() => {
+      this.userService.getUser().subscribe(user => {
+        this.user = user;
+        this.avatar = this.user.avatar
+      });
+    }, 100);
   }
 
   defaultAvatar() {
