@@ -63,7 +63,6 @@ export class IndexComponent implements OnInit {
 
   constructor(private messageService: MessageService, private confirmationService: ConfirmationService,
               private bankAccountService: BankAccountService, private transactionService: TransactionsService, private userService: UserService) {
-
   }
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
@@ -83,10 +82,9 @@ export class IndexComponent implements OnInit {
   totalBalance: number;
   totalIncomes: number;
   totalExpenses: number;
+
   transactions: Transaction[];
   transactionsByBankAccount: Transaction[];
-  incomes: Transaction[];
-  expenses: Transaction[];
   bankAccounts: BankAccount[];
 
   displayDialogBankAccount: boolean = false;
@@ -100,11 +98,10 @@ export class IndexComponent implements OnInit {
 
   //LOAD
   ngOnInit(): void {
-    this.userService.getUser().subscribe(user => {
+    this.userService.setUser()
+    this.userService.user$.subscribe(user => {
       this.user = user;
-      this.getBalanceByUserId();
-      this.getIncomesByUserId();
-      this.getExpensesByUserId();
+      this.getMoneySummaryByUserId();
       this.getBankAccountsByUserId();
     });
 
@@ -191,23 +188,11 @@ export class IndexComponent implements OnInit {
   }
 
   //GET DATA
-  getBalanceByUserId() {
-    this.bankAccountService.getTotalBalanceByMySelf().subscribe(balance => {
-      this.totalBalance = balance;
-    });
-  }
-
-  getIncomesByUserId() {
-    this.transactionService.getMyIncomes().subscribe(incomes => {
-      this.incomes = incomes;
-      this.totalIncomes = incomes.reduce((acc, income) => acc + income.amount, 0);
-    });
-  }
-
-  getExpensesByUserId() {
-    this.transactionService.getMyExpenses().subscribe(expenses => {
-      this.expenses = expenses;
-      this.totalExpenses = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+  getMoneySummaryByUserId() {
+    this.transactionService.getMoneySummaryByUserId().subscribe(accountData => {
+      this.totalBalance = accountData.totalBalance;
+      this.totalIncomes = accountData.totalIncomes;
+      this.totalExpenses = accountData.totalExpenses;
     });
   }
 
@@ -267,8 +252,7 @@ export class IndexComponent implements OnInit {
   //ORDER, FILTER, PAGINATE
   refresh() {
     this.updating = true;
-    this.ngOnInit()
-    this.lazyLoad({first: 0, rows: this.rows, sortField: this.sortField, sortOrder: this.sortOrder})
+    this.userService.setUser()
     this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
     });

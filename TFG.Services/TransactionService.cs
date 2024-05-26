@@ -80,7 +80,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
     private async Task<List<TransactionResponseDto>> GetTransactions(Expression<Func<Transaction, bool>> filter)
     {
-        var transactions = await bankContext.Transactions.Where(filter).ToListAsync();
+        var transactions = await bankContext.Transactions.Where(filter).OrderByDescending(t => t.Date).ToListAsync();
 
         return transactions.Select(transaction => _mapper.Map<TransactionResponseDto>(transaction)).ToList();
     }
@@ -95,8 +95,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         return await GetTransactions(t =>
             t.IbanAccountOrigin == bankAccount.Iban || t.IbanAccountDestination == bankAccount.Iban);
     }
-
-    public async Task<List<TransactionResponseDto>> GetExpensesByUserId(Guid userId)
+    
+    public async Task<UserSummary> GetSummary(Guid userId)
     {
         var bankAccounts = await bankContext.BankAccounts
             .Where(b => b.Users.Any(u => u.Id == userId))
@@ -105,28 +105,27 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         var firstDayOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1).ToUniversalTime();
 
-        return await GetTransactions(t =>
-            bankAccounts.Contains(t.IbanAccountOrigin ?? "") && t.Date >= firstDayOfMonth);
-    }
+        var transactionsFromFirstOfMonth = await GetTransactions(t => bankAccounts.Contains(t.IbanAccountDestination) && t.Date >= firstDayOfMonth);
+        var expensesFromFirstOfMonth = await GetTransactions(t => bankAccounts.Contains(t.IbanAccountOrigin ?? "") && t.Date >= firstDayOfMonth);
 
-    public async Task<List<TransactionResponseDto>> GetIncomesByUserId(Guid userId)
-    {
-        var bankAccounts = await bankContext.BankAccounts
-            .Where(b => b.Users.Any(u => u.Id == userId))
-            .Select(b => b.Iban)
-            .ToListAsync();
+        var totalBalance = bankAccounts.Sum(iban => bankContext.BankAccounts.First(b => b.Iban == iban).Balance);
+        var totalIncomes = transactionsFromFirstOfMonth.Sum(t => t.Amount);
+        var totalExpenses = expensesFromFirstOfMonth.Sum(t => t.Amount);
 
-        var firstDayOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1).ToUniversalTime();
-
-        return await GetTransactions(t => bankAccounts.Contains(t.IbanAccountDestination) && t.Date >= firstDayOfMonth);
+        return new UserSummary
+        {
+            TotalBalance = totalBalance,
+            TotalIncomes = totalIncomes,
+            TotalExpenses = totalExpenses
+        };
     }
 
     //CREATE
     public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto, Guid userId)
     {
-        var account = await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
-                          b.Iban == transactionCreateDto.IbanAccountOrigin) ??
-                      throw new HttpException(404, "Account origin not found");
+        var account = await bankContext.BankAccounts.Include(b => b.Users)
+            .FirstOrDefaultAsync(b => b.Iban == transactionCreateDto.IbanAccountOrigin) ??
+                     throw new HttpException(404, "Account origin not found");
 
         var accountDestination =
             await bankContext.BankAccounts.Include(b => b.Users)

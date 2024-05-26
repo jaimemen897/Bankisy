@@ -11,7 +11,6 @@ import {environment} from "../../environments/environment";
 export class AuthService {
   private loginUrl = `${environment.apiUrl}/session/login`
   private registerUrl = `${environment.apiUrl}/session/signup`
-  private getTokenUrl = `${environment.apiUrl}/session/token`
 
   constructor(private http: HttpClient, private messageService: MessageService) {
   }
@@ -24,12 +23,6 @@ export class AuthService {
 
   register(userRegister: UserCreate): Observable<any> {
     return this.http.post(this.registerUrl, userRegister).pipe(
-      catchError(error => this.handleError(error))
-    )
-  }
-
-  getToken(): Observable<any> {
-    return this.http.get(this.getTokenUrl).pipe(
       catchError(error => this.handleError(error))
     )
   }

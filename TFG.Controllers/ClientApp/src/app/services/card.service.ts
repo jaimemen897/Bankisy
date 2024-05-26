@@ -44,17 +44,22 @@ export class CardService {
         totalCount: response.totalCount,
         totalRecords: response.totalRecords,
         items: response.items
-      }))
+      })),
+      catchError(error => this.handleError(error))
     );
   }
 
   getCard(cardNumber: string): Observable<Card> {
     const url = `${this.apiUrl}/${cardNumber}`;
-    return this.http.get<Card>(url);
+    return this.http.get<Card>(url).pipe(
+      catchError(error => this.handleError(error))
+    );
   }
 
   getMyCards(): Observable<Card[]> {
-    return this.http.get<Card[]>(this.apiUrl + '/my-cards');
+    return this.http.get<Card[]>(this.apiUrl + '/my-cards').pipe(
+      catchError(error => this.handleError(error))
+    );
   }
 
   createCard(card: CardCreate): Observable<Card> {
@@ -83,11 +88,6 @@ export class CardService {
 
   deleteCard(cardNumber: string): Observable<Card> {
     return this.http.delete<Card>(this.apiUrl + '/' + cardNumber);
-  }
-
-  //TODO: no usage
-  deleteMyCard(cardNumber: string): Observable<Card> {
-    return this.http.delete<Card>(this.apiUrl + '/my-card/' + cardNumber);
   }
 
   renovateCard(cardNumber: string): Observable<Card> {
@@ -132,25 +132,21 @@ export class CardService {
     );
   }
 
-  //TODO: no usage
-  activateMyCard(cardNumber: string): Observable<Card> {
-    return this.http.post<Card>(this.apiUrl + '/my-card/' + cardNumber + '/activate', null).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
   private handleError(error: any) {
     const errorMessages: { [key: string]: string } = {
+      'Invalid orderBy parameter': 'Parámetro de ordenación inválido',
+      'Card not found': 'Tarjeta no encontrada',
+      'Cards not found': 'Tarjetas no encontradas',
       'User not found': 'Usuario no encontrado',
+      'You are not the owner of the card': 'No eres el propietario de la tarjeta',
       'Bank account not found': 'Cuenta bancaria no encontrada',
       'Bank account does not belong to the user': 'La cuenta bancaria no pertenece al usuario',
       'Bank account already has a card': 'La cuenta bancaria ya tiene una tarjeta',
       'Invalid card type. Valid values are: Debit, Visa, Credit, Prepaid, Virtual, Mastercard, AmericanExpress': 'Tipo de tarjeta inválido. Los valores válidos son: Débito, Visa, Crédito, Prepago, Virtual, Mastercard, AmericanExpress',
       'Card is already blocked': 'La tarjeta ya está bloqueada',
       'Card is not blocked': 'La tarjeta no está bloqueada',
-      'Card is not expired': 'La tarjeta no está caducada',
-      'Account origin not found': 'Cuenta de origen no encontrada',
-      'Account destination not found': 'Cuenta de destino no encontrada'
+      'Card is not expired': 'La tarjeta no está vencida',
+      'Server error': 'Error en el servidor'
     };
 
     if (error.status === 400 || error.status === 404) {
@@ -163,6 +159,14 @@ export class CardService {
           detail: message
         });
       }
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        closable: false,
+        detail: errorMessages['Server error'],
+        life: 2000
+      });
     }
 
     return throwError(() => error);

@@ -77,14 +77,6 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         return bankAccounts.Select(bankAccount => _mapper.Map<BankAccountResponseDto>(bankAccount)).ToList();
     }
 
-    public async Task<decimal> GetTotalBalanceByUserId(Guid userId)
-    {
-        var bankAccounts = await bankContext.BankAccounts.Include(ba => ba.Users)
-            .Where(ba => ba.Users.Any(u => u.Id == userId) && !ba.IsDeleted).ToListAsync();
-
-        return bankAccounts.Sum(ba => ba.Balance);
-    }
-
     //CREATE
     public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto, Guid? userId = null)
     {

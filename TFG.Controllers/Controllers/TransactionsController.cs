@@ -36,17 +36,10 @@ public class TransactionsController(TransactionService transactionService) : Con
     }
 
     [Authorize(Policy = "User")]
-    [HttpGet("myself/incomes")]
-    public async Task<List<TransactionResponseDto>> GetMyIncomes()
+    [HttpGet("summary")]
+    public async Task<UserSummary> GetSummary()
     {
-        return await transactionService.GetIncomesByUserId(GetUserId());
-    }
-
-    [Authorize(Policy = "User")]
-    [HttpGet("myself/expenses")]
-    public async Task<List<TransactionResponseDto>> GetMyExpenses()
-    {
-        return await transactionService.GetExpensesByUserId(GetUserId());
+        return await transactionService.GetSummary(GetUserId());
     }
 
     [Authorize(Policy = "Admin")]
@@ -79,7 +72,7 @@ public class TransactionsController(TransactionService transactionService) : Con
     }
 
     [Authorize(Policy = "User")]
-    [HttpPost("bizum/{userId}")]
+    [HttpPost("bizum")]
     public async Task<ActionResult<BizumResponseDto>> CreateBizum(BizumCreateDto transaction)
     {
         return await transactionService.CreateBizum(transaction, GetUserId());

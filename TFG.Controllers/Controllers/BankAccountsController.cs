@@ -45,13 +45,6 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
         return await bankAccountService.GetBankAccountsByUserId(GetUserId());
     }
 
-    [Authorize(Policy = "User")]
-    [HttpGet("my-self/totalbalance")]
-    public async Task<ActionResult<decimal>> GetTotalBalanceByMySelf()
-    {
-        return await bankAccountService.GetTotalBalanceByUserId(GetUserId());
-    }
-
 
     //CREATE
     [Authorize(Policy = "Admin")]

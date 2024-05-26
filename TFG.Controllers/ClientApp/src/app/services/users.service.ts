@@ -107,10 +107,13 @@ export class UserService {
   private handleError(error: any) {
     const errorMessages: { [key: string]: string } = {
       'Invalid orderBy parameter': 'Parámetro de ordenación inválido',
-      'Username, Email or DNI already exists': 'Nombre de usuario, email o DNI ya existen',
-      'Invalid gender. Valid values are: Male, Female, Other, PreferNotToSay': 'Género inválido. Los valores válidos son: Masculino, Femenino, Otro, Prefiero no decirlo',
       'User not found': 'Usuario no encontrado',
-      'User or password incorrect': 'Usuario o contraseña incorrectos'
+      'Invalid gender. Valid values are: Male, Female, Other, PreferNotToSay': 'Género inválido. Los valores válidos son: Masculino, Femenino, Otro, Prefiero no decirlo',
+      'Username, Email or DNI already exists': 'El nombre de usuario, correo electrónico o DNI ya existen',
+      'Invalid file type. Only images are allowed': 'Tipo de archivo inválido. Solo se permiten imágenes',
+      'Invalid password hash': 'Hash de contraseña inválido',
+      'Invalid credentials': 'Credenciales inválidas',
+      'Server error': 'Error en el servidor'
     };
 
     if (error.status === 400 || error.status === 404) {
@@ -132,6 +135,14 @@ export class UserService {
           life: 2000
         });
       }
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        closable: false,
+        detail: errorMessages['Server error'],
+        life: 2000
+      });
     }
 
     return throwError(() => error);

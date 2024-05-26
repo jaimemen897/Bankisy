@@ -435,7 +435,7 @@ public class TransactionServiceTest
         _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
 
         // Act
-        var result = await _transactionService.GetIncomesByUserId(user.Id);
+        var result = await _transactionService.GetSummary(user.Id);
 
         // Assert
         Assert.Multiple(() =>
