@@ -105,9 +105,13 @@ export class TransactionsService {
 
   private handleError(error: any) {
     const errorMessages: { [key: string]: string } = {
+      'User not found': 'Usuario no encontrado',
+      'Account not found': 'Cuenta no encontrada',
+      'Account origin not found or not accepting Bizum': 'Debes activar bizum en una de tus cuentas',
       'Transaction not found': 'Transacción no encontrada',
       'Account origin not found': 'Cuenta de origen no encontrada',
       'Account destination not found': 'Cuenta de destino no encontrada',
+      'Account destination not found or not accepting Bizum' : 'El usuario introducido no tiene el servicio Bizum activado',
       'Origin and destination users cannot be the same': 'El usuario de origen y el de destino no pueden ser el mismo',
       'Insufficient funds in the origin account': 'Fondos insuficientes en la cuenta de origen',
       'Transaction amount must be greater than zero': 'El monto de la transacción debe ser mayor que cero',
@@ -127,7 +131,7 @@ export class TransactionsService {
           life: 2000
         });
       }
-    } else {
+    } else if (error.status === 500) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',

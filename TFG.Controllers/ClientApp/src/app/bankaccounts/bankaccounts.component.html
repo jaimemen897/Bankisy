@@ -36,7 +36,7 @@
               <p-dropdown (onChange)="onSearchFilter($event)" [options]="accountsTypes" [showClear]="true"
                           class="text-color-secondary" placeholder="Tipo de cuenta">
                 <ng-template let-option pTemplate="item">
-                  <p-tag [severity]="getSeverity(option)" [value]="option"></p-tag>
+                  <p-tag rounded [severity]="getSeverity(option)" [value]="option"></p-tag>
                 </ng-template>
               </p-dropdown>
             </ng-template>
@@ -82,7 +82,7 @@
           {{ account.iban }}
         </td>
         <td>
-          <p-tag [severity]="getSeverity(account.accountType)" [value]="getAccountName(account.accountType)"></p-tag>
+          <p-tag rounded [severity]="getSeverity(account.accountType)" [value]="getAccountName(account.accountType)"></p-tag>
         </td>
         <td>
           <div class="inline-block vertical-align-middle">
@@ -92,7 +92,7 @@
           </div>
         </td>
         <td>
-          <p-tag [severity]="getBalanceColor(account.balance)" [value]="account.balance.toString() + '€'"></p-tag>
+          <p-tag rounded [severity]="getBalanceColor(account.balance)" [value]="account.balance.toString() + '€'"></p-tag>
         </td>
         <td>
           <i

@@ -4,14 +4,10 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1130734c_002D6b7a_002D4b26_002Dba3e_002Db59f55ead8ff/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4fe7dd19_002D52b8_002D43af_002Da2f5_002D0d30b88ce2e5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" IsLocked="True" Name="DeleteTransaction_ReturnsExpectedTransaction" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4fe7dd19_002D52b8_002D43af_002Da2f5_002D0d30b88ce2e5/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsLocked="True" Name="DeleteTransaction_ReturnsExpectedTransaction" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=91acc588_002D2b1d_002D456d_002D82f8_002D3b04ff7af634/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteAvatar_ReturnsUserWithDefaultAvatar" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::45B6B4D3-5BF7-4370-84F9-A77AF3C58162::net8.0::TFG.ServicesTests.Users.UserServiceTest.DeleteAvatar_ReturnsUserWithDefaultAvatar&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	
 	
 	
 	

@@ -45,7 +45,7 @@
                           class="text-color-secondary"
                           placeholder="Tipo">
                 <ng-template let-option pTemplate="item">
-                  <p-tag [severity]="getSeverity(option)" [value]="option"></p-tag>
+                  <p-tag rounded [severity]="getSeverity(option)" [value]="option"></p-tag>
                 </ng-template>
               </p-dropdown>
             </ng-template>
@@ -99,7 +99,7 @@
         </td>
         <!--TIPO DE TARJETA-->
         <td>
-          <p-tag [severity]="getSeverity(card.cardType)" [value]="getCardTypeValue(card.cardType)"></p-tag>
+          <p-tag rounded [severity]="getSeverity(card.cardType)" [value]="getCardTypeValue(card.cardType)"></p-tag>
         </td>
         <!--USUARIO-->
         <td>

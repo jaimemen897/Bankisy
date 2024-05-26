@@ -159,7 +159,7 @@ export class CardService {
           detail: message
         });
       }
-    } else {
+    } else if (error.status === 500) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',

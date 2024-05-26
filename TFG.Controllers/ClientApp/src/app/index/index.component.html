@@ -85,6 +85,7 @@
           <ng-template pTemplate="header">
             <tr>
               <th>IBAN</th>
+              <th>Bizum activado</th>
               <th>Saldo</th>
               <th>Usuarios</th>
               <th>Tipo de cuenta</th>
@@ -94,8 +95,9 @@
           <ng-template pTemplate="body" let-account>
             <tr>
               <td>{{ account.iban }}</td>
+              <td>{{ account.acceptBizum ? 'Sí' : 'No' }}</td>
               <td>
-                <p-tag [value]="account.balance + '€'" [severity]="getBalanceColor(account.balance)"></p-tag>
+                <p-tag rounded [value]="account.balance + '€'" [severity]="getBalanceColor(account.balance)"></p-tag>
               </td>
               <td>{{ account.usersName }}</td>
               <td>{{ getAccountName(account.accountType) }}</td>
@@ -119,6 +121,7 @@
                 <p class="text-left">Tipo de cuenta: {{ getAccountName(account.accountType) }}</p>
                 <p class="text-left">Usuario: {{ account.usersName }}</p>
                 <p class="text-left">Saldo: {{ account.balance }}</p>
+                <p class="text-left">Bizum activado: {{ account.acceptBizum ? 'Sí' : 'No' }}</p>
                 <p class="text-left">Estado: {{ account.isDeleted ? 'Inactiva' : 'Activa' }}</p>
               </ng-template>
             </p-overlayPanel>
@@ -240,7 +243,7 @@
             <tr>
               <td>{{ transaction.id }}</td>
               <td>
-                <p-tag [value]="transaction.amount + '€'" [severity]="getTransactionColor(transaction)"></p-tag>
+                <p-tag rounded [value]="transaction.amount + '€'" [severity]="getTransactionColor(transaction)"></p-tag>
               </td>
               <td>{{ transaction.concept }}</td>
               <td>{{ transaction.ibanAccountOrigin }}</td>

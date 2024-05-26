@@ -55,7 +55,7 @@ export class AuthService {
           life: 2000
         });
       }
-    } else {
+    } else if (error.status === 500) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',

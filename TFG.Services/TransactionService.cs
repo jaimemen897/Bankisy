@@ -146,7 +146,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         var user = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == userId) ??
                    throw new HttpException(404, "User not found");
 
-        var account = await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
+        var account = await bankContext.BankAccounts.Include(b => b.Users).FirstOrDefaultAsync(b =>
                           b.Users.Any(u => u.Id == user.Id) && b.AcceptBizum && !b.IsDeleted) ??
                       throw new HttpException(404, "Account origin not found or not accepting Bizum");
 
@@ -155,7 +155,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
             throw new HttpException(404, "User destination not found");
 
         var accountDestination =
-            await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
+            await bankContext.BankAccounts.Include(b => b.Users).FirstOrDefaultAsync(b =>
                 b.Users.Any(u => u.Id == userDestination.Id) && b.AcceptBizum && !b.IsDeleted) ??
             throw new HttpException(404, "Account destination not found or not accepting Bizum");
 
@@ -169,7 +169,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         ValidateBizum(user, userDestination, account, bizumCreateDto);
 
-        await CreateTransactionPay(account, accountDestination, transactionCreate);
+        await CreateTransactionPay(account, accountDestination, transactionCreate, true);
 
         ClearCache();
 
@@ -177,7 +177,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     }
 
     private async Task<TransactionResponseDto> CreateTransactionPay(BankAccount accountOrigin,
-        BankAccount accountDestination, TransactionCreateDto transactionCreateDto)
+        BankAccount accountDestination, TransactionCreateDto transactionCreateDto, bool isBizum = false)
     {
         var transaction = _mapper.Map<Transaction>(transactionCreateDto);
 
@@ -193,10 +193,12 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         await bankContext.SaveChangesAsync();
 
         var recipientUser = accountDestination.Users.FirstOrDefault();
+        var message = isBizum
+            ? $"Se ha recibido un Bizum de {transaction.Amount}€ con concepto: {transaction.Concept}"
+            : $"Se ha recibido una transferencia de {transaction.Amount}€ con concepto: {transaction.Concept}";
         if (recipientUser != null)
             if (MyHub._userConnections.TryGetValue(recipientUser.Id.ToString(), out var connectionId))
-                await hubContext.Clients.Client(connectionId).SendAsync("TransferReceived", recipientUser.Id,
-                    $"Se ha recibido una transferencia de {transaction.Amount}€");
+                await hubContext.Clients.Client(connectionId).SendAsync("TransferReceived", recipientUser.Id,message);
 
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
