@@ -22,6 +22,7 @@ import {environment} from "../../environments/environment";
 import {UserService} from "../services/users.service";
 import {User} from "../models/User";
 import {ImageModule} from "primeng/image";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @Component({
   selector: 'app-profile',
@@ -41,7 +42,8 @@ import {ImageModule} from "primeng/image";
     TooltipModule,
     NgOptimizedImage,
     SplitButtonModule,
-    ImageModule
+    ImageModule,
+    ProgressSpinnerModule
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -49,13 +51,10 @@ import {ImageModule} from "primeng/image";
 export class ProfileComponent implements OnInit {
   constructor(private messageService: MessageService, private location: Location,
               private router: Router, private userService: UserService) {
-    this.userService.getUser().subscribe(user => {
-      this.user = user;
-    });
   }
 
   apiUrl = `${environment.apiUrl}/users/avatar`
-  user: User;
+  user!: User;
   genders: string[] = [Gender.Male, Gender.Female, Gender.Other, Gender.PreferNotToSay];
   avatar!: string;
 
@@ -77,14 +76,18 @@ export class ProfileComponent implements OnInit {
     }];
 
   ngOnInit(): void {
-    this.formGroup.controls.name.setValue(this.user.name);
-    this.formGroup.controls.email.setValue(this.user.email);
-    this.formGroup.controls.username.setValue(this.user.username);
-    this.formGroup.controls.dni.setValue(this.user.dni);
-    this.formGroup.controls.phone.setValue(this.user.phone);
-    let genderTranslated = Gender[this.user.gender as keyof typeof Gender];
-    this.formGroup.controls.gender.setValue(genderTranslated);
-    this.avatar = this.user.avatar;
+    this.userService.setUser();
+    this.userService.user$.subscribe(user => {
+      this.user = user;
+      this.formGroup.controls.name.setValue(this.user.name);
+      this.formGroup.controls.email.setValue(this.user.email);
+      this.formGroup.controls.username.setValue(this.user.username);
+      this.formGroup.controls.dni.setValue(this.user.dni);
+      this.formGroup.controls.phone.setValue(this.user.phone);
+      let genderTranslated = Gender[this.user.gender as keyof typeof Gender];
+      this.formGroup.controls.gender.setValue(genderTranslated);
+      this.avatar = this.user.avatar;
+    });
   }
 
   sendForm() {
@@ -140,12 +143,6 @@ export class ProfileComponent implements OnInit {
       closable: false
     });
     this.userService.setUser()
-    setTimeout(() => {
-      this.userService.getUser().subscribe(user => {
-        this.user = user;
-        this.avatar = this.user.avatar
-      });
-    }, 100);
   }
 
   defaultAvatar() {
@@ -158,9 +155,6 @@ export class ProfileComponent implements OnInit {
         closable: false
       });
       this.userService.setUser()
-      this.userService.getUser().subscribe(user => {
-        this.user = user;
-      });
       this.avatar = this.user.avatar
     });
   }

@@ -59,7 +59,7 @@ export class CardPanelComponent {
 
   constructor(private messageService: MessageService, private cardService: CardService, private userService: UserService) {
     this.refresh();
-    this.userService.getUser().subscribe(user => {
+    this.userService.user$.subscribe(user => {
       this.user = user;
     });
   }

@@ -15,8 +15,7 @@
               </div>
 
               <div class="card-body w-full">
-                <h2>{{ card.cardNumber }}</h2>
-                <p>{{ card.user.name }}</p>
+                <h2>{{ card.cardNumber.slice(0, 4) + ' ' + card.cardNumber.slice(4, 8) + ' ' + card.cardNumber.slice(8, 12) + ' ' + card.cardNumber.slice(12, 16) }}</h2>                <p>{{ card.user.name }}</p>
                 <div class="gap-2 w-full flex justify-content-center">
                   <p-button (click)="infoPanel.toggle($event)" icon="pi pi-eye"
                             styleClass="bg-black-alpha-90 border-transparent text-white hover:bg-gray-700"></p-button>

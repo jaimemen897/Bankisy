@@ -16,6 +16,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {Transaction} from "../models/Transaction";
 import {TransactionsService} from "../services/transactions.service";
 import {SocketService} from "../services/socket.service";
+import {IbanFormatPipe} from "../pipes/IbanFormatPipe";
 
 @Component({
   selector: 'app-transactions',
@@ -34,7 +35,8 @@ import {SocketService} from "../services/socket.service";
     FormsModule,
     OverlayPanelModule,
     ConfirmDialogModule,
-    DatePipe
+    DatePipe,
+    IbanFormatPipe
   ],
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.css'

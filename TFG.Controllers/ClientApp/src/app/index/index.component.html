@@ -94,8 +94,10 @@
           </ng-template>
           <ng-template pTemplate="body" let-account>
             <tr>
-              <td>{{ account.iban }}</td>
-              <td>{{ account.acceptBizum ? 'Sí' : 'No' }}</td>
+              <td>{{ account.iban | ibanFormat }}</td>
+              <td>
+                <p-tag rounded [value]="account.acceptBizum ? 'Sí' : 'No'" [severity]="getBizumColor(account.acceptBizum)"></p-tag>
+              </td>
               <td>
                 <p-tag rounded [value]="account.balance + '€'" [severity]="getBalanceColor(account.balance)"></p-tag>
               </td>
@@ -117,7 +119,7 @@
             <!--PANELES DESPLEGABLES-->
             <p-overlayPanel #infoPanel appendTo="body">
               <ng-template pTemplate="content">
-                <h4 class="text-left">IBAN: {{ account.iban }}</h4>
+                <h4 class="text-left">IBAN: {{ account.iban | ibanFormat }}</h4>
                 <p class="text-left">Tipo de cuenta: {{ getAccountName(account.accountType) }}</p>
                 <p class="text-left">Usuario: {{ account.usersName }}</p>
                 <p class="text-left">Saldo: {{ account.balance }}</p>
@@ -246,8 +248,8 @@
                 <p-tag rounded [value]="transaction.amount + '€'" [severity]="getTransactionColor(transaction)"></p-tag>
               </td>
               <td>{{ transaction.concept }}</td>
-              <td>{{ transaction.ibanAccountOrigin }}</td>
-              <td>{{ transaction.ibanAccountDestination }}</td>
+              <td>{{ transaction.ibanAccountOrigin | ibanFormat }}</td>
+              <td>{{ transaction.ibanAccountDestination | ibanFormat }}</td>
               <td>{{ transaction.date | date: 'dd/MM/yyyy HH:mm' }}</td>
               <td></td>
             </tr>

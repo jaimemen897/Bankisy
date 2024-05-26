@@ -100,10 +100,6 @@ export class UserService {
     });
   }
 
-  getUser() {
-    return this.user$;
-  }
-
   private handleError(error: any) {
     const errorMessages: { [key: string]: string } = {
       'Invalid orderBy parameter': 'Parámetro de ordenación inválido',

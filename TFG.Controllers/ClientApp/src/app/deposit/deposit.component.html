@@ -2,11 +2,15 @@
 <div class="w-full flex justify-content-center align-items-center flex-column">
   <form [formGroup]="formGroup" class="flex justify-content-center shadow-none">
     <div class="flex flex-column justify-content-center align-content-center gap-4 w-20rem">
-      <h1>Ingresar dinero</h1>
+      <h1 class="text-center">Ingresar dinero</h1>
 
       <p-dropdown [options]="bankAccounts" [showClear]="true" emptyMessage="No hay cuentas disponibles"
                   formControlName="selectedBankAccount"
-                  optionLabel="iban" placeholder="Cuenta" styleClass="w-20rem"/>
+                  optionLabel="iban" placeholder="Cuenta" styleClass="w-20rem">
+        <ng-template let-item pTemplate="item">
+          <p>{{ item.iban | ibanFormat }}</p>
+        </ng-template>
+      </p-dropdown>
       <div class="flex gap-4 justify-content-start align-items-center mb-2">
         <label for="amount">Cantidad a ingresar</label>
         <div class="flex flex-column gap-1 w-5">

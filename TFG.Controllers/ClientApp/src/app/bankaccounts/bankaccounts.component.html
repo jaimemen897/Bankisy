@@ -79,7 +79,7 @@
     <ng-template let-account pTemplate="body">
       <tr>
         <td>
-          {{ account.iban }}
+          {{ account.iban | ibanFormat }}
         </td>
         <td>
           <p-tag rounded [severity]="getSeverity(account.accountType)" [value]="getAccountName(account.accountType)"></p-tag>
@@ -103,7 +103,7 @@
           <div class="flex gap-2">
             <p-overlayPanel #infoPanel appendTo="body">
               <ng-template pTemplate="content">
-                <h4 class="text-left">IBAN: {{ account.iban }}</h4>
+                <h4 class="text-left">IBAN: {{ account.iban | ibanFormat }}</h4>
                 <p class="text-left">Tipo de cuenta: {{ getAccountName(account.accountType) }}</p>
                 <p class="text-left">Usuario: {{ account.usersName }}</p>
                 <p class="text-left">Saldo: {{ account.balance }}</p>
@@ -115,7 +115,7 @@
                 <p-scroller [items]="transactions" [style]="{'width': '300px', 'height': '130px'}"
                             scrollHeight="15rem">
                   <ng-template let-item pTemplate="item">
-                    <p>{{ item.concept }} - {{ item.date | date: 'dd/MM' }} - {{ item.amount }}€</p>
+                    <p>{{ item.concept }} - {{ item.date | date: 'dd/MM/YY' }} - {{ item.amount }}€</p>
                   </ng-template>
                 </p-scroller>
               </ng-template>

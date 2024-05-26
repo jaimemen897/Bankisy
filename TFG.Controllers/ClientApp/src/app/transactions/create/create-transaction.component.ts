@@ -14,6 +14,7 @@ import {NgStyle} from "@angular/common";
 import {BankAccountService} from "../../services/bankaccounts.service";
 import {TransactionsService} from "../../services/transactions.service";
 import {UserService} from "../../services/users.service";
+import {IbanFormatPipe} from "../../pipes/IbanFormatPipe";
 
 @Component({
   selector: 'app-create-transaction',
@@ -26,7 +27,8 @@ import {UserService} from "../../services/users.service";
     ReactiveFormsModule,
     InputTextModule,
     StyleClassModule,
-    NgStyle
+    NgStyle,
+    IbanFormatPipe
   ],
   templateUrl: './create-transaction.component.html',
   styleUrl: './create-transaction.component.css'
@@ -53,7 +55,7 @@ export class CreateTransactionComponent implements OnInit {
   }
 
   loadUser() {
-    this.userService.getUser().subscribe(user => {
+    this.userService.user$.subscribe(user => {
       this.user = user;
     });
     this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {

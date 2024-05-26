@@ -21,6 +21,7 @@ import {AccountType} from "../models/AccountType";
 import {Transaction} from "../models/Transaction";
 import {StyleClassModule} from "primeng/styleclass";
 import {CascadeSelectModule} from "primeng/cascadeselect";
+import {IbanFormatPipe} from "../pipes/IbanFormatPipe";
 
 @Component({
   selector: 'app-bankaccounts',
@@ -44,7 +45,8 @@ import {CascadeSelectModule} from "primeng/cascadeselect";
     DatePipe,
     NgStyle,
     StyleClassModule,
-    CascadeSelectModule
+    CascadeSelectModule,
+    IbanFormatPipe
   ],
   templateUrl: './bankaccounts.component.html',
   styleUrl: './bankaccounts.component.css'

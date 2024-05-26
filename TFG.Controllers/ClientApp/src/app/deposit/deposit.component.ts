@@ -11,6 +11,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {MessageService} from "primeng/api";
 
 import {BankAccountService} from "../services/bankaccounts.service";
+import {IbanFormatPipe} from "../pipes/IbanFormatPipe";
 
 @Component({
   selector: 'app-deposit',
@@ -22,7 +23,8 @@ import {BankAccountService} from "../services/bankaccounts.service";
     SliderModule,
     ToastModule,
     DropdownModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    IbanFormatPipe
   ],
   templateUrl: './deposit.component.html',
   styleUrl: './deposit.component.css'

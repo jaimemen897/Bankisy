@@ -51,7 +51,7 @@ export class NavbarComponent implements OnInit {
 
   constructor(@Inject(DOCUMENT) private document: Document, private messageService: MessageService, private userService: UserService) {
     let theme = window.localStorage.getItem('theme');
-    this.userService.getUser().subscribe(user => {
+    this.userService.user$.subscribe(user => {
       this.user = user;
     });
     if (theme) {

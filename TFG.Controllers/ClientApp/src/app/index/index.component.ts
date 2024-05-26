@@ -28,6 +28,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {BankAccountService} from "../services/bankaccounts.service";
 import {TransactionsService} from "../services/transactions.service";
 import {UserService} from "../services/users.service";
+import {IbanFormatPipe} from "../pipes/IbanFormatPipe";
 
 @Component({
   selector: 'app-index',
@@ -54,7 +55,8 @@ import {UserService} from "../services/users.service";
     ProgressSpinnerModule,
     InplaceModule,
     InputTextModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    IbanFormatPipe
   ],
   templateUrl: './index.component.html',
   styleUrl: './index.component.css'
@@ -218,6 +220,14 @@ export class IndexComponent implements OnInit {
       return 'warning';
     } else if (balance < 0) {
       return 'danger';
+    } else {
+      return 'info';
+    }
+  }
+
+  getBizumColor(bizum: boolean) {
+    if (bizum) {
+      return 'success';
     } else {
       return 'info';
     }

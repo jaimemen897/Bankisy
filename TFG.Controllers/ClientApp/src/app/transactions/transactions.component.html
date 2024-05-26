@@ -8,22 +8,22 @@
            [value]="transactions">
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="concept" style="width:22%">Concepto
+        <th pSortableColumn="concept" style="width:18%">Concepto
           <p-sortIcon field="concept"/>
         </th>
-        <th pSortableColumn="amount" style="width:22%">Cantidad
+        <th pSortableColumn="amount" style="width:14%">Cantidad
           <p-sortIcon field="amount"/>
         </th>
-        <th pSortableColumn="ibanAccountOrigin" style="width:22%">Cuenta origen
+        <th pSortableColumn="ibanAccountOrigin" style="width:20%">Cuenta origen
           <p-sortIcon field="ibanAccountOrigin"/>
         </th>
-        <th pSortableColumn="ibanAccountDestination" style="width:22%">Cuenta destino
+        <th pSortableColumn="ibanAccountDestination" style="width:20%">Cuenta destino
           <p-sortIcon field="ibanAccountDestination"/>
         </th>
-        <th pSortableColumn="date" style="width:22%">Fecha
+        <th pSortableColumn="date" style="width:12%">Fecha
           <p-sortIcon field="date"/>
         </th>
-        <th style="width:22%">
+        <th style="width:16%">
           <p-button (onClick)="clearOrders()" class="w-12" label="Quitar orden" text/>
         </th>
       </tr>
@@ -36,7 +36,7 @@
         </th>
         <!--BUSCAR POR CANTIDAD-->
         <th>
-          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="amount" placeholder="Buscar por cantidad"
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="amount" placeholder="Cantidad"
                           type="text"/>
         </th>
         <!--BUSCAR POR CUENTA ORIGEN-->
@@ -51,7 +51,7 @@
         </th>
         <!--BUSCAR POR FECHA-->
         <th>
-          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="date" placeholder="Buscar por fecha"
+          <p-columnFilter (input)="onSearch($event)" [showMenu]="false" field="date" placeholder="Fecha"
                           type="date"/>
         </th>
         <!--CLEAR-->
@@ -70,10 +70,10 @@
           <p-tag rounded [severity]="getAmountColor(transaction.amount)" [value]="transaction.amount.toString() + '€'"></p-tag>
         </td>
         <td>
-          {{ transaction.ibanAccountOrigin }}
+          {{ transaction.ibanAccountOrigin | ibanFormat }}
         </td>
         <td>
-          {{ transaction.ibanAccountDestination }}
+          {{ transaction.ibanAccountDestination | ibanFormat }}
         </td>
         <td>
           {{ transaction.date | date: 'dd/MM/yyyy' }}
@@ -86,8 +86,8 @@
                 <p>Id: {{ transaction.id }}</p>
                 <p>Concepto: '{{ transaction.concept }}'</p>
                 <p>Cantidad: {{ transaction.amount }}€</p>
-                <p>Cuenta origen: {{ transaction.ibanAccountOrigin }}</p>
-                <p>Cuenta destino: {{ transaction.ibanAccountDestination }}</p>
+                <p>Cuenta origen: {{ transaction.ibanAccountOrigin | ibanFormat }}</p>
+                <p>Cuenta destino: {{ transaction.ibanAccountDestination | ibanFormat }}</p>
                 <p>Fecha: {{ transaction.date | date: 'dd/MM/yyyy HH:mm:ss' }}</p>
               </ng-template>
             </p-overlayPanel>
