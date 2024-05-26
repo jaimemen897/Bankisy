@@ -47,19 +47,3 @@ public class SessionServiceTest
         _sessionService = new SessionService(_usersService, _mockHttpContextAccessor.Object, _configuration);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

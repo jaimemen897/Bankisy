@@ -32,14 +32,14 @@ public class UserServiceTest
         _mockContext = new Mock<BankContext>(options);
         _cardService = new CardService(_mockContext.Object);
 
-        Mock<IConfiguration> configurationMock = new Mock<IConfiguration>();
+        Mock<IConfiguration> configurationMock = new();
         //key, issuer, audience
         configurationMock.Setup(x => x["Jwt:Key"]).Returns("a_very_long_and_secure_key");
         configurationMock.Setup(x => x["Jwt:Issuer"]).Returns("issuer");
         configurationMock.Setup(x => x["Jwt:Audience"]).Returns("audience");
         configurationMock.Setup(x => x["Jwt:secret"]).Returns("a_very_long_and_secure_key_laskdjñflaksjdf");
 
-        
+
         _configuration = configurationMock.Object;
 
         _bankAccountService = new BankAccountService(_mockContext.Object, _cacheMock.Object, _cardService);
@@ -255,7 +255,7 @@ public class UserServiceTest
             Gender = "Male",
             Password = "password",
             Avatar = "avatar.png",
-            Phone = "123456789",
+            Phone = "123456789"
         };
 
         _mockContext.Setup(x => x.Users).ReturnsDbSet([]);
@@ -292,7 +292,7 @@ public class UserServiceTest
             Gender = "Male",
             Password = "password",
             Avatar = "avatar.png",
-            Phone = "123456789",
+            Phone = "123456789"
         };
 
         var users = new List<User>
@@ -342,7 +342,7 @@ public class UserServiceTest
 
         _mockContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
-    
+
     [Test]
     public void UpdateUser_UserNotFound()
     {
@@ -363,7 +363,7 @@ public class UserServiceTest
         });
     }
 
-    
+
     //UPDATE PROFILE
     [Test]
     public async Task UpdateProfile_ReturnsToken()
@@ -371,8 +371,11 @@ public class UserServiceTest
         // Arrange
         var userId = Guid.NewGuid();
         var user = new User { Id = userId, Name = "Test User" };
-        var userUpdateDto = new UserUpdateDto { Name = "Updated User", Email = "test@test.com", Username = "test", Dni = "54522318J",
-            Gender = "Female", Password = "password", Avatar = "avatar.png", Phone = "123456789" };
+        var userUpdateDto = new UserUpdateDto
+        {
+            Name = "Updated User", Email = "test@test.com", Username = "test", Dni = "54522318J",
+            Gender = "Female", Password = "password", Avatar = "avatar.png", Phone = "123456789"
+        };
 
         _mockContext.Setup(x => x.Users).ReturnsDbSet(new List<User> { user });
         _mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
@@ -381,12 +384,9 @@ public class UserServiceTest
         var result = await _usersService.UpdateProfile(userId, userUpdateDto);
 
         // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result, Is.InstanceOf<string>());
-        });
+        Assert.Multiple(() => { Assert.That(result, Is.InstanceOf<string>()); });
     }
-    
+
     [Test]
     public void UpdateProfile_UserNotFound()
     {
@@ -406,7 +406,7 @@ public class UserServiceTest
             Assert.That(exception.Message, Is.EqualTo("User not found"));
         });
     }
-    
+
     //UPLOAD AVATAR
     [Test]
     public async Task UploadAvatar_UpdatesUserAvatar()
@@ -440,7 +440,7 @@ public class UserServiceTest
 
         _mockContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
-    
+
     [Test]
     public void UploadAvatar_UserNotFound()
     {
@@ -451,7 +451,8 @@ public class UserServiceTest
         _mockContext.Setup(x => x.Users).ReturnsDbSet(new List<User>());
 
         // Act
-        var exception = Assert.ThrowsAsync<HttpException>(() => _usersService.UploadAvatar(mockFile.Object, "http://localhost", userId));
+        var exception = Assert.ThrowsAsync<HttpException>(() =>
+            _usersService.UploadAvatar(mockFile.Object, "http://localhost", userId));
 
         // Assert
         Assert.Multiple(() =>
@@ -460,7 +461,7 @@ public class UserServiceTest
             Assert.That(exception.Message, Is.EqualTo("User not found"));
         });
     }
-    
+
     [Test]
     public void UploadAvatar_InvalidFileType()
     {
@@ -482,7 +483,8 @@ public class UserServiceTest
         _mockContext.Setup(x => x.Users).ReturnsDbSet(new List<User> { user });
 
         // Act
-        var exception = Assert.ThrowsAsync<HttpException>(() => _usersService.UploadAvatar(mockFile.Object, "http://localhost", userId));
+        var exception = Assert.ThrowsAsync<HttpException>(() =>
+            _usersService.UploadAvatar(mockFile.Object, "http://localhost", userId));
 
         // Assert
         Assert.Multiple(() =>
@@ -491,7 +493,7 @@ public class UserServiceTest
             Assert.That(exception.Message, Is.EqualTo("Invalid file type. Only images are allowed"));
         });
     }
-    
+
     [Test]
     public async Task UploadAvatar_UserWithDefaultAvatar_ReturnsUpdatedUser()
     {
@@ -524,7 +526,7 @@ public class UserServiceTest
 
         _mockContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
-    
+
     [Test]
     public async Task UploadAvatar_DirectoryNotExists_ReturnsUpdatedUser()
     {
@@ -600,7 +602,7 @@ public class UserServiceTest
             Assert.That(exception.Message, Is.EqualTo("User not found"));
         });
     }
-    
+
     [Test]
     public async Task DeleteUser_UserWithAvatar_ReturnsDeletedUser()
     {
@@ -659,7 +661,7 @@ public class UserServiceTest
             Assert.That(exception.Message, Is.EqualTo("User not found"));
         });
     }
-    
+
     //VALIDATE USER
     [Test]
     public async Task ValidateUserCredentials_ValidCredentials_ReturnsUser()
@@ -706,7 +708,7 @@ public class UserServiceTest
         // Act & Assert
         Assert.ThrowsAsync<HttpException>(() => _usersService.ValidateUserCredentials(username, password));
     }
-    
+
     //invalid password hash
     [Test]
     public void ValidateUserCredentials_InvalidPasswordHash_ThrowsHttpException()

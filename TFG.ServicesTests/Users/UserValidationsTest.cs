@@ -22,7 +22,7 @@ public class UserValidationsTest
             Gender = "Male",
             Password = "password",
             Avatar = "avatar.png",
-            Phone = "123456789",
+            Phone = "123456789"
         };
         _context = new ValidationContext(_user, null, null);
         _results = [];

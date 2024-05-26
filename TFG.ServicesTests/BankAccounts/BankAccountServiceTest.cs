@@ -782,7 +782,7 @@ public class BankAccountServiceTest
             Assert.That(ex.Code, Is.EqualTo(400));
         });
     }
-    
+
     [Test]
     public async Task UpdateBankAccount_Ok_WhenUsersIdIsNull()
     {

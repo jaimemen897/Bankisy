@@ -17,7 +17,7 @@ public class BankAccountValidationsTest
         {
             AccountType = "Savings",
             UsersId = new List<Guid> { Guid.NewGuid() },
-            AcceptBizum = true,
+            AcceptBizum = true
         };
         _context = new ValidationContext(_bankAccount, null, null);
         _results = [];

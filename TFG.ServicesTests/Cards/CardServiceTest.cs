@@ -92,7 +92,7 @@ public class CardServiceTest
         // Assert
         Assert.That(result.Result.Items, Has.Count.EqualTo(0));
     }
-    
+
 
     //GET BY CARD NUMBER
     [Test]
@@ -178,7 +178,7 @@ public class CardServiceTest
         // Assert
         Assert.Multiple(() => { Assert.That(result, Has.Count.EqualTo(0)); });
     }
-    
+
 
     //CREATE
     [Test]
@@ -378,7 +378,7 @@ public class CardServiceTest
                            string.Join(", ", Enum.GetNames(typeof(CardType)))));
         });
     }
-    
+
     [Test]
     public void CreateCard_ThrowsHttpException_UserNotOwnerOfCard()
     {
@@ -553,7 +553,7 @@ public class CardServiceTest
         // Assert
         Assert.That(result.Pin, Is.EqualTo(cardUpdateDto.Pin));
     }
-    
+
     [Test]
     public void UpdateCard_ThrowsHttpException_UserNotOwnerOfCard()
     {
@@ -569,7 +569,8 @@ public class CardServiceTest
         _mockContext.Setup(x => x.Cards).ReturnsDbSet(new List<Card> { card });
 
         // Act
-        var exception = Assert.ThrowsAsync<HttpException>(() => _cardService.UpdateCard(cardNumber, cardUpdateDto, Guid.NewGuid()));
+        var exception =
+            Assert.ThrowsAsync<HttpException>(() => _cardService.UpdateCard(cardNumber, cardUpdateDto, Guid.NewGuid()));
 
         // Assert
         Assert.Multiple(() =>
@@ -578,8 +579,8 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
         });
     }
-    
-    
+
+
     //DELETE
     [Test]
     public async Task DeleteCard_DeletesCard()
@@ -615,7 +616,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
+
     [Test]
     public void DeleteCard_ThrowsHttpException_UserNotOwnerOfCard()
     {
@@ -635,8 +636,8 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
         });
     }
-    
-    
+
+
     //ACTIVATE
     [Test]
     public async Task ActivateCard_ActivatesCard()
@@ -653,7 +654,7 @@ public class CardServiceTest
         // Assert
         Assert.That(card.IsDeleted, Is.False);
     }
-    
+
     [Test]
     public void ActivateCard_ThrowsHttpException_UserNotOwnerOfCard()
     {
@@ -673,7 +674,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
         });
     }
-    
+
     [Test]
     public void ActivateCard_ThrowsHttpException_CardNotFound()
     {
@@ -692,8 +693,8 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
-    
+
+
     //BLOCK
     [Test]
     public async Task BlockCard_BlocksCard()
@@ -729,7 +730,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
+
     [Test]
     public void BlockCard_ThrowsHttpException_CardAlreadyBlocked()
     {
@@ -749,7 +750,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card is already blocked"));
         });
     }
-    
+
     [Test]
     public void BlockCard_ThrowsHttpException_UserNotOwnerOfCard()
     {
@@ -769,8 +770,8 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
         });
     }
-    
-    
+
+
     //UNBLOCK
     [Test]
     public async Task UnblockCard_UnblocksCard()
@@ -806,7 +807,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
+
     [Test]
     public void UnblockCard_ThrowsHttpException_CardNotBlocked()
     {
@@ -826,7 +827,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card is not blocked"));
         });
     }
-    
+
     [Test]
     public void UnblockCard_ThrowsHttpException_UserNotOwnerOfCard()
     {
@@ -846,8 +847,8 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
         });
     }
-    
-    
+
+
     //RENOVATE
     [Test]
     public async Task RenovateCard_ReturnsExpectedCard()
@@ -864,7 +865,7 @@ public class CardServiceTest
         // Assert
         Assert.That(result.CardNumber, Is.EqualTo(cardNumber));
     }
-    
+
     [Test]
     public void RenovateCard_ThrowsHttpException_CardNotFound()
     {
@@ -883,7 +884,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
+
     [Test]
     public void RenovateCard_ThrowsHttpException_CardNotExpired()
     {
@@ -903,7 +904,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card is not expired"));
         });
     }
-    
+
     [Test]
     public void RenovateCard_ThrowsHttpException_UserNotOwnerOfCard()
     {
