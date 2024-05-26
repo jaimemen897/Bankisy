@@ -52,7 +52,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
         var cacheKey = $"GetUser-{id}";
         if (cache.TryGetValue(cacheKey, out UserResponseDto? user) && user != null) return user;
 
-        var userEntity = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        var userEntity = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == id) ??
+                         throw new HttpException(404, "User not found");
         user = _mapper.Map<UserResponseDto>(userEntity);
         AddUserToCache(userEntity);
 

@@ -33,7 +33,6 @@ public class UserServiceTest
         _cardService = new CardService(_mockContext.Object);
 
         Mock<IConfiguration> configurationMock = new();
-        //key, issuer, audience
         configurationMock.Setup(x => x["Jwt:Key"]).Returns("a_very_long_and_secure_key");
         configurationMock.Setup(x => x["Jwt:Issuer"]).Returns("issuer");
         configurationMock.Setup(x => x["Jwt:Audience"]).Returns("audience");
@@ -204,10 +203,7 @@ public class UserServiceTest
         // Arrange
         var expectedUser = new User { Id = Guid.NewGuid(), Name = "Test User" };
 
-        var mockSet = new Mock<DbSet<User>>();
-        mockSet.Setup(x => x.FindAsync(expectedUser.Id)).ReturnsAsync(expectedUser);
-
-        _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
+        _mockContext.Setup(x => x.Users).ReturnsDbSet(new List<User> { expectedUser });
 
         // Act
         var result = await _usersService.GetUserAsync(expectedUser.Id);
@@ -224,10 +220,7 @@ public class UserServiceTest
     public void GetUserAsync_ReturnsNull()
     {
         // Arrange
-        var mockSet = new Mock<DbSet<User>>();
-        mockSet.Setup(x => x.FindAsync(It.IsAny<Guid>())).ReturnsAsync((User)null);
-
-        _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
+        _mockContext.Setup(x => x.Users).ReturnsDbSet([]);
 
         // Act
         var exception = Assert.ThrowsAsync<HttpException>(() => _usersService.GetUserAsync(Guid.NewGuid()));
