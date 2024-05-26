@@ -5,7 +5,6 @@ import {SocketService} from "./services/socket.service";
 import {DOCUMENT} from "@angular/common";
 import {UserService} from "./services/users.service";
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

@@ -52,7 +52,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
         var cacheKey = $"GetUser-{id}";
         if (cache.TryGetValue(cacheKey, out UserResponseDto? user) && user != null) return user;
 
-        var userEntity = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        var userEntity = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == id) ??
+                         throw new HttpException(404, "User not found");
         user = _mapper.Map<UserResponseDto>(userEntity);
         AddUserToCache(userEntity);
 
@@ -71,7 +72,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
 
     public async Task<UserResponseDto> UpdateUser(Guid id, UserUpdateDto user)
     {
-        var userToUpdate = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        var userToUpdate = await bankContext.Users.FirstOrDefaultAsync(x => x.Id == id) ??
+                           throw new HttpException(404, "User not found");
         userToUpdate = _mapper.Map(user, userToUpdate);
         await IsValid(user, userToUpdate);
 
@@ -117,15 +119,15 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
         ClearCache();
     }
 
-    public async Task<UserResponseDto> UploadAvatar(Guid id, IFormFile file, string host)
+    public async Task<UserResponseDto> UploadAvatar(IFormFile file, string host, Guid id)
     {
-        var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        var user = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == id) ??
+                   throw new HttpException(404, "User not found");
         var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
         if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
 
         if (file.Length > 0)
         {
-            /*check if file is an image*/
             if (!file.ContentType.Contains("image"))
                 throw new HttpException(400, "Invalid file type. Only images are allowed");
 
@@ -144,7 +146,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
             }
 
             user.Avatar = $"{host}/uploads/{user.Id}-{file.FileName}";
-            bankContext.Entry(user).State = EntityState.Modified;
+            bankContext.Users.Update(user);
             await bankContext.SaveChangesAsync();
         }
 
@@ -155,7 +157,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
 
     public async Task<UserResponseDto> DeleteAvatar(Guid id)
     {
-        var user = await bankContext.Users.FindAsync(id) ?? throw new HttpException(404, "User not found");
+        var user = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == id) ??
+                   throw new HttpException(404, "User not found");
         if (user.Avatar != User.ImageDefault)
         {
             var avatar = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads",
@@ -163,7 +166,8 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
             if (File.Exists(avatar)) File.Delete(avatar);
 
             user.Avatar = User.ImageDefault;
-            bankContext.Entry(user).State = EntityState.Modified;
+            
+            bankContext.Users.Update(user);
             await bankContext.SaveChangesAsync();
         }
 

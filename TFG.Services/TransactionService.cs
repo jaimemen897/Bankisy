@@ -36,9 +36,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
             transactionsQuery = transactionsQuery.Where(t =>
                 (t.IbanAccountOrigin != null && t.IbanAccountOrigin.Contains(search)) ||
                 t.IbanAccountDestination.Contains(search) ||
-                t.Concept.Contains(search) ||
-                t.Date.ToString().Contains(search) ||
-                t.Amount.ToString().Contains(search));
+                t.Concept.Contains(search) || t.Amount.ToString().Contains(search));
 
         if (userId != null)
         {
@@ -60,7 +58,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         }
 
         var paginatedTransactions = await transactionsQuery.ToPagination(pageNumber, pageSize, orderBy, descending,
-            transaction => _mapper.Map<TransactionResponseDto>(transaction));
+            _mapper.Map<TransactionResponseDto>);
 
         return paginatedTransactions;
     }
@@ -126,7 +124,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     //CREATE
     public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto, Guid userId)
     {
-        var account = await bankContext.BankAccounts.FindAsync(transactionCreateDto.IbanAccountOrigin) ??
+        var account = await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
+                          b.Iban == transactionCreateDto.IbanAccountOrigin) ??
                       throw new HttpException(404, "Account origin not found");
 
         var accountDestination =
@@ -145,7 +144,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
     public async Task<BizumResponseDto> CreateBizum(BizumCreateDto bizumCreateDto, Guid userId)
     {
-        var user = await bankContext.Users.FindAsync(userId) ?? throw new HttpException(404, "User not found");
+        var user = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == userId) ??
+                   throw new HttpException(404, "User not found");
 
         var account = await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
                           b.Users.Any(u => u.Id == user.Id) && b.AcceptBizum && !b.IsDeleted) ??
@@ -181,13 +181,16 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         BankAccount accountDestination, TransactionCreateDto transactionCreateDto)
     {
         var transaction = _mapper.Map<Transaction>(transactionCreateDto);
+
+        // Add the transaction to the origin and destination accounts
         accountOrigin.TransactionsOrigin.Add(transaction);
         accountDestination.TransactionsDestination.Add(transaction);
-        bankContext.Transactions.Add(transaction);
 
+        // Update the balances
         accountOrigin.Balance -= transaction.Amount;
         accountDestination.Balance += transaction.Amount;
 
+        // Save the changes
         await bankContext.SaveChangesAsync();
 
         var recipientUser = accountDestination.Users.FirstOrDefault();
@@ -199,9 +202,13 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
 
-    public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto)
+    public async Task AddPaymentIntent(IncomeCreateDto incomeCreateDto, Guid userId)
     {
-        var account = await bankContext.BankAccounts.FindAsync(incomeCreateDto.IbanAccountDestination) ??
+        var userAsync = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == userId) ??
+                        throw new HttpException(404, "User not found");
+        
+        var account = await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
+                          b.Users.Any(u => u.Id == userAsync.Id) && !b.IsDeleted) ??
                       throw new HttpException(404, "Account origin not found");
 
         var transaction = new Transaction
@@ -216,7 +223,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
         account.TransactionsDestination.Add(transaction);
         account.Balance += transaction.Amount;
 
-        bankContext.Transactions.Add(transaction);
+        //bankContext.Transactions.Add(transaction);
         await bankContext.SaveChangesAsync();
     }
 

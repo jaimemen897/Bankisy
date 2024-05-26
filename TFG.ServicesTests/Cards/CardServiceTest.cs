@@ -92,7 +92,7 @@ public class CardServiceTest
         // Assert
         Assert.That(result.Result.Items, Has.Count.EqualTo(0));
     }
-    
+
 
     //GET BY CARD NUMBER
     [Test]
@@ -178,7 +178,7 @@ public class CardServiceTest
         // Assert
         Assert.Multiple(() => { Assert.That(result, Has.Count.EqualTo(0)); });
     }
-    
+
 
     //CREATE
     [Test]
@@ -379,6 +379,40 @@ public class CardServiceTest
         });
     }
 
+    [Test]
+    public void CreateCard_ThrowsHttpException_UserNotOwnerOfCard()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var cardCreateDto = new CardCreateDto
+        {
+            UserId = userId,
+            BankAccountIban = "ES1234567891234567891234",
+            CardType = "Debit"
+        };
+
+        var user = new User { Id = userId };
+        var bankAccount = new BankAccount { Iban = cardCreateDto.BankAccountIban, Users = [user] };
+        var card = new Card { UserId = Guid.NewGuid() };
+
+        var mockSet = new Mock<DbSet<User>>();
+        mockSet.Setup(x => x.FindAsync(cardCreateDto.UserId)).ReturnsAsync(user);
+
+        _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
+        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(new List<BankAccount> { bankAccount });
+        _mockContext.Setup(x => x.Cards).ReturnsDbSet(new List<Card> { card });
+
+        // Act
+        var exception = Assert.ThrowsAsync<HttpException>(() => _cardService.CreateCard(cardCreateDto, Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception.Code, Is.EqualTo(403));
+            Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
+        });
+    }
+
 
     //UPDATE
     [Test]
@@ -519,8 +553,34 @@ public class CardServiceTest
         // Assert
         Assert.That(result.Pin, Is.EqualTo(cardUpdateDto.Pin));
     }
-    
-    
+
+    [Test]
+    public void UpdateCard_ThrowsHttpException_UserNotOwnerOfCard()
+    {
+        // Arrange
+        var cardNumber = "1234567890123456";
+        var cardUpdateDto = new CardUpdateDto { UserId = Guid.NewGuid(), CardType = "Visa" };
+        var card = new Card { CardNumber = cardNumber, UserId = Guid.NewGuid(), CardType = CardType.Debit };
+
+        var mockSet = new Mock<DbSet<User>>();
+        mockSet.Setup(x => x.FindAsync(cardUpdateDto.UserId)).ReturnsAsync(new User());
+
+        _mockContext.Setup(x => x.Users).Returns(mockSet.Object);
+        _mockContext.Setup(x => x.Cards).ReturnsDbSet(new List<Card> { card });
+
+        // Act
+        var exception =
+            Assert.ThrowsAsync<HttpException>(() => _cardService.UpdateCard(cardNumber, cardUpdateDto, Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception.Code, Is.EqualTo(403));
+            Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
+        });
+    }
+
+
     //DELETE
     [Test]
     public async Task DeleteCard_DeletesCard()
@@ -556,8 +616,28 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
-    
+
+    [Test]
+    public void DeleteCard_ThrowsHttpException_UserNotOwnerOfCard()
+    {
+        // Arrange
+        var cardNumber = "1234567890123456";
+        var card = new Card { CardNumber = cardNumber, UserId = Guid.NewGuid() };
+
+        _mockContext.Setup(x => x.Cards).ReturnsDbSet(new List<Card> { card });
+
+        // Act
+        var exception = Assert.ThrowsAsync<HttpException>(() => _cardService.DeleteCard(cardNumber, Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception.Code, Is.EqualTo(403));
+            Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
+        });
+    }
+
+
     //ACTIVATE
     [Test]
     public async Task ActivateCard_ActivatesCard()
@@ -574,7 +654,27 @@ public class CardServiceTest
         // Assert
         Assert.That(card.IsDeleted, Is.False);
     }
-    
+
+    [Test]
+    public void ActivateCard_ThrowsHttpException_UserNotOwnerOfCard()
+    {
+        // Arrange
+        var cardNumber = "1234567890123456";
+        var card = new Card { CardNumber = cardNumber, UserId = Guid.NewGuid() };
+
+        _mockContext.Setup(x => x.Cards).ReturnsDbSet(new List<Card> { card });
+
+        // Act
+        var exception = Assert.ThrowsAsync<HttpException>(() => _cardService.ActivateCard(cardNumber, Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception.Code, Is.EqualTo(403));
+            Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
+        });
+    }
+
     [Test]
     public void ActivateCard_ThrowsHttpException_CardNotFound()
     {
@@ -593,8 +693,8 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
-    
+
+
     //BLOCK
     [Test]
     public async Task BlockCard_BlocksCard()
@@ -630,7 +730,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
+
     [Test]
     public void BlockCard_ThrowsHttpException_CardAlreadyBlocked()
     {
@@ -650,8 +750,28 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card is already blocked"));
         });
     }
-    
-    
+
+    [Test]
+    public void BlockCard_ThrowsHttpException_UserNotOwnerOfCard()
+    {
+        // Arrange
+        var cardNumber = "1234567890123456";
+        var card = new Card { CardNumber = cardNumber, UserId = Guid.NewGuid() };
+
+        _mockContext.Setup(x => x.Cards).ReturnsDbSet(new List<Card> { card });
+
+        // Act
+        var exception = Assert.ThrowsAsync<HttpException>(() => _cardService.BlockCard(cardNumber, Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception.Code, Is.EqualTo(403));
+            Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
+        });
+    }
+
+
     //UNBLOCK
     [Test]
     public async Task UnblockCard_UnblocksCard()
@@ -687,7 +807,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
+
     [Test]
     public void UnblockCard_ThrowsHttpException_CardNotBlocked()
     {
@@ -707,8 +827,28 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card is not blocked"));
         });
     }
-    
-    
+
+    [Test]
+    public void UnblockCard_ThrowsHttpException_UserNotOwnerOfCard()
+    {
+        // Arrange
+        var cardNumber = "1234567890123456";
+        var card = new Card { CardNumber = cardNumber, UserId = Guid.NewGuid() };
+
+        _mockContext.Setup(x => x.Cards).ReturnsDbSet(new List<Card> { card });
+
+        // Act
+        var exception = Assert.ThrowsAsync<HttpException>(() => _cardService.UnblockCard(cardNumber, Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception.Code, Is.EqualTo(403));
+            Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
+        });
+    }
+
+
     //RENOVATE
     [Test]
     public async Task RenovateCard_ReturnsExpectedCard()
@@ -725,7 +865,7 @@ public class CardServiceTest
         // Assert
         Assert.That(result.CardNumber, Is.EqualTo(cardNumber));
     }
-    
+
     [Test]
     public void RenovateCard_ThrowsHttpException_CardNotFound()
     {
@@ -744,7 +884,7 @@ public class CardServiceTest
             Assert.That(exception.Message, Is.EqualTo("Card not found"));
         });
     }
-    
+
     [Test]
     public void RenovateCard_ThrowsHttpException_CardNotExpired()
     {
@@ -762,6 +902,26 @@ public class CardServiceTest
         {
             Assert.That(exception.Code, Is.EqualTo(400));
             Assert.That(exception.Message, Is.EqualTo("Card is not expired"));
+        });
+    }
+
+    [Test]
+    public void RenovateCard_ThrowsHttpException_UserNotOwnerOfCard()
+    {
+        // Arrange
+        var cardNumber = "1234567890123456";
+        var card = new Card { CardNumber = cardNumber, UserId = Guid.NewGuid() };
+
+        _mockContext.Setup(x => x.Cards).ReturnsDbSet(new List<Card> { card });
+
+        // Act
+        var exception = Assert.ThrowsAsync<HttpException>(() => _cardService.RenovateCard(cardNumber, Guid.NewGuid()));
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(exception.Code, Is.EqualTo(403));
+            Assert.That(exception.Message, Is.EqualTo("You are not the owner of the card"));
         });
     }
 }

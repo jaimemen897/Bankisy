@@ -54,7 +54,6 @@ export class RegisterComponent {
     confirmpassword: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)])
   }, {validators: passwordMatchValidator});
 
-
   sendForm() {
     if (this.formGroup.valid) {
       let genderTranslated = Object.keys(Gender).find(key => Gender[key as keyof typeof Gender] === this.formGroup.value.gender) as keyof typeof Gender;
@@ -69,7 +68,9 @@ export class RegisterComponent {
       };
       this.authService.register(user).subscribe((data: Token) => {
           localStorage.setItem('token', data.token);
-          this.router.navigate(['/index']);
+          setTimeout(() => {
+            this.router.navigate(['/index']);
+          }, 10);
         }
       );
     } else {

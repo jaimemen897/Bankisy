@@ -21,6 +21,7 @@ import {passwordMatchValidator} from "../register/passwordMatchValidator";
 import {environment} from "../../environments/environment";
 import {UserService} from "../services/users.service";
 import {User} from "../models/User";
+import {ImageModule} from "primeng/image";
 
 @Component({
   selector: 'app-profile',
@@ -39,7 +40,8 @@ import {User} from "../models/User";
     OverlayPanelModule,
     TooltipModule,
     NgOptimizedImage,
-    SplitButtonModule
+    SplitButtonModule,
+    ImageModule
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -52,7 +54,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  apiUrl = `${environment.apiUrl}/index/avatar`
+  apiUrl = `${environment.apiUrl}/users/avatar`
   user: User;
   genders: string[] = [Gender.Male, Gender.Female, Gender.Other, Gender.PreferNotToSay];
   avatar!: string;
@@ -138,10 +140,12 @@ export class ProfileComponent implements OnInit {
       closable: false
     });
     this.userService.setUser()
-    this.userService.getUser().subscribe(user => {
-      this.user = user;
-    });
-    this.avatar = this.user.avatar
+    setTimeout(() => {
+      this.userService.getUser().subscribe(user => {
+        this.user = user;
+        this.avatar = this.user.avatar
+      });
+    }, 100);
   }
 
   defaultAvatar() {

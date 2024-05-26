@@ -2,7 +2,7 @@
 <p-toast></p-toast>
 <p-card>
   <div class="grid">
-    @if (user) {
+    @if (user && bankAccounts && totalIncomes && totalExpenses && totalBalance) {
       @if (bankAccounts && bankAccounts.length == 0) {
         <p-dialog
           [header]="'¡Hola ' + user.name + '! Parece que aún no tienes ninguna cuenta bancaria. Vamos a crear una para ti.'"
