@@ -357,91 +357,37 @@ public class TransactionServiceTest
         });
     }
 
-
-    //GET EXPENSES BY USERID
+    //GET USER SUMMARY
     [Test]
-    public async Task GetExpensesByUserId_ReturnsExpectedTransactions()
+    public async Task GetSummary_ReturnsCorrectSummary()
     {
         // Arrange
-        var user = new User { Id = Guid.NewGuid(), Name = "Test User" };
+        var userId = Guid.NewGuid();
+        var user = new User { Id = userId };
         var bankAccounts = new List<BankAccount>
         {
-            new()
-            {
-                Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user]
-            },
-            new() { Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Saving }
+            new() { Iban = "ES1234567890123456789012", Balance = 1000, Users = new List<User> { user } },
+            new() { Iban = "ES9876543210987654321098", Balance = 2000, Users = new List<User> { user } }
         };
 
         var transactions = new List<Transaction>
         {
-            new()
-            {
-                Id = 1, Amount = 100, Concept = "Test Transaction 1", IbanAccountOrigin = bankAccounts[0].Iban,
-                Date = DateTime.UtcNow, IbanAccountDestination = bankAccounts[0].Iban
-            },
-            new()
-            {
-                Id = 2, Amount = 200, Concept = "Test Transaction 2", IbanAccountDestination = bankAccounts[0].Iban,
-                Date = DateTime.UtcNow, IbanAccountOrigin = bankAccounts[1].Iban
-            }
+            new() { Amount = 100, IbanAccountDestination = "ES1234567890123456789012", Date = DateTime.UtcNow },
+            new() { Amount = 200, IbanAccountOrigin = "ES1234567890123456789012", Date = DateTime.UtcNow }
         };
 
         _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
         _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
 
         // Act
-        var result = await _transactionService.GetExpensesByUserId(user.Id);
+        var result = await _transactionService.GetSummary(userId);
 
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(result, Has.Count.EqualTo(1));
-            Assert.That(result[0].Id, Is.EqualTo(1));
-        });
-    }
-
-
-    //GET INCOMES BY USERID
-    [Test]
-    public async Task GetIncomesByUserId_ReturnsExpectedTransactions()
-    {
-        // Arrange
-        var user = new User { Id = Guid.NewGuid(), Name = "Test User" };
-        var bankAccounts = new List<BankAccount>
-        {
-            new()
-            {
-                Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user]
-            },
-            new() { Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Saving }
-        };
-
-        var transactions = new List<Transaction>
-        {
-            new()
-            {
-                Id = 1, Amount = 100, Concept = "Test Transaction 1", IbanAccountOrigin = bankAccounts[1].Iban,
-                Date = DateTime.UtcNow, IbanAccountDestination = bankAccounts[0].Iban
-            },
-            new()
-            {
-                Id = 2, Amount = 200, Concept = "Test Transaction 2", IbanAccountDestination = bankAccounts[1].Iban,
-                Date = DateTime.UtcNow, IbanAccountOrigin = bankAccounts[0].Iban
-            }
-        };
-
-        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
-        _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
-
-        // Act
-        var result = await _transactionService.GetSummary(user.Id);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result, Has.Count.EqualTo(1));
-            Assert.That(result[0].Id, Is.EqualTo(1));
+            Assert.That(result.TotalBalance, Is.EqualTo(3000));
+            Assert.That(result.TotalIncomes, Is.EqualTo(100));
+            Assert.That(result.TotalExpenses, Is.EqualTo(200));
         });
     }
 

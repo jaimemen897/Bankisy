@@ -252,61 +252,6 @@ public class BankAccountServiceTest
         Assert.That(result, Is.Empty);
     }
 
-    //GET TOTAL BALANCE BY USER ID
-    [Test]
-    public async Task GetTotalBalanceByUserId_ReturnsExpectedTotalBalance()
-    {
-        // Arrange
-        var user = new User { Name = "Test User", Id = Guid.NewGuid() };
-        var user2 = new User { Name = "Test User 2", Id = Guid.NewGuid() };
-        var bankAccounts = new List<BankAccount>
-        {
-            new()
-            {
-                Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user]
-            },
-            new()
-            {
-                Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Student, Users =
-                    [user2]
-            }
-        };
-        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
-
-        // Act
-        var result = await _bankAccountService.GetTotalBalanceByUserId(user.Id);
-
-        // Assert
-        Assert.That(result, Is.EqualTo(1000));
-    }
-
-    [Test]
-    public async Task GetTotalBalanceByUserId_ReturnsZero_WhenUserHasNoBankAccounts()
-    {
-        // Arrange
-        var user = new User { Name = "Test User", Id = Guid.NewGuid() };
-        var user2 = new User { Name = "Test User 2", Id = Guid.NewGuid() };
-        var bankAccounts = new List<BankAccount>
-        {
-            new()
-            {
-                Iban = "ES1234567890123456789012", Balance = 1000, AccountType = AccountType.Current, Users = [user2]
-            },
-            new()
-            {
-                Iban = "ES9876543210987654321098", Balance = 2000, AccountType = AccountType.Student, Users =
-                    [user2]
-            }
-        };
-        _mockContext.Setup(x => x.BankAccounts).ReturnsDbSet(bankAccounts);
-
-        // Act
-        var result = await _bankAccountService.GetTotalBalanceByUserId(user.Id);
-
-        // Assert
-        Assert.That(result, Is.EqualTo(0));
-    }
-
     //ACTIVATE BANK ACCOUNT
     [Test]
     public async Task ActivateBankAccount_Ok()

@@ -34,7 +34,7 @@ export class SocketService {
 
       this.messageService.add({
         severity: 'info',
-        summary: 'Transferencia recibida',
+        summary: 'Has recibido una transferencia',
         detail: message,
         life: 2000,
         closable: false
