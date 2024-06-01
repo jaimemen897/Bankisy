@@ -64,7 +64,7 @@ public class CardService(BankContext bankContext)
 
     public async Task<CardResponseDto> CreateCard(CardCreateDto cardCreateDto, Guid? userId = null)
     {
-        var user = await bankContext.Users.FindAsync(cardCreateDto.UserId) ??
+         var user = await bankContext.Users.FindAsync(cardCreateDto.UserId) ??
                    throw new HttpException(404, "User not found");
         
         if (userId != null && userId != user.Id) throw new HttpException(403, "You are not the owner of the card");

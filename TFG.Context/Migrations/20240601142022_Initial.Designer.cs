@@ -12,7 +12,7 @@ using TFG.Context.Context;
 namespace TFG.Context.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20240328095236_Initial")]
+    [Migration("20240601142022_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -31,6 +31,10 @@ namespace TFG.Context.Migrations
                         .HasMaxLength(34)
                         .HasColumnType("character varying(34)")
                         .HasColumnName("iban");
+
+                    b.Property<bool>("AcceptBizum")
+                        .HasColumnType("boolean")
+                        .HasColumnName("accept_bizum");
 
                     b.Property<int>("AccountType")
                         .HasColumnType("integer")
@@ -58,7 +62,8 @@ namespace TFG.Context.Migrations
 
                     b.Property<string>("BankAccountIban")
                         .IsRequired()
-                        .HasColumnType("character varying(34)")
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)")
                         .HasColumnName("bank_account_iban");
 
                     b.Property<int>("CardType")
@@ -73,6 +78,10 @@ namespace TFG.Context.Migrations
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expiration_date");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_blocked");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -121,11 +130,12 @@ namespace TFG.Context.Migrations
 
                     b.Property<string>("IbanAccountDestination")
                         .IsRequired()
+                        .HasMaxLength(34)
                         .HasColumnType("character varying(34)")
                         .HasColumnName("iban_account_destination");
 
                     b.Property<string>("IbanAccountOrigin")
-                        .IsRequired()
+                        .HasMaxLength(34)
                         .HasColumnType("character varying(34)")
                         .HasColumnName("iban_account_origin");
 
@@ -147,21 +157,24 @@ namespace TFG.Context.Migrations
 
                     b.Property<string>("Avatar")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("avatar");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Dni")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(9)
+                        .HasColumnType("character varying(9)")
                         .HasColumnName("dni");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("email");
 
                     b.Property<int>("Gender")
@@ -174,25 +187,34 @@ namespace TFG.Context.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("password");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("character varying(9)")
+                        .HasColumnName("phone");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer")
                         .HasColumnName("role");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("username");
 
                     b.HasKey("Id");
@@ -244,9 +266,7 @@ namespace TFG.Context.Migrations
 
                     b.HasOne("TFG.Context.Models.BankAccount", "BankAccountOriginIban")
                         .WithMany("TransactionsOrigin")
-                        .HasForeignKey("IbanAccountOrigin")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IbanAccountOrigin");
 
                     b.Navigation("BankAccountDestinationIban");
 
