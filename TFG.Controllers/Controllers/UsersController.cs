@@ -40,7 +40,7 @@ public class UsersController(UsersService usersService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<UserResponseDto>> CreateUser(UserCreateDto user)
     {
-        return await usersService.CreateUser(user);
+        return Created("", await usersService.CreateUser(user));
     }
 
     [Authorize(Policy = "Admin")]
@@ -86,14 +86,15 @@ public class UsersController(UsersService usersService) : ControllerBase
     public async Task<ActionResult> DeleteMyAvatar()
     {
         await usersService.DeleteAvatar(GetUserId());
-        return Ok();
+        return NoContent();
     }
 
     [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
-    public async Task DeleteUser(Guid id)
+    public async Task<ActionResult> DeleteUser(Guid id)
     {
         await usersService.DeleteUser(id);
+        return NoContent();
     }
 
     private Guid GetUserId()
