@@ -19,7 +19,8 @@ namespace TFG.Context.Migrations
                     iban = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
                     balance = table.Column<decimal>(type: "numeric", nullable: false),
                     account_type = table.Column<int>(type: "integer", nullable: false),
-                    is_deleted = table.Column<bool>(type: "boolean", nullable: false)
+                    is_deleted = table.Column<bool>(type: "boolean", nullable: false),
+                    accept_bizum = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,17 +32,18 @@ namespace TFG.Context.Migrations
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    email = table.Column<string>(type: "text", nullable: false),
-                    username = table.Column<string>(type: "text", nullable: false),
-                    dni = table.Column<string>(type: "text", nullable: false),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    username = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    dni = table.Column<string>(type: "character varying(9)", maxLength: 9, nullable: false),
                     gender = table.Column<int>(type: "integer", nullable: false),
-                    password = table.Column<string>(type: "text", nullable: false),
-                    avatar = table.Column<string>(type: "text", nullable: false),
+                    password = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    avatar = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    phone = table.Column<string>(type: "character varying(9)", maxLength: 9, nullable: false),
                     role = table.Column<int>(type: "integer", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -56,8 +58,8 @@ namespace TFG.Context.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     concept = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    iban_account_origin = table.Column<string>(type: "character varying(34)", nullable: false),
-                    iban_account_destination = table.Column<string>(type: "character varying(34)", nullable: false),
+                    iban_account_origin = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: true),
+                    iban_account_destination = table.Column<string>(type: "character varying(34)", maxLength: 34, nullable: false),
                     date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -73,8 +75,7 @@ namespace TFG.Context.Migrations
                         name: "FK_transactions_bank_accounts_iban_account_origin",
                         column: x => x.iban_account_origin,
                         principalTable: "bank_accounts",
-                        principalColumn: "iban",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "iban");
                 });
 
             migrationBuilder.CreateTable(
@@ -87,8 +88,9 @@ namespace TFG.Context.Migrations
                     expiration_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     cvv = table.Column<string>(type: "text", nullable: false),
                     is_deleted = table.Column<bool>(type: "boolean", nullable: false),
+                    is_blocked = table.Column<bool>(type: "boolean", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    bank_account_iban = table.Column<string>(type: "character varying(34)", nullable: false)
+                    bank_account_iban = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false)
                 },
                 constraints: table =>
                 {

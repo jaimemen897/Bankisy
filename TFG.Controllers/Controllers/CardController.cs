@@ -44,14 +44,14 @@ public class CardController(CardService cardService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CardResponseDto>> CreateCard(CardCreateDto cardCreateDto)
     {
-        return await cardService.CreateCard(cardCreateDto);
+        return Created("", await cardService.CreateCard(cardCreateDto));
     }
 
     [Authorize(Policy = "User")]
     [HttpPost("my-card")]
     public async Task<ActionResult<CardResponseDto>> CreateCardForMySelf(CardCreateDto cardCreateDto)
     {
-        return await cardService.CreateCard(cardCreateDto, GetUserId());
+        return Created("", await cardService.CreateCard(cardCreateDto, GetUserId()));
     }
 
     //UPDATE

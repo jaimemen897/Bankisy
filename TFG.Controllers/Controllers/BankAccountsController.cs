@@ -51,14 +51,14 @@ public class BankAccountsController(BankAccountService bankAccountService) : Con
     [HttpPost]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccount(BankAccountCreateDto bankAccount)
     {
-        return await bankAccountService.CreateBankAccount(bankAccount);
+        return Created("", await bankAccountService.CreateBankAccount(bankAccount));
     }
 
     [Authorize(Policy = "User")]
     [HttpPost("my-self")]
     public async Task<ActionResult<BankAccountResponseDto>> CreateBankAccountForMySelf(BankAccountCreateDto bankAccount)
     {
-        return await bankAccountService.CreateBankAccount(bankAccount, GetUserId());
+        return Created("", await bankAccountService.CreateBankAccount(bankAccount, GetUserId()));
     }
 
 
