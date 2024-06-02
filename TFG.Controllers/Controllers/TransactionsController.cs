@@ -68,22 +68,23 @@ public class TransactionsController(TransactionService transactionService) : Con
     [HttpPost]
     public async Task<ActionResult<TransactionResponseDto>> CreateTransaction(TransactionCreateDto transaction)
     {
-        return await transactionService.CreateTransaction(transaction, GetUserId());
+        return Created("", await transactionService.CreateTransaction(transaction, GetUserId()));
     }
 
     [Authorize(Policy = "User")]
     [HttpPost("bizum")]
     public async Task<ActionResult<BizumResponseDto>> CreateBizum(BizumCreateDto transaction)
     {
-        return await transactionService.CreateBizum(transaction, GetUserId());
+        return Created("", await transactionService.CreateBizum(transaction, GetUserId()));
     }
 
     //DELETE
     [Authorize(Policy = "Admin")]
     [HttpDelete("{id}")]
-    public async Task DeleteTransaction(int id)
+    public async Task<ActionResult> DeleteTransaction(int id)
     {
         await transactionService.DeleteTransaction(id);
+        return NoContent();
     }
 
     private Guid GetUserId()
