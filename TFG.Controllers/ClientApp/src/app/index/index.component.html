@@ -7,7 +7,7 @@
         <p-dialog
           [header]="'¡Hola ' + user.name + '! Parece que aún no tienes ninguna cuenta bancaria. Vamos a crear una para ti.'"
           [visible]="displayDialogBankAccountNewUser" [modal]="true" [style]="{ width: '200vh', height: '70vh' }"
-          [draggable]="false" [resizable]="false">
+          [draggable]="false" [resizable]="false" [closable]="false">
           <div class="flex flex-column justify-content-center align-items-center align-content-center h-full">
             <p-button [ngClass]="{'hidden': displayCreateBankAccount}" label="Empecemos eligiendo el tipo de cuenta"
                       (click)="goToCreateBankAccountNewUser()" class="m-2"></p-button>

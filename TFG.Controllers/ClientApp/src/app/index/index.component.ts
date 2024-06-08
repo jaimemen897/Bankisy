@@ -29,6 +29,7 @@ import {BankAccountService} from "../services/bankaccounts.service";
 import {TransactionsService} from "../services/transactions.service";
 import {UserService} from "../services/users.service";
 import {IbanFormatPipe} from "../pipes/IbanFormatPipe";
+import {SocketService} from "../services/socket.service";
 
 @Component({
   selector: 'app-index',
@@ -64,7 +65,8 @@ import {IbanFormatPipe} from "../pipes/IbanFormatPipe";
 export class IndexComponent implements OnInit {
 
   constructor(private messageService: MessageService, private confirmationService: ConfirmationService,
-              private bankAccountService: BankAccountService, private transactionService: TransactionsService, private userService: UserService) {
+              private bankAccountService: BankAccountService, private transactionService: TransactionsService,
+              private userService: UserService, private socketService: SocketService) {
   }
 
   @ViewChild(CreateTransactionComponent) transactionCreate!: CreateTransactionComponent
@@ -106,7 +108,9 @@ export class IndexComponent implements OnInit {
       this.getMoneySummaryByUserId();
       this.getBankAccountsByUserId();
     });
-
+    this.socketService.eventEmit$.subscribe(() => {
+      this.refresh();
+    });
 
     this.items = [
       {
@@ -181,9 +185,9 @@ export class IndexComponent implements OnInit {
   lazyLoad(event: any) {
     let pageNumber = Math.floor(event.first / event.rows) + 1;
     let sortField = event.sortField;
-    let sortOrder = event.sortOrder;
+    this.sortOrder = event.sortOrder;
 
-    this.transactionService.getTransactionsByMyself(pageNumber, event.rows, sortField, sortOrder, this.search, this.filter).subscribe(data => {
+    this.transactionService.getTransactionsByMyself(pageNumber, event.rows, sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
       this.transactions = data.items;
       this.totalRecords = data.totalRecords;
     });
@@ -245,7 +249,7 @@ export class IndexComponent implements OnInit {
 
   getTransactionsByIban(iban: string) {
     this.transactionsByBankAccount = [];
-    this.transactionService.getTransactionsByIban(iban).subscribe(data => {
+    this.transactionService.getTransactionsByIbanForUser(iban).subscribe(data => {
       this.transactionsByBankAccount = data;
       if (this.transactionsByBankAccount.length === 0) {
         this.messageService.add({
@@ -265,6 +269,10 @@ export class IndexComponent implements OnInit {
     this.userService.setUser()
     this.bankAccountService.getBankAccountsByMySelf().subscribe(bankAccounts => {
       this.bankAccounts = bankAccounts;
+    });
+    this.transactionService.getTransactionsByMyself(1, 5, this.sortField, this.sortOrder === -1, this.search, this.filter).subscribe(data => {
+      this.transactions = data.items;
+      this.totalRecords = data.totalRecords;
     });
     setTimeout(() => {
       this.updating = false;

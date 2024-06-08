@@ -79,6 +79,12 @@ export class TransactionsService {
     );
   }
 
+  getTransactionsByIbanForUser(iban: string): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(`${this.apiUrl}/bankaccount/${iban}`).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   getMoneySummaryByUserId(): Observable<AccountData> {
     return this.http.get<AccountData>(`${this.apiUrl}/summary`).pipe(
       catchError(error => this.handleError(error))
