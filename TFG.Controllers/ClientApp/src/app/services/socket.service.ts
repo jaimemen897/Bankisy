@@ -22,7 +22,7 @@ export class SocketService {
     this.hubConnection
       .start()
       .then(() => console.log('Connection success, waiting for messages'))
-      .catch(err => console.log('Error while starting connection: ' + err));
+      .catch((err: any) => console.log('Error while starting connection: ' + err));
   }
 
   private getAccessToken = (): string => {
@@ -30,7 +30,7 @@ export class SocketService {
   }
 
   public transferNotification = () => {
-    this.hubConnection.on('TransferReceived', (user, message) => {
+    this.hubConnection.on('TransferReceived', (user: string, message: string) => {
 
       this.messageService.add({
         severity: 'info',

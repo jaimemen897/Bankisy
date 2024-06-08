@@ -90,6 +90,12 @@ export class CardService {
     return this.http.delete<Card>(this.apiUrl + '/' + cardNumber);
   }
 
+  deleteMyCard(cardNumber: string): Observable<Card> {
+    return this.http.delete<Card>(this.apiUrl + '/my-card/' + cardNumber).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
   renovateCard(cardNumber: string): Observable<Card> {
     return this.http.post<Card>(this.apiUrl + '/' + cardNumber + '/renovate', null).pipe(
       catchError(error => this.handleError(error))

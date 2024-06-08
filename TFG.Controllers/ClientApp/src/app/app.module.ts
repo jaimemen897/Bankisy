@@ -7,7 +7,7 @@ import {AppComponent} from './app.component';
 import {ButtonModule} from "primeng/button";
 import {ConfirmationService, FilterMatchMode, MessageService, PrimeNGConfig} from 'primeng/api';
 import {UsersComponent} from "./users/users.component";
-import {routes} from "./Redirections/app.routing";
+import {routes} from "./redirections/app.routing";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MessagesModule} from "primeng/messages";
 import {LoginComponent} from "./login/login.component";

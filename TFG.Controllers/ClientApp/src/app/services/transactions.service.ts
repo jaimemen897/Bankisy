@@ -74,7 +74,7 @@ export class TransactionsService {
   }
 
   getTransactionsByIban(iban: string): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(`${this.apiUrl}/bankaccount/${iban}`).pipe(
+    return this.http.get<Transaction[]>(`${this.apiUrl}/${iban}/transactions`).pipe(
       catchError(error => this.handleError(error))
     );
   }

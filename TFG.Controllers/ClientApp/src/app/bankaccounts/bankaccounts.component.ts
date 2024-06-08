@@ -22,6 +22,7 @@ import {Transaction} from "../models/Transaction";
 import {StyleClassModule} from "primeng/styleclass";
 import {CascadeSelectModule} from "primeng/cascadeselect";
 import {IbanFormatPipe} from "../pipes/IbanFormatPipe";
+import {TransactionsService} from "../services/transactions.service";
 
 @Component({
   selector: 'app-bankaccounts',
@@ -52,7 +53,7 @@ import {IbanFormatPipe} from "../pipes/IbanFormatPipe";
   styleUrl: './bankaccounts.component.css'
 })
 export class BankaccountsComponent {
-  constructor(private bankAccountService: BankAccountService, private confirmationService: ConfirmationService, private messageService: MessageService) {
+  constructor(private transactionService: TransactionsService, private bankAccountService: BankAccountService, private confirmationService: ConfirmationService, private messageService: MessageService) {
   }
 
   @ViewChild(BankaccountCreateComponent) bankAccountCreateComponent!: BankaccountCreateComponent;
@@ -209,7 +210,7 @@ export class BankaccountsComponent {
   }
 
   getTransactionsByIban(iban: string, event: any) {
-    this.bankAccountService.getTransactionsByIban(iban).subscribe(data => {
+    this.transactionService.getTransactionsByIban(iban).subscribe(data => {
       this.transactions = data;
       if (this.transactions.length !== 0) {
         this.transactionPanel.toggle(event);

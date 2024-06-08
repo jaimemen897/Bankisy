@@ -60,6 +60,13 @@ builder.Services.AddScoped<CardService>();
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
+string envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{envName}.json", optional: true, reloadOnChange: true);
+
 builder.Services.AddDbContext<BankContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionURL"));

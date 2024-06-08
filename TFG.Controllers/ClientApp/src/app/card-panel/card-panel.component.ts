@@ -166,6 +166,13 @@ export class CardPanelComponent {
             }
           },
           {
+            label: 'Eliminar tarjeta',
+            icon: 'pi pi-trash',
+            command: () => {
+              this.deleteMyCard(card);
+            }
+          },
+          {
             label: 'Renovar tarjeta',
             icon: 'pi pi-refresh',
             command: () => {
@@ -249,6 +256,18 @@ export class CardPanelComponent {
       closable: false
     });
     this.refresh()
+  }
+
+  deleteMyCard(card: Card) {
+    this.cardService.deleteMyCard(card.cardNumber).subscribe(() => {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Tarjeta eliminada',
+        detail: 'Tarjeta eliminada correctamente',
+        closable: false, life: 2000,
+      });
+      this.refresh();
+    });
   }
 
   protected readonly Card = Card;

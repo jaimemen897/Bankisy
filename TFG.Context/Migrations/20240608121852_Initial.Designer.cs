@@ -12,7 +12,7 @@ using TFG.Context.Context;
 namespace TFG.Context.Migrations
 {
     [DbContext(typeof(BankContext))]
-    [Migration("20240601142022_Initial")]
+    [Migration("20240608121852_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
