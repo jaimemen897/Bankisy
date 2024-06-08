@@ -1,13 +1,12 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule, OnInit} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient} from '@angular/common/http';
 import {provideRouter, RouterModule, withComponentInputBinding} from '@angular/router';
 import {AppComponent} from './app.component';
 import {ButtonModule} from "primeng/button";
 import {ConfirmationService, FilterMatchMode, MessageService, PrimeNGConfig} from 'primeng/api';
 import {UsersComponent} from "./users/users.component";
-import {routes} from "./redirections/app.routing";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MessagesModule} from "primeng/messages";
 import {LoginComponent} from "./login/login.component";
@@ -18,14 +17,15 @@ import {NavbarComponent} from "./navbar/navbar.component";
 import {NgxStripeModule} from "ngx-stripe";
 import {InputSwitchModule} from "primeng/inputswitch";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {routes} from "./app.routing";
 
 @NgModule({
   declarations: [
     AppComponent,
   ],
   imports: [
-    BrowserModule,
     HttpClientModule,
+    BrowserModule,
     FormsModule,
     RouterModule.forRoot([]),
     ButtonModule,
@@ -38,7 +38,8 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
     InputSwitchModule,
     ProgressSpinnerModule
   ],
-  providers: [MessageService,
+  providers: [MessageService, PrimeNGConfig,
+    provideHttpClient(),
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorHttpInterceptor, multi: true},
     provideRouter(routes, withComponentInputBinding()),

@@ -78,3 +78,8 @@ body {
 .p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
   background-color: white;
 }
+
+*::selection {
+  background-color: rgba(92, 93, 141, 0.5);
+  color: white;
+}

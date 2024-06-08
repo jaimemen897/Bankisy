@@ -1,18 +1,19 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {UsersComponent} from "../users/users.component";
-import {LoginComponent} from "../login/login.component";
-import {RegisterComponent} from "../register/register.component";
-import {BankaccountsComponent} from "../bankaccounts/bankaccounts.component";
-import {TransactionsComponent} from "../transactions/transactions.component";
-import {IndexComponent} from "../index/index.component";
-import {CardComponent} from "../cards/cards.component";
-import {CardPanelComponent} from "../card-panel/card-panel.component";
-import {ProfileComponent} from "../profile/profile.component";
-import {BizumCreateComponent} from "../transactions/bizum-create/bizum-create.component";
-import {CreateTransactionComponent} from "../transactions/create/create-transaction.component";
-import {BankaccountCreateComponent} from "../bankaccounts/bankaccount-create/bankaccount-create.component";
-import {DepositComponent} from "../deposit/deposit.component";
+import {IndexComponent} from "./index/index.component";
+import {UsersComponent} from "./users/users.component";
+import {LoginComponent} from "./login/login.component";
+import {RegisterComponent} from "./register/register.component";
+import {BankaccountsComponent} from "./bankaccounts/bankaccounts.component";
+import {TransactionsComponent} from "./transactions/transactions.component";
+import {CardComponent} from "./cards/cards.component";
+import {CardPanelComponent} from "./card-panel/card-panel.component";
+import {ProfileComponent} from "./profile/profile.component";
+import {CreateTransactionComponent} from "./transactions/create/create-transaction.component";
+import {BizumCreateComponent} from "./transactions/bizum-create/bizum-create.component";
+import {BankaccountCreateComponent} from "./bankaccounts/bankaccount-create/bankaccount-create.component";
+import {DepositComponent} from "./deposit/deposit.component";
+
 
 export const routes: Routes = [
   {path: '', redirectTo: '/index', pathMatch: 'full', data: {animation: 'IndexPage'}},

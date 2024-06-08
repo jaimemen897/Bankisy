@@ -37,7 +37,7 @@
 
       <ng-template pTemplate="grid">
         <div class="grid grid-nogutter">
-          @for (user of users; track users) {
+          @for (user of users; track user.id) {
             <div class="col-12 sm:col-6 lg:col-12 xl:col-3 p-2">
               <div class="p-4 border-1 surface-border surface-card border-round shadow-6">
                 <div class="flex flex-wrap align-items-center justify-content-between gap-1">
