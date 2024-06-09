@@ -6,12 +6,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Stripe;
 using TFG.Context.Context;
-using TFG.Controllers.DataAccessor;
+using TFG.Context.DataAccessor;
 using TFG.Controllers.ExceptionsHandler;
 using TFG.Services;
 using TFG.Services.Hub;
-using BankAccountService = TFG.Services.BankAccountService;
-using CardService = TFG.Services.CardService;
 
 var myAllowSpecificOrigins = "AllowAngularApp";
 
@@ -53,10 +51,12 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<UsersService>();
-builder.Services.AddScoped<BankAccountService>();
+builder.Services.AddScoped<TFG.Services.BankAccountService>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<SessionService>();
-builder.Services.AddScoped<CardService>();
+builder.Services.AddScoped<WebhookService>();
+builder.Services.AddScoped<CheckoutService>();
+builder.Services.AddScoped<TFG.Services.CardService>();
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
@@ -122,7 +122,6 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"));
 
 var app = builder.Build();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseHsts();

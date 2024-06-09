@@ -1,4 +1,4 @@
-namespace TFG.Controllers.DataAccessor;
+namespace TFG.Context.DataAccessor;
 
 public class StripeSettings
 {
