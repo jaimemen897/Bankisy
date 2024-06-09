@@ -1,0 +1,44 @@
+<p-toast></p-toast>
+<div class="w-full flex justify-content-center align-items-center flex-column">
+  <form [formGroup]="formGroup" class="flex justify-content-center shadow-none">
+    <div class="flex flex-column justify-content-center align-content-center gap-4 w-20rem">
+      <h1 class="text-center">Ingresar dinero</h1>
+
+      <p-dropdown [options]="bankAccounts" [showClear]="true" emptyMessage="No hay cuentas disponibles"
+                  formControlName="selectedBankAccount"
+                  optionLabel="iban" placeholder="Cuenta" styleClass="w-20rem">
+        <ng-template let-item pTemplate="item">
+          <p>{{ item.iban | ibanFormat }}</p>
+        </ng-template>
+      </p-dropdown>
+      <div class="flex gap-4 justify-content-start align-items-center mb-2">
+        <label for="amount">Cantidad a ingresar</label>
+        <div class="flex flex-column gap-1 w-5">
+          <input (input)="setAmmountOnSlider($event)" [max]="10000" [min]="0" class="w-full" formControlName="amount"
+                 id="amount"
+                 pInputText
+                 placeholder="0,00€" type="number"/>
+          @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
+            @if (formGroup.controls['amount'].errors?.required) {
+              <p
+                class="text-red-500 text-xs m-0 ml-3">Este campo es obligatorio</p>
+            }
+            @if (formGroup.controls['amount'].errors?.min) {
+              <p
+                class="text-red-500 text-xs m-0 ml-3">La cantidad mínima es 0,01€</p>
+            }
+            @if (formGroup.controls['amount'].errors?.max) {
+              <p
+                class="text-red-500 text-xs m-0 ml-3">La cantidad máxima es 10.000€</p>
+            }
+          }
+        </div>
+      </div>
+      <p-slider (onChange)="setAmmountOnInput($event)" animate="true" formControlName="slider" max="10000"
+                styleClass="w-full mb-3 p-1"/>
+
+      <p-button (click)="createCheckoutSession()" label="Ir a la página de pago" rounded styleClass="w-full"/>
+    </div>
+  </form>
+
+</div>

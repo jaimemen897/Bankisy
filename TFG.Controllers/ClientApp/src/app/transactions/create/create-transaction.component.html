@@ -1,0 +1,72 @@
+<div class="card flex justify-content-center align-items-center m-2 overflow-hidden">
+  <div class="flex flex-column justify-content-center align-items-center gap-3">
+    <form [formGroup]="formGroup" class="flex flex-column gap-3 p-1">
+      <p-dropdown [options]="bankAccounts" [showClear]="true" emptyMessage="No hay cuentas disponibles"
+                  formControlName="ibanAccountOrigin" optionLabel="iban" placeholder="Cuenta origen"
+                  styleClass="w-20rem">
+        <ng-template let-item pTemplate="item">
+          <p>{{ item.iban | ibanFormat }}</p>
+        </ng-template>
+      </p-dropdown>
+      <div class="flex flex-column gap-1">
+        <input class="p-3 border-round-3xl border-0 w-20rem" formControlName="ibanAccountDestination" pInputText
+               placeholder="Cuenta destino" type="text">
+        @if (formGroup.controls['ibanAccountDestination'].invalid && formGroup.controls['ibanAccountDestination'].touched) {
+          @if (formGroup.controls['ibanAccountDestination'].errors?.required) {
+            <p
+              class="text-red-500 text-xs m-0 ml-3">
+              La cuenta destino es obligatoria</p>
+          }
+          @if (formGroup.controls['ibanAccountDestination'].errors?.pattern) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El formato no es correcto</p>
+          }
+        }
+      </div>
+      <div class="flex flex-column gap-1">
+        <input class="p-3 border-round-3xl border-0 mb-0 w-20rem" formControlName="amount" pInputText
+               placeholder="Cantidad"
+               type="number">
+        @if (formGroup.controls['amount'].invalid && formGroup.controls['amount'].touched) {
+          @if (formGroup.controls['amount'].errors?.required) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              La cantidad es obligatoria</p>
+          }
+          @if (formGroup.controls['amount'].errors?.min) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El valor mínimo es 0,01€</p>
+          }
+          @if (formGroup.controls['amount'].errors?.max) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El valor máximo son 20.000€</p>
+          }
+          @if (formGroup.controls['amount'].errors?.pattern) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El formato no es correcto</p>
+          }
+        }
+      </div>
+
+      <div class="flex flex-column gap-1">
+        <input class="p-3 border-round-3xl border-0 w-20rem" formControlName="concept" pInputText placeholder="Concepto"
+               type="text">
+        @if (formGroup.controls['concept'].invalid && formGroup.controls['concept'].touched) {
+          @if (formGroup.controls['concept'].errors?.required) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El concepto es obligatorio</p>
+          }
+          @if (formGroup.controls['concept'].errors?.minlength) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El concepto no puede tener menos de 3 caracteres</p>
+          }
+          @if (formGroup.controls['concept'].errors?.maxlength) {
+            <p class="text-red-500 text-xs m-0 ml-3">
+              El concepto no puede tener más de 30 caracteres</p>
+          }
+        }
+      </div>
+      <p-button (click)="createTransaction()" label="Confirmar" rounded styleClass="w-full mt-5"></p-button>
+      <p-button (click)="cancel()" label="Cancelar" rounded severity="secondary" styleClass="w-full"></p-button>
+    </form>
+  </div>
+</div>

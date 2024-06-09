@@ -1,16 +1,85 @@
-/* You can add global styles to this file, and also import other style files */
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
 
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
+@layer reset, primeng;
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-code {
-  color: #e01a76;
+.p-panel .p-panel-content {
+  padding: 0;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+:root.light-theme {
+  --bg-custom-color: #dcdcdc;
+
+}
+
+:root.dark-theme {
+  --bg-custom-color: #27272a;
+}
+
+.p-dropdown {
+  background-color: var(--bg-custom-color);
+  border: none;
+  border-radius: 4rem;
+  outline: none;
+  box-shadow: none;
+}
+
+.p-inputtext {
+  padding: 0.90rem;
+  background-color: var(--bg-custom-color);
+  border: none;
+  border-radius: 4rem;
+  outline: none;
+  box-shadow: none;
+}
+
+.p-multiselect {
+  padding: 0.45rem;
+  background-color: var(--bg-custom-color);
+  border: none;
+  border-radius: 4rem;
+  outline: none;
+  box-shadow: none;
+}
+
+.p-paginator .p-dropdown .p-dropdown-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.p-fileupload .p-fileupload-buttonbar {
+  background: transparent;
+  border-color: transparent;
+}
+
+.p-fileupload .p-fileupload-content {
+  border-color: transparent;
+}
+
+.p-button:active, .p-button:focus {
+  box-shadow: none;
+}
+
+.p-slider-range {
+  border-radius: 4rem;
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background-color: var(--bg-custom-color);
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
+  background-color: white;
+}
+
+*::selection {
+  background-color: rgba(92, 93, 141, 0.5);
+  color: white;
 }

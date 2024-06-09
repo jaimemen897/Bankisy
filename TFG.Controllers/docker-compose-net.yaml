@@ -1,0 +1,27 @@
+services:
+  postgres-db:
+    container_name: db-postgree
+    image: postgres:latest
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    ports:
+      - ${DATABASE_PORT}:5432
+  
+  bankisy-controller:
+    ports:
+      - 5196:5196
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    container_name: bankisy-controller
+    restart: always
+
+  

@@ -1,0 +1,18 @@
+.custom-otp-input {
+  width: 2.3rem;
+  font-size: 1.5rem;
+  border: 0 none;
+  appearance: none;
+  text-align: center;
+  transition: all 0.2s;
+  background: transparent;
+  border-bottom: 2px solid var(--surface-500);
+  border-radius: 0px;
+  margin: 0 0.2rem;
+}
+
+.custom-otp-input:focus {
+  outline: 0 none;
+  box-shadow: none;
+  border-bottom-color: var(--primary-color);
+}

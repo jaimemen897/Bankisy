@@ -1,0 +1,64 @@
+<div class="bg-primary border-transparent border-noround flex w-full justify-content-between p-2">
+
+  @if (user) {
+    <div>
+      <p-button label="Bankisy" routerLink="/" styleClass="text-50" text/>
+    </div>
+
+    <div class="inline-flex">
+      @if (user.role === 'Admin') {
+        <p-menu #menu popup [model]="items"></p-menu>
+        <p-button label="Acciones" (click)="menu.toggle($event)" styleClass="text-50" text/>
+      }
+
+      <!--CREAR CUENTA-->
+      <p-button label="Crear cuenta" (click)="goToCreateBankAccount()" styleClass="text-50" text/>
+      <p-dialog [(visible)]="displayDialogBankAccount" [modal]="true" [draggable]="false"
+                header="Crear una cuenta bancaria"
+                [resizable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}" [closable]="false">
+        <app-bankaccount-create (onSave)="createBankAccount()" (onCancel)="closeDialog()"></app-bankaccount-create>
+      </p-dialog>
+
+      <!--TRANSACCIONES-->
+      <p-button label="Transferir" (click)="goToCreateTransaction()" styleClass="text-50" text/>
+      <p-dialog [(visible)]="displayDialogTransaction" [modal]="true" [closable]="false"
+                [draggable]="false" header="Realizar una transferencia" [resizable]="false"
+                [contentStyle]="{height: 'auto', borderRadius: '16px'}">
+        <app-create-transaction (onSave)="createTransaction()" (onCancel)="closeDialog()"></app-create-transaction>
+      </p-dialog>
+
+      <!--BIZUM-->
+      <p-button label="Bizum" (click)="goToCreateBizum()" styleClass="text-50" text/>
+      <p-dialog [(visible)]="displayDialogBizum" [modal]="true" [resizable]="false" [closable]="false"
+                [draggable]="false" [contentStyle]="{height: 'auto', borderRadius: '16px'}"
+                header="Enviar un bizum">
+        <app-bizum-create (onSave)="createBizum()" (onCancel)="closeDialog()"></app-bizum-create>
+      </p-dialog>
+
+      <p-button label="Tarjetas" [routerLink]="['/card-panel']" styleClass="text-50" text/>
+
+      <p-button label="Ingresar" [routerLink]="['/deposit']" styleClass="text-50" text/>
+    </div>
+  }
+
+  <div>
+    @if (themeSelection) {
+      <p-button icon="pi pi-moon" styleClass="text-50" text (click)="changeTheme(false)"/>
+    } @else {
+      <p-button icon="pi pi-sun" styleClass="text-50" text (click)="changeTheme(true)"/>
+    }
+    @if (!isLogged()) {
+      <p-button [routerLink]="['/login']" class="m-1" icon="pi pi-sign-in" pTooltip="Iniciar sesión" [showDelay]="500"
+                tooltipPosition="bottom" styleClass="text-50" text/>
+    }
+    @if (isLogged()) {
+      <p-button (click)="logout()" class="m-1" icon="pi pi-sign-out" pTooltip="Cerrar sesión" [showDelay]="500"
+                tooltipPosition="bottom" styleClass="text-50" text/>
+    }
+    @if (isLogged()) {
+      <p-button [routerLink]="['/profile']" class="m-1" icon="pi pi-user" pTooltip="Perfil" [showDelay]="500"
+                tooltipPosition="bottom" styleClass="text-50" text/>
+    }
+  </div>
+
+</div>

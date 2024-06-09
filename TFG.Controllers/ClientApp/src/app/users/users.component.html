@@ -1,0 +1,135 @@
+<router-outlet></router-outlet>
+<p-toast></p-toast>
+
+<div class="card">
+  <div
+    class="dataView-container w-12 sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/5 mx-auto border-1 surface-border border-round">
+    <p-dataView (onLazyLoad)="lazyLoad($event)" [lazy]="true" [paginator]="true" [rowsPerPageOptions]="[8, 15, 25]"
+                [rows]="rows" [sortField]="sortField" [sortOrder]="sortOrder" [totalRecords]="totalRecords"
+                [value]="users" emptyMessage="No se han encontrado usuarios" layout="grid">
+
+      <ng-template pTemplate="header">
+        <h1 class="text-3xl font-bold flex-grow-0 text-center">GESTIÓN DE USUARIOS</h1>
+
+        <div class="flex justify-content-around flex-wrap">
+          <div class="flex align-items-center justify-content-center h-4rem">
+            <p-button (click)="goToAddUser()" icon="pi pi-plus" label="Crear usuario" rounded/>
+
+            <p-dialog [(visible)]="displayDialog" [closable]="false" [contentStyle]="{height: 'auto'}"
+                      [draggable]="false" [header]="headerSaveUpdateUser"
+                      [modal]="true" [resizable]="false">
+
+              <app-create-users (onCancel)="closeDialog()" (onSave)="saveBankAccount()"></app-create-users>
+            </p-dialog>
+          </div>
+          <div class="flex align-items-center justify-content-center h-4rem">
+            <input (input)="onSearch($event)" pInputText placeholder="Buscar por nombre o email"/>
+          </div>
+
+          <div class="flex align-items-center justify-content-center h-4rem">
+            <div class="flex flex-column md:flex-row md:justify-content-between">
+              <p-dropdown (onChange)="onSortChange($event)" [options]="sortOptions" placeholder="Ordenar por nombre"
+                          styleClass="mb-2 md:mb-0"></p-dropdown>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="grid">
+        <div class="grid grid-nogutter">
+          @for (user of users; track user.id) {
+            <div class="col-12 sm:col-6 lg:col-12 xl:col-3 p-2">
+              <div class="p-4 border-1 surface-border surface-card border-round shadow-6">
+                <div class="flex flex-wrap align-items-center justify-content-between gap-1">
+                  @if (user.role === 'Admin') {
+                    <span class="flex align-items-center gap-2 bg-cyan-100 border-round-3xl p-2 text-black-alpha-80">
+                      <i class="pi pi-user"></i>
+                      <span class="font-semibold">{{ user.role }}</span>
+                    </span>
+                  } @else {
+                    <span class="flex align-items-center gap-2 bg-indigo-100 border-round-3xl p-2 text-black-alpha-80">
+                      <i class="pi pi-user"></i>
+                      <span class="font-semibold">{{ user.role }}</span>
+                    </span>
+                  }
+                </div>
+                <div class="flex flex-column align-items-center gap-3 py-4">
+                  <img class="w-10rem h-10rem mx-auto" [src]="user.avatar" [alt]="user.name" style="object-fit: cover"/>
+                  <div class="text-2xl font-bold">{{ user.name }}</div>
+                  <p>{{ user.email }}</p>
+                </div>
+                <!--BOTONES-->
+                <div class="flex align-items-center justify-content-center gap-2">
+                  <!--INFO-->
+                  <p-overlayPanel #op>
+                    <ng-template pTemplate="content">
+                      <h4 class="text-left">{{ user.name }}</h4>
+                      <p class="text-left">Id: {{ user.id }}</p>
+                      <p class="text-left">Email: {{ user.email }}</p>
+                      <p class="text-left">Usuario: {{ user.username }}</p>
+                      <p class="text-left">Teléfono: {{ user.phone }}</p>
+                      <p class="text-left">DNI: {{ user.dni }}</p>
+                      <p class="text-left">Género: {{ getGenderName(user.gender) }}</p>
+                      <p class="text-left">Rol: {{ user.role }}</p>
+                    </ng-template>
+                  </p-overlayPanel>
+                  <!--SUBIR AVATAR-->
+                  <p-overlayPanel #up>
+                    <div class="flex justify-content-center">
+                      <p-fileUpload name="avatar" url="{{ urlToUpload }}/users/{{ user.id }}/avatar"
+                                    accept="image/*" [multiple]="false"
+                                    (onUpload)="onUpload()" chooseLabel="Elegir" uploadLabel="Enviar"
+                                    cancelLabel="Cancelar"
+                                    method="put" invalidFileTypeMessageDetail="Solo se permiten imágenes">
+                        <ng-template pTemplate="content">
+                          <div class="flex flex-column align-items-center gap-2">
+                            <i class="pi pi-upload text-5xl"></i>
+                            <span class="text-lg">Arrastra y suelta una imagen aquí</span>
+                          </div>
+                        </ng-template>
+                      </p-fileUpload>
+                    </div>
+                  </p-overlayPanel>
+                  <!--VER IMAGEN-->
+                  <p-overlayPanel #im>
+                    <img [src]="user.avatar" [alt]="user.name" class="w-16rem max-h-20rem" style="object-fit: cover;"/>
+                  </p-overlayPanel>
+
+                  <p-button icon="pi pi-user" (click)="op.toggle($event)" severity="info" pTooltip="Información"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                  <p-button icon="pi pi-pencil" (click)="goToEditUser(user.id)" severity="secondary" pTooltip="Editar"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                  <p-button (click)="up.toggle($event)" icon="pi pi-camera" severity="help" pTooltip="Subir avatar"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                  <p-button (click)="im.toggle($event)" icon="pi pi-image" severity="success" pTooltip="Ver imagen"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                  <p-button (click)="delete(user.id)" icon="pi pi-trash" severity="danger" pTooltip="Borrar"
+                            [showDelay]="500" tooltipPosition="bottom" [autoHide]="true" size="large"/>
+                </div>
+              </div>
+            </div>
+          }
+          <p-toast></p-toast>
+          <p-confirmDialog #cd>
+            <ng-template let-message pTemplate="headless">
+              <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+                <div
+                  class="border-circle bg-red-500 inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8 text-white">
+                  <i class="pi pi-trash text-5xl"></i>
+                </div>
+                <span class="font-bold text-2xl block mb-2 mt-4 text-left">{{ message.header }}</span>
+                <p class="mb-0 text-left">{{ message.message }}</p>
+                <div class="flex align-items-center justify-content-center gap-2 mt-4">
+                  <p-button (click)="cd.accept()" label="Eliminar" styleClass="p-button-danger"/>
+                  <p-button (click)="cd.reject()" label="Cancelar" styleClass="p-button-secondary"/>
+                </div>
+              </div>
+            </ng-template>
+          </p-confirmDialog>
+        </div>
+      </ng-template>
+
+
+    </p-dataView>
+  </div>
+</div>
