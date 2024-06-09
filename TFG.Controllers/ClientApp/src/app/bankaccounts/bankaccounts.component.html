@@ -82,7 +82,8 @@
           {{ account.iban | ibanFormat }}
         </td>
         <td>
-          <p-tag rounded [severity]="getSeverity(account.accountType)" [value]="getAccountName(account.accountType)"></p-tag>
+          <p-tag rounded [severity]="getSeverity(account.accountType)"
+                 [value]="getAccountName(account.accountType)"></p-tag>
         </td>
         <td>
           <div class="inline-block vertical-align-middle">
@@ -92,7 +93,8 @@
           </div>
         </td>
         <td>
-          <p-tag rounded [severity]="getBalanceColor(account.balance)" [value]="account.balance.toString() + '€'"></p-tag>
+          <p-tag rounded [severity]="getBalanceColor(account.balance)"
+                 [value]="account.balance.toString() + '€'"></p-tag>
         </td>
         <td>
           <i

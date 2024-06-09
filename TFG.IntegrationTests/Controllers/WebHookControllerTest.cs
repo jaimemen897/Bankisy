@@ -94,8 +94,9 @@ public class WebhookControllerTest
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(webhookData), Encoding.UTF8, "application/json");
-        
-        _client.DefaultRequestHeaders.Add("Stripe-Signature", "t=1717945202,v1=2a33c17e2014f34b41739e1e57b47d41a794823b17329782899d75b528a5fee4,v0=381689585c695dceeb0840c23a3603ba83c2fa39cfd901f164ed224f75a06749");
+
+        _client.DefaultRequestHeaders.Add("Stripe-Signature",
+            "t=1717945202,v1=2a33c17e2014f34b41739e1e57b47d41a794823b17329782899d75b528a5fee4,v0=381689585c695dceeb0840c23a3603ba83c2fa39cfd901f164ed224f75a06749");
 
         // Act
         var response = await _client.PostAsync("/Webhook", content);

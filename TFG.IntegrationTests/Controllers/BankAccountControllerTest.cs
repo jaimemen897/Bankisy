@@ -62,7 +62,7 @@ public class BankAccountControllerTest
             Password = BCrypt.Net.BCrypt.HashPassword("Admin1234"),
         };
         context.Users.Add(user);
-        
+
         // Create the bank account
         var bankAccount = new BankAccount
         {
@@ -71,7 +71,7 @@ public class BankAccountControllerTest
             Users = [user],
         };
         context.BankAccounts.Add(bankAccount);
-        
+
         context.SaveChanges();
 
         var sessionService = scope.ServiceProvider.GetService<SessionService>();
@@ -113,8 +113,7 @@ public class BankAccountControllerTest
 
         Assert.IsNotNull(content);
     }
-    
-    //get bankaccounts by myself
+
     [Test]
     public async Task GetBankAccountsByMySelf_ReturnsExpectedResult()
     {
@@ -213,7 +212,7 @@ public class BankAccountControllerTest
     public async Task UpdateBankAccount_ReturnsExpectedResult()
     {
         // Arrange
-        var iban = "ES7357810375677605638221"; 
+        var iban = "ES7357810375677605638221";
         var bankAccount = new BankAccountUpdateDto
         {
             AcceptBizum = false,
@@ -232,12 +231,12 @@ public class BankAccountControllerTest
 
         Assert.IsNotNull(responseContent);
     }
-    
+
     [Test]
     public async Task ActiveBizum_ReturnsExpectedResult()
     {
         // Arrange
-        var iban = "ES7357810375677605638221"; 
+        var iban = "ES7357810375677605638221";
         var userId = _userId;
 
         // Act
@@ -251,7 +250,7 @@ public class BankAccountControllerTest
     public async Task ActiveBizumForMySelf_ReturnsExpectedResult()
     {
         // Arrange
-        var iban = "ES7357810375677605638221"; 
+        var iban = "ES7357810375677605638221";
 
         // Act
         var response = await _client.PutAsync($"/BankAccounts/my-self/{iban}/active-bizum", null);
@@ -264,7 +263,7 @@ public class BankAccountControllerTest
     public async Task DeleteBankAccount_ReturnsExpectedResult()
     {
         // Arrange
-        var iban = "ES7357810375677605638221"; 
+        var iban = "ES7357810375677605638221";
 
         // Act
         var response = await _client.DeleteAsync($"/BankAccounts/{iban}");
@@ -277,7 +276,7 @@ public class BankAccountControllerTest
     public async Task ActiveBankAccount_ReturnsExpectedResult()
     {
         // Arrange
-        var iban = "ES7357810375677605638221"; 
+        var iban = "ES7357810375677605638221";
 
         // Act
         var response = await _client.PutAsync($"/BankAccounts/{iban}/active", null);
@@ -285,6 +284,4 @@ public class BankAccountControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
-
-    
 }

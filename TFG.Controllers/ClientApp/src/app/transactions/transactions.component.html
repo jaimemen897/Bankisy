@@ -67,7 +67,8 @@
           {{ transaction.concept }}
         </td>
         <td>
-          <p-tag rounded [severity]="getAmountColor(transaction.amount)" [value]="transaction.amount.toString() + '€'"></p-tag>
+          <p-tag rounded [severity]="getAmountColor(transaction.amount)"
+                 [value]="transaction.amount.toString() + '€'"></p-tag>
         </td>
         <td>
           {{ transaction.ibanAccountOrigin | ibanFormat }}

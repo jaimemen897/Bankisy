@@ -19,7 +19,6 @@ public class TransactionControllerTest
     private WebApplicationFactory<Program> _factory;
     private HttpClient _client;
     private string _token;
-    private Guid _userId;
 
     [SetUp]
     public void Setup()
@@ -86,7 +85,7 @@ public class TransactionControllerTest
             TransactionsOrigin = [],
             Cards = []
         };
-        
+
         var bankAccount2 = new BankAccount
         {
             Iban = "ES7921000813610123456780",
@@ -99,10 +98,10 @@ public class TransactionControllerTest
             TransactionsOrigin = [],
             Cards = []
         };
-        
+
         context.BankAccounts.Add(bankAccount);
         context.BankAccounts.Add(bankAccount2);
-        
+
         var transaction = new Transaction
         {
             Id = 1,
@@ -128,8 +127,6 @@ public class TransactionControllerTest
         var jsonResponse = JObject.Parse(response);
         _token = jsonResponse["token"].ToString();
 
-        _userId = Guid.Parse("19d3c1ec-3449-4d95-ac69-f7e847025b23");
-
         _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token}");
     }
 
@@ -143,7 +140,7 @@ public class TransactionControllerTest
         _client?.Dispose();
         _factory?.Dispose();
     }
-    
+
     [Test]
     public async Task GetTransactions_ReturnsExpectedResult()
     {
@@ -159,7 +156,7 @@ public class TransactionControllerTest
         Assert.IsNotNull(transactions);
         Assert.IsNotEmpty(transactions.Items);
     }
-    
+
     [Test]
     public async Task GetTransaction_ReturnsExpectedResult()
     {
@@ -177,7 +174,7 @@ public class TransactionControllerTest
 
         Assert.IsNotNull(transaction);
     }
-    
+
     [Test]
     public async Task GetTransactionsForAccount_ReturnsExpectedResult()
     {
@@ -196,7 +193,7 @@ public class TransactionControllerTest
         Assert.IsNotNull(transactions);
         Assert.IsNotEmpty(transactions);
     }
-    
+
     [Test]
     public async Task GetTransactionsByIban_ReturnsExpectedResult()
     {
@@ -215,7 +212,7 @@ public class TransactionControllerTest
         Assert.IsNotNull(transactions);
         Assert.IsNotEmpty(transactions);
     }
-    
+
     [Test]
     public async Task CreateBizum_ReturnsExpectedResult()
     {
@@ -240,7 +237,7 @@ public class TransactionControllerTest
 
         Assert.IsNotNull(bizumResponse);
     }
-    
+
     [Test]
     public async Task GetMyTransactions_ReturnsExpectedResult()
     {
@@ -256,7 +253,7 @@ public class TransactionControllerTest
         Assert.IsNotNull(transactions);
         Assert.IsNotEmpty(transactions.Items);
     }
-    
+
     [Test]
     public async Task GetSummary_ReturnsExpectedResult()
     {
@@ -271,7 +268,7 @@ public class TransactionControllerTest
 
         Assert.IsNotNull(summary);
     }
-    
+
     [Test]
     public async Task CreateTransaction_ReturnsExpectedResult()
     {
@@ -295,7 +292,7 @@ public class TransactionControllerTest
 
         Assert.IsNotNull(responseContent);
     }
-    
+
     [Test]
     public async Task DeleteTransaction_ReturnsExpectedResult()
     {

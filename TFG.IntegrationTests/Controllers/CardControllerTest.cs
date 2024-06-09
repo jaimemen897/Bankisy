@@ -77,7 +77,7 @@ public class CardControllerTest
             TransactionsOrigin = [],
             Cards = []
         };
-        
+
         var bankAccount2 = new BankAccount
         {
             Iban = "ES7921000813610123456780",
@@ -190,7 +190,7 @@ public class CardControllerTest
             UserId = _userId,
             BankAccountIban = "ES7921000813610123456780"
         };
-        
+
         var content = new StringContent(JsonConvert.SerializeObject(card), Encoding.UTF8, "application/json");
 
         // Act
@@ -239,7 +239,6 @@ public class CardControllerTest
             UserId = _userId,
             BankAccountIban = "ES7921000813610123456780",
             CardType = "Debit"
-            
         };
         var content = new StringContent(JsonConvert.SerializeObject(card), Encoding.UTF8, "application/json");
 
@@ -342,7 +341,7 @@ public class CardControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
-    
+
     [Test]
     public async Task UnblockCard_ReturnsExpectedResult()
     {
@@ -372,7 +371,7 @@ public class CardControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
-    
+
     [Test]
     public async Task UnblockMyCard_ReturnsExpectedResult()
     {
@@ -389,7 +388,7 @@ public class CardControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
     }
-    
+
     [Test]
     public async Task ActivateCard_ReturnsExpectedResult()
     {

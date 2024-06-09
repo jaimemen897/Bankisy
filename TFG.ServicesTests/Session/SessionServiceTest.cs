@@ -28,7 +28,7 @@ public class SessionServiceTest
     private UsersService _usersService;
     private BankAccountService _bankAccountService;
     private CardService _cardService;
-    
+
     [SetUp]
     public void SetUp()
     {
@@ -145,7 +145,7 @@ public class SessionServiceTest
             Assert.That((string)tokenObject.user.Name, Is.EqualTo(user.Name));
         });
     }
-    
+
     [Test]
     public void Register_UserAlreadyExists_ThrowsHttpException()
     {
@@ -161,14 +161,14 @@ public class SessionServiceTest
             Username = "testUser", Password = BCrypt.Net.BCrypt.HashPassword("testPassword"), Dni = "12345678A",
             Phone = "123456787"
         };
-        
+
         _mockContext.Setup(x => x.Users).ReturnsDbSet(new List<User> { user });
-        
+
         // Act & Assert
         Assert.ThrowsAsync<HttpException>(() => _sessionService.Register(userRegisterDto));
     }
-    
-    
+
+
     //GET USER BY TOKEN
     [Test]
     public async Task GetUserByToken_ReturnsExpectedUser()
@@ -180,16 +180,16 @@ public class SessionServiceTest
             Username = "testUser", Password = BCrypt.Net.BCrypt.HashPassword("testPassword"), Dni = "12345678A",
             Phone = "123456787"
         };
-        
+
         var tokenJson = SessionService.GetToken(user, configurationMock.Object);
         var tokenObject = JsonConvert.DeserializeObject<dynamic>(tokenJson);
         var token = (string)tokenObject.token;
-        
+
         _mockContext.Setup(x => x.Users).ReturnsDbSet(new List<User> { user });
-        
+
         // Act
         var result = await _sessionService.GetUserByToken(token);
-        
+
         // Assert
         Assert.Multiple(() =>
         {
@@ -205,8 +205,8 @@ public class SessionServiceTest
         // Act & Assert
         Assert.ThrowsAsync<SecurityTokenMalformedException>(() => _sessionService.GetUserByToken("invalidToken"));
     }
-    
-    
+
+
     //GET MYSELF
     [Test]
     public async Task GetMyself_ReturnsExpectedUser()
@@ -240,7 +240,7 @@ public class SessionServiceTest
             Assert.That(result.Name, Is.EqualTo(user.Name));
         });
     }
-    
+
 
     //GET TOKEN
     [Test]

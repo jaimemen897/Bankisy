@@ -190,7 +190,7 @@ public class TransactionServiceTest
             Assert.That(result.Items[0].Id, Is.EqualTo(2));
         });
     }
-    
+
     [Test]
     public void GetTransactions_ThrowsHttpExceptionWhenInvalidOrderByParameter()
     {
@@ -202,10 +202,11 @@ public class TransactionServiceTest
         };
 
         _mockContext.Setup(x => x.Transactions).ReturnsDbSet(transactions);
-        
+
         // Act
-        var ex = Assert.ThrowsAsync<HttpException>(() => _transactionService.GetTransactions(1, 2, "Invalid", false, null, null, null));
-        
+        var ex = Assert.ThrowsAsync<HttpException>(() =>
+            _transactionService.GetTransactions(1, 2, "Invalid", false, null, null, null));
+
         // Assert
         Assert.Multiple(() =>
         {

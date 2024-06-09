@@ -11,6 +11,7 @@ public class WebhookController(WebhookService webhookService) : Controller
     [HttpPost]
     public async Task<IActionResult> Index()
     {
-        return await webhookService.HandleWebhook(await new StreamReader(Request.Body).ReadToEndAsync(), Request.Headers["Stripe-Signature"]);
+        return await webhookService.HandleWebhook(await new StreamReader(Request.Body).ReadToEndAsync(),
+            Request.Headers["Stripe-Signature"]);
     }
 }

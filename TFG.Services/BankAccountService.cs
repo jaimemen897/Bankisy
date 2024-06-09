@@ -78,11 +78,12 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
     }
 
     //CREATE
-    public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto, Guid? userId = null)
+    public async Task<BankAccountResponseDto> CreateBankAccount(BankAccountCreateDto bankAccountCreateDto,
+        Guid? userId = null)
     {
         var userEntity = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
         IsValid(bankAccountCreateDto, userEntity);
-        
+
         var users = await bankContext.Users.Where(u => bankAccountCreateDto.UsersId.Contains(u.Id)).ToListAsync();
         bankAccountCreateDto.UsersId = bankAccountCreateDto.UsersId.Distinct().ToList();
         if (users.Count != bankAccountCreateDto.UsersId.Count) throw new HttpException(404, "Users not found");
@@ -150,12 +151,13 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
     {
         var bankAccount = await bankContext.BankAccounts.Include(ba => ba.Users)
             .FirstOrDefaultAsync(ba => ba.Iban == iban) ?? throw new HttpException(404, "Bank account not found");
-        
+
         if (userId != null)
         {
             _ = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == userId) ??
-                       throw new HttpException(404, "User not found");
-            if (bankAccount.Users.All(u => u.Id != userId)) throw new HttpException(404, "User not found in bank account");
+                throw new HttpException(404, "User not found");
+            if (bankAccount.Users.All(u => u.Id != userId))
+                throw new HttpException(404, "User not found in bank account");
         }
 
         if (bankAccount.Balance != 0)
@@ -223,7 +225,6 @@ public class BankAccountService(BankContext bankContext, IMemoryCache cache, Car
         if (user == null) return;
         if (bankAccountCreateDto.UsersId.All(id => id != user.Id))
             throw new HttpException(403, "You can't create a bank account for another user");
-
     }
 
     private static void IsValid(BankAccountUpdateDto bankAccountUpdateDto)

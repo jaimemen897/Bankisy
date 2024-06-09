@@ -96,7 +96,8 @@
             <tr>
               <td>{{ account.iban | ibanFormat }}</td>
               <td>
-                <p-tag rounded [value]="account.acceptBizum ? 'Sí' : 'No'" [severity]="getBizumColor(account.acceptBizum)"></p-tag>
+                <p-tag rounded [value]="account.acceptBizum ? 'Sí' : 'No'"
+                       [severity]="getBizumColor(account.acceptBizum)"></p-tag>
               </td>
               <td>
                 <p-tag rounded [value]="account.balance + '€'" [severity]="getBalanceColor(account.balance)"></p-tag>

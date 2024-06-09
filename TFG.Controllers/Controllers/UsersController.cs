@@ -64,7 +64,7 @@ public class UsersController(UsersService usersService) : ControllerBase
         var host = $"{Request.Scheme}://{Request.Host}";
         return await usersService.UploadAvatar(avatar, host, id);
     }
-    
+
     [Authorize(Policy = "User")]
     [HttpPut("avatar")]
     public async Task<ActionResult<UserResponseDto>> UpdateAvatar([FromForm] IFormFile avatar)

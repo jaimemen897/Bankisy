@@ -14,7 +14,7 @@ import {MessageService} from "primeng/api";
 export class BankAccountService {
   private apiUrl = `${environment.apiUrl}/bankaccounts`
 
-  constructor(private http: HttpClient, private messageService: MessageService){
+  constructor(private http: HttpClient, private messageService: MessageService) {
   }
 
   getBankAccounts(pageNumber: number, pageSize: number, orderBy?: string, descending?: boolean, search?: string, filter?: string, isDeleted?: boolean): Observable<Pagination<BankAccount>> {
@@ -113,7 +113,7 @@ export class BankAccountService {
     const errorMessages: { [key: string]: string } = {
       'BankAccount not found': 'Cuenta bancaria no encontrada',
       'Users not found': 'Usuarios no encontrados',
-      'Invalid account type. Valid values are: Saving, Current, FixedTerm, Payroll, Student' :'Tipo de cuenta inválido. Los valores válidos son: Ahorro, Corriente, Plazo fijo, Nómina, Estudiante',
+      'Invalid account type. Valid values are: Saving, Current, FixedTerm, Payroll, Student': 'Tipo de cuenta inválido. Los valores válidos son: Ahorro, Corriente, Plazo fijo, Nómina, Estudiante',
       'You can\'t create a bank account for another user': 'No puedes crear una cuenta bancaria para otro usuario',
       'You can\'t delete a bank account with balance': 'No puedes eliminar una cuenta bancaria con saldo',
       'User not found in bank account': 'Usuario no encontrado en la cuenta bancaria',

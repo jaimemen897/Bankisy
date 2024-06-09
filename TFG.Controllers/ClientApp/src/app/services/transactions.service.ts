@@ -117,7 +117,7 @@ export class TransactionsService {
       'Transaction not found': 'Transacción no encontrada',
       'Account origin not found': 'Cuenta de origen no encontrada',
       'Account destination not found': 'Cuenta de destino no encontrada',
-      'Account destination not found or not accepting Bizum' : 'El usuario introducido no tiene el servicio Bizum activado',
+      'Account destination not found or not accepting Bizum': 'El usuario introducido no tiene el servicio Bizum activado',
       'Origin and destination users cannot be the same': 'El usuario de origen y el de destino no pueden ser el mismo',
       'Insufficient funds in the origin account': 'Fondos insuficientes en la cuenta de origen',
       'Transaction amount must be greater than zero': 'El monto de la transacción debe ser mayor que cero',

@@ -93,7 +93,7 @@ public class UsersControllerTest
         _client?.Dispose();
         _factory?.Dispose();
     }
-    
+
     [Test]
     public async Task GetUsers_ReturnsExpectedResult()
     {
@@ -286,7 +286,7 @@ public class UsersControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
     }
-    
+
     [Test]
     public async Task UpdateAvatar_ReturnsExpectedResult()
     {
@@ -323,7 +323,7 @@ public class UsersControllerTest
 
         Assert.IsNotNull(responseContent);
     }
-    
+
     [Test]
     public async Task DeleteMyAvatar_ReturnsExpectedResult()
     {
@@ -333,5 +333,4 @@ public class UsersControllerTest
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
     }
-    
 }

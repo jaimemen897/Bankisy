@@ -13,7 +13,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace TFG.Services;
 
-public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccountService bankAccountService, IConfiguration configuration)
+public class UsersService(
+    BankContext bankContext,
+    IMemoryCache cache,
+    BankAccountService bankAccountService,
+    IConfiguration configuration)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
     private readonly List<Guid> _userIds = [];
@@ -85,7 +89,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
 
         return _mapper.Map<UserResponseDto>(userToUpdate);
     }
-    
+
     public async Task<string> UpdateProfile(Guid id, UserUpdateDto user)
     {
         var userUpdated = await UpdateUser(id, user);
@@ -166,7 +170,7 @@ public class UsersService(BankContext bankContext, IMemoryCache cache, BankAccou
             if (File.Exists(avatar)) File.Delete(avatar);
 
             user.Avatar = User.ImageDefault;
-            
+
             bankContext.Users.Update(user);
             await bankContext.SaveChangesAsync();
         }

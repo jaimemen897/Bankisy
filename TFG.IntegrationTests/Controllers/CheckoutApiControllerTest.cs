@@ -13,7 +13,6 @@ using TFG.Services;
 
 namespace TFG.IntegrationTests.Controllers;
 
-
 public class CheckoutApiControllerTest
 {
     private WebApplicationFactory<Program> _factory;
@@ -74,7 +73,7 @@ public class CheckoutApiControllerTest
 
         var jsonResponse = JObject.Parse(response);
         _token = jsonResponse["token"].ToString();
-        
+
         _client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token}");
     }
 

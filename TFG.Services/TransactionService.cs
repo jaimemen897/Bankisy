@@ -14,7 +14,11 @@ using TFG.Services.Pagination;
 
 namespace TFG.Services;
 
-public class TransactionService(BankContext bankContext, IMemoryCache cache, IHubContext<MyHub> hubContext, BankAccountService bankAccountService)
+public class TransactionService(
+    BankContext bankContext,
+    IMemoryCache cache,
+    IHubContext<MyHub> hubContext,
+    BankAccountService bankAccountService)
 {
     private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
     private readonly List<int> _transactionIds = [];
@@ -88,14 +92,14 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     public async Task<List<TransactionResponseDto>> GetTransactionsByIban(string iban, Guid? userId = null)
     {
         var bankAccount = await bankAccountService.GetBankAccount(iban);
-        
+
         if (userId != null && bankAccount.UsersId.All(id => id != userId))
             throw new HttpException(403, "You are not the owner of the account");
 
         return await GetTransactions(t =>
             t.IbanAccountOrigin == bankAccount.Iban || t.IbanAccountDestination == bankAccount.Iban);
     }
-    
+
     public async Task<UserSummary> GetSummary(Guid userId)
     {
         var bankAccounts = await bankContext.BankAccounts
@@ -105,8 +109,10 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         var firstDayOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1).ToUniversalTime();
 
-        var transactionsFromFirstOfMonth = await GetTransactions(t => bankAccounts.Contains(t.IbanAccountDestination) && t.Date >= firstDayOfMonth);
-        var expensesFromFirstOfMonth = await GetTransactions(t => bankAccounts.Contains(t.IbanAccountOrigin ?? "") && t.Date >= firstDayOfMonth);
+        var transactionsFromFirstOfMonth = await GetTransactions(t =>
+            bankAccounts.Contains(t.IbanAccountDestination) && t.Date >= firstDayOfMonth);
+        var expensesFromFirstOfMonth = await GetTransactions(t =>
+            bankAccounts.Contains(t.IbanAccountOrigin ?? "") && t.Date >= firstDayOfMonth);
 
         var totalBalance = bankAccounts.Sum(iban => bankContext.BankAccounts.First(b => b.Iban == iban).Balance);
         var totalIncomes = transactionsFromFirstOfMonth.Sum(t => t.Amount);
@@ -124,8 +130,8 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     public async Task<TransactionResponseDto> CreateTransaction(TransactionCreateDto transactionCreateDto, Guid userId)
     {
         var account = await bankContext.BankAccounts.Include(b => b.Users)
-            .FirstOrDefaultAsync(b => b.Iban == transactionCreateDto.IbanAccountOrigin) ??
-                     throw new HttpException(404, "Account origin not found");
+                          .FirstOrDefaultAsync(b => b.Iban == transactionCreateDto.IbanAccountOrigin) ??
+                      throw new HttpException(404, "Account origin not found");
 
         var accountDestination =
             await bankContext.BankAccounts.Include(b => b.Users)
@@ -198,7 +204,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
             : $"Se ha recibido una transferencia de {transaction.Amount}€ con concepto: {transaction.Concept}";
         if (recipientUser != null)
             if (MyHub._userConnections.TryGetValue(recipientUser.Id.ToString(), out var connectionId))
-                await hubContext.Clients.Client(connectionId).SendAsync("TransferReceived", recipientUser.Id,message);
+                await hubContext.Clients.Client(connectionId).SendAsync("TransferReceived", recipientUser.Id, message);
 
         return _mapper.Map<TransactionResponseDto>(transaction);
     }
@@ -207,7 +213,7 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
     {
         var userAsync = await bankContext.Users.FirstOrDefaultAsync(u => u.Id == userId) ??
                         throw new HttpException(404, "User not found");
-        
+
         var account = await bankContext.BankAccounts.FirstOrDefaultAsync(b =>
                           b.Users.Any(u => u.Id == userAsync.Id) && !b.IsDeleted) ??
                       throw new HttpException(404, "Account origin not found");
@@ -252,10 +258,9 @@ public class TransactionService(BankContext bankContext, IMemoryCache cache, IHu
 
         if (transactionCreateDto.Amount <= 0)
             throw new HttpException(400, "Transaction amount must be greater than zero");
-        
+
         if (accountOrigin.Users.All(u => u.Id != userId))
             throw new HttpException(403, "You are not the owner of the account");
-
     }
 
     //DELETE

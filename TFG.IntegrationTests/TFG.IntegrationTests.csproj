@@ -11,8 +11,8 @@
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.6" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.6"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
         <PackageReference Include="NUnit" Version="3.14.0"/>
         <PackageReference Include="NUnit.Analyzers" Version="3.9.0"/>
@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TFG.Controllers\TFG.Controllers.csproj" />
+        <ProjectReference Include="..\TFG.Controllers\TFG.Controllers.csproj"/>
     </ItemGroup>
 
 </Project>
