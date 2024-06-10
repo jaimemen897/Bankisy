@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -72,6 +73,9 @@ builder.Services.AddDbContext<BankContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionURL"));
     options.EnableSensitiveDataLogging();
 });
+
+builder.Services.Configure<KestrelServerOptions>(builder.Configuration.GetSection("Kestrel"));
+
 builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
 {
