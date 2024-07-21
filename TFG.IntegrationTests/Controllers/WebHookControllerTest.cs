@@ -106,6 +106,6 @@ public class WebhookControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 }

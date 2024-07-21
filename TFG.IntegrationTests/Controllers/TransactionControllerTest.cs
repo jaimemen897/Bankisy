@@ -153,8 +153,8 @@ public class TransactionControllerTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var transactions = JsonConvert.DeserializeObject<Pagination<TransactionResponseDto>>(responseContent);
 
-        Assert.IsNotNull(transactions);
-        Assert.IsNotEmpty(transactions.Items);
+        Assert.That(transactions, Is.Not.Null);
+        Assert.That(transactions.Items, Is.Not.Empty);
     }
 
     [Test]
@@ -172,7 +172,7 @@ public class TransactionControllerTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var transaction = JsonConvert.DeserializeObject<TransactionResponseDto>(responseContent);
 
-        Assert.IsNotNull(transaction);
+        Assert.That(transaction, Is.Not.Null);
     }
 
     [Test]
@@ -190,8 +190,8 @@ public class TransactionControllerTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var transactions = JsonConvert.DeserializeObject<List<TransactionResponseDto>>(responseContent);
 
-        Assert.IsNotNull(transactions);
-        Assert.IsNotEmpty(transactions);
+        Assert.That(transactions, Is.Not.Null);
+        Assert.That(transactions, Is.Not.Empty);
     }
 
     [Test]
@@ -209,8 +209,8 @@ public class TransactionControllerTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var transactions = JsonConvert.DeserializeObject<List<TransactionResponseDto>>(responseContent);
 
-        Assert.IsNotNull(transactions);
-        Assert.IsNotEmpty(transactions);
+        Assert.That(transactions, Is.Not.Null);
+        Assert.That(transactions, Is.Not.Empty);
     }
 
     [Test]
@@ -235,7 +235,7 @@ public class TransactionControllerTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var bizumResponse = JsonConvert.DeserializeObject<BizumResponseDto>(responseContent);
 
-        Assert.IsNotNull(bizumResponse);
+        Assert.That(bizumResponse, Is.Not.Null);
     }
 
     [Test]
@@ -250,8 +250,8 @@ public class TransactionControllerTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var transactions = JsonConvert.DeserializeObject<Pagination<TransactionResponseDto>>(responseContent);
 
-        Assert.IsNotNull(transactions);
-        Assert.IsNotEmpty(transactions.Items);
+        Assert.That(transactions, Is.Not.Null);
+        Assert.That(transactions.Items, Is.Not.Empty);
     }
 
     [Test]
@@ -266,7 +266,7 @@ public class TransactionControllerTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var summary = JsonConvert.DeserializeObject<UserSummary>(responseContent);
 
-        Assert.IsNotNull(summary);
+        Assert.That(summary, Is.Not.Null);
     }
 
     [Test]
@@ -290,7 +290,7 @@ public class TransactionControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]

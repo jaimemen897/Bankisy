@@ -111,7 +111,7 @@ public class BankAccountControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -125,7 +125,7 @@ public class BankAccountControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -142,7 +142,7 @@ public class BankAccountControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -159,7 +159,7 @@ public class BankAccountControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -182,7 +182,7 @@ public class BankAccountControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -205,7 +205,7 @@ public class BankAccountControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -229,7 +229,7 @@ public class BankAccountControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]

@@ -146,7 +146,7 @@ public class CardControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -160,7 +160,7 @@ public class CardControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -177,7 +177,7 @@ public class CardControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -201,7 +201,7 @@ public class CardControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -225,7 +225,7 @@ public class CardControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -250,7 +250,7 @@ public class CardControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -274,7 +274,7 @@ public class CardControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]

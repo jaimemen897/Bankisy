@@ -106,8 +106,8 @@ public class UsersControllerTest
         var responseContent = await response.Content.ReadAsStringAsync();
         var users = JsonConvert.DeserializeObject<Pagination<UserResponseDto>>(responseContent);
 
-        Assert.IsNotNull(users);
-        Assert.IsNotEmpty(users.Items);
+        Assert.That(users, Is.Not.Null);
+        Assert.That(users.Items, Is.Not.Null);
     }
 
     [Test]
@@ -124,7 +124,7 @@ public class UsersControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -138,7 +138,7 @@ public class UsersControllerTest
 
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(content);
+        Assert.That(content, Is.Not.Null);
     }
 
     [Test]
@@ -166,7 +166,7 @@ public class UsersControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -195,7 +195,7 @@ public class UsersControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -216,7 +216,7 @@ public class UsersControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -254,7 +254,7 @@ public class UsersControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -271,7 +271,7 @@ public class UsersControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
@@ -321,7 +321,7 @@ public class UsersControllerTest
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.IsNotNull(responseContent);
+        Assert.That(responseContent, Is.Not.Null);
     }
 
     [Test]
