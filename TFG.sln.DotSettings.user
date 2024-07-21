@@ -5,6 +5,7 @@
   &lt;Assembly Path="C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Controllers\bin\Release\net8.0\IbanNet.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\Jaime\Downloads\Clase2\TFG.Net\TFG.Controllers\bin\Release\net8.0\TFG.Controllers.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Monitoring/StartMode/@EntryValue">Disabled</s:String>
 	
 	
 	
